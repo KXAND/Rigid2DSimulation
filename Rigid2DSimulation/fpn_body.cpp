@@ -84,8 +84,8 @@ void RLbBody::Sync(App& app) {
 	if (!pbsel) { txt = loc(L"body_not_sel"); return; }
 	txt.clear();
 	
-	txt += loc(L"body_o") + tw2(bsel.o) + L"\n";
-	txt += loc(L"body_v") + tw2(bsel.v) + L"\n";
+	txt += loc(L"body_o") + toWstring(bsel.o) + L"\n";
+	txt += loc(L"body_v") + toWstring(bsel.v) + L"\n";
 	txt += loc(L"body_ang") + tw2(bsel.ang) + L"\n";
 	txt += loc(L"body_v_ang") + tw2(bsel.v_ang) + L"\n";
 	txt += loc(L"body_fixed") + tw(bsel.fixed) + L"\n";

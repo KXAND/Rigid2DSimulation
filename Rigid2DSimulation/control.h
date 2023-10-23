@@ -3,8 +3,8 @@
 
 struct App;
 struct Control {
-	dvec tl;
-	drect vp;
+	dVector2 tl;
+	dRect vp;
 
 	virtual ~Control() {}
 	virtual void Update(App& app) {}

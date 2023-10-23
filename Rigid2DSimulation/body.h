@@ -23,7 +23,7 @@ struct Body {
 	vector<Connection*> cons;
 	vector2 o, v;
 	aabb box;
-	mat2 tsf = mat2::id();
+	matrix2 tsf = matrix2::I();
 	wstring cmd, tmp_cmd;
 	double ang = 0, v_ang = 0;
 	double inv_m = 0, inv_i = 0;
@@ -39,7 +39,7 @@ struct Body {
 	vector2 p_drag_rel;
 	double dep_shape = 0, dep_point = 0;
 	double r_point = 0;
-	dcol c_inner, c_border, c_hovered, c_dragged, c_selected, c_selected_con;
+	dColor c_inner, c_border, c_hovered, c_dragged, c_selected, c_selected_con;
 
 	Body();
 	Body(vector2 const& _o);
@@ -55,7 +55,7 @@ struct Body {
 	void read_cfg(Var const& cfg);
 	void generate();
 	void update_box();
-	void warp(drect rc);
+	void warp(dRect rc);
 	void register_grid(Cur& cur);
 
 	void Init(bool repos_o = false);

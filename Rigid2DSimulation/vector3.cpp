@@ -10,7 +10,7 @@ wstring tw2(vector3 v) {
 	return L"(" + tw2(v.x) + L"," + tw2(v.y) + L"," + tw2(v.z) + L")";
 }
 
-cam::cam(drect vp) : vp(vp) {
+cam::cam(dRect vp) : vp(vp) {
 	r = 1000; scl = 500;
 	max_d = 1e6; min_d = 1; calc();
 }
@@ -34,23 +34,23 @@ void cam::calc() {
 	p = p * r + look;
 
 	// 下面可能会产生奇异的情况。
-	vector3 vy = (look - p).unit();
-	vector3 vx = cross(vy, vector3(0, 0, 1)).unit();
+	vector3 vy = (look - p).normalize();
+	vector3 vx = cross(vy, vector3(0, 0, 1)).normalize();
 	vector3 vz = cross(vx, vy);
-	mt = mat3(vx, vy, vz).tsp();
-	mt = mat3::rot(vector3(0, 1, 0), psi) * mt;
-	ct = vp.tl + dvec(vp.w, vp.h) / 2;
+	mt = matrix3(vx, vy, vz).transpose();
+	mt = matrix3::rotate(vector3(0, 1, 0), psi) * mt;
+	ct = vp.topLeftPosition + dVector2(vp.w, vp.h) / 2;
 }
-void cam::calc_fp() {
+void cam::calcFirstPerson() {
 	// 第一人称模式，舍弃了 look, r。
 	vector3 vy;
 	vy.z = sin(phi);
 	vy.x = cos(phi) * sin(theta);
 	vy.y = cos(phi) * cos(theta);
-	vector3 vx = cross(vy, vector3(0, 0, 1)).unit();
+	vector3 vx = cross(vy, vector3(0, 0, 1)).normalize();
 	vector3 vz = cross(vx, vy);
 
-	mt = mat3(vx, vy, vz).tsp();
-	mt = mat3::rot(vector3(0, 1, 0), psi) * mt;
-	ct = vp.tl + dvec(vp.w, vp.h) / 2;
+	mt = matrix3(vx, vy, vz).transpose();
+	mt = matrix3::rotate(vector3(0, 1, 0), psi) * mt;
+	ct = vp.topLeftPosition + dVector2(vp.w, vp.h) / 2;
 }

@@ -51,7 +51,7 @@ void Creator::update_box(Cur& cur) {
 		if (x1 - x0 >= min_wh && y1 - y0 >= min_wh) {
 			mkp(bo)(msh<Shape>(rect(x1 - x0, y1 - y0)));
 			bo->o = vector2(x0 + x1, y0 + y1) / 2;
-			bo->c_inner = dcol(drnd(256), drnd(256), drnd(256));
+			bo->c_inner = dColor(drnd(256), drnd(256), drnd(256));
 			if (cfg_body) { bo->read_cfg(*cfg_body); }
 			bo->Init();
 		}
@@ -76,7 +76,7 @@ void Creator::update_ball(Cur& cur) {
 		if (r > min_r) {
 			mkp(bo)(msh<Shape>(r));
 			bo->o = vector2(p_rec);
-			bo->c_inner = dcol(drnd(256), drnd(256), drnd(256));
+			bo->c_inner = dColor(drnd(256), drnd(256), drnd(256));
 			if (cfg_body) { bo->read_cfg(*cfg_body); }
 			bo->Init();
 		}
@@ -98,13 +98,13 @@ void Creator::update_plate(Cur& cur) {
 	if (active) {
 		double thk = thick;
 		double min_len = 5;
-		dvec v = p_rec - msp;
+		dVector2 v = p_rec - msp;
 		double len = sqrt(v.lensqr());
 		if (len > min_len) {
 			mkp(bo)(msh<Shape>(rect(len + thk, thk)));
 			bo->o = vector2(p_rec + msp) / 2;
 			bo->ang = atan2(v.y, v.x);
-			bo->c_inner = dcol(drnd(256), drnd(256), drnd(256));
+			bo->c_inner = dColor(drnd(256), drnd(256), drnd(256));
 			if (cfg_body) { bo->read_cfg(*cfg_body); }
 			bo->Init();
 		}
@@ -151,7 +151,7 @@ void Creator::update_con(Cur& cur) {
 void Creator::update_point(Cur& cur) {
 	if (hovered && msc(0)) {
 		mkp(bo)((vector2)msp);
-		bo->c_inner = dcol(drnd(256), drnd(256), drnd(256));
+		bo->c_inner = dColor(drnd(256), drnd(256), drnd(256));
 		if (cfg_body) { bo->read_cfg(*cfg_body); }
 		bo->Init();
 		cur.bs.push_back(bo);
@@ -180,7 +180,7 @@ void Creator::update_particle(Cur& cur) {
 	if (hovered && msc(0)) {
 		mkp(bo)(msh<Shape>(rad));
 		bo->o = (vector2)msp;
-		bo->c_inner = dcol(drnd(256), drnd(256), drnd(256));
+		bo->c_inner = dColor(drnd(256), drnd(256), drnd(256));
 		if (cfg_body) { bo->read_cfg(*cfg_body); }
 		bo->Init();
 		cur.bs.push_back(bo);
@@ -215,6 +215,6 @@ void Creator::Discard(Cur& cur) {
 	hovered = active = false;
 }
 void Creator::PreUpdate(Cur& cur) {
-	bool ok = dhv <= dep() && insd(msp, bgr.vp());
+	bool ok = dhv <= dep() && isInside(msp, bgr.vp());
 	if (ok) { dhv = dep(); hvd = this; }
 }

@@ -30,11 +30,11 @@ Textbox::Textbox(int w) : w(w) {
 int Textbox::GetW() const { return w + gap.x + w_txt; }
 int Textbox::GetH() const { return h + gap.y; }
 
-dvec Textbox::tl_box() const { return tl + dvec(w_txt, 0); }
-drect Textbox::vp_show_txt() const {
-	dvec tl_show_txt = tl_box() + dvec(w_show_txt_mg, 0);
+dVector2 Textbox::tl_box() const { return tl + dVector2(w_txt, 0); }
+dRect Textbox::vp_show_txt() const {
+	dVector2 tl_show_txt = tl_box() + dVector2(w_show_txt_mg, 0);
 	int w_show_txt = w - 2 * w_show_txt_mg;
-	return overlap(vp, { tl_show_txt, w_show_txt, h });
+	return getOverlapRect(vp, { tl_show_txt, w_show_txt, h });
 }
 wstring Textbox::left() const {
 	auto a = str.begin();
@@ -108,7 +108,7 @@ void Textbox::hdl_back(App& app) {
 		str = left() + right();
 		edit_a = edit_b = edit_begin();
 	} else if (edit_begin() > 0) {
-		x_str_rel += ft[str[edit_a]].w;
+		x_str_rel += ft[str[edit_a]].width;
 		x_str_rel = min<double>(x_str_rel, w_edit_mg);
 		auto a = str.begin();
 		auto b = str.begin() + edit_a - 1;
@@ -188,17 +188,17 @@ void Textbox::clamp_str(App& app) {
 }
 
 void Textbox::render_main(App& app) {
-	dvec tl_txt = tl + dvec(0, (h - ft.h) / 2);
+	dVector2 tl_txt = tl + dVector2(0, (h - ft.h) / 2);
 	draw_str(scr, dscr, dep, txt, c_txt, ft, tl_txt, 0, vp);
 
-	dcol const& c =
+	dColor const& c =
 		!enabled ? c_invalid :
 		edit ? c_edit :
 		rhvd ? c_hovered : c_normal;
-	draw_px_rect_framed_raw(scr, tl_box(), w, h, vp, c, c_frame);
+	drawRectangleWithBorderRaw(scr, tl_box(), w, h, vp, c, c_frame);
 
 	int x_cur = 0;
-	dvec tl_str = tl_box() + dvec(x_str_rel, (h - ft.h) / 2);
+	dVector2 tl_str = tl_box() + dVector2(x_str_rel, (h - ft.h) / 2);
 	draw_str(scr, dscr, dep, left(), c_str, ft, tl_str, x_cur, 0, vp_show_txt());
 	draw_str(scr, dscr, dep, mid(), c_selected, ft, tl_str, x_cur, 0, vp_show_txt());
 	draw_str(scr, dscr, dep, right(), c_str, ft, tl_str, x_cur, 0, vp_show_txt());
@@ -209,7 +209,7 @@ void Textbox::render_cursor(App& app) {
 	if (show_cursor) {
 		int x_cs = tl_box().x + x_cs_rel(app) - w_cursor / 2;
 		int y_cs = tl_box().y + (h - h_cursor) / 2;
-		draw_rect_raw(scr, { x_cs, y_cs }, w_cursor, h_cursor, vp_show_txt(), c_cursor);
+		drawRectangleRaw(scr, { x_cs, y_cs }, w_cursor, h_cursor, vp_show_txt(), c_cursor);
 	}
 }
 void Textbox::render(App& app) {
@@ -249,7 +249,7 @@ void Textbox::PreUpdate(App& app) {
 	if (edit) { kb = this; }
 
 	bool ok = dhv <= dep &&
-		insd(msp, { tl_box(), w, h }) && insd(msp, vp);
+		isInside(msp, { tl_box(), w, h }) && isInside(msp, vp);
 	if (ok) { dhv = dep; hvd = this; }
 }
 

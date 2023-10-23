@@ -21,8 +21,8 @@ Panel Panel::menu(App& app) {
 	pn.h = app.h - 40;
 	pn.h_show = pn.h - 20;
 
-	drect tmp;
-	tmp.tl = dvec(10 - 2, 10 - 2);
+	dRect tmp;
+	tmp.topLeftPosition = dVector2(10 - 2, 10 - 2);
 	tmp.w = pn.w - 20 + 4;
 	tmp.h = pn.h - 20 + 4;
 	pn.vp_show_rel = tmp; return pn;
@@ -34,8 +34,8 @@ Panel Panel::bottom(App& app) {
 	pn.tl.y = app.h - pn.h;
 	pn.h_show = pn.h;
 
-	drect tmp;
-	tmp.tl = dvec(10 - 2, 10 - 2);
+	dRect tmp;
+	tmp.topLeftPosition = dVector2(10 - 2, 10 - 2);
 	tmp.w = pn.w - 20 + 4;
 	tmp.h = pn.h - 20 + 4;
 	pn.vp_show_rel = tmp; return pn;
@@ -44,9 +44,9 @@ Panel Panel::bottom(App& app) {
 int Panel::min_y() const {
 	return tl.y + tl_show_rel.y + h_show - c->GetH();
 }
-drect Panel::vp_show(App& app) const {
-	drect vp = vp_show_rel;
-	vp.tl += tl; return overlap(vpscr, vp);
+dRect Panel::vp_show(App& app) const {
+	dRect vp = vp_show_rel;
+	vp.topLeftPosition += tl; return getOverlapRect(vpscr, vp);
 }
 void Panel::set_c(App& app, Control* _c) {
 	if (c != _c) {
@@ -67,12 +67,12 @@ void Panel::init_sb() {
 	mkp(sb)();
 	sb->c = c;
 	sb->h = h;
-	sb->tl = tl + dvec(w - sb->w, 0);
+	sb->tl = tl + dVector2(w - sb->w, 0);
 	sb->h_show = h_show;
 	sb->top_show = tl.y + tl_show_rel.y;
 }
 void Panel::render(App& app) {
-	draw_px_rect_framed_raw(scr, tl, w, h, vpscr, c_panel, c_frame);
+	drawRectangleWithBorderRaw(scr, tl, w, h, vpscr, c_panel, c_frame);
 }
 
 void Panel::Init(App& app) { init_c(app); init_sb(); }
@@ -84,7 +84,7 @@ void Panel::Update(App& app) {
 	if (full) {
 		int cy = c->tl.y;
 		if (wheeled) { cy += msw * wheel_mtp; }
-		c->tl.y = clmp(cy, min_y(), tl.y + tl_show_rel.y);
+		c->tl.y = clamp(cy, min_y(), tl.y + tl_show_rel.y);
 	}
 	else if (c) { c->tl.y = tl.y + tl_show_rel.y; }
 
@@ -101,11 +101,11 @@ void Panel::Discard(App& app) {
 }
 void Panel::PreUpdate(App& app) {
 	bool ok = dhv <= dep &&
-		insd(msp, { tl, w, h }) && insd(msp, vpscr);
+		isInside(msp, { tl, w, h }) && isInside(msp, vpscr);
 	if (ok) { dhv = dep; hvd = this; }
 
 	ok = dwh <= dep &&
-		insd(msp, { tl, w, h }) && insd(msp, vpscr);
+		isInside(msp, { tl, w, h }) && isInside(msp, vpscr);
 	if (ok) { dwh = dep; whd = this; }
 
 	if (c) { c->PreUpdate(app); }

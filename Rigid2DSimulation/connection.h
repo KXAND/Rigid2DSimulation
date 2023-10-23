@@ -20,10 +20,10 @@ struct Connection {
 	double len = 0;
 	double hooke = 0;
 	bool tight = false;
-	dcol c_rope_tight, c_rope_normal;
-	dcol c_link;
-	dcol c_cord_tight, c_cord_normal;
-	dcol c_spring_tight, c_spring_loose;
+	dColor c_rope_tight, c_rope_normal;
+	dColor c_link;
+	dColor c_cord_tight, c_cord_normal;
+	dColor c_spring_tight, c_spring_loose;
 
 	Connection();
 	void save(Cur const& cur, FILE* f) const;

@@ -5,14 +5,14 @@ struct App;
 struct Control;
 struct ScrollbarY;
 struct FloatPanel {
-	dvec tl;
+	dVector2 tl;
 	double dep = 0;
 	Control* c = NULL;
 	wstring txt;
 	int w = 0, h = 0;
 	double wheel_mtp = 0;
-	dvec tl_show_rel;
-	drect vp_show_rel;
+	dVector2 tl_show_rel;
+	dRect vp_show_rel;
 
 	bool use_sb = false;
 	ptr<ScrollbarY> sb;
@@ -22,9 +22,9 @@ struct FloatPanel {
 	int half_s_mark = 0;
 	int margin_close = 0;
 	int margin_title = 0;
-	dcol c_txt, c_mark, c_frame, c_panel;
-	dcol c_bar_normal, c_bar_dragged, c_bar_hovered;
-	dcol c_close_normal, c_close_chosen, c_close_hovered, c_close_invalid;
+	dColor c_txt, c_mark, c_frame, c_panel;
+	dColor c_bar_normal, c_bar_dragged, c_bar_hovered;
+	dColor c_close_normal, c_close_chosen, c_close_hovered, c_close_invalid;
 
 	int h_show = 0;
 	double t_click = 0;
@@ -42,10 +42,10 @@ struct FloatPanel {
 	FloatPanel(App& app, int _w, int _h);
 
 	int min_y() const;
-	drect vp_show(App& app) const;
-	dvec tl_close() const;
+	dRect vp_show(App& app) const;
+	dVector2 tl_close() const;
 	void set_c(App& app, Control* _c);
-	void set_tl(App& app, dvec const& p);
+	void set_tl(App& app, dVector2 const& p);
 	void init_c(App& app);
 	void init_sb();
 

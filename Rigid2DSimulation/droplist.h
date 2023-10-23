@@ -6,7 +6,7 @@ typedef function<wstring(int, App&)> DpNm;
 wstring dpnm_none(int id, App &app);
 
 struct Droplist : Control {
-	dvec gap;
+	dVector2 gap;
 	double dep = 0;
 	wstring txt;
 	int w = 0, h = 0;
@@ -21,7 +21,7 @@ struct Droplist : Control {
 	double sign_r = 0;
 	int sign_margin = 0;
 	int x_txt_margin = 0;
-	dcol c_txt, c_mark, c_edit, c_frame, c_normal, c_invalid, c_hovered;
+	dColor c_txt, c_mark, c_edit, c_frame, c_normal, c_invalid, c_hovered;
 
 	// -1 代表没有悬浮在任何选项上面。
 	int item_hv = -1;
@@ -34,8 +34,8 @@ struct Droplist : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	dvec tl_box() const;
-	dvec tl_item() const;
+	dVector2 tl_box() const;
+	dVector2 tl_item() const;
 	void render_main(App& app);
 	void render_items(App& app);
 	void render(App& app);

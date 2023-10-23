@@ -3,12 +3,12 @@
 #include "control.h"
 
 struct Textbox : Control {
-	dvec gap;
+	dVector2 gap;
 	double dep = 0;
 	wstring txt;
 	int w = 0, h = 0;
 	bool clr_upon_edit = false;
-	dcol c_txt, c_str, c_edit, c_frame, c_normal,
+	dColor c_txt, c_str, c_edit, c_frame, c_normal,
 		c_cursor, c_hovered, c_invalid, c_selected;
 
 	// cs = cursor£¬mg = margin¡£
@@ -34,8 +34,8 @@ struct Textbox : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	dvec tl_box() const;
-	drect vp_show_txt() const;
+	dVector2 tl_box() const;
+	dRect vp_show_txt() const;
 	wstring left() const;
 	wstring mid() const;
 	wstring right() const;

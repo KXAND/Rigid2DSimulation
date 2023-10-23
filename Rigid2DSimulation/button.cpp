@@ -21,14 +21,14 @@ int Button::GetW() const { return w + gap.x; }
 int Button::GetH() const { return h + gap.y; }
 
 void Button::render(App& app) {
-	dcol const& c =
+	dColor const& c =
 		!enabled ? c_invalid :
 		chosen ? c_chosen :
 		rhvd ? c_hovered : c_normal;
-	dvec wh = str_wh(txt, ft, 0);
-	dvec tl_txt = tl + dvec(w, h) / 2 - wh / 2;
+	dVector2 wh = str_wh(txt, ft, 0);
+	dVector2 tl_txt = tl + dVector2(w, h) / 2 - wh / 2;
 
-	draw_px_rect_framed_raw(scr, tl, w, h, vp, c, c_frame);
+	drawRectangleWithBorderRaw(scr, tl, w, h, vp, c, c_frame);
 	draw_str(scr, dscr, dep, txt, c_txt, ft, tl_txt, 0, vp);
 }
 
@@ -44,7 +44,7 @@ void Button::Update(App& app) {
 void Button::Discard(App& app) { rmv; chosen = hovered = false; }
 void Button::PreUpdate(App& app) {
 	bool ok = dhv <= dep &&
-		insd(msp, { tl, w, h }) && insd(msp, vp);
+		isInside(msp, { tl, w, h }) && isInside(msp, vp);
 	if (ok) { dhv = dep; hvd = this; }
 }
 

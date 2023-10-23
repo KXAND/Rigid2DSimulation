@@ -55,7 +55,7 @@ void App::reset_dscr() {
 }
 void App::present_scr() {
 	int ret = SetDIBitsToDevice(hdc, 0, 0, w, h,
-		0, 0, 0, h, scr.cols.data(), &bmi, DIB_RGB_COLORS);
+		0, 0, 0, h, scr.colors.data(), &bmi, DIB_RGB_COLORS);
 	if (!ret) { addlog(L"Õ¹Ê¾ÆÁÄ»Ê§°Ü.\n"); }
 }
 void App::addlog(wstring const& s) {

@@ -23,27 +23,27 @@ int DragbarX::GetH() const { return nh + gap.y; }
 double DragbarX::uval() const { return (double)nx_rel / (bw - nw); }
 void DragbarX::set_nx_rel(double uv) {
 	int tmp = uv * (bw - nw);
-	nx_rel = clmp(tmp, 0, bw - nw);
+	nx_rel = clamp(tmp, 0, bw - nw);
 }
-dvec DragbarX::tl_node() const { return tl + dvec(w_txt + nx_rel, 0); }
+dVector2 DragbarX::tl_node() const { return tl + dVector2(w_txt + nx_rel, 0); }
 void DragbarX::render(App& app) {
-	dvec tl_txt = tl + dvec(0, (nh - ft.h) / 2);
+	dVector2 tl_txt = tl + dVector2(0, (nh - ft.h) / 2);
 	draw_str(scr, dscr, dep, txt, c_txt, ft, tl_txt, 0, vp);
 
-	dcol const& c =
+	dColor const& c =
 		!enabled ? c_invalid :
 		dragged ? c_dragged :
 		rhvd ? c_hovered : c_normal;
-	dvec tl_bar = tl + dvec(w_txt, (nh - bh) / 2);
-	draw_rect_raw(scr, tl_bar, bw, bh, vp, c_bar);
-	draw_rect_raw(scr, tl_node(), nw, nh, vp, c);
+	dVector2 tl_bar = tl + dVector2(w_txt, (nh - bh) / 2);
+	drawRectangleRaw(scr, tl_bar, bw, bh, vp, c_bar);
+	drawRectangleRaw(scr, tl_node(), nw, nh, vp, c);
 }
 
 void DragbarX::Update(App& app) {
 	hovered = (hvd == this);
 	w_txt = str_wh(txt, ft, 0).x;
 	if (dragged) {
-		nx_rel = clmp(msp.x - (tl.x + w_txt + nw / 2), 0, bw - nw);
+		nx_rel = clamp(msp.x - (tl.x + w_txt + nw / 2), 0, bw - nw);
 		// 在刚刚抓住的那一帧没有更新，在放下的那一帧还在更新。省事。
 		Upload(app);
 		if (enabled && !msd[0]) { OnDone(app); }
@@ -59,7 +59,7 @@ void DragbarX::Discard(App& app) {
 }
 void DragbarX::PreUpdate(App& app) {
 	bool ok = dhv <= dep &&
-		insd(msp, { tl_node(), nw, nh }) && insd(msp, vp);
+		isInside(msp, { tl_node(), nw, nh }) && isInside(msp, vp);
 	if (ok) { dhv = dep; hvd = this; }
 }
 

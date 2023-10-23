@@ -4,16 +4,16 @@
 #include "control.h"
 
 struct RichTextbox : Control {
-	dvec gap;
+	dVector2 gap;
 	int w_str = 0;
 	double dep = 0;
 	int w = 0, h = 0;
 	bool clr_upon_edit = false;
-	dcol c_str, c_edit, c_frame, c_normal,
+	dColor c_str, c_edit, c_frame, c_normal,
 		c_cursor, c_hovered, c_invalid, c_selected;
 
-	dvec edit_mg;
-	dvec show_txt_mg;
+	dVector2 edit_mg;
+	dVector2 show_txt_mg;
 	double slide_mtp = 0;
 	double wheel_mtp = 0;
 	double twinkle_mtp = 0;
@@ -36,7 +36,7 @@ struct RichTextbox : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	drect vp_show_txt() const;
+	dRect vp_show_txt() const;
 	wstring left() const;
 	wstring mid() const;
 	wstring right() const;
@@ -45,7 +45,7 @@ struct RichTextbox : Control {
 	bool selected() const;
 	int max_x_cs_rel() const;
 	int max_y_cs_rel() const;
-	dvec p_cs_rel(App& app) const;
+	dVector2 p_cs_rel(App& app) const;
 
 	void select_a(App& app);
 	void select_b(App& app);

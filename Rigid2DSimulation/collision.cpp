@@ -8,7 +8,7 @@
 #include "my_def.h"
 
 void Collision::Render(Cur& cur) const {
-	draw_eclipse(scr, dscr, 100, c, 5, 5, bgr.vp(), dcol(255, 255, 0));
+	drawEllipse(scr, dscr, 100, c, 5, 5, bgr.vp(), dColor(255, 255, 0));
 }
 void Collision::Resolve(bool equal_repos) {
 	double e = min(b0->e, b1->e);
@@ -98,7 +98,7 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse) {
 	vector2 c;
 	if (sh0.ball) {
 		rep(i, 0, sh1.vs.size()) {
-			vector2 n = (sh1.vs[i] - sh0.o).unit();
+			vector2 n = (sh1.vs[i] - sh0.o).normalize();
 			if (n.zero()) { n = vector2(0, 1); }
 			auto d = sub_collide_poly(n, sh0.o + n * sh0.r, sh1, c);
 			if (d < 0) { return false; }
@@ -114,7 +114,7 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse) {
 	rep(i, 0, sh0.vs.size()) {
 		int j = (i + 1) % sh0.vs.size();
 		vector2 n = sh0.vs[j] - sh0.vs[i];
-		n = vector2(n.y, -n.x).unit();
+		n = vector2(n.y, -n.x).normalize();
 		auto d = sh1.ball ?
 			sub_collide_ball(n, sh0.vs[i], sh1, c) :
 			sub_collide_poly(n, sh0.vs[i], sh1, c);
@@ -144,7 +144,7 @@ bool collide_balls(Shape& sh0, Shape& sh1, Collision& out) {
 	double d = sh0.r + sh1.r - o10.len();
 	if (d < 0) { return false; }
 	out.d = d;
-	out.n = o10.zero() ? vector2(0, 1) : o10.unit();
+	out.n = o10.zero() ? vector2(0, 1) : o10.normalize();
 	if (sh0.r < sh1.r) {
 		out.c = sh0.o + sh0.r * out.n;
 	} else {

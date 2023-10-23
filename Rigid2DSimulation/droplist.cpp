@@ -29,37 +29,37 @@ int Droplist::GetH() const {
 	return h + gap.y + (edit ? n_item * h_item : 0);
 }
 
-dvec Droplist::tl_box() const { return tl + dvec(w_txt, 0); }
-dvec Droplist::tl_item() const { return tl_box() + dvec(0, h); }
+dVector2 Droplist::tl_box() const { return tl + dVector2(w_txt, 0); }
+dVector2 Droplist::tl_item() const { return tl_box() + dVector2(0, h); }
 void Droplist::render_main(App& app) {
-	dvec tl_txt = tl + dvec(0, (h - ft.h) / 2);
+	dVector2 tl_txt = tl + dVector2(0, (h - ft.h) / 2);
 	draw_str(scr, dscr, dep, txt, c_txt, ft, tl_txt, 0, vp);
 
-	dcol const& c =
+	dColor const& c =
 		!enabled ? c_invalid :
 		edit ? c_edit :
 		rhvd ? c_hovered : c_normal;
-	draw_px_rect_framed(scr, dscr, dep, tl_box(), w, h, vp, c, c_frame);
+	drawRectangleWithBorder(scr, dscr, dep, tl_box(), w, h, vp, c, c_frame);
 
 	vector2 ct_sign = (vector2)tl_box() + vector2(w - sign_margin, h / 2);
-	draw_eclipse(scr, dscr, dep, ct_sign, sign_r, sign_r, vp, c_mark);
+	drawEllipse(scr, dscr, dep, ct_sign, sign_r, sign_r, vp, c_mark);
 
-	dvec tl_item = tl + dvec(x_txt_margin, (h - ft.h) / 2);
+	dVector2 tl_item = tl + dVector2(x_txt_margin, (h - ft.h) / 2);
 	draw_str(scr, dscr, dep, nm(picked, app), c_txt, ft, tl_txt, 0, vp);
 }
 void Droplist::render_items(App& app) {
 	if (edit) {
-		draw_px_rect_framed(scr, dscr, dep, 
+		drawRectangleWithBorder(scr, dscr, dep, 
 			tl_item(), w, h_item * n_item, vp, c_normal, c_frame);
 		if (item_hv != -1) {
-			dvec tl_hovered = tl_box() + dvec(0, h + h_item * item_hv);
-			draw_px_rect_framed(scr, dscr, dep,
+			dVector2 tl_hovered = tl_box() + dVector2(0, h + h_item * item_hv);
+			drawRectangleWithBorder(scr, dscr, dep,
 				tl_hovered, w, h_item, vp, c_hovered, c_frame);
 		}
 		rep(i, 0, n_item) {
-			dvec tl_txt_item = tl_box() +
-				dvec(0, h + h_item * i) +
-				dvec(x_txt_margin, (h_item - ft.h) / 2);
+			dVector2 tl_txt_item = tl_box() +
+				dVector2(0, h + h_item * i) +
+				dVector2(x_txt_margin, (h_item - ft.h) / 2);
 			draw_str(scr, dscr, dep, nm(i, app), c_txt, ft, tl_txt_item, 0, vp);
 		}
 	}
@@ -94,7 +94,7 @@ void Droplist::Discard(App& app) {
 void Droplist::PreUpdate(App& app) {
 	int real_h = h + (edit ? n_item * h_item : 0);
 	bool ok = dhv <= dep &&
-		insd(msp, { tl_box(), w, real_h}) && insd(msp, vp);
+		isInside(msp, { tl_box(), w, real_h}) && isInside(msp, vp);
 	if (ok) { dhv = dep; hvd = this; }
 }
 

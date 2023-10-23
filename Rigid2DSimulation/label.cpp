@@ -13,7 +13,7 @@ int Label::GetW() const { return w + gap.x; }
 int Label::GetH() const { return h + gap.y; }
 
 void Label::render(App& app) {
-	dvec tl_txt = tl + dvec(0, h - ft.h) / 2;
+	dVector2 tl_txt = tl + dVector2(0, h - ft.h) / 2;
 	draw_str(scr, dscr, dep, txt, c_txt, ft, tl_txt, 0, vp);
 }
 void Label::Update(App& app) {

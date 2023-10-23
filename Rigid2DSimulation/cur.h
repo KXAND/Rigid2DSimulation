@@ -49,7 +49,7 @@ struct Cur : App {
 	double max_real_dt = 0;
 	double real_dt = 0, t = 0;
 	int n_step = 0;
-	drect rect_scene;
+	dRect rect_scene;
 	ptr<Creator> crt;
 	Body *body_sel = NULL;
 	Connection* con_sel = NULL;

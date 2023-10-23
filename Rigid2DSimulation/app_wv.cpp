@@ -50,7 +50,7 @@ bool app_wv::play() {
 	int n_in = max(0, n_safe - n_play);
 	for (auto v : wvin) {
 		wvblks[n_play]->dat[cur++] =
-			clmp(int(v * 256 * 128), -128 * 256, 128 * 256 - 1);
+			clamp(int(v * 256 * 128), -128 * 256, 128 * 256 - 1);
 		if (cur == len_block_n()) {
 			bool ret = wvblks[n_play++]->play(hwo);
 			if (!ret) { return false; } cur = 0;

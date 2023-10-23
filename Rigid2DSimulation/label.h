@@ -3,12 +3,12 @@
 #include "control.h"
 
 struct Label : Control {
-	dvec gap;
+	dVector2 gap;
 	double dep = 0;
 	int w = 0, h = 0;
 	bool fixed_w = false;
 
-	dcol c_txt;
+	dColor c_txt;
 	wstring txt;
 
 	Label(bool big = false);

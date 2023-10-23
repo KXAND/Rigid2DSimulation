@@ -83,7 +83,7 @@ void Cur::Reset() {
 	gravity = vector2();
 	max_real_dt = 0.05;
 	t = 0; n_step = 60;
-	rect_scene.tl = bgr.tl;
+	rect_scene.topLeftPosition = bgr.tl;
 	rect_scene.w = bgr.w;
 	rect_scene.h = bgr.h;
 	s_grid = 50;
@@ -187,8 +187,8 @@ void Cur::set_cfg(Var const& v) {
 	getv(electrostatic); getv(coulomb);
 	getv(n_step); n_step = max(1, n_step);
 	getv(s_grid);  getv(equal_repos); getv(t); getv(show_track);
-	if (found(L"left_scene")) { rect_scene.tl.x = dic[L"left_scene"]->num; }
-	if (found(L"top_scene")) { rect_scene.tl.y = dic[L"top_scene"]->num; }
+	if (found(L"left_scene")) { rect_scene.topLeftPosition.x = dic[L"left_scene"]->num; }
+	if (found(L"top_scene")) { rect_scene.topLeftPosition.y = dic[L"top_scene"]->num; }
 	if (found(L"w_scene")) { rect_scene.w = dic[L"w_scene"]->num; }
 	if (found(L"h_scene")) { rect_scene.h = dic[L"h_scene"]->num; }
 	if (found(L"gravity")) { gravity = tv2(*dic[L"gravity"]); }

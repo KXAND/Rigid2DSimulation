@@ -4,7 +4,7 @@
 struct app_input {
 	double msw = 0;
 	wstring chs;
-	dvec msp, msp_old;
+	dVector2 msp, msp_old;
 	array<BYTE, 3> msd{}, msd_old{};
 	array<int, 256> kbmsg{};
 	array<BYTE, 256> kbd{}, kbd_old{};

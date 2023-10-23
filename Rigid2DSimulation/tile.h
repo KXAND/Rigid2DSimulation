@@ -1,40 +1,39 @@
 #pragma once
 #include "vector3.h"
-
-struct dcol {
+struct dColor {
 	BYTE b = 0, g = 0, r = 0;
-	dcol() = default;
-	dcol(BYTE r, BYTE g, BYTE b) : r(r), g(g), b(b) {}
-	explicit dcol(BYTE a) : dcol(a, a, a) {}
-	explicit dcol(wstring const& s);
-	explicit dcol(col3 c) {
-		r = clmp<int>(0, 255, c.r() * 255);
-		g = clmp<int>(0, 255, c.g() * 255);
-		b = clmp<int>(0, 255, c.b() * 255);
+	dColor() = default;
+	dColor(BYTE r, BYTE g, BYTE b) : r(r), g(g), b(b) {}
+	explicit dColor(BYTE a) : dColor(a, a, a) {}
+	explicit dColor(wstring const& s);
+	explicit dColor(vector3 c) {
+		r = clamp<int>(0, 255, (int)c.r() * 255);
+		g = clamp<int>(0, 255, (int)c.g() * 255);
+		b = clamp<int>(0, 255, (int)c.b() * 255);
 	}
-	explicit operator col3() const { return col3(r, g, b) / 255; }
+	// 允许转换为 vector3，禁止显式操作
+	explicit operator vector3() const { return vector3(r, g, b) / 255; }
 };
-inline bool operator==(dcol a, dcol b) {
-	return memcmp(&a, &b, sizeof(dcol)) == 0;
+inline bool operator==(dColor a, dColor b) {
+	return memcmp(&a, &b, sizeof(dColor)) == 0;
 }
-inline bool operator!=(dcol a, dcol b) { return !(a == b); }
-wstring tw(dcol c);
-void cover(dcol& bc, BYTE& ba, dcol fc, BYTE fa);
+inline bool operator!=(dColor a, dColor b) { return !(a == b); }
+wstring tw(dColor c);
+void cover(dColor& bc, BYTE& ba, dColor fc, BYTE fa);
 
 struct tile {
-	int w = 0, h = 0;
-	vector<dcol> cols;
+	int width = 0, height = 0;
+	vector<dColor> colors;
 	vector<BYTE> as;
 
 	tile() = default;
-	tile(int w, int h, dcol c = {}, BYTE a = 0);
-	// src 不能为空。
-	tile(int w, int h, tile const& src, drect vp_src);
-	void save(wstring const& nm) const;
-	tile(wstring const& nm, bool* ok = NULL);
+	tile(int w, int h, dColor c = {}, BYTE a = 0);
+	tile(int w, int h, tile const& src, dRect vp_src);// src 不能为空。
+	tile(wstring const& fileName, bool* ok = NULL);
+	void save(wstring const& fileName) const;
 
-	int n() const;
-	drect rect() const;
-	void fill(dcol c, BYTE a = 255);
+	int area() const;
+	dRect rect() const;
+	void fill(dColor color, BYTE a = 255);
 };
 typedef vector<double> dbuf;

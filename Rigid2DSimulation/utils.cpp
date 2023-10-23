@@ -104,7 +104,7 @@ void set_clipboard(wstring const& s) {
 }
 
 double get_val(double x, vector<double> const& ys) {
-	x = clmp(x * (ys.size() - 1), 0.0, ys.size() - 1.0);
+	x = clamp(x * (ys.size() - 1), 0.0, ys.size() - 1.0);
 	int x0 = floor(x), x1 = ceil(x);
 	if (x0 == x1) { return ys[x0]; }
 	return ys[x0] * (x1 - x) + ys[x1] * (x - x0);

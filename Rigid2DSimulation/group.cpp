@@ -3,7 +3,7 @@
 #include "connection.h"
 #include "cur.h"
 
-void Group::Warp(drect rc) {
+void Group::Warp(dRect rc) {
 	for (auto b : bs) if (b->inv_m == 0 || b->dragged) { return; }
 	bool ok = false;
 

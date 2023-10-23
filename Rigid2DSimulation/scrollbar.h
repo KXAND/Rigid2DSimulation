@@ -7,12 +7,12 @@ struct Control;
 // 这一权限留给 Panel 等对象的直接上级。
 // Scrollbar 不是控件，不继承 Control 类。
 struct ScrollbarY {
-	dvec tl;
+	dVector2 tl;
 	double dep = 0;
 	Control* c = NULL;
 	int w = 0, h = 0;
 	int h_show = 0, top_show = 0;
-	dcol c_bar, c_frame, c_normal, c_dragged, c_hovered, c_invalid;
+	dColor c_bar, c_frame, c_normal, c_dragged, c_hovered, c_invalid;
 
 	int ny_rel = 0, nh = 0;
 	bool full = false;

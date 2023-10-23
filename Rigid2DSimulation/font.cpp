@@ -15,7 +15,7 @@ bool font::load_font(wstring const& name, wchar_t c) {
 	wstring path = L"./fonts/" + name + L".tile";
 	bool ret = false; tile t0(path, &ret);
 	if (ret) {
-		tile t1 = tile(t0.w * h / t0.h, h, t0, t0.rect());
+		tile t1 = tile(t0.width * h / t0.height, h, t0, t0.rect());
 		fts[c] = t1; return true;
 	}
 	else { return false; }
@@ -44,7 +44,7 @@ bool font::init() {
 	wstring path = L"./fonts/missing.tile";
 	bool ret = false; tile t0(path, &ret);
 	if (ret) {
-		tile t1 = tile(t0.w * h / t0.h, h, t0, t0.rect());
+		tile t1 = tile(t0.width * h / t0.height, h, t0, t0.rect());
 		missing = t1; return true;
 	}
 	else { return false; }

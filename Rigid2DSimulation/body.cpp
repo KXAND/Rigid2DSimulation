@@ -11,7 +11,7 @@
 #include "connection.h"
 
 #include "my_def.h"
-#define tls (cur.rect_scene.tl)
+#define tls (cur.rect_scene.topLeftPosition)
 #define found(s) (dic.find(s) != dic.end())
 #define getv(nm) if (found(L#nm)) { nm = dic.at(L#nm)->num; }
 
@@ -96,7 +96,7 @@ void Body::read_cfg(Var const& cfg) {
 	auto dic = cfg.dic;
 	if (found(L"o")) { o = tv2(*dic[L"o"]); }
 	if (found(L"v")) { v = tv2(*dic[L"v"]); }
-	if (found(L"col")) { c_inner = (dcol)tv3(*dic[L"col"]); }
+	if (found(L"col")) { c_inner = (dColor)tv3(*dic[L"col"]); }
 	getv(ang); getv(v_ang); getv(e); getv(mu_s); getv(mu_d);
 	getv(damp_v); getv(damp_v_ang); getv(fixed);
 	getv(density); getv(charge_density); 
@@ -113,7 +113,7 @@ vector2 Body::rnd_rel() const {
 	} return shs.back()->rnd_rel();
 }
 void Body::generate() {
-	tsf = mat2::rot(ang);
+	tsf = matrix2::rot(ang);
 	for (auto sh : shs) {
 		sh->o = o + tsf * sh->o_rel;
 		sh->ang = ang;
@@ -129,7 +129,7 @@ void Body::update_box() {
 		box = aabb(box, sh->bounding_box());
 	}
 }
-void Body::warp(drect rc) {
+void Body::warp(dRect rc) {
 	// 这个方法已经过时了。
 	if (inv_m == 0 || dragged) { return; }
 
@@ -145,10 +145,10 @@ void Body::register_grid(Cur& cur) {
 	int y0 = floor((box.y0 - tls.y) / cur.s_grid);
 	int x1 = floor((box.x1 - tls.x) / cur.s_grid);
 	int y1 = floor((box.y1 - tls.y) / cur.s_grid);
-	x0 = clmp(x0, 0, cur.nx_grid - 1);
-	x1 = clmp(x1, 0, cur.nx_grid - 1);
-	y0 = clmp(y0, 0, cur.ny_grid - 1);
-	y1 = clmp(y1, 0, cur.ny_grid - 1);
+	x0 = clamp(x0, 0, cur.nx_grid - 1);
+	x1 = clamp(x1, 0, cur.nx_grid - 1);
+	y0 = clamp(y0, 0, cur.ny_grid - 1);
+	y1 = clamp(y1, 0, cur.ny_grid - 1);
 	if (x1 > x0 + 1 || y1 > y0 + 1) {
 		cur.out_grid.push_back(this); return;
 	}
@@ -171,7 +171,7 @@ void Body::Init(bool repos_o) {
 			rep(i, 0, sh->vs_rel.size()) {
 				int j = (i + 1) % sh->vs_rel.size();
 				auto p = sh->vs_rel[i], q = sh->vs_rel[j];
-				double tri_area = mat2(p, q).det() / 2;
+				double tri_area = matrix2(p, q).det() / 2;
 				double tri_inertia = dot(p, p) + dot(p, q) + dot(q, q);
 				tri_inertia *= tri_area / 6;
 
@@ -200,37 +200,37 @@ void Body::Init(bool repos_o) {
 void Body::Render(Cur& cur) const {
 	bool selected_con = cur.con_sel && 
 		(cur.con_sel->b0 == this || cur.con_sel->b1 == this);
-	dcol c_normal;
+	dColor c_normal;
 	switch (cur.display) {
 	case DISP_COL: c_normal = c_inner; break;
 	if (point) { break; }
 	case DISP_ENERGY: {
 		double energy = v.lensqr() + v_ang * v_ang * inertia / area;
-		c_normal = (dcol)col3(energy * cur.energy_mul, 0, 0);
+		c_normal = (dColor)vector3(energy * cur.energy_mul, 0, 0);
 	} break;
 	case DISP_CHARGE: {
 		c_normal = charge_density > 0 ?
-			(dcol)col3(charge_density * cur.charge_mul, 0, 0) :
-			(dcol)col3(0, 0, -charge_density * cur.charge_mul);
+			(dColor)vector3(charge_density * cur.charge_mul, 0, 0) :
+			(dColor)vector3(0, 0, -charge_density * cur.charge_mul);
 	} break;
 	}
 
-	dcol c =
+	dColor c =
 		dragged ? c_dragged :
 		(cur.body_sel == this) ? c_selected :
 		hovered ? c_hovered : 
 		selected_con ? c_selected_con : c_normal;
 	if (point) {
-		draw_eclipse(scr, dscr, dep(), o, r_point, r_point, bgr.vp(), c);
+		drawEllipse(scr, dscr, dep(), o, r_point, r_point, bgr.vp(), c);
 		draw_eclipse_frame(scr, dscr, dep(), o, r_point, r_point, bgr.vp(), c_border, 20);
 	}
 	for (auto sh : shs) {
 		if (sh->ball) {
-			draw_eclipse(scr, dscr, dep(), sh->o, sh->r, sh->r, bgr.vp(), c);
+			drawEllipse(scr, dscr, dep(), sh->o, sh->r, sh->r, bgr.vp(), c);
 			draw_eclipse_frame(scr, dscr, dep(), 
 				sh->o, sh->r, sh->r, bgr.vp(), c_border, 30); 
 			auto tip = vector2(cos(sh->ang), sin(sh->ang)) * sh->r + sh->o;
-			draw_px_seg(scr, dscr, sh->o, tip, dep(), bgr.vp(), c_border); continue;
+			drawLineSegment(scr, dscr, sh->o, tip, dep(), bgr.vp(), c_border); continue;
 		}
 
 		rep(i, 0, sh->vs.size()) {
@@ -239,20 +239,20 @@ void Body::Render(Cur& cur) const {
 		}
 		rep(i, 0, sh->vs.size()) {
 			int j = (i + 1) % sh->vs.size();
-			draw_px_seg(scr, dscr, sh->vs[i], sh->vs[j], dep(), bgr.vp(), c_border);
+			drawLineSegment(scr, dscr, sh->vs[i], sh->vs[j], dep(), bgr.vp(), c_border);
 		}
 	}
 
 	if (dragged) {
 		vector2 p1 = vector2(msp);
 		vector2 p0 = o + tsf * p_drag_rel;
-		draw_px_seg(scr, dscr, p0, p1, dep(), bgr.vp(), dcol(0, 255, 255)); 
+		drawLineSegment(scr, dscr, p0, p1, dep(), bgr.vp(), dColor(0, 255, 255)); 
 	}
 
 	if (!track.empty()) {
 		vector2 p0 = track.front();
 		for (auto p1 : track) {
-			draw_px_seg(scr, dscr, p0, p1, 10, bgr.vp(), dcol(255, 0, 255));
+			drawLineSegment(scr, dscr, p0, p1, 10, bgr.vp(), dColor(255, 0, 255));
 			p0 = p1;
 		}
 	}
@@ -323,7 +323,7 @@ void Body::hdl_dragged_point(Cur& cur) {
 	vector2 p1 = vector2(msp);
 	vector2 p0 = o + tsf * p_drag_rel;
 	vector2 v1 = vector2(msp - msp_old) / cur.real_dt;
-	vector2 d = (p1 - p0).unit();
+	vector2 d = (p1 - p0).normalize();
 
 	vector2 r0 = p0 - o;
 	r0 = vector2(-r0.y, r0.x);
@@ -349,7 +349,7 @@ void Body::hdl_dragged_whole(Cur& cur) {
 void Body::hdl_dragged_force(Cur& cur, double sdt) {
 	vector2 p1 = vector2(msp);
 	vector2 p0 = o + tsf * p_drag_rel;
-	vector2 d = (p1 - p0).unit();
+	vector2 d = (p1 - p0).normalize();
 
 	vector2 r0 = p0 - o;
 	r0 = vector2(-r0.y, r0.x);
@@ -403,13 +403,13 @@ void Body::Update(Cur& cur) {
 }
 void Body::PreUpdate(Cur& cur) {
 	bool ok = dhv <= dep() &&
-		inside((vector2)msp) && insd(msp, bgr.vp());
+		inside((vector2)msp) && isInside(msp, bgr.vp());
 	if (ok) { dhv = dep(); hvd = this; }
 }
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulomb) {
 	double dsqr = (b1.o - b0.o).lensqr();
-	vector2 d = (b1.o - b0.o).unit();
+	vector2 d = (b1.o - b0.o).normalize();
 	vector2 je = -b0.charge * b1.charge * d / dsqr * sdt * coulomb;
 	b0.v += je * b0.inv_m;
 	b1.v -= je * b1.inv_m;

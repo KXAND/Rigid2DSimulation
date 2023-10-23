@@ -84,7 +84,7 @@ void Connection::resolve_rope_link(bool equal_repos) {
 
 	vector2 d = p1 - p0;
 	double cur_len = d.len();
-	d = d.unit();
+	d = d.normalize();
 	tight = cur_len > len;
 	if (!tight && type == CON_ROPE) { return; }
 
@@ -127,7 +127,7 @@ void Connection::resolve_cord_spring(double sdt) {
 
 	vector2 d = p1 - p0;
 	double cur_len = d.len();
-	d = d.unit();
+	d = d.normalize();
 	if (d.zero()) { d = vector2(1, 0); }
 	tight = cur_len > len;
 	if (!tight && type == CON_CORD) { return; }
@@ -148,14 +148,14 @@ void Connection::Resolve(double sdt, bool equal_repos) {
 	}
 }
 void Connection::Render(Cur& cur) const {
-	dcol c;
+	dColor c;
 	switch (type) {
 	case CON_ROPE: c = tight ? c_rope_tight : c_rope_normal; break;
 	case CON_LINK: c = c_link; break;
 	case CON_CORD: c = tight ? c_cord_tight : c_cord_normal; break;
 	case CON_SPRG: c = tight ? c_spring_tight : c_spring_loose; break;
 	}
-	draw_px_seg(scr, dscr, p0, p1, 2, bgr.vp(), c);
+	drawLineSegment(scr, dscr, p0, p1, 2, bgr.vp(), c);
 }
 
 Body* the_other(Body* b, Connection const& con) {

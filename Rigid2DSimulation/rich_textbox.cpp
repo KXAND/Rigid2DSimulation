@@ -31,11 +31,11 @@ RichTextbox::RichTextbox(int w, int h, bool newline) : w(w), h(h) {
 int RichTextbox::GetW() const { return w + gap.x; }
 int RichTextbox::GetH() const { return h + gap.y; }
 
-drect RichTextbox::vp_show_txt() const {
-	dvec tl_show_txt = tl + show_txt_mg;
+dRect RichTextbox::vp_show_txt() const {
+	dVector2 tl_show_txt = tl + show_txt_mg;
 	int w_show_txt = w - 2 * show_txt_mg.x;
 	int h_show_txt = h - 2 * show_txt_mg.y;
-	return overlap(vp, { tl_show_txt, w_show_txt, h_show_txt });
+	return getOverlapRect(vp, { tl_show_txt, w_show_txt, h_show_txt });
 }
 wstring RichTextbox::left() const {
 	auto a = str.begin();
@@ -57,21 +57,21 @@ int RichTextbox::edit_end() const { return max(edit_a, edit_b); }
 bool RichTextbox::selected() const { return edit_a != edit_b; }
 int RichTextbox::max_x_cs_rel() const { return w - edit_mg.x; }
 int RichTextbox::max_y_cs_rel() const { return h - edit_mg.y; }
-dvec RichTextbox::p_cs_rel(App& app) const {
+dVector2 RichTextbox::p_cs_rel(App& app) const {
 	wstring tmp(str.begin(), str.begin() + edit_b);
-	int x = 0; dvec p = str_wh(tmp, ft, w_str, &x);
+	int x = 0; dVector2 p = str_wh(tmp, ft, w_str, &x);
 	p.x = x; p.y -= ft.h;
-	return (dvec)tl_str_rel + p;
+	return (dVector2)tl_str_rel + p;
 }
 
 void RichTextbox::select_a(App& app) {
 	selecting = true;
-	dvec p = msp - (tl + (dvec)tl_str_rel);
+	dVector2 p = msp - (tl + (dVector2)tl_str_rel);
 	edit_a = edit_b = str_index_at_pos(str, ft, p, w_str);
 	update_x_cs_rel_hist(app);
 }
 void RichTextbox::select_b(App& app) {
-	dvec p = msp - (tl + (dvec)tl_str_rel);
+	dVector2 p = msp - (tl + (dVector2)tl_str_rel);
 	edit_b = str_index_at_pos(str, ft, p, w_str);
 	update_x_cs_rel_hist(app);
 }
@@ -119,7 +119,7 @@ void RichTextbox::hdl_up(App& app) {
 	else {
 		wstring tmp(str.begin(), str.begin() + edit_b);
 		int y = str_wh(tmp, ft, w_str).y - 2 * ft.h;
-		dvec p(x_cs_rel_hist, y);
+		dVector2 p(x_cs_rel_hist, y);
 		edit_a = edit_b = str_index_at_pos(str, ft, p, w_str);
 	}
 }
@@ -131,7 +131,7 @@ void RichTextbox::hdl_down(App& app) {
 	else {
 		wstring tmp(str.begin(), str.begin() + edit_b);
 		int y = str_wh(tmp, ft, w_str).y;
-		dvec p(x_cs_rel_hist, y);
+		dVector2 p(x_cs_rel_hist, y);
 		edit_a = edit_b = str_index_at_pos(str, ft, p, w_str);
 	}
 }
@@ -226,7 +226,7 @@ void RichTextbox::clamp_cursor(App& app) {
 }
 void RichTextbox::clamp_str(App& app) {
 	// 除了文字过少以外，clamp_selecting 和 wheel 后也需要这一步。
-	dvec p_end_rel = (dvec)tl_str_rel + str_wh(str, ft, w_str);
+	dVector2 p_end_rel = (dVector2)tl_str_rel + str_wh(str, ft, w_str);
 	if (p_end_rel.x < max_x_cs_rel()) {
 		tl_str_rel.x += max_x_cs_rel() - p_end_rel.x;
 	}
@@ -239,14 +239,14 @@ void RichTextbox::clamp_str(App& app) {
 }
 
 void RichTextbox::render_main(App& app) {
-	dcol c =
+	dColor c =
 		!enabled ? c_invalid :
 		edit ? c_edit :
 		rhvd ? c_hovered : c_normal;
-	draw_px_rect_framed_raw(scr, tl, w, h, vp, c, c_frame);
+	drawRectangleWithBorderRaw(scr, tl, w, h, vp, c, c_frame);
 
 	int x_cur = 0;
-	dvec tl_txt = tl + (dvec)tl_str_rel;
+	dVector2 tl_txt = tl + (dVector2)tl_str_rel;
 	draw_str(scr, dscr, dep, left(), c_str, ft, tl_txt, x_cur, w_str, vp_show_txt());
 	draw_str(scr, dscr, dep, mid(), c_selected, ft, tl_txt, x_cur, w_str, vp_show_txt());
 	draw_str(scr, dscr, dep, right(), c_str, ft, tl_txt, x_cur, w_str, vp_show_txt());
@@ -255,8 +255,8 @@ void RichTextbox::render_cursor(App& app) {
 	bool show_cursor = edit &&
 		(sin(dur * twinkle_mtp) > 0 || cursor_change);
 	if (show_cursor) {
-		dvec tl_cs = tl + p_cs_rel(app) + dvec(-w_cursor, ft.h - h_cursor) / 2;
-		draw_rect_raw(scr, tl_cs, w_cursor, h_cursor, vp_show_txt(), c_cursor);
+		dVector2 tl_cs = tl + p_cs_rel(app) + dVector2(-w_cursor, ft.h - h_cursor) / 2;
+		drawRectangleRaw(scr, tl_cs, w_cursor, h_cursor, vp_show_txt(), c_cursor);
 	}
 }
 void RichTextbox::render(App& app) {
@@ -300,10 +300,10 @@ void RichTextbox::PreUpdate(App& app) {
 	if (edit) { kb = this; }
 
 	bool ok = dhv <= dep &&
-		insd(msp, { tl, w, h }) && insd(msp, vp);
+		isInside(msp, { tl, w, h }) && isInside(msp, vp);
 	if (ok) { dhv = dep; hvd = this; }
 
 	ok = dwh <= dep &&
-		insd(msp, { tl, w, h }) && insd(msp, vp);
+		isInside(msp, { tl, w, h }) && isInside(msp, vp);
 	if (ok) { dwh = dep; whd = this; }
 }

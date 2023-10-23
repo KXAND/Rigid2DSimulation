@@ -1,31 +1,41 @@
 #include "draw_comp.h"
 #include "draw_geo.h"
 
-void draw_px_rect_framed_raw
-(tile& dest, dvec tl, int w, int h, drect vp, dcol c, dcol fc) {
-	draw_rect_raw(dest, tl, w, h, vp, c);
-	dvec p0 = tl;
-	dvec p1 = tl + dvec(w, 0);
-	dvec p2 = tl + dvec(0, h);
+void drawRectangleWithBorderRaw(tile& targetTile, dVector2 topLeft, int width, int height, dRect viewPort, dColor color, dColor borderColor)
+{
+	// 左上为原点，向下向左
 
-	draw_rect_raw(dest, p0, w, 1, vp, fc);
-	draw_rect_raw(dest, p2, w, 1, vp, fc);
-	draw_rect_raw(dest, p0, 1, h, vp, fc);
-	draw_rect_raw(dest, p1, 1, h, vp, fc);
-}
-void draw_px_rect_frame(tile& dest, dbuf& ds, double d,
-	dvec tl, int w, int h, drect vp, dcol c) {
-	dvec p0 = tl;
-	dvec p1 = tl + dvec(w, 0);
-	dvec p2 = tl + dvec(0, h);
+	// 内部
+	drawRectangleRaw(targetTile, topLeft, width, height, viewPort, color);
 
-	draw_rect(dest, ds, d, p0, w, 1, vp, c);
-	draw_rect(dest, ds, d, p2, w, 1, vp, c);
-	draw_rect(dest, ds, d, p0, 1, h, vp, c);
-	draw_rect(dest, ds, d, p1, 1, h, vp, c);
+	dVector2 topRight = topLeft + dVector2(width, 0);
+	dVector2 bottomLeft = topLeft + dVector2(0, height);
+
+	// 框架颜色
+	drawRectangleRaw(targetTile, topLeft, width, 1, viewPort, borderColor);
+	drawRectangleRaw(targetTile, bottomLeft, width, 1, viewPort, borderColor);
+	drawRectangleRaw(targetTile, topLeft, 1, height, viewPort, borderColor);
+	drawRectangleRaw(targetTile, topRight, 1, height, viewPort, borderColor);
 }
-void draw_px_rect_framed(tile& dest, dbuf& ds, double d,
-	dvec tl, int w, int h, drect vp, dcol c, dcol fc) {
-	draw_rect(dest, ds, d, tl, w, h, vp, c);
-	draw_px_rect_frame(dest, ds, d, tl, w, h, vp, fc);
+
+// 绘制矩形框
+void drawRectangleBorder(tile& targetTile, dbuf& zBuffer, double depth,
+	dVector2 topLeft, int width, int height, dRect viewPort, dColor color)
+{
+	dVector2 topRight = topLeft + dVector2(width, 0);
+	dVector2 bottomLeft = topLeft + dVector2(0, height);
+
+	drawRectangle(targetTile, zBuffer, depth, topLeft, width, 1, viewPort, color);
+	drawRectangle(targetTile, zBuffer, depth, bottomLeft, width, 1, viewPort, color);
+	drawRectangle(targetTile, zBuffer, depth, topLeft, 1, height, viewPort, color);
+	drawRectangle(targetTile, zBuffer, depth, topRight, 1, height, viewPort, color);
+}
+
+void drawRectangleWithBorder(tile& targetTile, dbuf& zBuffer, double depth,
+	dVector2 topLeft, int width, int height, dRect viewPort, dColor color, dColor borderColor)
+{
+	// 矩形内部绘制
+	drawRectangle(targetTile, zBuffer, depth, topLeft, width, height, viewPort, color);
+
+	drawRectangleBorder(targetTile, zBuffer, depth, topLeft, width, height, viewPort, borderColor);
 }

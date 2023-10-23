@@ -2,9 +2,9 @@
 #include "vector2.h"
 #include "tile.h"
 
-void draw_px_rect_framed_raw
-(tile& dest, dvec tl, int w, int h, drect vp, dcol c, dcol fc);
-void draw_px_rect_frame(tile& dest, dbuf& ds, double d,
-	dvec tl, int w, int h, drect vp, dcol c);
-void draw_px_rect_framed(tile& dest, dbuf& ds, double d,
-	dvec tl, int w, int h, drect vp, dcol c, dcol fc);
+void drawRectangleWithBorderRaw
+(tile& dest, dVector2 tl, int w, int h, dRect vp, dColor c, dColor fc);
+void drawRectangleBorder(tile& dest, dbuf& ds, double d,
+	dVector2 tl, int w, int h, dRect vp, dColor c);
+void drawRectangleWithBorder(tile& dest, dbuf& ds, double d,
+	dVector2 tl, int w, int h, dRect vp, dColor c, dColor fc);

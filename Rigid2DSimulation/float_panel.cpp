@@ -37,11 +37,11 @@ FloatPanel::FloatPanel() {
 }
 FloatPanel::FloatPanel(App& app, int _w, int _h) : FloatPanel() {
 	w = _w; h = _h;
-	tl = dvec(scr.w - w, scr.h - h) / 2;
+	tl = dVector2(scr.width - w, scr.height - h) / 2;
 	h_show = h - 50; use_sb = true;
 
-	drect tmp;
-	tmp.tl = dvec(10 - 2, 40 - 2);
+	dRect tmp;
+	tmp.topLeftPosition = dVector2(10 - 2, 40 - 2);
 	tmp.w = w - 40 + 4;
 	tmp.h = h - 50 + 4;
 	vp_show_rel = tmp;
@@ -50,14 +50,14 @@ FloatPanel::FloatPanel(App& app, int _w, int _h) : FloatPanel() {
 int FloatPanel::min_y() const {
 	return tl.y + tl_show_rel.y + h_show - c->GetH();
 }
-drect FloatPanel::vp_show(App& app) const {
-	drect vp = vp_show_rel;
-	vp.tl += tl; return overlap(vpscr, vp);
+dRect FloatPanel::vp_show(App& app) const {
+	dRect vp = vp_show_rel;
+	vp.topLeftPosition += tl; return getOverlapRect(vpscr, vp);
 }
-dvec FloatPanel::tl_close() const {
+dVector2 FloatPanel::tl_close() const {
 	int x_rel = w - margin_close - s_close;
 	int y_rel = (h_bar - s_close) / 2;
-	return tl + dvec(x_rel, y_rel);
+	return tl + dVector2(x_rel, y_rel);
 }
 void FloatPanel::set_c(App& app, Control* _c) {
 	if (c != _c) {
@@ -68,13 +68,13 @@ void FloatPanel::set_c(App& app, Control* _c) {
 		} sb->c = c;
 	}
 }
-void FloatPanel::set_tl(App& app, dvec const& p) {
+void FloatPanel::set_tl(App& app, dVector2 const& p) {
 	if (c) {
 		c->tl += p - tl;
 		// 在调用 vp_show 之前需要先更新 tl。
 		tl = p; c->vp = vp_show(app);
 	}
-	sb->tl = p + dvec(w - sb->w, h_bar);
+	sb->tl = p + dVector2(w - sb->w, h_bar);
 	sb->top_show = p.y + tl_show_rel.y;
 }
 void FloatPanel::init_c(App& app) {
@@ -87,7 +87,7 @@ void FloatPanel::init_sb() {
 	mkp(sb)();
 	sb->c = c;
 	sb->h = h - h_bar;
-	sb->tl = tl + dvec(w - sb->w, h_bar);
+	sb->tl = tl + dVector2(w - sb->w, h_bar);
 	sb->h_show = h_show;
 	sb->top_show = tl.y + tl_show_rel.y;
 }
@@ -95,13 +95,13 @@ void FloatPanel::init_sb() {
 void FloatPanel::hide(App& app) { shown = false; Discard(app); }
 void FloatPanel::show(App& app) { shown = true; t_click = dur; }
 void FloatPanel::deal_caption(App& app) {
-	hovered_close = hovered && insd(msp, { tl_close(), s_close, s_close });
-	hovered_bar = hovered && !hovered_close && insd(msp, { tl, w, h_bar });
+	hovered_close = hovered && isInside(msp, { tl_close(), s_close, s_close });
+	hovered_bar = hovered && !hovered_close && isInside(msp, { tl, w, h_bar });
 
 	if (dragged_bar) {
-		dvec tmp = tl + msp - msp_old;
-		tmp.x = clmp(tmp.x, 0, scr.w - w);
-		tmp.y = clmp(tmp.y, 0, scr.h - h_bar); set_tl(app, tmp);
+		dVector2 tmp = tl + msp - msp_old;
+		tmp.x = clamp(tmp.x, 0, scr.width - w);
+		tmp.y = clamp(tmp.y, 0, scr.height - h_bar); set_tl(app, tmp);
 		dragged_bar = msd[0];
 	}
 	else { dragged_bar = hovered_bar && msc(0); }
@@ -116,33 +116,33 @@ void FloatPanel::wheel_and_clamp_cy(App& app) {
 	if (full) {
 		int cy = c->tl.y;
 		if (wheeled) { cy += msw * wheel_mtp; }
-		c->tl.y = clmp(cy, min_y(), tl.y + tl_show_rel.y);
+		c->tl.y = clamp(cy, min_y(), tl.y + tl_show_rel.y);
 	}
 	else if (c) { c->tl.y = tl.y + tl_show_rel.y; }
 }
 
 void FloatPanel::render_main(App& app) {
-	draw_px_rect_framed_raw(scr, tl, w, h, vpscr, c_panel, c_frame);
-	dcol const& c_bar =
+	drawRectangleWithBorderRaw(scr, tl, w, h, vpscr, c_panel, c_frame);
+	dColor const& c_bar =
 		dragged_bar ? c_bar_dragged :
 		hovered_bar && msnd ? c_bar_hovered : c_bar_normal;
-	draw_px_rect_framed_raw(scr, tl, w, h_bar, vpscr, c_bar, c_frame);
+	drawRectangleWithBorderRaw(scr, tl, w, h_bar, vpscr, c_bar, c_frame);
 
-	dvec tl_title = tl + dvec(margin_title, (h_bar - ft.h) / 2);
+	dVector2 tl_title = tl + dVector2(margin_title, (h_bar - ft.h) / 2);
 	draw_str(scr, dscr, dep, txt, c_txt, ft, tl_title, 0, vpscr);
 }
 void FloatPanel::render_close(App& app) {
-	dcol const& c_close =
+	dColor const& c_close =
 		!enabled_close ? c_close_invalid :
 		chosen_close ? c_close_chosen :
 		hovered_close && msnd ? c_close_hovered : c_close_normal;
-	draw_rect_raw(scr, tl_close(), s_close, s_close, vpscr, c_close);
+	drawRectangleRaw(scr, tl_close(), s_close, s_close, vpscr, c_close);
 
-	dvec mark_ct = tl_close() + dvec(s_close, s_close) / 2;
-	dvec mark_arm = { half_s_mark , half_s_mark };
-	draw_px_seg(scr, dscr, mark_ct - mark_arm, mark_ct + mark_arm, dep, vpscr, c_mark);
+	dVector2 mark_ct = tl_close() + dVector2(s_close, s_close) / 2;
+	dVector2 mark_arm = { half_s_mark , half_s_mark };
+	drawLineSegment(scr, dscr, mark_ct - mark_arm, mark_ct + mark_arm, dep, vpscr, c_mark);
 	mark_arm = { -half_s_mark , half_s_mark };
-	draw_px_seg(scr, dscr, mark_ct - mark_arm, mark_ct + mark_arm, dep, vpscr, c_mark);
+	drawLineSegment(scr, dscr, mark_ct - mark_arm, mark_ct + mark_arm, dep, vpscr, c_mark);
 }
 void FloatPanel::render(App& app) {
 	render_main(app); render_close(app);
@@ -177,11 +177,11 @@ void FloatPanel::Discard(App& app) {
 void FloatPanel::PreUpdate(App& app) {
 	if (!shown) return;
 	bool ok = dhv <= dep &&
-		insd(msp, { tl, w, h }) && insd(msp, vpscr);
+		isInside(msp, { tl, w, h }) && isInside(msp, vpscr);
 	if (ok) { dhv = dep; hvd = this; }
 
 	ok = dwh <= dep &&
-		insd(msp, { tl, w, h }) && insd(msp, vpscr);
+		isInside(msp, { tl, w, h }) && isInside(msp, vpscr);
 	if (ok) { dwh = dep; whd = this; }
 
 	if (c) { c->PreUpdate(app); }

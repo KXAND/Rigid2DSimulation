@@ -238,7 +238,7 @@ void CreateBody(Cur& cur, Var const& shs_cfg, Var const& cfg) {
 	if (point) { mkp(bo)(vector2()); }
 	else { mkp(bo)(shs); }
 
-	bo->c_inner = dcol(drnd(256), drnd(256), drnd(256));
+	bo->c_inner = dColor(drnd(256), drnd(256), drnd(256));
 	bo->read_cfg(cfg); 
 	bool repos_o = false;
 	getv(repos_o);
@@ -251,8 +251,8 @@ void CreateConn(Cur& cur, Var const& cfg) {
 	int idx1 = drnd(bs.size());
 	auto dic = cfg.dic;
 	getv(idx0); getv(idx1);
-	idx0 = clmp(idx0, 0, (int)bs.size());
-	idx1 = clmp(idx1, 0, (int)bs.size());
+	idx0 = clamp(idx0, 0, (int)bs.size());
+	idx1 = clamp(idx1, 0, (int)bs.size());
 	
 	ptr<Connection> con;
 	mkp(con)();
@@ -289,7 +289,7 @@ void Boundary(Cur& cur, Var const& thk, Var const &cfg) {
 	double bx0 = bgr.tl.x, bx1 = bx0 + bw;
 	double by0 = bgr.tl.y, by1 = by0 + bh;
 	ptr<Body> bo;
-	dcol col = dcol(drnd(256), drnd(256), drnd(256));
+	dColor col = dColor(drnd(256), drnd(256), drnd(256));
 
 	bo = msh<Body>(msh<Shape>(rect(thk.num, bh)));
 	bo->o = vector2(bx0, (by0 + by1) / 2);
@@ -337,7 +337,7 @@ void Gear(Cur& cur, Var const& r, Var const& n, Var const& h, Var const& cfg) {
 		shs.push_back(msh<Shape>(vector<vector2>{ v0, v, v1 }));
 	}
 	auto wheel = msh<Body>(shs);
-	wheel->c_inner = dcol(drnd(256), drnd(256), drnd(256));
+	wheel->c_inner = dColor(drnd(256), drnd(256), drnd(256));
 	wheel->read_cfg(cfg);
 	wheel->Init();
 	bs.push_back(wheel);
@@ -365,7 +365,7 @@ void Strand(Cur& cur, Var const& _p0, Var const& _p1,
 	double len = (p1 - p0).len() / n;
 	double rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * rad);
-	dcol col = dcol(drnd(256), drnd(256), drnd(256));
+	dColor col = dColor(drnd(256), drnd(256), drnd(256));
 
 	mkp(b0)(msh<Shape>(rad));
 	b0->c_inner = col;
@@ -386,8 +386,8 @@ void Strand(Cur& cur, Var const& _p0, Var const& _p1,
 		con->b0 = &*b0;
 		con->b1 = &*b1;
 		con->len = gap;
-		con->p0_rel = +rad * (p1 - p0).unit();
-		con->p1_rel = -rad * (p1 - p0).unit();
+		con->p0_rel = +rad * (p1 - p0).normalize();
+		con->p1_rel = -rad * (p1 - p0).normalize();
 		con->read_cfg(cfg_conn);
 		con->sign_up();
 		con->generate();
@@ -407,7 +407,7 @@ void Necklace(Cur& cur, Var const& _o, Var const& rad,
 	double len = 2 * PI * rad.num / n;
 	double ball_rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * ball_rad);
-	dcol col = dcol(drnd(256), drnd(256), drnd(256));
+	dColor col = dColor(drnd(256), drnd(256), drnd(256));
 
 	mkp(b0)(msh<Shape>(ball_rad));
 	b0->c_inner = col;

@@ -4,7 +4,7 @@
 
 struct Cur;
 struct Bgr {
-	dvec tl;
+	dVector2 tl;
 	double dep = 0;
 	tile black;
 	int w = 0, h = 0;
@@ -13,7 +13,7 @@ struct Bgr {
 	bool wheeled = false;
 
 	Bgr(Cur& cur);
-	drect vp() const { return { tl, w, h }; }
+	dRect vp() const { return { tl, w, h }; }
 	void render(Cur& cur);
 
 	void Update(Cur& cur);

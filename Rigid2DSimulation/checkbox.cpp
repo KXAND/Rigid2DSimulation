@@ -22,19 +22,19 @@ Checkbox::Checkbox(bool big) {
 int Checkbox::GetW() const { return s_box + gap.x + w_txt; }
 int Checkbox::GetH() const { return h + gap.y; }
 
-dvec Checkbox::tl_box() const { return tl + dvec(w_txt, (h - s_box) / 2); }
+dVector2 Checkbox::tl_box() const { return tl + dVector2(w_txt, (h - s_box) / 2); }
 void Checkbox::render(App& app) {
-	dvec tl_txt = tl + dvec(0, (h - ft.h) / 2);
+	dVector2 tl_txt = tl + dVector2(0, (h - ft.h) / 2);
 	draw_str(scr, dscr, dep, txt, c_txt, ft, tl_txt, 0, vp);
 
-	dcol const& c =
+	dColor const& c =
 		!enabled ? c_invalid :
 		rhvd ? c_hovered : c_normal;
-	draw_rect_raw(scr, tl_box(), s_box, s_box, vp, c);
+	drawRectangleRaw(scr, tl_box(), s_box, s_box, vp, c);
 	if (checked) {
 		int hs = (s_box - s_box_in) / 2;
-		dvec tl_box_in = tl_box() + dvec(hs, hs);
-		draw_rect_raw(scr, tl_box_in, s_box_in, s_box_in, vp, c_inner);
+		dVector2 tl_box_in = tl_box() + dVector2(hs, hs);
+		drawRectangleRaw(scr, tl_box_in, s_box_in, s_box_in, vp, c_inner);
 	}
 }
 
@@ -51,7 +51,7 @@ void Checkbox::Discard(App& app) {
 }
 void Checkbox::PreUpdate(App& app) {
 	bool ok = dhv <= dep &&
-		insd(msp, { tl_box(), s_box, s_box }) && insd(msp, vp);
+		isInside(msp, { tl_box(), s_box, s_box }) && isInside(msp, vp);
 	if (ok) { dhv = dep; hvd = this; }
 }
 

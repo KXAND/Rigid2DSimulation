@@ -13,6 +13,6 @@ int SeparatorY::GetH() const { return 1 + gap.y; }
 
 void SeparatorY::render(App& app) {
 	// 虽然 dep 没什么用，但出于习惯还是保留了。
-	draw_rect_raw(scr, tl, w, 1, vp, c_mark);
+	drawRectangleRaw(scr, tl, w, 1, vp, c_mark);
 }
 void SeparatorY::Update(App& app) { render(app); }

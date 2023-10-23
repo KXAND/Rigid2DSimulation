@@ -31,7 +31,7 @@ vector2 Shape::rnd_rel() const {
 	rep(i, 0, vs.size()) {
 		int j = (i + 1) % vs.size();
 		auto p = vs_rel[i], q = vs_rel[j];
-		prob -= mat2(p - o_rel, q - o_rel).det() / 2;
+		prob -= matrix2(p - o_rel, q - o_rel).det() / 2;
 
 		if (prob < 0 || i == vs.size() - 1) {
 			return rnd_tri(o_rel, p, q);
@@ -68,11 +68,11 @@ bool inside_tri(vector2 v, vector2 v0, vector2 v1, vector2 v2) {
 	vector3 u0(v0.x, v0.y, 1);
 	vector3 u1(v1.x, v1.y, 1);
 	vector3 u2(v2.x, v2.y, 1);
-	vector3 t = mat3(u0, u1, u2).inv() * u;
+	vector3 t = matrix3(u0, u1, u2).inverse() * u;
 	return 
-		insd(t.x, 0.0, 1.0) && 
-		insd(t.y, 0.0, 1.0) && 
-		insd(t.z, 0.0, 1.0);
+		isBetween(t.x, 0.0, 1.0) && 
+		isBetween(t.y, 0.0, 1.0) && 
+		isBetween(t.z, 0.0, 1.0);
 }
 vector<vector2> rect(double w, double h) {
 	vector<vector2> sh;

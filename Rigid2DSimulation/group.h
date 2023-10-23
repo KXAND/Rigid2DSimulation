@@ -7,7 +7,7 @@ struct Connection;
 struct Group {
 	vector<Body*> bs;
 	Group(vector<Body*> const& bs) : bs(bs) {}
-	void Warp(drect rc);
+	void Warp(dRect rc);
 };
 
 void find_component(vector<Body*>& out, Body* b);

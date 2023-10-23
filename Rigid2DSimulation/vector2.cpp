@@ -5,14 +5,14 @@ vector2::vector2(wstring const& s) {
 	x = fetch_num(i, s);
 	y = fetch_num(i, s);
 }
-wstring tw2(vector2 v) {
+wstring toWstring(vector2 v) {
 	return L"(" + tw2(v.x) + L"," + tw2(v.y) + L")";
 }
 
-bool insd(vector2 v, rect r) {
+bool isInside(vector2 v, rect r) {
 	return
-		insd(v.x, r.left(), r.right()) &&
-		insd(v.y, r.top(), r.bottom());
+		isBetween(v.x, r.left(), r.right()) &&
+		isBetween(v.y, r.top(), r.bottom());
 }
 
 // 不知道能不能优化，同时二次和三次应该有单独的实现。

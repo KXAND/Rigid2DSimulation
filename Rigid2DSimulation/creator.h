@@ -19,7 +19,7 @@ struct Creator {
 	double dep_con = 0;
 	double thick = 0;
 	double rad = 0;
-	dvec p_rec;
+	dVector2 p_rec;
 	Body* b0 = NULL;
 	Body* b1 = NULL;
 	ptr<Var> cfg_body, cfg_conn;

@@ -3,12 +3,12 @@
 #include "control.h"
 
 struct DragbarX : Control {
-	dvec gap;
+	dVector2 gap;
 	double dep = 0;
 	wstring txt;
 	int bw = 0, bh = 0;
 	int nw = 0, nh = 0;
-	dcol c_txt, c_bar, c_normal, c_hovered, c_invalid, c_dragged;
+	dColor c_txt, c_bar, c_normal, c_hovered, c_invalid, c_dragged;
 
 	int w_txt = 0;
 	int nx_rel = 0;
@@ -22,7 +22,7 @@ struct DragbarX : Control {
 
 	double uval() const;
 	void set_nx_rel(double uv);
-	dvec tl_node() const;
+	dVector2 tl_node() const;
 
 	void render(App& app);
 	virtual void Sync(App& app) {}
