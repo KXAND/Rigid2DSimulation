@@ -58,8 +58,8 @@ void Connection::sign_up() {
 	if (b0 != b1) { b1->cons.push_back(this); }
 }
 void Connection::generate() {
-	p0 = b0->o + b0->tsf * p0_rel;
-	p1 = b1->o + b1->tsf * p1_rel;
+	p0 = b0->o + b0->transform * p0_rel;
+	p1 = b1->o + b1->transform * p1_rel;
 }
 void Connection::refresh(Cur& cur) {
 	gl[L"conn"] = msh<Var>();
@@ -155,7 +155,7 @@ void Connection::Render(Cur& cur) const {
 	case CON_CORD: c = tight ? c_cord_tight : c_cord_normal; break;
 	case CON_SPRG: c = tight ? c_spring_tight : c_spring_loose; break;
 	}
-	drawLineSegment(scr, dscr, p0, p1, 2, bgr.vp(), c);
+	drawLineSegment(scr, dscr, p0, p1, 2, bgr.viewPort(), c);
 }
 
 Body* the_other(Body* b, Connection const& con) {

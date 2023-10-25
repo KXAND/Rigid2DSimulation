@@ -21,7 +21,7 @@ struct Droplist : Control {
 	double sign_r = 0;
 	int sign_margin = 0;
 	int x_txt_margin = 0;
-	dColor c_txt, c_mark, c_edit, c_frame, c_normal, c_invalid, c_hovered;
+	dColor c_txt, c_mark, c_edit, c_frame, c_normal, c_invalid, hoveredColor;
 
 	// -1 代表没有悬浮在任何选项上面。
 	int item_hv = -1;

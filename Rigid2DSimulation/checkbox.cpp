@@ -12,10 +12,10 @@ Checkbox::Checkbox(bool big) {
 
 	c_txt = { 255, 255, 255 };
 	c_frame = { 150, 150, 150 };
-	c_inner = { 0, 255, 0 };
+	innerColor = { 0, 255, 0 };
 	c_normal = { 80, 80, 80 };
 	c_invalid = { 0, 0, 0 };
-	c_hovered = { 20, 20, 255 };
+	hoveredColor = { 20, 20, 255 };
 }
 // 这里会利用到空格的宽度刚好等于 gap.x。
 // 否则的话应该对 txt 是否为空做讨论，这里怕麻烦不管了。
@@ -29,12 +29,12 @@ void Checkbox::render(App& app) {
 
 	dColor const& c =
 		!enabled ? c_invalid :
-		rhvd ? c_hovered : c_normal;
+		rhvd ? hoveredColor : c_normal;
 	drawRectangleRaw(scr, tl_box(), s_box, s_box, vp, c);
 	if (checked) {
 		int hs = (s_box - s_box_in) / 2;
 		dVector2 tl_box_in = tl_box() + dVector2(hs, hs);
-		drawRectangleRaw(scr, tl_box_in, s_box_in, s_box_in, vp, c_inner);
+		drawRectangleRaw(scr, tl_box_in, s_box_in, s_box_in, vp, innerColor);
 	}
 }
 

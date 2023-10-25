@@ -13,7 +13,7 @@ struct Bgr {
 	bool wheeled = false;
 
 	Bgr(Cur& cur);
-	dRect vp() const { return { tl, w, h }; }
+	dRect viewPort() const { return { tl, w, h }; }
 	void render(Cur& cur);
 
 	void Update(Cur& cur);

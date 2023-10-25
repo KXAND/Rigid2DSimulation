@@ -15,9 +15,9 @@ RichTextbox::RichTextbox(int w, int h, bool newline) : w(w), h(h) {
 	c_frame = { 150, 150, 150 };
 	c_normal = { 40, 40, 40 };
 	c_cursor = { 255, 255, 255 };
-	c_hovered = { 40, 40, 80 };
+	hoveredColor = { 40, 40, 80 };
 	c_invalid = { 0, 0, 0 };
-	c_selected = { 150, 150, 255 };
+	selectedColor = { 150, 150, 255 };
 
 	edit_mg = { 5, 5 };
 	show_txt_mg = { 2, 2 };
@@ -242,13 +242,13 @@ void RichTextbox::render_main(App& app) {
 	dColor c =
 		!enabled ? c_invalid :
 		edit ? c_edit :
-		rhvd ? c_hovered : c_normal;
+		rhvd ? hoveredColor : c_normal;
 	drawRectangleWithBorderRaw(scr, tl, w, h, vp, c, c_frame);
 
 	int x_cur = 0;
 	dVector2 tl_txt = tl + (dVector2)tl_str_rel;
 	draw_str(scr, dscr, dep, left(), c_str, ft, tl_txt, x_cur, w_str, vp_show_txt());
-	draw_str(scr, dscr, dep, mid(), c_selected, ft, tl_txt, x_cur, w_str, vp_show_txt());
+	draw_str(scr, dscr, dep, mid(), selectedColor, ft, tl_txt, x_cur, w_str, vp_show_txt());
 	draw_str(scr, dscr, dep, right(), c_str, ft, tl_txt, x_cur, w_str, vp_show_txt());
 }
 void RichTextbox::render_cursor(App& app) {

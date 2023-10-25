@@ -11,8 +11,8 @@ ScrollbarY::ScrollbarY() {
 	c_bar = { 0, 0, 0 };
 	c_frame = { 150, 150, 150 };
 	c_normal = { 80, 80, 80 };
-	c_dragged = { 150, 60, 60 };
-	c_hovered = { 60, 60, 150 };
+	draggedColor = { 150, 60, 60 };
+	hoveredColor = { 60, 60, 150 };
 	c_invalid = { 0, 0, 0 };
 }
 void ScrollbarY::render(App& app) {
@@ -20,8 +20,8 @@ void ScrollbarY::render(App& app) {
 	if (full) {
 		dColor const& c =
 			!enabled ? c_invalid :
-			dragged ? c_dragged :
-			rhvd ? c_hovered : c_normal;
+			dragged ? draggedColor :
+			rhvd ? hoveredColor : c_normal;
 		drawRectangleWithBorderRaw(scr, tl + dVector2(0, ny_rel), w, nh, vpscr, c, c_frame);
 	}
 }

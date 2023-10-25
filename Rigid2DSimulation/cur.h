@@ -2,15 +2,15 @@
 #include "app.h"
 #include "var.h"
 
-int constexpr MODE_DRG = 0;
+int constexpr MODE_DRAG = 0;
 int constexpr MODE_SEL = 1;
-int constexpr MODE_CRT = 2;
+int constexpr MODE_CREATE = 2;
 int constexpr MODE_DEL = 3;
 
-int constexpr DISP_COL = 0;
-int constexpr DISP_ENERGY = 1;
-int constexpr DISP_CHARGE = 2;
-int constexpr DISP_NONE = 3;
+int constexpr DISPLAY_COLOR = 0;
+int constexpr DISPLAY_ENERGY = 1;
+int constexpr DISPLAY_CHARGES = 2;
+int constexpr DISPLAY_NONE = 3;
 
 
 struct Body;
@@ -38,7 +38,7 @@ struct Cur : App {
 	int mode = 0;
 	int display = 0;
 	double energy_mul = 0;
-	double charge_mul = 0;
+	double chargeMultiplier = 0;
 	bool show_track = false;
 	bool mute = false;
 	bool paused = false;
@@ -50,7 +50,7 @@ struct Cur : App {
 	double real_dt = 0, t = 0;
 	int n_step = 0;
 	dRect rect_scene;
-	ptr<Creator> crt;
+	ptr<Creator> creator;
 	Body *body_sel = NULL;
 	Connection* con_sel = NULL;
 	vector<ptr<Body>> bs;

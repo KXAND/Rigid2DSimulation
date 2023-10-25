@@ -34,25 +34,25 @@ void BtMute::OnClick(App& app) { cur.mute = !cur.mute; }
 BtMode::BtMode() : Button(150) {}
 void BtMode::Update(App& app) {
 	switch (cur.mode) {
-	case MODE_DRG: txt = loc(L"mode_drag"); break;
+	case MODE_DRAG: txt = loc(L"mode_drag"); break;
 	case MODE_SEL: txt = loc(L"mode_sel"); break;
-	case MODE_CRT: txt = loc(L"mode_create"); break;
+	case MODE_CREATE: txt = loc(L"mode_create"); break;
 	case MODE_DEL: txt = loc(L"mode_del"); break;
 	}
 	Button::Update(app);
 }
 void BtMode::OnClick(App& app) {
-	cur.crt->Discard(cur); 
+	cur.creator->Discard(cur); 
 	cur.mode = (cur.mode + 1) % 4;
 }
 
 BtDisplay::BtDisplay() : Button(150) {}
 void BtDisplay::Update(App& app) {
 	switch (cur.display) {
-	case DISP_COL: txt = loc(L"disp_col"); break;
-	case DISP_ENERGY: txt = loc(L"disp_energy"); break;
-	case DISP_CHARGE: txt = loc(L"disp_charge"); break;
-	case DISP_NONE: txt = loc(L"disp_none"); break;
+	case DISPLAY_COLOR: txt = loc(L"disp_col"); break;
+	case DISPLAY_ENERGY: txt = loc(L"disp_energy"); break;
+	case DISPLAY_CHARGES: txt = loc(L"disp_charge"); break;
+	case DISPLAY_NONE: txt = loc(L"disp_none"); break;
 	}
 	Button::Update(app);
 }

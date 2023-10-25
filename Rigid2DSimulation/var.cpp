@@ -65,8 +65,8 @@ bool default_fun(Scope& gl, Scope& sc, expr const& ex, Var& out) {
 	if (f == L"&&") { out = Var(d0 && d1); return true; }
 	if (f == L"||") { out = Var(d0 || d1); return true; }
 	if (f == L"pow") { out = Var(pow(d0, d1)); return true; }
-	if (f == L"rand") { out = Var(frnd(d0, d1)); return true; }
-	if (f == L"rand_int") { out = Var(drnd(d0, d1)); return true; }
+	if (f == L"rand") { out = Var(generateRadomFloat(d0, d1)); return true; }
+	if (f == L"rand_int") { out = Var(generateRadomInt(d0, d1)); return true; }
 	if (f == L"str") { out = Var(tw2(d0)); return true; }
 	if (f == L".") { out = Var(s0 + s1); return true; }
 	return false;

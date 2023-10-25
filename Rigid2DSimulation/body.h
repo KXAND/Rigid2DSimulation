@@ -9,7 +9,8 @@ struct Var;
 struct Cur;
 struct Shape;
 struct Connection;
-struct Body {
+struct Body
+{
 	bool del = false;
 	bool point = false;
 	bool fixed = false;
@@ -19,18 +20,18 @@ struct Body {
 	bool preset_ang = false;
 	bool preset_v_ang = false;
 	vector<vector2> track;
-	vector<ptr<Shape>> shs;
+	vector<ptr<Shape>> shapes;
 	vector<Connection*> cons;
 	vector2 o, v;
 	aabb box;
-	matrix2 tsf = matrix2::I();
+	matrix2 transform = matrix2::I();
 	wstring cmd, tmp_cmd;
-	double ang = 0, v_ang = 0;
+	double radian = 0, v_ang = 0;
 	double inv_m = 0, inv_i = 0;
 	double area = 0, density = 0;
 	double e = 0, mu_s = 0, mu_d = 0;
 	double damp_v = 0, damp_v_ang = 0;
-	double charge_density = 0, charge = 0;
+	double chargeDensity = 0, charge = 0;
 
 	bool visited = false;
 	bool hovered = false;
@@ -39,7 +40,12 @@ struct Body {
 	vector2 p_drag_rel;
 	double dep_shape = 0, dep_point = 0;
 	double r_point = 0;
-	dColor c_inner, c_border, c_hovered, c_dragged, c_selected, c_selected_con;
+	dColor innerColor;
+	dColor borderColor;
+	dColor hoveredColor;
+	dColor draggedColor;
+	dColor selectedColor;
+	dColor selectedConColor;
 
 	Body();
 	Body(vector2 const& _o);
@@ -47,11 +53,11 @@ struct Body {
 	Body(vector<ptr<Shape>> const& _shs);
 	void save(FILE* f) const;
 	Body(Cur& cur, FILE* f);
-	
-	double dep() const;
+
+	double getDepth() const;
 	vector2 rnd_rel() const;
 	bool inside(vector2 p) const;
-	void refresh(Cur &cur);
+	void refresh(Cur& cur);
 	void read_cfg(Var const& cfg);
 	void generate();
 	void update_box();
@@ -60,7 +66,7 @@ struct Body {
 
 	void Init(bool repos_o = false);
 	void Render(Cur& cur) const;
-	void Step(Cur &cur, double sdt);
+	void Step(Cur& cur, double sdt);
 	void follow_preset_o(Cur& cur, double sdt);
 	void follow_preset_ang(Cur& cur, double sdt);
 	void follow_preset_v_ang(Cur& cur);

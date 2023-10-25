@@ -29,11 +29,11 @@ inline double modf(double a, double b) { return fmod(fmod(a, b) + b, b); }
 inline double modp(double an) { return modf(an + PI, 2 * PI) - PI; }
 
 // 注意 [a, b] 是闭区间，但 sz 是开的。
-int drnd(int a, int b);
-int drnd(int sz);
-double frnd(double a, double b);
-double frnd(double b);
-double nrnd(double mean, double stddev);
+int generateRadomInt(int a, int b);
+int generateRadomInt(int sz);
+double generateRadomFloat(double a, double b);
+double generateRadomFloat(double b);
+double generateNormalRadomFloat(double mean, double stddev);
 
 wstring tw2(double d);
 wstring tw(string const& s);

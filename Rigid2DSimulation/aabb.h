@@ -12,4 +12,4 @@ struct aabb {
 
 	void expand(vector2 v);
 };
-bool overlap(aabb const& b0, aabb const& b1);
+bool isOverlap(aabb const& b0, aabb const& b1);

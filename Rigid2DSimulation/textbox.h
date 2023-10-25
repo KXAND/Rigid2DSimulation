@@ -9,7 +9,7 @@ struct Textbox : Control {
 	int w = 0, h = 0;
 	bool clr_upon_edit = false;
 	dColor c_txt, c_str, c_edit, c_frame, c_normal,
-		c_cursor, c_hovered, c_invalid, c_selected;
+		c_cursor, hoveredColor, c_invalid, selectedColor;
 
 	// cs = cursor，mg = margin。
 	// 也是 x_str_rel 的默认值，否则一开始编辑文字的位置就会变化。

@@ -34,7 +34,8 @@ if (p##a.x symbol bd) {\
 #undef TMP
 }
 void drawLineSegment(tile& targetTile, dbuf& zBuffer,
-	dVector2 pa, dVector2 pb, double d, dRect viewPort, dColor color) {
+	dVector2 pa, dVector2 pb, double d, dRect viewPort, dColor color) 
+{
 	if (viewPort.w <= 0 || viewPort.h <= 0) { return; }
 	if (!preDrawLineSegment(pa, pb, viewPort)) { return; }
 

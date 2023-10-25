@@ -12,9 +12,9 @@ DragbarX::DragbarX(int w) : bw(w) {
 	c_txt = { 255, 255, 255 };
 	c_bar = { 80, 80, 80 };
 	c_normal = { 80, 80, 80 };
-	c_hovered = { 20, 20, 255 };
+	hoveredColor = { 20, 20, 255 };
 	c_invalid = { 0, 0, 0 };
-	c_dragged = { 250, 20, 20 };
+	draggedColor = { 250, 20, 20 };
 }
 int DragbarX::GetW() const { return bw + gap.x + w_txt; }
 int DragbarX::GetH() const { return nh + gap.y; }
@@ -32,8 +32,8 @@ void DragbarX::render(App& app) {
 
 	dColor const& c =
 		!enabled ? c_invalid :
-		dragged ? c_dragged :
-		rhvd ? c_hovered : c_normal;
+		dragged ? draggedColor :
+		rhvd ? hoveredColor : c_normal;
 	dVector2 tl_bar = tl + dVector2(w_txt, (nh - bh) / 2);
 	drawRectangleRaw(scr, tl_bar, bw, bh, vp, c_bar);
 	drawRectangleRaw(scr, tl_node(), nw, nh, vp, c);

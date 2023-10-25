@@ -238,7 +238,7 @@ void CreateBody(Cur& cur, Var const& shs_cfg, Var const& cfg) {
 	if (point) { mkp(bo)(vector2()); }
 	else { mkp(bo)(shs); }
 
-	bo->c_inner = dColor(drnd(256), drnd(256), drnd(256));
+	bo->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
 	bo->read_cfg(cfg); 
 	bool repos_o = false;
 	getv(repos_o);
@@ -247,8 +247,8 @@ void CreateBody(Cur& cur, Var const& shs_cfg, Var const& cfg) {
 	cur.scene_changed = true;
 }
 void CreateConn(Cur& cur, Var const& cfg) {
-	int idx0 = drnd(bs.size());
-	int idx1 = drnd(bs.size());
+	int idx0 = generateRadomInt(bs.size());
+	int idx1 = generateRadomInt(bs.size());
 	auto dic = cfg.dic;
 	getv(idx0); getv(idx1);
 	idx0 = clamp(idx0, 0, (int)bs.size());
@@ -266,14 +266,14 @@ void CreateConn(Cur& cur, Var const& cfg) {
 		con->p0_rel = tv2(*dic[L"p0"]);
 		if (absolute) { 
 			con->p0_rel -= con->b0->o; 
-			con->p0_rel = con->b0->tsf.inv() * con->p0_rel;
+			con->p0_rel = con->b0->transform.inverse() * con->p0_rel;
 		}
 	}
 	if (found(L"p1")) {
 		con->p1_rel = tv2(*dic[L"p1"]);
 		if (absolute) {
 			con->p1_rel -= con->b1->o; 
-			con->p1_rel = con->b1->tsf.inv() * con->p1_rel;
+			con->p1_rel = con->b1->transform.inverse() * con->p1_rel;
 		}
 	}
 	con->sign_up();
@@ -289,36 +289,36 @@ void Boundary(Cur& cur, Var const& thk, Var const &cfg) {
 	double bx0 = bgr.tl.x, bx1 = bx0 + bw;
 	double by0 = bgr.tl.y, by1 = by0 + bh;
 	ptr<Body> bo;
-	dColor col = dColor(drnd(256), drnd(256), drnd(256));
+	dColor col = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
 
-	bo = msh<Body>(msh<Shape>(rect(thk.num, bh)));
+	bo = msh<Body>(msh<Shape>(getRectVerticesByCenter(thk.num, bh)));
 	bo->o = vector2(bx0, (by0 + by1) / 2);
 	bo->fixed = true;
-	bo->c_inner = col;
+	bo->innerColor = col;
 	bo->read_cfg(cfg);
 	bo->Init();
 	bs.push_back(bo);
 
-	bo = msh<Body>(msh<Shape>(rect(thk.num, bh)));
+	bo = msh<Body>(msh<Shape>(getRectVerticesByCenter(thk.num, bh)));
 	bo->o = vector2(bx1, (by0 + by1) / 2);
 	bo->fixed = true;
-	bo->c_inner = col;
+	bo->innerColor = col;
 	bo->read_cfg(cfg);
 	bo->Init();
 	bs.push_back(bo);
 
-	bo = msh<Body>(msh<Shape>(rect(bw, thk.num)));
+	bo = msh<Body>(msh<Shape>(getRectVerticesByCenter(bw, thk.num)));
 	bo->o = vector2((bx0 + bx1) / 2, by0);
 	bo->fixed = true;
-	bo->c_inner = col;
+	bo->innerColor = col;
 	bo->read_cfg(cfg);
 	bo->Init();
 	bs.push_back(bo);
 
-	bo = msh<Body>(msh<Shape>(rect(bw, thk.num)));
+	bo = msh<Body>(msh<Shape>(getRectVerticesByCenter(bw, thk.num)));
 	bo->o = vector2((bx0 + bx1) / 2, by1);
 	bo->fixed = true;
-	bo->c_inner = col;
+	bo->innerColor = col;
 	bo->read_cfg(cfg);
 	bo->Init();
 	bs.push_back(bo);
@@ -337,12 +337,12 @@ void Gear(Cur& cur, Var const& r, Var const& n, Var const& h, Var const& cfg) {
 		shs.push_back(msh<Shape>(vector<vector2>{ v0, v, v1 }));
 	}
 	auto wheel = msh<Body>(shs);
-	wheel->c_inner = dColor(drnd(256), drnd(256), drnd(256));
+	wheel->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
 	wheel->read_cfg(cfg);
 	wheel->Init();
 	bs.push_back(wheel);
 	auto root = msh<Body>(wheel->o);
-	root->c_inner = wheel->c_inner;
+	root->innerColor = wheel->innerColor;
 	root->Init();
 	bs.push_back(root);
 
@@ -365,10 +365,10 @@ void Strand(Cur& cur, Var const& _p0, Var const& _p1,
 	double len = (p1 - p0).len() / n;
 	double rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * rad);
-	dColor col = dColor(drnd(256), drnd(256), drnd(256));
+	dColor col = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
 
 	mkp(b0)(msh<Shape>(rad));
-	b0->c_inner = col;
+	b0->innerColor = col;
 	b0->o = p0;
 	b0->read_cfg(cfg_body);
 	b0->Init();
@@ -376,7 +376,7 @@ void Strand(Cur& cur, Var const& _p0, Var const& _p1,
 
 	rep(i, 1, n + 1) {
 		mkp(b1)(msh<Shape>(rad));
-		b1->c_inner = col;
+		b1->innerColor = col;
 		b1->o = (p0 * (n - i) + p1 * i) / n;
 		b1->read_cfg(cfg_body);
 		b1->Init();
@@ -407,10 +407,10 @@ void Necklace(Cur& cur, Var const& _o, Var const& rad,
 	double len = 2 * PI * rad.num / n;
 	double ball_rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * ball_rad);
-	dColor col = dColor(drnd(256), drnd(256), drnd(256));
+	dColor col = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
 
 	mkp(b0)(msh<Shape>(ball_rad));
-	b0->c_inner = col;
+	b0->innerColor = col;
 	b0->o = o + vector2(rad.num, 0);
 	b0->read_cfg(cfg_body);
 	b0->Init();
@@ -420,7 +420,7 @@ void Necklace(Cur& cur, Var const& _o, Var const& rad,
 	rep(i, 1, n) {
 		double phi = 2 * PI * i / n;
 		mkp(b1)(msh<Shape>(ball_rad));
-		b1->c_inner = col;
+		b1->innerColor = col;
 		b1->o = o + vector2(cos(phi), sin(phi)) * rad.num;
 		b1->read_cfg(cfg_body);
 		b1->Init();

@@ -8,7 +8,7 @@ struct DragbarX : Control {
 	wstring txt;
 	int bw = 0, bh = 0;
 	int nw = 0, nh = 0;
-	dColor c_txt, c_bar, c_normal, c_hovered, c_invalid, c_dragged;
+	dColor c_txt, c_bar, c_normal, hoveredColor, c_invalid, draggedColor;
 
 	int w_txt = 0;
 	int nx_rel = 0;

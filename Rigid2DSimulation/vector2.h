@@ -79,7 +79,7 @@ struct matrix2 {
 		a00(a00), a01(a01), a10(a10), a11(a11) {}
 	matrix2(vector2 v0, vector2 v1) : matrix2(v0.x, v1.x, v0.y, v1.y) {}
 
-	static matrix2 rot(double rad) {
+	static matrix2 rotate(double rad) {
 		double c = cos(rad), s = sin(rad);
 		return { c, -s, s, c };
 	}
@@ -98,11 +98,12 @@ struct matrix2 {
 	}
 	matrix2& operator/=(double a) { return *this *= 1 / a; }
 
-	matrix2 tsp() const { return { a00, a10, a01, a11 }; }
-	matrix2 inv() const { return matrix2(a11, -a01, -a10, a00) / det(); }
+	matrix2 transpose() const { return { a00, a10, a01, a11 }; }
+	matrix2 inverse() const { return matrix2(a11, -a01, -a10, a00) / det(); }
 	matrix2 abs() const {
 		return matrix2(::abs(a00), ::abs(a01), ::abs(a10), ::abs(a11));
 	}
+	// 行列式运算
 	double det() const { return a00 * a11 - a01 * a10; }
 };
 inline matrix2 operator+(matrix2 a, matrix2 b) { return a += b; }

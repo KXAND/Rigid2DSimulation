@@ -22,7 +22,7 @@ Droplist::Droplist(int w, DpNm const& nm) : w(w), nm(nm) {
 	c_frame = { 150, 150, 150 };
 	c_normal = { 40, 40, 40 };
 	c_invalid = { 0, 0, 0 };
-	c_hovered = { 60, 60, 150 };
+	hoveredColor = { 60, 60, 150 };
 }
 int Droplist::GetW() const { return w + gap.x + w_txt; }
 int Droplist::GetH() const {
@@ -38,7 +38,7 @@ void Droplist::render_main(App& app) {
 	dColor const& c =
 		!enabled ? c_invalid :
 		edit ? c_edit :
-		rhvd ? c_hovered : c_normal;
+		rhvd ? hoveredColor : c_normal;
 	drawRectangleWithBorder(scr, dscr, dep, tl_box(), w, h, vp, c, c_frame);
 
 	vector2 ct_sign = (vector2)tl_box() + vector2(w - sign_margin, h / 2);
@@ -54,7 +54,7 @@ void Droplist::render_items(App& app) {
 		if (item_hv != -1) {
 			dVector2 tl_hovered = tl_box() + dVector2(0, h + h_item * item_hv);
 			drawRectangleWithBorder(scr, dscr, dep,
-				tl_hovered, w, h_item, vp, c_hovered, c_frame);
+				tl_hovered, w, h_item, vp, hoveredColor, c_frame);
 		}
 		rep(i, 0, n_item) {
 			dVector2 tl_txt_item = tl_box() +

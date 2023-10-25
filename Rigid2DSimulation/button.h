@@ -7,7 +7,7 @@ struct Button : Control {
 	double dep = 0;
 	wstring txt;
 	int w = 0, h = 0;
-	dColor c_txt, c_frame, c_normal, c_chosen, c_hovered, c_invalid;
+	dColor c_txt, c_frame, c_normal, c_chosen, hoveredColor, c_invalid;
 
 	bool chosen = false;
 	bool enabled = true;

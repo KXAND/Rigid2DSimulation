@@ -17,9 +17,9 @@ Textbox::Textbox(int w) : w(w) {
 	c_frame = { 150, 150, 150 };
 	c_normal = { 40, 40, 40 };
 	c_cursor = { 255, 255, 255 };
-	c_hovered = { 60, 60, 150 };
+	hoveredColor = { 60, 60, 150 };
 	c_invalid = { 0, 0, 0 };
-	c_selected = { 150, 150, 255 };
+	selectedColor = { 150, 150, 255 };
 
 	w_edit_mg = 5;
 	w_show_txt_mg = 2;
@@ -194,13 +194,13 @@ void Textbox::render_main(App& app) {
 	dColor const& c =
 		!enabled ? c_invalid :
 		edit ? c_edit :
-		rhvd ? c_hovered : c_normal;
+		rhvd ? hoveredColor : c_normal;
 	drawRectangleWithBorderRaw(scr, tl_box(), w, h, vp, c, c_frame);
 
 	int x_cur = 0;
 	dVector2 tl_str = tl_box() + dVector2(x_str_rel, (h - ft.h) / 2);
 	draw_str(scr, dscr, dep, left(), c_str, ft, tl_str, x_cur, 0, vp_show_txt());
-	draw_str(scr, dscr, dep, mid(), c_selected, ft, tl_str, x_cur, 0, vp_show_txt());
+	draw_str(scr, dscr, dep, mid(), selectedColor, ft, tl_str, x_cur, 0, vp_show_txt());
 	draw_str(scr, dscr, dep, right(), c_str, ft, tl_str, x_cur, 0, vp_show_txt());
 }
 void Textbox::render_cursor(App& app) {

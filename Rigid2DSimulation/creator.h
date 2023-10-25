@@ -1,13 +1,13 @@
 #pragma once
 #include "vector2.h"
 
-int constexpr CRT_BOX = 0;
-int constexpr CRT_BALL = 1;
-int constexpr CRT_PLATE = 2;
-int constexpr CRT_PARTICLE = 3;
-int constexpr CRT_CONN = 4;
-int constexpr CRT_POINT = 5;
-int constexpr CRT_NAIL = 6;
+int constexpr CREATE_BOX = 0;
+int constexpr CREATE_BALL = 1;
+int constexpr CREATE_PLATE = 2;
+int constexpr CREATE_PARTICLE = 3;
+int constexpr CREATE_CONN = 4;
+int constexpr CREATE_POINT = 5;
+int constexpr CREATE_NAIL = 6;
 
 struct Var;
 struct Cur;
@@ -25,7 +25,7 @@ struct Creator {
 	ptr<Var> cfg_body, cfg_conn;
 	vector2 p0_rel, p1_rel;
 
-	ptr<Body> bo;
+	ptr<Body> body;
 	ptr<Connection> con;
 	bool active = false;
 	bool hovered = false;

@@ -8,7 +8,7 @@ struct Checkbox : Control {
 	double dep = 0;
 	wstring txt;
 	int s_box = 0, s_box_in = 0;
-	dColor c_txt, c_frame, c_inner, c_normal, c_invalid, c_hovered;
+	dColor c_txt, c_frame, innerColor, c_normal, c_invalid, hoveredColor;
 
 	int w_txt = 0;
 	bool checked = false;

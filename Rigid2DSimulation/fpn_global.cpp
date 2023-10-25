@@ -25,14 +25,14 @@ void RLbGlobal::Sync(App& app) {
 	txt += loc(L"coulomb") + tw2(cur.coulomb) + L"\n";
 
 	wstring s;
-	switch (cur.crt->mode) {
-	case CRT_BALL: s = loc(L"crt_ball"); break;
-	case CRT_BOX: s = loc(L"crt_box"); break;
-	case CRT_CONN: s = loc(L"crt_conn"); break;
-	case CRT_NAIL: s = loc(L"crt_nail"); break;
-	case CRT_PARTICLE: s = loc(L"crt_particle"); break;
-	case CRT_PLATE: s = loc(L"crt_plate"); break;
-	case CRT_POINT: s = loc(L"crt_point"); break;
+	switch (cur.creator->mode) {
+	case CREATE_BALL: s = loc(L"crt_ball"); break;
+	case CREATE_BOX: s = loc(L"crt_box"); break;
+	case CREATE_CONN: s = loc(L"crt_conn"); break;
+	case CREATE_NAIL: s = loc(L"crt_nail"); break;
+	case CREATE_PARTICLE: s = loc(L"crt_particle"); break;
+	case CREATE_PLATE: s = loc(L"crt_plate"); break;
+	case CREATE_POINT: s = loc(L"crt_point"); break;
 	}
 	txt += loc(L"creator_mode") + s + L"\n";
 }

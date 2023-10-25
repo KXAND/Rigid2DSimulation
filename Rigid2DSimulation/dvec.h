@@ -46,5 +46,5 @@ struct dRect {
 	dVector2 center() const { return topLeftPosition + dVector2(w, h) / 2; }
 };
 bool isInside(dVector2 v, dRect r);
-// 这里可能会出现负的 drect。
+// 这里可能会出现负的 dRect。
 dRect getOverlapRect(dRect a, dRect b);

@@ -12,7 +12,7 @@ struct ScrollbarY {
 	Control* c = NULL;
 	int w = 0, h = 0;
 	int h_show = 0, top_show = 0;
-	dColor c_bar, c_frame, c_normal, c_dragged, c_hovered, c_invalid;
+	dColor c_bar, c_frame, c_normal, draggedColor, hoveredColor, c_invalid;
 
 	int ny_rel = 0, nh = 0;
 	bool full = false;

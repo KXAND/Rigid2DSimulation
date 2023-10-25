@@ -8,7 +8,7 @@
 #include "my_def.h"
 
 void Collision::Render(Cur& cur) const {
-	drawEllipse(scr, dscr, 100, c, 5, 5, bgr.vp(), dColor(255, 255, 0));
+	drawEllipse(scr, dscr, 100, c, 5, 5, bgr.viewPort(), dColor(255, 255, 0));
 }
 void Collision::Resolve(bool equal_repos) {
 	double e = min(b0->e, b1->e);
@@ -73,12 +73,12 @@ void Collision::Resolve(bool equal_repos) {
 
 void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralell) {
 	if (b0.inv_m == 0 && b1.inv_m == 0) { return; }
-	if (!overlap(b0.box, b1.box)) { return; }
+	if (!isOverlap(b0.box, b1.box)) { return; }
 
-	for (auto sh0 : b0.shs) for (auto sh1 : b1.shs) {
+	for (auto sh0 : b0.shapes) for (auto sh1 : b1.shapes) {
 		Collision col;
 		col.b0 = &b0; col.b1 = &b1;
-		if (sh0->ball && sh1->ball) {
+		if (sh0->isCircle && sh1->isCircle) {
 			if (!collide_balls(*sh0, *sh1, col)) { continue; }
 		} else {
 			if (!collide(*sh0, *sh1, col, false)) { continue; }
@@ -86,7 +86,7 @@ void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralel
 		}
 		
 		// 下面的小于号有一点重要。
-		if (!sh0->ball && !sh1->ball && col.diff < eps_paralell) {
+		if (!sh0->isCircle && !sh1->isCircle && col.diff < eps_paralell) {
 			double dsqr_close = DBL_MAX;
 			find_contact(*sh0, *sh1, col.c, dsqr_close);
 			find_contact(*sh1, *sh0, col.c, dsqr_close);
@@ -96,9 +96,9 @@ void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralel
 }
 bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse) {
 	vector2 c;
-	if (sh0.ball) {
-		rep(i, 0, sh1.vs.size()) {
-			vector2 n = (sh1.vs[i] - sh0.o).normalize();
+	if (sh0.isCircle) {
+		rep(i, 0, sh1.vertices.size()) {
+			vector2 n = (sh1.vertices[i] - sh0.o).normalize();
 			if (n.zero()) { n = vector2(0, 1); }
 			auto d = sub_collide_poly(n, sh0.o + n * sh0.r, sh1, c);
 			if (d < 0) { return false; }
@@ -111,13 +111,13 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse) {
 		} return true;
 	}
 
-	rep(i, 0, sh0.vs.size()) {
-		int j = (i + 1) % sh0.vs.size();
-		vector2 n = sh0.vs[j] - sh0.vs[i];
+	rep(i, 0, sh0.vertices.size()) {
+		int j = (i + 1) % sh0.vertices.size();
+		vector2 n = sh0.vertices[j] - sh0.vertices[i];
 		n = vector2(n.y, -n.x).normalize();
-		auto d = sh1.ball ?
-			sub_collide_ball(n, sh0.vs[i], sh1, c) :
-			sub_collide_poly(n, sh0.vs[i], sh1, c);
+		auto d = sh1.isCircle ?
+			sub_collide_ball(n, sh0.vertices[i], sh1, c) :
+			sub_collide_poly(n, sh0.vertices[i], sh1, c);
 		if (d < 0) { return false; }
 		if (d < out.d) {
 			out.diff = out.d - d;
@@ -128,10 +128,10 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse) {
 	} return true;
 }
 void find_contact(Shape& sh0, Shape& sh1, vector2 &c, double &dsqr_close) {
-	rep(i, 0, sh0.vs.size()) {
-		int j = (i + 1) % sh0.vs.size();
-		for (auto v : sh1.vs) {
-			double dsqr = dist_sqr(sh0.vs[i], sh0.vs[j], v);
+	rep(i, 0, sh0.vertices.size()) {
+		int j = (i + 1) % sh0.vertices.size();
+		for (auto v : sh1.vertices) {
+			double dsqr = dist_sqr(sh0.vertices[i], sh0.vertices[j], v);
 			// 这里的小于号很重要。
 			if (dsqr < dsqr_close) {
 				dsqr_close = dsqr; c = v;
@@ -157,7 +157,7 @@ double sub_collide_ball(vector2 n, vector2 o, Shape const& sh, vector2& c) {
 }
 double sub_collide_poly(vector2 n, vector2 o, Shape const& sh, vector2& c) {
 	double out = DBL_MAX;
-	for (auto v : sh.vs) {
+	for (auto v : sh.vertices) {
 		auto tmp = dot(v - o, n);
 		if (tmp < out) {
 			out = tmp; c = v;

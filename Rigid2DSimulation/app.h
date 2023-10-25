@@ -38,11 +38,11 @@ struct App {
 
 	void reset_dscr();
 	void present_scr();
-	void addlog(wstring const& s);
+	void addLog(wstring const& s);
 	wstring loc(wstring const& id) const;
 
 	void init_bmi();
-	void load_localization();
+	void loadLocalizationFile();
 	void register_window_class();
 	void create_window();
 };

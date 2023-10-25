@@ -2,10 +2,14 @@
 #include "vector2.h"
 #include "tile.h"
 
-void drawRectangleRaw(tile& dest, dVector2 tl, int w, int h, dRect vp, dColor col);
-void drawRectangle(tile& dest, dbuf& ds, double dep,
-	dVector2 tl, int w, int h, dRect vp, dColor col);
-void drawRectangleWithTransform(tile& dest, dbuf& ds, double dep,
-	vector2 ct, double w, double h, matrix2 tsf, dRect vp, dColor col);
-void drawEllipse(tile& dest, dbuf& ds, double dep,
-	vector2 ct, double ax, double ay, dRect vp, dColor col);
+// @todo: 把两个 drawRectangle 移到别的文件中
+void drawRectangleRaw(tile& targetTile, dVector2 topLeft, int w, int h, dRect viewPort, dColor color);
+
+void drawRectangle(tile& targetTile, dbuf& zBuffer, double depth,
+	dVector2 topLeft, int width, int height, dRect viewPort, dColor color);
+
+void drawRectangleWithTransform(tile& targetTile, dbuf& zBuffer, double depth,
+	vector2 center, double width, double height, matrix2 transformMatrix, dRect viewPort, dColor color);
+
+void drawEllipse(tile& targetTile, dbuf& zBuffer, double depth,
+	vector2 center, double axisX, double axisY, dRect viewPort, dColor color);

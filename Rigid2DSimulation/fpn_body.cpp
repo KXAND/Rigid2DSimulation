@@ -86,11 +86,11 @@ void RLbBody::Sync(App& app) {
 	
 	txt += loc(L"body_o") + toWstring(bsel.o) + L"\n";
 	txt += loc(L"body_v") + toWstring(bsel.v) + L"\n";
-	txt += loc(L"body_ang") + tw2(bsel.ang) + L"\n";
+	txt += loc(L"body_ang") + tw2(bsel.radian) + L"\n";
 	txt += loc(L"body_v_ang") + tw2(bsel.v_ang) + L"\n";
 	txt += loc(L"body_fixed") + tw(bsel.fixed) + L"\n";
 	txt += loc(L"body_density") + tw2(bsel.density) + L"\n";
-	txt += loc(L"body_charge_density") + tw2(bsel.charge_density) + L"\n";
+	txt += loc(L"body_charge_density") + tw2(bsel.chargeDensity) + L"\n";
 	txt += loc(L"body_e") + tw2(bsel.e) + L"\n";
 	txt += loc(L"body_mu_s") + tw2(bsel.mu_s) + L"\n";
 	txt += loc(L"body_mu_d") + tw2(bsel.mu_d) + L"\n";

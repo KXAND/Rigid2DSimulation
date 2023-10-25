@@ -14,7 +14,7 @@ Button::Button(int w) : w(w) {
 	c_frame = { 150, 150, 150 };
 	c_normal = { 80, 80, 80 };
 	c_chosen = { 150, 60, 60 };
-	c_hovered = { 60, 60, 150 };
+	hoveredColor = { 60, 60, 150 };
 	c_invalid = { 0, 0, 0 };
 }
 int Button::GetW() const { return w + gap.x; }
@@ -24,7 +24,7 @@ void Button::render(App& app) {
 	dColor const& c =
 		!enabled ? c_invalid :
 		chosen ? c_chosen :
-		rhvd ? c_hovered : c_normal;
+		rhvd ? hoveredColor : c_normal;
 	dVector2 wh = str_wh(txt, ft, 0);
 	dVector2 tl_txt = tl + dVector2(w, h) / 2 - wh / 2;
 

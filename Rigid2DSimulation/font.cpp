@@ -8,7 +8,7 @@ tile const& font::operator[](wchar_t c) const {
 }
 wstring font::rnd(int n) const {
 	wstring s;
-	rep(i, 0, n) { s += chi[drnd(chi.size())]; } return s;
+	rep(i, 0, n) { s += chi[generateRadomInt(chi.size())]; } return s;
 }
 
 bool font::load_font(wstring const& name, wchar_t c) {
