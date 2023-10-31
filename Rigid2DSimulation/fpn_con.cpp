@@ -48,7 +48,7 @@ void RLbCon::Sync(App& app) {
 	switch (csel.type) {
 	case CON_ROPE: type = loc(L"conn_rope"); break;
 	case CON_LINK: type = loc(L"conn_link"); break;
-	case CON_SPRG: type = loc(L"conn_spring"); break;
+	case CON_SPRING: type = loc(L"conn_spring"); break;
 	case CON_CORD: type = loc(L"conn_cord"); break;
 	}
 	txt += loc(L"conn_type") + type + L"\n";

@@ -19,8 +19,8 @@
 Body::Body()
 {
 	density = 1;
-	damp_v = 0.1; damp_v_ang = 0.1;
-	e = 0.7; mu_s = 0.5; mu_d = 0.3;
+	dampCoeff = 0.1; dampCoeffAngular = 0.1;
+	elasticity = 0.7; frictionStatic = 0.5; frictionDynamic = 0.3;
 
 	dep_shape = 0; dep_point = 1;
 	r_point = 8;
@@ -50,10 +50,10 @@ void Body::save(FILE* f) const
 	sz = shapes.size();
 	fwt(sz);
 	for (auto sh : shapes) { sh->Save(f); }
-	fwt(o); fwt(v); fwtv(cmd);
-	fwt(radian); fwt(v_ang); fwt(density);
-	fwt(e); fwt(mu_s); fwt(mu_d);
-	fwt(damp_v); fwt(damp_v_ang);
+	fwt(o); fwt(velocity); fwtv(cmd);
+	fwt(radian); fwt(velocityAngular); fwt(density);
+	fwt(elasticity); fwt(frictionStatic); fwt(frictionDynamic);
+	fwt(dampCoeff); fwt(dampCoeffAngular);
 	fwt(chargeDensity); fwt(innerColor);
 }
 Body::Body(Cur& cur, FILE* f) : Body()
@@ -65,10 +65,10 @@ Body::Body(Cur& cur, FILE* f) : Body()
 	{
 		shapes.push_back(msh<Shape>(f));
 	}
-	frd(o); frd(v); frdv(cmd); tmp_cmd = cmd;
-	frd(radian); frd(v_ang); frd(density);
-	frd(e); frd(mu_s); frd(mu_d);
-	frd(damp_v); frd(damp_v_ang);
+	frd(o); frd(velocity); frdv(cmd); tmp_cmd = cmd;
+	frd(radian); frd(velocityAngular); frd(density);
+	frd(elasticity); frd(frictionStatic); frd(frictionDynamic);
+	frd(dampCoeff); frd(dampCoeffAngular);
 	frd(chargeDensity); frd(innerColor);
 
 	refresh(cur);
@@ -104,56 +104,70 @@ void Body::refresh(Cur& cur)
 	if (found(L"v_ang_prog")) { mkp(v_ang_prog)(dic.at(L"v_ang_prog")->procs); }
 	Init();
 }
+
 void Body::read_cfg(Var const& cfg)
 {
 	auto dic = cfg.dic;
 	if (found(L"o")) { o = tv2(*dic[L"o"]); }
-	if (found(L"v")) { v = tv2(*dic[L"v"]); }
+	if (found(L"v")) { velocity = tv2(*dic[L"v"]); }
 	if (found(L"col")) { innerColor = (dColor) tv3(*dic[L"col"]); }
-	getv(radian); getv(v_ang); getv(e); getv(mu_s); getv(mu_d);
-	getv(damp_v); getv(damp_v_ang); getv(fixed);
-	getv(density); getv(chargeDensity);
+	getv(radian);
+	getv(velocityAngular);
+	getv(elasticity);
+	getv(frictionStatic);
+	getv(frictionDynamic);
+	getv(dampCoeff);
+	getv(dampCoeffAngular);
+	getv(fixed);
+	getv(density);
+	getv(chargeDensity);
 }
-vector2 Body::rnd_rel() const
+
+vector2 Body::generateRandomPointInside() const
 {
 	if (point) { return {}; }
 
-	double p = generateRadomFloat(area);
-	for (auto sh : shapes)
+	double randomArea = generateRadomFloat(area);
+	for (const auto& shape : shapes)
 	{
-		p -= sh->area;
-		if (p < 0)
+		randomArea -= shape->area;
+		if (randomArea < 0)
 		{
-			return sh->generateRandomPointInside();
+			return shape->generateRandomPointInside();
 		}
-	} return shapes.back()->generateRandomPointInside();
+	}
+	return shapes.back()->generateRandomPointInside();
 }
-void Body::generate()
+
+void Body::updatePositionAndAABB()
 {
 	transform = matrix2::rotate(radian);
-	for (auto shape : shapes)
+	for (auto& shape : shapes)
 	{
-		shape->o = o + transform * shape->o_rel;
-		shape->ang = radian;
+		shape->o = o + transform * shape->oRelative;
+		shape->radian = radian;
 		rep(i, 0, shape->vertices.size())
 		{
 			shape->vertices[i] = o + transform * shape->verticesRelative[i];
 		}
 	}
-	update_box();
+	updateAABB();
 }
-void Body::update_box()
+
+void Body::updateAABB()
 {
+	// @todo：考虑设计一个expand函数
 	box = aabb();
-	for (auto sh : shapes)
+	for (const auto& shape : shapes)
 	{
-		box = aabb(box, sh->getBoundingBox());
+		box = aabb(box, shape->getBoundingBox());
 	}
 }
+
 void Body::warp(dRect rc)
 {
 	// 这个方法已经过时了。
-	if (inv_m == 0 || dragged) { return; }
+	if (invMass == 0 || dragged) { return; }
 
 	if (o.x < rc.left()) { o.x += rc.w; }
 	else if (o.x > rc.right()) { o.x -= rc.w; }
@@ -192,7 +206,7 @@ void Body::Init(bool repos_o)
 		if (sh->isCircle)
 		{
 			sh->area = PI * sh->r * sh->r;
-			sub_center = sh->area * sh->o_rel;
+			sub_center = sh->area * sh->oRelative;
 			inertia += sh->area * (sh->r * sh->r) / 2;
 		}
 		else
@@ -213,25 +227,25 @@ void Body::Init(bool repos_o)
 
 		area += sh->area;
 		center += sub_center;
-		sh->o_rel = sub_center / sh->area;
+		sh->oRelative = sub_center / sh->area;
 	}
 
 	center /= area;
 	charge = chargeDensity * area;
-	inv_m = fixed ? 0 : 1 / (density * area);
-	inv_i = fixed ? 0 : 1 / (density * inertia);
+	invMass = fixed ? 0 : 1 / (density * area);
+	invInertia = fixed ? 0 : 1 / (density * inertia);
 	if (repos_o) { o = center; }
 	for (auto sh : shapes)
 	{
-		sh->o_rel -= center;
+		sh->oRelative -= center;
 		for (auto& v : sh->verticesRelative) { v -= center; }
 	}
-	generate();
+	updatePositionAndAABB();
 }
 void Body::Render(Cur& cur) const
 {
 	bool selected_con = cur.con_sel &&
-		(cur.con_sel->b0 == this || cur.con_sel->b1 == this);
+		(cur.con_sel->body0 == this || cur.con_sel->body1 == this);
 	dColor normalColor;
 	switch (cur.display)
 	{
@@ -241,7 +255,7 @@ void Body::Render(Cur& cur) const
 			if (point) { break; }
 		case DISPLAY_ENERGY:
 		{
-			double energy = v.lensqr() + v_ang * v_ang * inertia / area;
+			double energy = velocity.lensqr() + velocityAngular * velocityAngular * inertia / area;
 			normalColor = (dColor) vector3(energy * cur.energy_mul, 0, 0);
 			break;
 		}
@@ -268,7 +282,7 @@ void Body::Render(Cur& cur) const
 		drawEllipse(scr, dscr, getDepth(), o, r_point, r_point, bgr.viewPort(), color);
 		drawEllipseBorder(scr, dscr, getDepth(), o, r_point, r_point, bgr.viewPort(), borderColor, 20);
 	}
-	for (auto shape : shapes)
+	for (auto& shape : shapes)
 	{
 		if (shape->isCircle)
 		{
@@ -278,7 +292,7 @@ void Body::Render(Cur& cur) const
 				shape->o, shape->r, shape->r, bgr.viewPort(), borderColor, 30);
 
 			// 显示一条半径以便于我们判断圆的旋转角度
-			auto peakPoint = vector2(cos(shape->ang), sin(shape->ang)) * shape->r + shape->o;
+			auto peakPoint = vector2(cos(shape->radian), sin(shape->radian)) * shape->r + shape->o;
 			drawLineSegment(scr, dscr, shape->o, peakPoint, getDepth(), bgr.viewPort(), borderColor);
 			continue;
 		}
@@ -312,68 +326,82 @@ void Body::Render(Cur& cur) const
 		}
 	}
 }
-void Body::Step(Cur& cur, double sdt)
+
+void Body::Step(Cur& cur, double stepDt)
 {
-	if (inv_m)
+	if (invMass)
 	{
-		v -= damp_v * v * sdt;
-		v += cur.gravity * sdt;
-		v_ang -= damp_v_ang * v_ang * sdt;
-		if (preset_v_ang) { follow_preset_v_ang(cur); }
-		o += v * sdt;
-		radian += v_ang * sdt;
+		velocity -= dampCoeff * velocity * stepDt;
+		velocity += cur.gravity * stepDt;
+		velocityAngular -= dampCoeffAngular * velocityAngular * stepDt;
+		if (preset_v_ang) { followPresetVelocityAngular(cur); }
+		o += velocity * stepDt;
+		radian += velocityAngular * stepDt;
 	}
 	else
 	{
-		v = {}; v_ang = 0;
-		if (preset_o) { follow_preset_o(cur, sdt); }
-		if (preset_ang) { follow_preset_ang(cur, sdt); }
+		velocity = {};
+		velocityAngular = 0;
+		if (preset_o) { followPresetO(cur, stepDt); }
+		if (preset_ang) { followPresetAngle(cur, stepDt); }
 	}
 
 	if (dragged)
 	{
 		if (msd[2]) { hdl_dragged_whole(cur); }
-		else if (!kb && kbd[L'F']) { hdl_dragged_force(cur, sdt); }
-		else if (inv_m == 0) { hdl_dragged_whole(cur); }
+		else if (!kb && kbd[L'F']) { hdl_dragged_force(cur, stepDt); }
+		else if (invMass == 0) { hdl_dragged_whole(cur); }
 		else { hdl_dragged_point(cur); }
 	}
 
-	generate();
+	updatePositionAndAABB();
 }
-void Body::follow_preset_o(Cur& cur, double sdt)
+
+void Body::followPresetO(Cur& cur, double stepDt)
 {
 	if (!o_prog) { return; }
-	Scope sc; bool ret = false;
-	sc[L"t"] = msh<Var>(cur.t);
-	auto p1_old = tv2(Execute(ret, gl, sc, *o_prog)->vec);
-	sc.clear(); sc[L"t"] = msh<Var>(cur.t + sdt); ret = false;
-	auto p1 = tv2(Execute(ret, gl, sc, *o_prog)->vec);
-	auto v1 = (p1 - p1_old) / sdt;
+	Scope scope;
+	bool ret = false;
+	scope[L"t"] = msh<Var>(cur.t);
+	auto positionOld = tv2(Execute(ret, gl, scope, *o_prog)->vec);
+	scope.clear(); scope[L"t"] = msh<Var>(cur.t + stepDt); ret = false;
+	auto positionNew = tv2(Execute(ret, gl, scope, *o_prog)->vec);
+	auto velocityNew = (positionNew - positionOld) / stepDt;
 
 	// 其实我觉得应当选用时间较小的值。
-	o = p1; v = v1;
+	o = positionNew;
+	velocity = velocityNew;
 }
-void Body::follow_preset_ang(Cur& cur, double sdt)
+
+void Body::followPresetAngle(Cur& cur, double stepDt)
 {
 	if (!ang_prog) { return; }
-	Scope sc; bool ret = false;
-	sc[L"t"] = msh<Var>(cur.t);
-	auto ang1_old = Execute(ret, gl, sc, *ang_prog)->num;
-	sc.clear(); sc[L"t"] = msh<Var>(cur.t + sdt); ret = false;
-	auto ang1 = Execute(ret, gl, sc, *ang_prog)->num;
-	auto v_ang1 = (ang1 - ang1_old) / sdt;
 
-	radian = ang1; v_ang = v_ang1;
+	Scope scope;
+	bool ret = false;
+	scope[L"t"] = msh<Var>(cur.t);
+	auto radianOld = Execute(ret, gl, scope, *ang_prog)->num;
+	scope.clear();
+	scope[L"t"] = msh<Var>(cur.t + stepDt);
+	ret = false;
+	auto radianNew = Execute(ret, gl, scope, *ang_prog)->num;
+	auto velocityAngularNew = (radianNew - radianOld) / stepDt;
+
+	radian = radianNew;
+	velocityAngular = velocityAngularNew;
 }
-void Body::follow_preset_v_ang(Cur& cur)
+
+void Body::followPresetVelocityAngular(Cur& cur)
 {
 	if (!v_ang_prog) { return; }
+
 	Scope sc; bool ret = false;
 	sc[L"t"] = msh<Var>(cur.t);
-	auto v_ang1 = Execute(ret, gl, sc, *v_ang_prog)->num;
+	auto velocityAngularNew = Execute(ret, gl, sc, *v_ang_prog)->num;
 
-	v_ang = v_ang1;
+	velocityAngular = velocityAngularNew;
 }
+
 void Body::update_ang_drag(Cur& cur)
 {
 	v_ang_drag = 0;
@@ -384,6 +412,7 @@ void Body::update_ang_drag(Cur& cur)
 	}
 	ang_drag = radian + v_ang_drag * cur.real_dt;
 }
+
 void Body::hdl_dragged_point(Cur& cur)
 {
 	vector2 p1 = vector2(msp);
@@ -393,26 +422,28 @@ void Body::hdl_dragged_point(Cur& cur)
 
 	vector2 r0 = p0 - o;
 	r0 = vector2(-r0.y, r0.x);
-	vector2 v0 = v + v_ang * r0;
+	vector2 v0 = velocity + velocityAngular * r0;
 	double rd0 = dot(r0, d);
-	double inv_i0 = inv_m + rd0 * rd0 * inv_i;
+	double inv_i0 = invMass + rd0 * rd0 * invInertia;
 	vector2 j = dot(v1 - v0, d) * d / inv_i0;
 
-	v += j * inv_m;
-	v_ang += dot(j, r0) * inv_i;
+	velocity += j * invMass;
+	velocityAngular += dot(j, r0) * invInertia;
 	o += p1 - p0;
 }
+
 void Body::hdl_dragged_whole(Cur& cur)
 {
 	vector2 p1 = vector2(msp);
 	vector2 p0 = o + transform * p_drag_rel;
 	vector2 v1 = vector2(msp - msp_old) / cur.real_dt;
 
-	v = v1;
+	velocity = v1;
 	radian = ang_drag;
-	v_ang = v_ang_drag;
+	velocityAngular = v_ang_drag;
 	o += p1 - p0;
 }
+
 void Body::hdl_dragged_force(Cur& cur, double sdt)
 {
 	vector2 p1 = vector2(msp);
@@ -424,8 +455,8 @@ void Body::hdl_dragged_force(Cur& cur, double sdt)
 	double hooke = 1e6;
 	vector2 j = hooke * (p1 - p0).len() * sdt * d;
 
-	v += j * inv_m;
-	v_ang += dot(j, r0) * inv_i;
+	velocity += j * invMass;
+	velocityAngular += dot(j, r0) * invInertia;
 }
 void Body::Update(Cur& cur)
 {
@@ -436,10 +467,19 @@ void Body::Update(Cur& cur)
 	if (dragged)
 	{
 		update_ang_drag(cur);
-		if (msd[2]) { hdl_dragged_whole(cur); }
+		if (msd[2])
+		{
+			hdl_dragged_whole(cur);
+		}
 		else if (!kb && kbd[L'F']) { }
-		else if (inv_m == 0) { hdl_dragged_whole(cur); }
-		else { hdl_dragged_point(cur); }
+		else if (invMass == 0)
+		{
+			hdl_dragged_whole(cur);
+		}
+		else
+		{
+			hdl_dragged_point(cur);
+		}
 		dragged = msd[0] && (cur.mode == MODE_DRAG);
 	}
 	else
@@ -491,6 +531,6 @@ void Electrostatic(Body& b0, Body& b1, double sdt, double coulomb)
 	double dsqr = (b1.o - b0.o).lensqr();
 	vector2 d = (b1.o - b0.o).normalize();
 	vector2 je = -b0.charge * b1.charge * d / dsqr * sdt * coulomb;
-	b0.v += je * b0.inv_m;
-	b1.v -= je * b1.inv_m;
+	b0.velocity += je * b0.invMass;
+	b1.velocity -= je * b1.invMass;
 }

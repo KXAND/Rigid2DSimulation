@@ -11,7 +11,7 @@ struct Collision {
 	double diff = DBL_MAX;
 	vector2 n, c;
 	void Render(Cur& cur) const;
-	void Resolve(bool equal_repos);
+	void simulate(bool equal_repos);
 };
 
 void Collide(

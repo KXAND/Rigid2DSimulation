@@ -3,7 +3,8 @@
 Shape::Shape(double _r, vector2 _o_rel)
 {
 	isCircle = true;
-	r = _r; o_rel = _o_rel;
+	r = _r;
+	oRelative = _o_rel;
 }
 
 Shape::Shape(vector<vector2> const& _verticesRelative)
@@ -15,13 +16,13 @@ Shape::Shape(vector<vector2> const& _verticesRelative)
 void Shape::Save(FILE* f) const
 {
 	int sz = 0;
-	fwt(isCircle); fwt(r); fwt(ang); fwt(o_rel);
+	fwt(isCircle); fwt(r); fwt(radian); fwt(oRelative);
 	fwtv(verticesRelative);
 }
 Shape::Shape(FILE* f)
 {
 	int sz = 0;
-	frd(isCircle); frd(r); frd(ang); frd(o_rel);
+	frd(isCircle); frd(r); frd(radian); frd(oRelative);
 	frdv(verticesRelative); vertices.resize(verticesRelative.size());
 }
 
@@ -42,11 +43,11 @@ vector2 Shape::generateRandomPointInside() const
 		auto q = verticesRelative[j];
 
 		// 利用二维空矩阵行列式结果等于两个向量（op，oq）构成的平行四边形的面积得
-		randomArea -= matrix2(p - o_rel, q - o_rel).det() / 2;
+		randomArea -= matrix2(p - oRelative, q - oRelative).det() / 2;
 
 		// 在第一个令面积为负的区域中随机
 		if (randomArea < 0 || i == vertices.size() - 1)
-			return generateRadomPointInTriangle(o_rel, p, q);
+			return generateRadomPointInTriangle(oRelative, p, q);
 
 	}
 	return {};
@@ -79,7 +80,7 @@ aabb Shape::getBoundingBox() const
 	return box;
 }
 
-vector2 generateRadomPointInTriangle(vector2 v0, vector2 v1, vector2 v2)
+vector2 Shape::generateRadomPointInTriangle(vector2 v0, vector2 v1, vector2 v2) const
 {
 	double x0 = generateRadomFloat(1);
 	double x1 = generateRadomFloat(1);
@@ -93,7 +94,7 @@ vector2 generateRadomPointInTriangle(vector2 v0, vector2 v1, vector2 v2)
 	return x0 * v0 + x1 * v1 + (1 - x0 - x1) * v2;
 }
 
-bool isInsideTriangle(vector2 v, vector2 v0, vector2 v1, vector2 v2)
+bool Shape::isInsideTriangle(vector2 v, vector2 v0, vector2 v1, vector2 v2) const
 {
 	// 齐次坐标
 	vector3 u(v.x, v.y, 1);

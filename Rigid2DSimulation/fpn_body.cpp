@@ -5,10 +5,10 @@
 
 #define cur (*(Cur*)&app)
 #include "my_def.h"
-#define pbsel (cur.body_sel)
-#define bsel (*pbsel)
+#define ptr_body_sel (cur.body_sel)
+#define bsel (*ptr_body_sel)
 #define pcsel (cur.con_sel)
-#define pcon (bsel.cons[id])
+#define pcon (bsel.connections[id])
 
 RTbBody::RTbBody() : RichTextbox(360, 400) {}
 void RTbBody::Sync(App& app) { str = bsel.tmp_cmd; }
@@ -30,7 +30,7 @@ void LbBodyCon::Sync(App& app) {
 	switch (pcon->type) {
 	case CON_ROPE: type = loc(L"conn_rope"); break;
 	case CON_LINK: type = loc(L"conn_link"); break;
-	case CON_SPRG: type = loc(L"conn_spring"); break;
+	case CON_SPRING: type = loc(L"conn_spring"); break;
 	case CON_CORD: type = loc(L"conn_cord"); break;
 	}
 	txt = loc(L"conn") + tw(id) + L": " + type;
@@ -45,14 +45,14 @@ ClXBodyCon::ClXBodyCon(int id) {
 	cs = { &*lb, &*cb };
 }
 void ClYBodyCons::Update(App& app) {
-	rep(i, mbs.size(), bsel.cons.size()) {
+	rep(i, mbs.size(), bsel.connections.size()) {
 		mbs.push_back(msh<ClXBodyCon>(i));
 	}
 	cs.clear();
-	rep(i, 0, bsel.cons.size()) {
+	rep(i, 0, bsel.connections.size()) {
 		cs.push_back(&*mbs[i]);
 	}
-	rep(i, bsel.cons.size(), mbs.size()) {
+	rep(i, bsel.connections.size(), mbs.size()) {
 		mbs[i]->Discard(app);
 	}
 	CtrlListY::Update(app);
@@ -67,8 +67,8 @@ ClyBody::ClyBody() {
 	mkp(cly_cons)(); mkp(spy)(400);
 }
 void ClyBody::Update(App& app) {
-	if (bo != pbsel) {
-		bo = pbsel;
+	if (bo != ptr_body_sel) {
+		bo = ptr_body_sel;
 		for (auto c : cs) { c->Discard(app); }
 		if (bo) { cs = { &*cly_cons, &*rtb, &*clx_bt, &*spy }; }
 		else { cs = {}; }
@@ -81,21 +81,21 @@ void ClyBody::Discard(App& app) {
 }
 
 void RLbBody::Sync(App& app) {
-	if (!pbsel) { txt = loc(L"body_not_sel"); return; }
+	if (!ptr_body_sel) { txt = loc(L"body_not_sel"); return; }
 	txt.clear();
 	
 	txt += loc(L"body_o") + toWstring(bsel.o) + L"\n";
-	txt += loc(L"body_v") + toWstring(bsel.v) + L"\n";
+	txt += loc(L"body_v") + toWstring(bsel.velocity) + L"\n";
 	txt += loc(L"body_ang") + tw2(bsel.radian) + L"\n";
-	txt += loc(L"body_v_ang") + tw2(bsel.v_ang) + L"\n";
+	txt += loc(L"body_v_ang") + tw2(bsel.velocityAngular) + L"\n";
 	txt += loc(L"body_fixed") + tw(bsel.fixed) + L"\n";
 	txt += loc(L"body_density") + tw2(bsel.density) + L"\n";
 	txt += loc(L"body_charge_density") + tw2(bsel.chargeDensity) + L"\n";
-	txt += loc(L"body_e") + tw2(bsel.e) + L"\n";
-	txt += loc(L"body_mu_s") + tw2(bsel.mu_s) + L"\n";
-	txt += loc(L"body_mu_d") + tw2(bsel.mu_d) + L"\n";
-	txt += loc(L"body_damp_v") + tw2(bsel.damp_v) + L"\n";
-	txt += loc(L"body_damp_v_ang") + tw2(bsel.damp_v_ang) + L"\n";
+	txt += loc(L"body_e") + tw2(bsel.elasticity) + L"\n";
+	txt += loc(L"body_mu_s") + tw2(bsel.frictionStatic) + L"\n";
+	txt += loc(L"body_mu_d") + tw2(bsel.frictionDynamic) + L"\n";
+	txt += loc(L"body_damp_v") + tw2(bsel.dampCoeff) + L"\n";
+	txt += loc(L"body_damp_v_ang") + tw2(bsel.dampCoeffAngular) + L"\n";
 }
 
 FPnBody :: FPnBody(App& app) : FPnLan(app, 400, 600, L"fpn_body") {

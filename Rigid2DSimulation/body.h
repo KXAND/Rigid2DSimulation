@@ -21,16 +21,18 @@ struct Body
 	bool preset_v_ang = false;
 	vector<vector2> track;
 	vector<ptr<Shape>> shapes;
-	vector<Connection*> cons;
-	vector2 o, v;
+	vector<Connection*> connections;
+	vector2 o, velocity;
 	aabb box;
 	matrix2 transform = matrix2::I();
 	wstring cmd, tmp_cmd;
-	double radian = 0, v_ang = 0;
-	double inv_m = 0, inv_i = 0;
+	double radian = 0, velocityAngular = 0;
+	double invMass = 0;// 质量倒数，为0表示此物体不参与运动计算
+	double invInertia = 0;// 转动惯量倒数
 	double area = 0, density = 0;
-	double e = 0, mu_s = 0, mu_d = 0;
-	double damp_v = 0, damp_v_ang = 0;
+	double elasticity = 0;// 弹性系数
+	double frictionStatic = 0, frictionDynamic = 0;
+	double dampCoeff = 0, dampCoeffAngular = 0;
 	double chargeDensity = 0, charge = 0;
 
 	bool visited = false;
@@ -40,6 +42,7 @@ struct Body
 	vector2 p_drag_rel;
 	double dep_shape = 0, dep_point = 0;
 	double r_point = 0;
+
 	dColor innerColor;
 	dColor borderColor;
 	dColor hoveredColor;
@@ -51,25 +54,25 @@ struct Body
 	Body(vector2 const& _o);
 	Body(ptr<Shape> sh);
 	Body(vector<ptr<Shape>> const& _shs);
-	void save(FILE* f) const;
 	Body(Cur& cur, FILE* f);
+	void save(FILE* f) const;
 
 	double getDepth() const;
-	vector2 rnd_rel() const;
+	vector2 generateRandomPointInside() const;
 	bool inside(vector2 p) const;
 	void refresh(Cur& cur);
 	void read_cfg(Var const& cfg);
-	void generate();
-	void update_box();
+	void updatePositionAndAABB();
+	void updateAABB();
 	void warp(dRect rc);
 	void register_grid(Cur& cur);
 
 	void Init(bool repos_o = false);
 	void Render(Cur& cur) const;
 	void Step(Cur& cur, double sdt);
-	void follow_preset_o(Cur& cur, double sdt);
-	void follow_preset_ang(Cur& cur, double sdt);
-	void follow_preset_v_ang(Cur& cur);
+	void followPresetO(Cur& cur, double sdt);
+	void followPresetAngle(Cur& cur, double sdt);
+	void followPresetVelocityAngular(Cur& cur);
 	void update_ang_drag(Cur& cur);
 	void hdl_dragged_point(Cur& cur);
 	void hdl_dragged_whole(Cur& cur);

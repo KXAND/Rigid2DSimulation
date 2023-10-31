@@ -4,7 +4,7 @@
 #include "cur.h"
 
 void Group::Warp(dRect rc) {
-	for (auto b : bs) if (b->inv_m == 0 || b->dragged) { return; }
+	for (auto b : bs) if (b->invMass == 0 || b->dragged) { return; }
 	bool ok = false;
 
 	ok = true;
@@ -27,8 +27,8 @@ void Group::Warp(dRect rc) {
 void find_component(vector<Body*>& out, Body* b) {
 	b->visited = true;
 	out.push_back(b);
-	for (auto c : b->cons) {
-		auto tmp = the_other(b, *c);
+	for (auto c : b->connections) {
+		auto tmp = getTheOtherBody(b, *c);
 		if (tmp && !tmp->visited) {
 			find_component(out, tmp);
 		}

@@ -256,28 +256,28 @@ void CreateConn(Cur& cur, Var const& cfg) {
 	
 	ptr<Connection> con;
 	mkp(con)();
-	con->b0 = &*bs[idx0];
-	con->b1 = &*bs[idx1];
-	con->p0_rel = con->b0->rnd_rel();
-	con->p1_rel = con->b1->rnd_rel();
+	con->body0 = &*bs[idx0];
+	con->body1 = &*bs[idx1];
+	con->p0Relative = con->body0->generateRandomPointInside();
+	con->p1Relative = con->body1->generateRandomPointInside();
 	bool absolute = false;
 	getv(absolute);
 	if (found(L"p0")) {
-		con->p0_rel = tv2(*dic[L"p0"]);
+		con->p0Relative = tv2(*dic[L"p0"]);
 		if (absolute) { 
-			con->p0_rel -= con->b0->o; 
-			con->p0_rel = con->b0->transform.inverse() * con->p0_rel;
+			con->p0Relative -= con->body0->o; 
+			con->p0Relative = con->body0->transform.inverse() * con->p0Relative;
 		}
 	}
 	if (found(L"p1")) {
-		con->p1_rel = tv2(*dic[L"p1"]);
+		con->p1Relative = tv2(*dic[L"p1"]);
 		if (absolute) {
-			con->p1_rel -= con->b1->o; 
-			con->p1_rel = con->b1->transform.inverse() * con->p1_rel;
+			con->p1Relative -= con->body1->o; 
+			con->p1Relative = con->body1->transform.inverse() * con->p1Relative;
 		}
 	}
-	con->sign_up();
-	con->generate();
+	con->signUpToBodies();
+	con->updatePosition();
 	con->len = (con->p0 - con->p1).len();
 	con->read_cfg(cfg);
 	cur.cons.push_back(con);
@@ -348,10 +348,10 @@ void Gear(Cur& cur, Var const& r, Var const& n, Var const& h, Var const& cfg) {
 
 	auto con = msh<Connection>();
 	con->type = CON_LINK;
-	con->b0 = &*root;
-	con->b1 = &*wheel;
-	con->sign_up();
-	con->generate();
+	con->body0 = &*root;
+	con->body1 = &*wheel;
+	con->signUpToBodies();
+	con->updatePosition();
 	cur.cons.push_back(con);
 	cur.scene_changed = true;
 }
@@ -383,14 +383,14 @@ void Strand(Cur& cur, Var const& _p0, Var const& _p1,
 		bs.push_back(b1);
 
 		mkp(con)();
-		con->b0 = &*b0;
-		con->b1 = &*b1;
+		con->body0 = &*b0;
+		con->body1 = &*b1;
 		con->len = gap;
-		con->p0_rel = +rad * (p1 - p0).normalize();
-		con->p1_rel = -rad * (p1 - p0).normalize();
+		con->p0Relative = +rad * (p1 - p0).normalize();
+		con->p1Relative = -rad * (p1 - p0).normalize();
 		con->read_cfg(cfg_conn);
-		con->sign_up();
-		con->generate();
+		con->signUpToBodies();
+		con->updatePosition();
 		cur.cons.push_back(con);
 
 		b0 = b1;
@@ -427,15 +427,15 @@ void Necklace(Cur& cur, Var const& _o, Var const& rad,
 		bs.push_back(b1);
 
 		mkp(con)();
-		con->b0 = &*b0;
-		con->b1 = &*b1;
+		con->body0 = &*b0;
+		con->body1 = &*b1;
 		con->len = gap;
-		con->p1_rel = ball_rad * vector2(+sin(phi), -cos(phi));
+		con->p1Relative = ball_rad * vector2(+sin(phi), -cos(phi));
 		phi = 2 * PI * (i - 1) / n;
-		con->p0_rel = ball_rad * vector2(-sin(phi), +cos(phi));
+		con->p0Relative = ball_rad * vector2(-sin(phi), +cos(phi));
 		con->read_cfg(cfg_conn);
-		con->sign_up();
-		con->generate();
+		con->signUpToBodies();
+		con->updatePosition();
 		cur.cons.push_back(con);
 
 		b0 = b1;
@@ -443,15 +443,15 @@ void Necklace(Cur& cur, Var const& _o, Var const& rad,
 	double phi = 2 * PI * (n) / n;
 	b1 = beg;
 	mkp(con)();
-	con->b0 = &*b0;
-	con->b1 = &*b1;
+	con->body0 = &*b0;
+	con->body1 = &*b1;
 	con->len = gap;
-	con->p1_rel = ball_rad * vector2(+sin(phi), -cos(phi));
+	con->p1Relative = ball_rad * vector2(+sin(phi), -cos(phi));
 	phi = 2 * PI * (n - 1) / n;
-	con->p0_rel = ball_rad * vector2(-sin(phi), +cos(phi));
+	con->p0Relative = ball_rad * vector2(-sin(phi), +cos(phi));
 	con->read_cfg(cfg_conn);
-	con->sign_up();
-	con->generate();
+	con->signUpToBodies();
+	con->updatePosition();
 	cur.cons.push_back(con);
 	cur.scene_changed = true;
 }

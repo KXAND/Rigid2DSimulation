@@ -169,13 +169,13 @@ void Creator::update_con(Cur& cur)
 		{
 			if (b1)
 			{
-				con->b0 = b0;
-				con->b1 = b1;
-				con->p0_rel = p0_rel;
-				con->p1_rel = p1_rel;
+				con->body0 = b0;
+				con->body1 = b1;
+				con->p0Relative = p0_rel;
+				con->p1Relative = p1_rel;
 
-				con->sign_up();
-				con->generate();
+				con->signUpToBodies();
+				con->updatePosition();
 				con->len = (con->p0 - con->p1).len();
 				cur.cons.push_back(con);
 				cur.scene_changed = true;
@@ -210,11 +210,11 @@ void Creator::update_nail(Cur& cur)
 		cur.bs.push_back(body);
 		mkp(con)();
 		con->type = CON_LINK;
-		con->b0 = b0;
-		con->b1 = &*body;
-		con->p0_rel = p0_rel;
-		con->sign_up();
-		con->generate();
+		con->body0 = b0;
+		con->body1 = &*body;
+		con->p0Relative = p0_rel;
+		con->signUpToBodies();
+		con->updatePosition();
 		cur.cons.push_back(con);
 
 		b0 = NULL; con = NULL;

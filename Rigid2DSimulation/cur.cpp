@@ -133,14 +133,14 @@ void Cur::Update()
 		if (kbc(L' ')) { paused = !paused; }
 	}
 
-	for (auto b : bs) if (b->del) for (auto c : b->cons) { c->del = true; }
+	for (auto b : bs) if (b->del) for (auto c : b->connections) { c->del = true; }
 	if (body_sel && body_sel->del) { body_sel = NULL; }
 	if (con_sel && con_sel->del) { con_sel = NULL; }
 	for (auto c : cons) if (c->del)
 	{
-		auto& cons0 = c->b0->cons;
+		auto& cons0 = c->body0->connections;
 		cons0.erase(remove(cons0.begin(), cons0.end(), &*c), cons0.end());
-		auto& cons1 = c->b1->cons;
+		auto& cons1 = c->body1->connections;
 		cons1.erase(remove(cons1.begin(), cons1.end(), &*c), cons1.end());
 	}
 	cons.erase(remove_if(cons.begin(), cons.end(),
@@ -178,15 +178,15 @@ void Cur::Update()
 
 			cols.clear();
 			CollideBodies();
-			for (auto c : cols) { c->Resolve(equal_repos); }
+			for (auto c : cols) { c->simulate(equal_repos); }
 			// for (auto c : cols) { c->Render(*this); }
-			for (auto c : cons) { c->Resolve(sdt, equal_repos); }
+			for (auto c : cons) { c->Simulate(sdt, equal_repos); }
 			t += sdt;
 		}
 	}
 
-	for (auto b : bs) { b->generate(); b->Render(*this); }
-	for (auto c : cons) { c->generate(); c->Render(*this); }
+	for (auto b : bs) { b->updatePositionAndAABB(); b->Render(*this); }
+	for (auto c : cons) { c->updatePosition(); c->Render(*this); }
 
 	if (mode == MODE_CREATE) { creator->Update(*this); }
 	ui.Update(*this);
