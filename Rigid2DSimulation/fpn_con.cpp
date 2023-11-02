@@ -4,7 +4,7 @@
 
 #define cur (*(Cur*)&app)
 #include "my_def.h"
-#define pcsel (cur.con_sel)
+#define pcsel (cur.connectionSelecting)
 #define csel (*pcsel)
 
 RTbCon::RTbCon() : RichTextbox(360, 400) {}

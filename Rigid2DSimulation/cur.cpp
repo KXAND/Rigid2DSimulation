@@ -76,20 +76,20 @@ void Cur::Reset()
 	connections.clear();
 	dbstr.clear();
 
-	gl[L"left_bgr"] = msh<Var>(bgr.tl.x);
-	gl[L"top_bgr"] = msh<Var>(bgr.tl.y);
-	gl[L"w_bgr"] = msh<Var>(bgr.w);
-	gl[L"h_bgr"] = msh<Var>(bgr.h);
+	gl[L"left_bgr"] = msh<Var>(bgr.topLeft.x);
+	gl[L"top_bgr"] = msh<Var>(bgr.topLeft.y);
+	gl[L"w_bgr"] = msh<Var>(bgr.width);
+	gl[L"h_bgr"] = msh<Var>(bgr.height);
 
-	body_sel = NULL;
-	con_sel = NULL;
+	bodySelecting = NULL;
+	connectionSelecting = NULL;
 	isSceneChanged = false;
 	gravity = vector2();
 	max_real_dt = 0.05;
 	t = 0; n_step = 60;
-	rect_scene.topLeftPosition = bgr.tl;
-	rect_scene.w = bgr.w;
-	rect_scene.h = bgr.h;
+	rect_scene.topLeftPosition = bgr.topLeft;
+	rect_scene.w = bgr.width;
+	rect_scene.h = bgr.height;
 	s_grid = 50;
 	energy_mul = 4e-6;
 	chargeMultiplier = 1;
@@ -128,14 +128,14 @@ void Cur::Update()
 		if (!isMuted) { cl->play(wv.wvin); }
 	}
 
-	if (!kb)
+	if (!keyboardOwner)
 	{
 		if (kbc(L' ')) { isPaused = !isPaused; }
 	}
 
 	for (auto b : bs) if (b->del) for (auto c : b->connections) { c->del = true; }
-	if (body_sel && body_sel->del) { body_sel = NULL; }
-	if (con_sel && con_sel->del) { con_sel = NULL; }
+	if (bodySelecting && bodySelecting->del) { bodySelecting = NULL; }
+	if (connectionSelecting && connectionSelecting->del) { connectionSelecting = NULL; }
 	for (auto c : connections) if (c->del)
 	{
 		auto& cons0 = c->body0->connections;

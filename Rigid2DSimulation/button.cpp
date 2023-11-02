@@ -43,9 +43,9 @@ void Button::Update(App& app) {
 }
 void Button::Discard(App& app) { rmv; chosen = hovered = false; }
 void Button::PreUpdate(App& app) {
-	bool ok = dhv <= dep &&
+	bool ok = hoveredDepth <= dep &&
 		isInside(msp, { tl, w, h }) && isInside(msp, vp);
-	if (ok) { dhv = dep; hvd = this; }
+	if (ok) { hoveredDepth = dep; hvd = this; }
 }
 
 BtLan::BtLan(int w, wstring const& id) : Button(w), id_txt(id) {}

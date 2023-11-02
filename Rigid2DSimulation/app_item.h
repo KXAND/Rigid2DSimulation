@@ -1,7 +1,7 @@
 #pragma once
 #include "dvec.h"
 
-struct app_input {
+struct AppInput {
 	double msw = 0;
 	wstring chs;
 	dVector2 msp, msp_old;
@@ -44,10 +44,10 @@ struct app_fps {
 };
 
 struct app_owners {
-	void* kb = NULL;
+	void* keyboardOwner = NULL;
 	void* hvd = NULL;
 	void* whd = NULL;
-	double dhv = -DBL_MAX, dwh = -DBL_MAX;
+	double hoveredDepth = -DBL_MAX, whdDepth = -DBL_MAX;
 
 	void reset();
 	void remove(void* o);

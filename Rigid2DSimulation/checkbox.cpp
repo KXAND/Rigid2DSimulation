@@ -50,9 +50,9 @@ void Checkbox::Discard(App& app) {
 	hovered = false; 
 }
 void Checkbox::PreUpdate(App& app) {
-	bool ok = dhv <= dep &&
+	bool ok = hoveredDepth <= dep &&
 		isInside(msp, { tl_box(), s_box, s_box }) && isInside(msp, vp);
-	if (ok) { dhv = dep; hvd = this; }
+	if (ok) { hoveredDepth = dep; hvd = this; }
 }
 
 CbLan::CbLan(wstring const& id, bool big) : Checkbox(big), id_txt(id) {}

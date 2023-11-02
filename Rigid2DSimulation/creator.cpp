@@ -268,9 +268,9 @@ void Creator::Discard(Cur& cur)
 }
 void Creator::PreUpdate(Cur& cur)
 {
-	if (dhv <= dep() && isInside(msp, bgr.viewPort()))
+	if (hoveredDepth <= dep() && isInside(msp, bgr.viewPort()))
 	{
-		dhv = dep();
+		hoveredDepth = dep();
 		hvd = this;
 	}
 }

@@ -305,9 +305,9 @@ void CreateConnetion(Cur& cur, Var const& cfg)
 
 void Boundary(Cur& cur, Var const& thk, Var const& cfg)
 {
-	double bw = bgr.w, bh = bgr.h;
-	double bx0 = bgr.tl.x, bx1 = bx0 + bw;
-	double by0 = bgr.tl.y, by1 = by0 + bh;
+	double bw = bgr.width, bh = bgr.height;
+	double bx0 = bgr.topLeft.x, bx1 = bx0 + bw;
+	double by0 = bgr.topLeft.y, by1 = by0 + bh;
 	ptr<Body> body;
 	dColor color = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
 

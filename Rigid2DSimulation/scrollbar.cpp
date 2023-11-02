@@ -50,7 +50,7 @@ void ScrollbarY::Discard(App& app) {
 	rmv; dragged = hovered = full = hovered_node = false;
 }
 void ScrollbarY::PreUpdate(App& app) {
-	bool ok = dhv <= dep &&
+	bool ok = hoveredDepth <= dep &&
 		isInside(msp, { tl, w, h }) && isInside(msp, vpscr);
-	if (ok) { dhv = dep; hvd = this; }
+	if (ok) { hoveredDepth = dep; hvd = this; }
 }

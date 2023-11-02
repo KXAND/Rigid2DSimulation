@@ -10,7 +10,7 @@ int destroyed(App* app, WPARAM wp, LPARAM lp) {
 	return 0;
 }
 int kill_focus(App* app, WPARAM wp, LPARAM lp) {
-	app->in.kbd.fill(false);
+	app->input.kbd.fill(false);
 	return 0;
 }
 int set_cursor(App* app, WPARAM wp, LPARAM lp) {
@@ -21,21 +21,21 @@ int set_cursor(App* app, WPARAM wp, LPARAM lp) {
 	return 0;
 }
 int bar_clicked(App* app, WPARAM wp, LPARAM lp) {
-	app->in.bar_clicked = true;
-	app->in.kbd.fill(false);
+	app->input.bar_clicked = true;
+	app->input.kbd.fill(false);
 	return 0;
 }
 int char_translated(App* app, WPARAM wp, LPARAM lp) {
-	app->in.chs += (wchar_t)wp;
+	app->input.chs += (wchar_t)wp;
 	return 0;
 }
 int key_up(App* app, WPARAM wp, LPARAM lp) {
-	app->in.kbd[wp] = false;
+	app->input.kbd[wp] = false;
 	return 0;
 }
 int key_down(App* app, WPARAM wp, LPARAM lp) {
-	app->in.kbmsg[wp]++;
-	app->in.kbd[wp] = true;
+	app->input.kbmsg[wp]++;
+	app->input.kbd[wp] = true;
 	return 0;
 }
 int mouse_move(App* app, WPARAM wp, LPARAM lp) {
@@ -43,7 +43,7 @@ int mouse_move(App* app, WPARAM wp, LPARAM lp) {
 }
 int mouse_wheel(App* app, WPARAM wp, LPARAM lp) {
 	int dt = GET_WHEEL_DELTA_WPARAM(wp);
-	app->in.msw = (double)dt / WHEEL_DELTA;
+	app->input.msw = (double)dt / WHEEL_DELTA;
 	return 0;
 }
 
@@ -52,41 +52,41 @@ int mouse_wheel(App* app, WPARAM wp, LPARAM lp) {
 // 窗口最小化或者被遮挡之后，如何判断鼠标是否在窗口内。
 // 好像鼠标在桌面之外的时候不会有 MOUSELEAVE 消息。
 int mouse_leave(App* app, WPARAM wp, LPARAM lp) {
-	app->in.mouse_owned = false;
-	app->in.mouse_tracked = false;
+	app->input.mouse_owned = false;
+	app->input.mouse_tracked = false;
 	return 0;
 }
 int left_mouse_up(App* app, WPARAM wp, LPARAM lp) {
-	app->in.msd[0] = false;
-	app->in.mouse_owned = true;
+	app->input.msd[0] = false;
+	app->input.mouse_owned = true;
 	return 0;
 }
 int left_mouse_down(App* app, WPARAM wp, LPARAM lp) {
-	app->in.msd[0] = true;
-	app->in.mouse_owned = true;
-	app->in.track_mouse();
+	app->input.msd[0] = true;
+	app->input.mouse_owned = true;
+	app->input.track_mouse();
 	return 0;
 }
 int mid_mouse_up(App* app, WPARAM wp, LPARAM lp) {
-	app->in.msd[1] = false;
-	app->in.mouse_owned = true;
+	app->input.msd[1] = false;
+	app->input.mouse_owned = true;
 	return 0;
 }
 int mid_mouse_down(App* app, WPARAM wp, LPARAM lp) {
-	app->in.msd[1] = true;
-	app->in.mouse_owned = true;
-	app->in.track_mouse();
+	app->input.msd[1] = true;
+	app->input.mouse_owned = true;
+	app->input.track_mouse();
 	return 0;
 }
 int right_mouse_up(App* app, WPARAM wp, LPARAM lp) {
-	app->in.msd[2] = false;
-	app->in.mouse_owned = true;
+	app->input.msd[2] = false;
+	app->input.mouse_owned = true;
 	return 0;
 }
 int right_mouse_down(App* app, WPARAM wp, LPARAM lp) {
-	app->in.msd[2] = true;
-	app->in.mouse_owned = true;
-	app->in.track_mouse();
+	app->input.msd[2] = true;
+	app->input.mouse_owned = true;
+	app->input.track_mouse();
 	return 0;
 }
 

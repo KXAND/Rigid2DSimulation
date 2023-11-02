@@ -297,13 +297,13 @@ void RichTextbox::Discard(App& app) {
 	edit_a = edit_b = 0; x_cs_rel_hist = 0;
 }
 void RichTextbox::PreUpdate(App& app) {
-	if (edit) { kb = this; }
+	if (edit) { keyboardOwner = this; }
 
-	bool ok = dhv <= dep &&
+	bool ok = hoveredDepth <= dep &&
 		isInside(msp, { tl, w, h }) && isInside(msp, vp);
-	if (ok) { dhv = dep; hvd = this; }
+	if (ok) { hoveredDepth = dep; hvd = this; }
 
-	ok = dwh <= dep &&
+	ok = whdDepth <= dep &&
 		isInside(msp, { tl, w, h }) && isInside(msp, vp);
-	if (ok) { dwh = dep; whd = this; }
+	if (ok) { whdDepth = dep; whd = this; }
 }

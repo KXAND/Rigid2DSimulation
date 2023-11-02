@@ -3,34 +3,39 @@
 #include "draw_str.h"
 #include "draw_tile.h"
 
-Bgr::Bgr(Cur& cur) {
-	w = 1630; h = 860;
-	tl = { 170, 0 }; dep = -100000;
-	black = tile(w, h, dColor{}, 255);
+Bgr::Bgr(Cur& cur)
+{
+	width = 1630; height = 860;
+	topLeft = { 170, 0 }; depth = -100000;
+	black = tile(width, height, dColor{}, 255);
 }
 
 #include "my_def.h"
 
-void Bgr::render(Cur& cur) {
-	draw_tile_raw(scr, tl, scr.rect(), black, black.rect());
+void Bgr::render(Cur& cur)
+{
+	draw_tile_raw(scr, topLeft, scr.rect(), black, black.rect());
 	draw_str(scr, dscr, 999, dbstr,
-		dColor(255), ft, tl + dVector2(10, 10), w - 20, bgr.viewPort());
+		dColor(255), ft, topLeft + dVector2(10, 10), width - 20, bgr.viewPort());
 }
 
-void Bgr::Update(Cur& cur) {
+void Bgr::Update(Cur& cur)
+{
 	hovered = (hvd == this);
 	wheeled = (whd == this);
 
-	if (hovered && msc(0)) { 
-		cur.body_sel = NULL; 
-		cur.con_sel = NULL; 
+	if (hovered && msc(0))
+	{
+		cur.bodySelecting = NULL;
+		cur.connectionSelecting = NULL;
 	}
 	render(cur);
 }
-void Bgr::PreUpdate(Cur& cur) {
-	bool ok = dhv <= dep && isInside(msp, viewPort());
-	if (ok) { dhv = dep; hvd = this; }
+void Bgr::PreUpdate(Cur& cur)
+{
+	bool haveDeeperValue = hoveredDepth <= depth && isInside(msp, viewPort());
+	if (haveDeeperValue) { hoveredDepth = depth; hvd = this; }
 
-	ok = dwh <= dep && isInside(msp, viewPort());
-	if (ok) { dwh = dep; whd = this; }
+	haveDeeperValue = whdDepth <= depth && isInside(msp, viewPort());
+	if (haveDeeperValue) { whdDepth = depth; whd = this; }
 }

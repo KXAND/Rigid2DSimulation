@@ -246,11 +246,11 @@ void Textbox::Discard(App& app) {
 	edit_a = edit_b = 0;
 }
 void Textbox::PreUpdate(App& app) {
-	if (edit) { kb = this; }
+	if (edit) { keyboardOwner = this; }
 
-	bool ok = dhv <= dep &&
+	bool ok = hoveredDepth <= dep &&
 		isInside(msp, { tl_box(), w, h }) && isInside(msp, vp);
-	if (ok) { dhv = dep; hvd = this; }
+	if (ok) { hoveredDepth = dep; hvd = this; }
 }
 
 TbLan::TbLan(wstring const& id, int w) : Textbox(w), id_txt(id) {}

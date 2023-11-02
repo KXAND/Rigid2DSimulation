@@ -176,13 +176,13 @@ void FloatPanel::Discard(App& app) {
 }
 void FloatPanel::PreUpdate(App& app) {
 	if (!shown) return;
-	bool ok = dhv <= dep &&
+	bool ok = hoveredDepth <= dep &&
 		isInside(msp, { tl, w, h }) && isInside(msp, vpscr);
-	if (ok) { dhv = dep; hvd = this; }
+	if (ok) { hoveredDepth = dep; hvd = this; }
 
-	ok = dwh <= dep &&
+	ok = whdDepth <= dep &&
 		isInside(msp, { tl, w, h }) && isInside(msp, vpscr);
-	if (ok) { dwh = dep; whd = this; }
+	if (ok) { whdDepth = dep; whd = this; }
 
 	if (c) { c->PreUpdate(app); }
 	if (use_sb) { sb->PreUpdate(app); }

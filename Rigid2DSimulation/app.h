@@ -18,7 +18,7 @@ struct App {
 
 	app_wv wv;
 	app_fps fps;
-	app_input in;
+	AppInput input;
 	app_owners own;
 
 	HDC hdc = NULL;

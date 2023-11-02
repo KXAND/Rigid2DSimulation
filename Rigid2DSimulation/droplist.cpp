@@ -93,9 +93,9 @@ void Droplist::Discard(App& app) {
 }
 void Droplist::PreUpdate(App& app) {
 	int real_h = h + (edit ? n_item * h_item : 0);
-	bool ok = dhv <= dep &&
+	bool ok = hoveredDepth <= dep &&
 		isInside(msp, { tl_box(), w, real_h}) && isInside(msp, vp);
-	if (ok) { dhv = dep; hvd = this; }
+	if (ok) { hoveredDepth = dep; hvd = this; }
 }
 
 DpLan::DpLan(wstring const& id, int w, DpNm const& nm) : Droplist(w, nm), id_txt(id) {}

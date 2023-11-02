@@ -1,12 +1,12 @@
 #include "app_item.h"
 
-void app_input::track_mouse() {
+void AppInput::track_mouse() {
 	if (!mouse_tracked) {
 		mouse_tracked = true;
 		TrackMouseEvent(&mouse_track);
 	}
 }
-bool app_input::sync_mouse(HWND hwnd) {
+bool AppInput::sync_mouse(HWND hwnd) {
 	POINT pnt{}; BOOL ret = GetCursorPos(&pnt);
 	if (!ret) { return false; }
 	ret = ScreenToClient(hwnd, &pnt);
@@ -23,12 +23,12 @@ bool app_input::sync_mouse(HWND hwnd) {
 	} return true;
 }
 
-void app_input::init(HWND hwnd) {
+void AppInput::init(HWND hwnd) {
 	mouse_track.cbSize = sizeof(mouse_track);
 	mouse_track.dwFlags = TME_LEAVE;
 	mouse_track.hwndTrack = hwnd;
 }
-void app_input::reset() {
+void AppInput::reset() {
 	msw = 0; chs.clear();
 	// msp 在 App 中已经做过了。
 	msd_old = msd; kbd_old = kbd;
@@ -50,13 +50,13 @@ void app_fps::update() {
 }
 
 void app_owners::reset() {
-	dhv = dwh = -DBL_MAX; kb = hvd = whd = NULL;
+	hoveredDepth = whdDepth = -DBL_MAX; keyboardOwner = hvd = whd = NULL;
 }
 void app_owners::remove(void* o) {
-	if (kb == o) { kb = NULL; }
+	if (keyboardOwner == o) { keyboardOwner = NULL; }
 	if (hvd == o) { hvd = NULL; }
 	if (whd == o) { whd = NULL; }
 }
 void app_owners::free_kb(void* o) {
-	if (kb == o) { kb = NULL; }
+	if (keyboardOwner == o) { keyboardOwner = NULL; }
 }

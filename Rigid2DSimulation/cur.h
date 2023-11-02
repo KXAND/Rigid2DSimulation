@@ -51,8 +51,8 @@ struct Cur : App {
 	int n_step = 0;
 	dRect rect_scene;
 	ptr<Creator> creator;
-	Body *body_sel = NULL;
-	Connection* con_sel = NULL;
+	Body *bodySelecting = NULL;
+	Connection* connectionSelecting = NULL;
 	vector<ptr<Body>> bs;
 	vector<ptr<Group>> grps;
 	vector<ptr<Collision>> cols;

@@ -5,9 +5,9 @@
 
 #define cur (*(Cur*)&app)
 #include "my_def.h"
-#define ptr_body_sel (cur.body_sel)
+#define ptr_body_sel (cur.bodySelecting)
 #define bsel (*ptr_body_sel)
-#define pcsel (cur.con_sel)
+#define pcsel (cur.connectionSelecting)
 #define pcon (bsel.connections[id])
 
 RTbBody::RTbBody() : RichTextbox(360, 400) {}

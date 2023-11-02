@@ -58,9 +58,9 @@ void DragbarX::Discard(App& app) {
 	dragged = hovered = false; 
 }
 void DragbarX::PreUpdate(App& app) {
-	bool ok = dhv <= dep &&
+	bool ok = hoveredDepth <= dep &&
 		isInside(msp, { tl_node(), nw, nh }) && isInside(msp, vp);
-	if (ok) { dhv = dep; hvd = this; }
+	if (ok) { hoveredDepth = dep; hvd = this; }
 }
 
 DbXLan::DbXLan(wstring const& id, int w) : DragbarX(w), id_txt(id) {}

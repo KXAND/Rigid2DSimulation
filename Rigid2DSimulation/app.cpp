@@ -21,7 +21,7 @@ void App::Init()
 
 	register_window_class(); create_window(); ret = wv.init();
 	addLog(ret ? L"成功加载声音模块.\n" : L"加载声音模块失败.\n");
-	in.init(hwnd); init_bmi(); loadLocalizationFile();
+	input.init(hwnd); init_bmi(); loadLocalizationFile();
 
 	hdc = GetDC(hwnd);
 	addLog(hdc ? L"成功取得设备环境句柄.\n" : L"取得设备环境句柄失败.\n");
@@ -46,11 +46,11 @@ void App::Run(bool console)
 			bool ret = SetWindowText(hwnd, title.c_str());
 			if (!ret) { addLog(L"设置标题失败.\n"); }
 			fps.update(); reset_dscr();
-			ret = in.sync_mouse(hwnd);
+			ret = input.sync_mouse(hwnd);
 			if (!ret) { addLog(L"同步鼠标位置失败.\n"); }
 			Update(); ret = wv.play();
 			if (!ret) { addLog(L"播放声音失败.\n"); }
-			present_scr(); in.reset(); own.reset();
+			present_scr(); input.reset(); own.reset();
 		}
 	} ReleaseDC(hwnd, hdc);
 	wv.exit(); addLog(L"退出程序.\n\n");

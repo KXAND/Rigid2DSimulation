@@ -244,8 +244,8 @@ void Body::Init(bool repos_o)
 }
 void Body::Render(Cur& cur) const
 {
-	bool selected_con = cur.con_sel &&
-		(cur.con_sel->body0 == this || cur.con_sel->body1 == this);
+	bool selected_con = cur.connectionSelecting &&
+		(cur.connectionSelecting->body0 == this || cur.connectionSelecting->body1 == this);
 	dColor normalColor;
 	switch (cur.display)
 	{
@@ -272,7 +272,7 @@ void Body::Render(Cur& cur) const
 
 	dColor color =
 		dragged ? draggedColor :
-		(cur.body_sel == this) ? selectedColor :
+		(cur.bodySelecting == this) ? selectedColor :
 		hovered ? hoveredColor :
 		selected_con ? selectedConColor :
 		normalColor;
@@ -349,7 +349,7 @@ void Body::Step(Cur& cur, double stepDt)
 	if (dragged)
 	{
 		if (msd[2]) { handleDragWhole(cur); }
-		else if (!kb && kbd[L'F']) { handleDragForce(cur, stepDt); }
+		else if (!keyboardOwner && kbd[L'F']) { handleDragForce(cur, stepDt); }
 		else if (invMass == 0) { handleDragWhole(cur); }
 		else { handleDragPoint(cur); }
 	}
@@ -406,7 +406,7 @@ void Body::followPresetVelocityAngular(Cur& cur)
 void Body::updateDragAngle(Cur& cur)
 {
 	velocityAngularDrag = 0;
-	if (!kb)
+	if (!keyboardOwner)
 	{
 		if (kbd[L'Q']) { velocityAngularDrag = -cur.velocityAngularDrag; }
 		if (kbd[L'E']) { velocityAngularDrag = +cur.velocityAngularDrag; }
@@ -474,7 +474,7 @@ void Body::Update(Cur& cur)
 	hovered = (hvd == this);
 
 	if (cur.mode == MODE_DEL && hovered && msc(0)) { del = true; }
-	if (cur.mode == MODE_SEL && hovered && msc(0)) { cur.body_sel = this; }
+	if (cur.mode == MODE_SEL && hovered && msc(0)) { cur.bodySelecting = this; }
 	if (dragged)
 	{
 		// 检查拖拽模式，应用函数
@@ -483,7 +483,7 @@ void Body::Update(Cur& cur)
 		{
 			handleDragWhole(cur);
 		}
-		else if (!kb && kbd[L'F']) { }
+		else if (!keyboardOwner && kbd[L'F']) { }
 		else if (invMass == 0)
 		{
 			handleDragWhole(cur);
@@ -506,12 +506,12 @@ void Body::Update(Cur& cur)
 		}
 	}
 
-	if (this == cur.body_sel && cur.isTrackShown && !cur.isPaused)
+	if (this == cur.bodySelecting && cur.isTrackShown && !cur.isPaused)
 	{
 		// 绘制运动轨迹
 		track.push_back(o);
 	}
-	else if (this != cur.body_sel || !cur.isTrackShown)
+	else if (this != cur.bodySelecting || !cur.isTrackShown)
 	{
 		//不符合条件时清空轨迹信息
 		track.clear();
@@ -536,9 +536,9 @@ void Body::Update(Cur& cur)
 }
 void Body::PreUpdate(Cur& cur)
 {
-	bool ok = dhv <= getDepth() &&
+	bool ok = hoveredDepth <= getDepth() &&
 		inside((vector2) msp) && isInside(msp, bgr.viewPort());
-	if (ok) { dhv = getDepth(); hvd = this; }
+	if (ok) { hoveredDepth = getDepth(); hvd = this; }
 }
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulomb)
