@@ -3,6 +3,9 @@
 #include "aabb.h"
 
 struct Cur;
+/// <summary>
+/// 定义一个图形
+/// </summary>
 struct Shape
 {
 private:

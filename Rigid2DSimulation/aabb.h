@@ -1,6 +1,9 @@
 #pragma once
 #include "vector2.h"
 
+/// <summary>
+/// aabb°üÎ§ºÐ
+/// </summary>
 struct aabb {
 	double x0 = DBL_MAX, x1 = -DBL_MAX;
 	double y0 = DBL_MAX, y1 = -DBL_MAX;

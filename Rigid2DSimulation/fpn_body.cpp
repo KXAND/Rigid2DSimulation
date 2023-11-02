@@ -19,7 +19,7 @@ void BtBodyOK::OnClick(App& app) {
 	bsel.cmd = bsel.tmp_cmd; bsel.refresh(cur);
 }
 BtBodyDel::BtBodyDel() : BtLan(70, L"bt_body_del") {}
-void BtBodyDel::OnClick(App& app) { bsel.del = true; cur.scene_changed = true; }
+void BtBodyDel::OnClick(App& app) { bsel.del = true; cur.isSceneChanged = true; }
 
 
 LbBodyCon::LbBodyCon(int id) : id(id), Label() {

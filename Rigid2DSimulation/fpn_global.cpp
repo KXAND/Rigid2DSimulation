@@ -21,7 +21,7 @@ void RLbGlobal::Sync(App& app) {
 	txt += loc(L"w_scene") + tw(cur.rect_scene.w) + L"\n";
 	txt += loc(L"h_scene") + tw(cur.rect_scene.h) + L"\n";
 	txt += loc(L"gravity") + toWstring(cur.gravity) + L"\n";
-	txt += loc(L"electrostatic") + tw(cur.electrostatic) + L"\n";
+	txt += loc(L"electrostatic") + tw(cur.hasElectrostatic) + L"\n";
 	txt += loc(L"coulomb") + tw2(cur.coulomb) + L"\n";
 
 	wstring s;

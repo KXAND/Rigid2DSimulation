@@ -200,34 +200,34 @@ void Body::Init(bool repos_o)
 
 	area = 0; vector2 center;
 	inertia = 0;
-	for (auto sh : shapes)
+	for (auto shapes : shapes)
 	{
-		sh->area = 0; vector2 sub_center;
-		if (sh->isCircle)
+		shapes->area = 0; vector2 sub_center;
+		if (shapes->isCircle)
 		{
-			sh->area = PI * sh->r * sh->r;
-			sub_center = sh->area * sh->oRelative;
-			inertia += sh->area * (sh->r * sh->r) / 2;
+			shapes->area = PI * shapes->r * shapes->r;
+			sub_center = shapes->area * shapes->oRelative;
+			inertia += shapes->area * (shapes->r * shapes->r) / 2;
 		}
 		else
 		{
-			rep(i, 0, sh->verticesRelative.size())
+			rep(i, 0, shapes->verticesRelative.size())
 			{
-				int j = (i + 1) % sh->verticesRelative.size();
-				auto p = sh->verticesRelative[i], q = sh->verticesRelative[j];
+				int j = (i + 1) % shapes->verticesRelative.size();
+				auto p = shapes->verticesRelative[i], q = shapes->verticesRelative[j];
 				double tri_area = matrix2(p, q).det() / 2;
 				double tri_inertia = dot(p, p) + dot(p, q) + dot(q, q);
 				tri_inertia *= tri_area / 6;
 
 				sub_center += tri_area * (p + q) / 3;
-				sh->area += tri_area;
+				shapes->area += tri_area;
 				inertia += tri_inertia;
 			}
 		}
 
-		area += sh->area;
+		area += shapes->area;
 		center += sub_center;
-		sh->oRelative = sub_center / sh->area;
+		shapes->oRelative = sub_center / shapes->area;
 	}
 
 	center /= area;
@@ -312,7 +312,7 @@ void Body::Render(Cur& cur) const
 	if (dragged)
 	{
 		vector2 p1 = vector2(msp);
-		vector2 p0 = o + transform * p_drag_rel;
+		vector2 p0 = o + transform * pDragRelative;
 		drawLineSegment(scr, dscr, p0, p1, getDepth(), bgr.viewPort(), dColor(0, 255, 255));
 	}
 
@@ -348,10 +348,10 @@ void Body::Step(Cur& cur, double stepDt)
 
 	if (dragged)
 	{
-		if (msd[2]) { hdl_dragged_whole(cur); }
-		else if (!kb && kbd[L'F']) { hdl_dragged_force(cur, stepDt); }
-		else if (invMass == 0) { hdl_dragged_whole(cur); }
-		else { hdl_dragged_point(cur); }
+		if (msd[2]) { handleDragWhole(cur); }
+		else if (!kb && kbd[L'F']) { handleDragForce(cur, stepDt); }
+		else if (invMass == 0) { handleDragWhole(cur); }
+		else { handleDragPoint(cur); }
 	}
 
 	updatePositionAndAABB();
@@ -395,68 +395,79 @@ void Body::followPresetVelocityAngular(Cur& cur)
 {
 	if (!v_ang_prog) { return; }
 
-	Scope sc; bool ret = false;
+	Scope sc;
+	bool ret = false;
 	sc[L"t"] = msh<Var>(cur.t);
 	auto velocityAngularNew = Execute(ret, gl, sc, *v_ang_prog)->num;
 
 	velocityAngular = velocityAngularNew;
 }
 
-void Body::update_ang_drag(Cur& cur)
+void Body::updateDragAngle(Cur& cur)
 {
-	v_ang_drag = 0;
+	velocityAngularDrag = 0;
 	if (!kb)
 	{
-		if (kbd[L'Q']) { v_ang_drag = -cur.v_ang_drag; }
-		if (kbd[L'E']) { v_ang_drag = +cur.v_ang_drag; }
+		if (kbd[L'Q']) { velocityAngularDrag = -cur.velocityAngularDrag; }
+		if (kbd[L'E']) { velocityAngularDrag = +cur.velocityAngularDrag; }
 	}
-	ang_drag = radian + v_ang_drag * cur.real_dt;
+	radianDrag = radian + velocityAngularDrag * cur.real_dt;
 }
 
-void Body::hdl_dragged_point(Cur& cur)
+void Body::handleDragPoint(Cur& cur)
 {
-	vector2 p1 = vector2(msp);
-	vector2 p0 = o + transform * p_drag_rel;
-	vector2 v1 = vector2(msp - msp_old) / cur.real_dt;
-	vector2 d = (p1 - p0).normalize();
+	// 下列命名指定o,p,m三点为body中心、被拖拽点及鼠标现在点
+	vector2 mousePos = vector2(msp);
+	vector2 pPos = o + transform * pDragRelative;
+	vector2 mouseVelocity = vector2(msp - msp_old) / cur.real_dt;
+	vector2 pmDir = (mousePos - pPos).normalize();
 
-	vector2 r0 = p0 - o;
-	r0 = vector2(-r0.y, r0.x);
-	vector2 v0 = velocity + velocityAngular * r0;
-	double rd0 = dot(r0, d);
+	vector2 opDir = pPos - o;
+	opDir = vector2(-opDir.y, opDir.x);
+	vector2 pVelocity = velocity + velocityAngular * opDir;
+	double rd0 = dot(opDir, pmDir);
 	double inv_i0 = invMass + rd0 * rd0 * invInertia;
-	vector2 j = dot(v1 - v0, d) * d / inv_i0;
 
-	velocity += j * invMass;
-	velocityAngular += dot(j, r0) * invInertia;
-	o += p1 - p0;
+	vector2 impulse = dot(mouseVelocity - pVelocity, pmDir) * pmDir / inv_i0;
+
+	velocity += impulse * invMass;
+	velocityAngular += dot(impulse, opDir) * invInertia;
+	o += mousePos - pPos;
 }
 
-void Body::hdl_dragged_whole(Cur& cur)
+/// <summary>
+/// 所有点同步被拖拽位移
+/// </summary>
+/// <param name="cur"></param>
+void Body::handleDragWhole(Cur& cur)
 {
-	vector2 p1 = vector2(msp);
-	vector2 p0 = o + transform * p_drag_rel;
-	vector2 v1 = vector2(msp - msp_old) / cur.real_dt;
+	vector2 mousePos = vector2(msp);
+	vector2 dragPointPos = o + transform * pDragRelative;
+	vector2 newVelocity = vector2(msp - msp_old) / cur.real_dt;
 
-	velocity = v1;
-	radian = ang_drag;
-	velocityAngular = v_ang_drag;
-	o += p1 - p0;
+	velocity = newVelocity;
+	radian = radianDrag;
+	velocityAngular = velocityAngularDrag;
+	o += mousePos - dragPointPos; // 中心平行位移
 }
 
-void Body::hdl_dragged_force(Cur& cur, double sdt)
+void Body::handleDragForce(Cur& cur, double deltaTime)
 {
+	// 运动路径方向
 	vector2 p1 = vector2(msp);
-	vector2 p0 = o + transform * p_drag_rel;
+	vector2 p0 = o + transform * pDragRelative;
 	vector2 d = (p1 - p0).normalize();
 
+	// 力
+	double k = 1e6;
+	vector2 impulse = k * (p1 - p0).len() * deltaTime * d;
+
+	// 刚体半径
 	vector2 r0 = p0 - o;
 	r0 = vector2(-r0.y, r0.x);
-	double hooke = 1e6;
-	vector2 j = hooke * (p1 - p0).len() * sdt * d;
 
-	velocity += j * invMass;
-	velocityAngular += dot(j, r0) * invInertia;
+	velocity += impulse * invMass;
+	velocityAngular += dot(impulse, r0) * invInertia;
 }
 void Body::Update(Cur& cur)
 {
@@ -466,56 +477,60 @@ void Body::Update(Cur& cur)
 	if (cur.mode == MODE_SEL && hovered && msc(0)) { cur.body_sel = this; }
 	if (dragged)
 	{
-		update_ang_drag(cur);
+		// 检查拖拽模式，应用函数
+		updateDragAngle(cur);
 		if (msd[2])
 		{
-			hdl_dragged_whole(cur);
+			handleDragWhole(cur);
 		}
 		else if (!kb && kbd[L'F']) { }
 		else if (invMass == 0)
 		{
-			hdl_dragged_whole(cur);
+			handleDragWhole(cur);
 		}
 		else
 		{
-			hdl_dragged_point(cur);
+			handleDragPoint(cur);
 		}
 		dragged = msd[0] && (cur.mode == MODE_DRAG);
 	}
 	else
 	{
+		// 检查 draged是否判断正确，更新被拖拽角度
 		dragged = hovered && msc(0) && (cur.mode == MODE_DRAG);
 		if (dragged)
 		{
-			p_drag_rel = transform.inverse() * ((vector2) msp - o);
-			// 下面这个还是很重要的。
-			update_ang_drag(cur);
+			// p移到m，那么mo = 变换*原距离 = 变换*原相对位置=po，故有。
+			pDragRelative = transform.inverse() * ((vector2) msp - o);
+			updateDragAngle(cur);
 		}
 	}
 
-	if (this == cur.body_sel && cur.show_track && !cur.paused)
+	if (this == cur.body_sel && cur.isTrackShown && !cur.isPaused)
 	{
+		// 绘制运动轨迹
 		track.push_back(o);
 	}
-	if (this != cur.body_sel || !cur.show_track)
+	else if (this != cur.body_sel || !cur.isTrackShown)
 	{
+		//不符合条件时清空轨迹信息
 		track.clear();
 	}
 
-
-	bool crt_ok = hovered && cur.mode == MODE_CREATE &&
+	// 创造连接
+	bool canCreate = hovered && cur.mode == MODE_CREATE &&
 		(cur.creator->mode == CREATE_CONN || cur.creator->mode == CREATE_NAIL);
-	if (crt_ok)
+	if (canCreate)
 	{
 		if (msc(0) && !cur.creator->active)
 		{
-			cur.creator->b0 = this;
-			cur.creator->p0_rel = transform.inverse() * ((vector2) msp - o);
+			cur.creator->body0 = this;
+			cur.creator->p0Relative = transform.inverse() * ((vector2) msp - o);
 		}
 		else if (!msd[0] && msd_old[0] && cur.creator->active)
 		{
-			cur.creator->b1 = this;
-			cur.creator->p1_rel = transform.inverse() * ((vector2) msp - o);
+			cur.creator->body1 = this;
+			cur.creator->p1Relative = transform.inverse() * ((vector2) msp - o);
 		}
 	}
 }

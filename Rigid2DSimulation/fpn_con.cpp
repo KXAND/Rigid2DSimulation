@@ -16,7 +16,7 @@ void BtConOK::OnClick(App& app) {
 	csel.cmd = csel.tmp_cmd; csel.refresh(cur);
 }
 BtConDel::BtConDel() : BtLan(70, L"bt_con_del") {}
-void BtConDel::OnClick(App& app) { csel.del = true; cur.scene_changed = true; }
+void BtConDel::OnClick(App& app) { csel.del = true; cur.isSceneChanged = true; }
 
 ClyCon::ClyCon() {
 	vector<Control*> tmp;

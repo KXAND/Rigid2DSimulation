@@ -39,13 +39,13 @@ struct Cur : App {
 	int display = 0;
 	double energy_mul = 0;
 	double chargeMultiplier = 0;
-	bool show_track = false;
-	bool mute = false;
-	bool paused = false;
-	bool scene_changed = false;
+	bool isTrackShown = false;
+	bool isMuted = false;
+	bool isPaused = false;
+	bool isSceneChanged = false;
 	vector2 gravity;
 	double coulomb = 0;
-	bool electrostatic = false;
+	bool hasElectrostatic = false;
 	double max_real_dt = 0;
 	double real_dt = 0, t = 0;
 	int n_step = 0;
@@ -56,11 +56,11 @@ struct Cur : App {
 	vector<ptr<Body>> bs;
 	vector<ptr<Group>> grps;
 	vector<ptr<Collision>> cols;
-	vector<ptr<Connection>> cons;
+	vector<ptr<Connection>> connections;
 
 	double eps_paralell = 0;
 	bool equal_repos = false;
-	double v_ang_drag = 0;
+	double velocityAngularDrag = 0;
 
 	double s_grid = 0;
 	int nx_grid = 0, ny_grid = 0;

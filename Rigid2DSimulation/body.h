@@ -9,6 +9,9 @@ struct Var;
 struct Cur;
 struct Shape;
 struct Connection;
+/// <summary>
+/// 定义单个物体的物理属性
+/// </summary>
 struct Body
 {
 	bool del = false;
@@ -38,8 +41,8 @@ struct Body
 	bool visited = false;
 	bool hovered = false;
 	bool dragged = false;
-	double ang_drag = 0, v_ang_drag = 0;
-	vector2 p_drag_rel;
+	double radianDrag = 0, velocityAngularDrag = 0;
+	vector2 pDragRelative;
 	double dep_shape = 0, dep_point = 0;
 	double r_point = 0;
 
@@ -57,28 +60,33 @@ struct Body
 	Body(Cur& cur, FILE* f);
 	void save(FILE* f) const;
 
-	double getDepth() const;
 	vector2 generateRandomPointInside() const;
 	bool inside(vector2 p) const;
 	void refresh(Cur& cur);
 	void read_cfg(Var const& cfg);
 	void updatePositionAndAABB();
-	void updateAABB();
 	void warp(dRect rc);
 	void register_grid(Cur& cur);
+private:
+	double getDepth() const;
+	void updateAABB();
 
+public:
 	void Init(bool repos_o = false);
 	void Render(Cur& cur) const;
 	void Step(Cur& cur, double sdt);
+	void Update(Cur& cur);
+	void PreUpdate(Cur& cur);
+
+private:
+	void updateDragAngle(Cur& cur);
+	void handleDragWhole(Cur& cur);
+	void handleDragPoint(Cur& cur);
+	void handleDragForce(Cur& cur, double sdt);
 	void followPresetO(Cur& cur, double sdt);
 	void followPresetAngle(Cur& cur, double sdt);
 	void followPresetVelocityAngular(Cur& cur);
-	void update_ang_drag(Cur& cur);
-	void hdl_dragged_point(Cur& cur);
-	void hdl_dragged_whole(Cur& cur);
-	void hdl_dragged_force(Cur& cur, double sdt);
-	void Update(Cur& cur);
-	void PreUpdate(Cur& cur);
+
 };
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulomb);

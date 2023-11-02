@@ -11,16 +11,18 @@
 #define found(s) (dic.find(s) != dic.end())
 #define getv(nm) if (found(L#nm)) { nm = dic.at(L#nm)->num; }
 
-ptr<Var> Ball(Var const& r) {
-	vector<ptr<Var>> vs;
-	vector<ptr<Var>> v;
+shared_ptr<Var> Ball(Var const& r)
+{
+	vector<shared_ptr<Var>> vs;
+	vector<shared_ptr<Var>> v;
 	// 应该有个快捷创建 Var 的方法才好。
-	v.push_back(msh<Var>(1));
-	v.push_back(msh<Var>(r));
-	vs.push_back(msh<Var>(v));
-	return msh<Var>(vs);
+	v.push_back(make_shared<Var>(1));
+	v.push_back(make_shared<Var>(r));
+	vs.push_back(make_shared<Var>(v));
+	return make_shared<Var>(vs);
 }
-ptr<Var> Box(Var const& w, Var const& h) {
+shared_ptr<Var> Box(Var const& w, Var const& h)
+{
 	vector<ptr<Var>> vs;
 	vector<ptr<Var>> v;
 	// 应该有个快捷创建 Var 的方法才好。
@@ -38,25 +40,28 @@ ptr<Var> Box(Var const& w, Var const& h) {
 	vs.push_back(msh<Var>(v));
 	return msh<Var>(vs);
 }
-ptr<Var> RegularPoly(Var const& n, Var const& r) {
+ptr<Var> RegularPoly(Var const& n, Var const& r)
+{
 	vector<ptr<Var>> vs;
 	vector<ptr<Var>> v;
 	v.push_back(msh<Var>(0));
 	vector<ptr<Var>> tmp;
 
-	auto m = max(3, (int)n.num);
-	rep(i, 0, m) {
+	auto m = max(3, (int) n.num);
+	rep(i, 0, m)
+	{
 		double phi = 2 * PI * i / m;
 		tmp.push_back(msh<Var>(
-			vector<ptr<Var>>{ 
-			msh<Var>(r.num * cos(phi)), 
-				msh<Var>(r.num * sin(phi)) }));
-	} 
+			vector<ptr<Var>>{
+			msh<Var>(r.num* cos(phi)),
+				msh<Var>(r.num* sin(phi)) }));
+	}
 	v.push_back(msh<Var>(tmp));
 	vs.push_back(msh<Var>(v));
 	return msh<Var>(vs);
 }
-ptr<Var> Parallelogram(Var const& w, Var const& h, Var const& s) {
+ptr<Var> Parallelogram(Var const& w, Var const& h, Var const& s)
+{
 	vector<ptr<Var>> vs;
 	vector<ptr<Var>> v;
 	v.push_back(msh<Var>(0));
@@ -73,7 +78,8 @@ ptr<Var> Parallelogram(Var const& w, Var const& h, Var const& s) {
 	vs.push_back(msh<Var>(v));
 	return msh<Var>(vs);
 }
-ptr<Var> Trapezoid(Var const& t, Var const& b, Var const& h) {
+ptr<Var> Trapezoid(Var const& t, Var const& b, Var const& h)
+{
 	vector<ptr<Var>> vs;
 	vector<ptr<Var>> v;
 	v.push_back(msh<Var>(0));
@@ -90,7 +96,8 @@ ptr<Var> Trapezoid(Var const& t, Var const& b, Var const& h) {
 	vs.push_back(msh<Var>(v));
 	return msh<Var>(vs);
 }
-ptr<Var> Cross(Var const& s, Var const& thk) {
+ptr<Var> Cross(Var const& s, Var const& thk)
+{
 	vector<ptr<Var>> vs;
 	vector<ptr<Var>> v;
 	v.push_back(msh<Var>(0));
@@ -98,11 +105,11 @@ ptr<Var> Cross(Var const& s, Var const& thk) {
 
 	tmp.push_back(msh<Var>(
 		vector<ptr<Var>>{ msh<Var>(+s.num / 2), msh<Var>(+thk.num / 2) }));
-	tmp.push_back(msh<Var>(								  
+	tmp.push_back(msh<Var>(
 		vector<ptr<Var>>{ msh<Var>(-s.num / 2), msh<Var>(+thk.num / 2) }));
-	tmp.push_back(msh<Var>(								  
+	tmp.push_back(msh<Var>(
 		vector<ptr<Var>>{ msh<Var>(-s.num / 2), msh<Var>(-thk.num / 2) }));
-	tmp.push_back(msh<Var>(								  
+	tmp.push_back(msh<Var>(
 		vector<ptr<Var>>{ msh<Var>(+s.num / 2), msh<Var>(-thk.num / 2) }));
 	v.push_back(msh<Var>(tmp));
 	vs.push_back(msh<Var>(v));
@@ -112,35 +119,36 @@ ptr<Var> Cross(Var const& s, Var const& thk) {
 	tmp.clear();
 	tmp.push_back(msh<Var>(
 		vector<ptr<Var>>{ msh<Var>(+thk.num / 2), msh<Var>(+s.num / 2) }));
-	tmp.push_back(msh<Var>(									
+	tmp.push_back(msh<Var>(
 		vector<ptr<Var>>{ msh<Var>(-thk.num / 2), msh<Var>(+s.num / 2) }));
-	tmp.push_back(msh<Var>(									
+	tmp.push_back(msh<Var>(
 		vector<ptr<Var>>{ msh<Var>(-thk.num / 2), msh<Var>(-s.num / 2) }));
-	tmp.push_back(msh<Var>(									
+	tmp.push_back(msh<Var>(
 		vector<ptr<Var>>{ msh<Var>(+thk.num / 2), msh<Var>(-s.num / 2) }));
 	v.push_back(msh<Var>(tmp));
 	vs.push_back(msh<Var>(v));
-	
+
 	return msh<Var>(vs);
 }
-ptr<Var> FramedBox(Var const& w, Var const& h, Var const& thk) {
-		double hw = 60, hh = 5;
-		vector2 a0(+w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
-		vector2 a1(-w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
-		vector2 a2(-w.num / 2 - thk.num / 2, +h.num / 2 - thk.num / 2);
-		vector2 a3(+w.num / 2 + thk.num / 2, +h.num / 2 - thk.num / 2);
-		vector2 b0(+w.num / 2 + thk.num / 2, -h.num / 2 + thk.num / 2);
-		vector2 b1(-w.num / 2 - thk.num / 2, -h.num / 2 + thk.num / 2);
-		vector2 b2(-w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
-		vector2 b3(+w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
-		vector2 c0(+w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
-		vector2 c1(+w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
-		vector2 c2(+w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
-		vector2 c3(+w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
-		vector2 d0(-w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
-		vector2 d1(-w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
-		vector2 d2(-w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
-		vector2 d3(-w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
+ptr<Var> FramedBox(Var const& w, Var const& h, Var const& thk)
+{
+	double hw = 60, hh = 5;
+	vector2 a0(+w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
+	vector2 a1(-w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
+	vector2 a2(-w.num / 2 - thk.num / 2, +h.num / 2 - thk.num / 2);
+	vector2 a3(+w.num / 2 + thk.num / 2, +h.num / 2 - thk.num / 2);
+	vector2 b0(+w.num / 2 + thk.num / 2, -h.num / 2 + thk.num / 2);
+	vector2 b1(-w.num / 2 - thk.num / 2, -h.num / 2 + thk.num / 2);
+	vector2 b2(-w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
+	vector2 b3(+w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
+	vector2 c0(+w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
+	vector2 c1(+w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
+	vector2 c2(+w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
+	vector2 c3(+w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
+	vector2 d0(-w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
+	vector2 d1(-w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
+	vector2 d2(-w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
+	vector2 d3(-w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
 
 	vector<ptr<Shape>> shapes;
 	shapes.push_back(msh<Shape>(vector<vector2>{ a0, a1, a2, a3 }));
@@ -209,7 +217,8 @@ ptr<Var> FramedBox(Var const& w, Var const& h, Var const& thk) {
 	return msh<Var>(vs);
 }
 
-void CreateBody(Cur& cur, Var const& shs_cfg, Var const& cfg) {
+void CreateBody(Cur& cur, Var const& shs_cfg, Var const& cfg)
+{
 	bool point = false;
 	auto dic = cfg.dic;
 	// point 变量在 Body 之后不能变动，所以要特殊考虑。
@@ -217,18 +226,23 @@ void CreateBody(Cur& cur, Var const& shs_cfg, Var const& cfg) {
 	ptr<Body> bo;
 	vector<ptr<Shape>> shs;
 	// 把这些抽象成 vec 的一个方法我觉得会更好。
-	for (auto v : shs_cfg.vec) {
+	for (auto v : shs_cfg.vec)
+	{
 		if (v->vec.empty()) { continue; }
 		ptr<Shape> sh;
-		if (v->vec[0]->num) {
+		if (v->vec[0]->num)
+		{
 			if (v->vec.size() < 2) { continue; }
 			vector2 o_rel;
 			if (v->vec.size() >= 3) { o_rel = tv2(*v->vec[2]); }
 			mkp(sh)(v->vec[1]->num, o_rel);
-		} else {
+		}
+		else
+		{
 			if (v->vec.size() < 2) { continue; }
 			vector<vector2> vs;
-			for (auto w : v->vec[1]->vec) {
+			for (auto w : v->vec[1]->vec)
+			{
 				vs.push_back(tv2(*w));
 			}
 			mkp(sh)(vs);
@@ -239,97 +253,105 @@ void CreateBody(Cur& cur, Var const& shs_cfg, Var const& cfg) {
 	else { mkp(bo)(shs); }
 
 	bo->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
-	bo->read_cfg(cfg); 
+	bo->read_cfg(cfg);
 	bool repos_o = false;
 	getv(repos_o);
 	bo->Init(repos_o);
 	bs.push_back(bo);
-	cur.scene_changed = true;
+	cur.isSceneChanged = true;
 }
-void CreateConn(Cur& cur, Var const& cfg) {
+void CreateConnetion(Cur& cur, Var const& cfg)
+{
 	int idx0 = generateRadomInt(bs.size());
 	int idx1 = generateRadomInt(bs.size());
 	auto dic = cfg.dic;
 	getv(idx0); getv(idx1);
-	idx0 = clamp(idx0, 0, (int)bs.size());
-	idx1 = clamp(idx1, 0, (int)bs.size());
-	
-	ptr<Connection> con;
-	mkp(con)();
-	con->body0 = &*bs[idx0];
-	con->body1 = &*bs[idx1];
-	con->p0Relative = con->body0->generateRandomPointInside();
-	con->p1Relative = con->body1->generateRandomPointInside();
+	idx0 = clamp(idx0, 0, (int) bs.size());
+	idx1 = clamp(idx1, 0, (int) bs.size());
+
+	ptr<Connection> connection;
+	mkp(connection)();
+	connection->body0 = &*bs[idx0];
+	connection->body1 = &*bs[idx1];
+	connection->p0Relative = connection->body0->generateRandomPointInside();
+	connection->p1Relative = connection->body1->generateRandomPointInside();
 	bool absolute = false;
 	getv(absolute);
-	if (found(L"p0")) {
-		con->p0Relative = tv2(*dic[L"p0"]);
-		if (absolute) { 
-			con->p0Relative -= con->body0->o; 
-			con->p0Relative = con->body0->transform.inverse() * con->p0Relative;
+	if (found(L"p0"))
+	{
+		connection->p0Relative = tv2(*dic[L"p0"]);
+		if (absolute)
+		{
+			connection->p0Relative -= connection->body0->o;
+			connection->p0Relative = connection->body0->transform.inverse() * connection->p0Relative;
 		}
 	}
-	if (found(L"p1")) {
-		con->p1Relative = tv2(*dic[L"p1"]);
-		if (absolute) {
-			con->p1Relative -= con->body1->o; 
-			con->p1Relative = con->body1->transform.inverse() * con->p1Relative;
+	if (found(L"p1"))
+	{
+		connection->p1Relative = tv2(*dic[L"p1"]);
+		if (absolute)
+		{
+			connection->p1Relative -= connection->body1->o;
+			connection->p1Relative = connection->body1->transform.inverse() * connection->p1Relative;
 		}
 	}
-	con->signUpToBodies();
-	con->updatePosition();
-	con->len = (con->p0 - con->p1).len();
-	con->read_cfg(cfg);
-	cur.cons.push_back(con);
-	cur.scene_changed = true;
+	connection->signUpToBodies();
+	connection->updatePosition();
+	connection->len = (connection->p0 - connection->p1).len();
+	connection->read_cfg(cfg);
+	cur.connections.push_back(connection);
+	cur.isSceneChanged = true;
 }
 
-void Boundary(Cur& cur, Var const& thk, Var const &cfg) {
+void Boundary(Cur& cur, Var const& thk, Var const& cfg)
+{
 	double bw = bgr.w, bh = bgr.h;
 	double bx0 = bgr.tl.x, bx1 = bx0 + bw;
 	double by0 = bgr.tl.y, by1 = by0 + bh;
-	ptr<Body> bo;
-	dColor col = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
+	ptr<Body> body;
+	dColor color = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
 
-	bo = msh<Body>(msh<Shape>(getRectVerticesByCenter(thk.num, bh)));
-	bo->o = vector2(bx0, (by0 + by1) / 2);
-	bo->fixed = true;
-	bo->innerColor = col;
-	bo->read_cfg(cfg);
-	bo->Init();
-	bs.push_back(bo);
+	body = msh<Body>(msh<Shape>(getRectVerticesByCenter(thk.num, bh)));
+	body->o = vector2(bx0, (by0 + by1) / 2);
+	body->fixed = true;
+	body->innerColor = color;
+	body->read_cfg(cfg);
+	body->Init();
+	bs.push_back(body);
 
-	bo = msh<Body>(msh<Shape>(getRectVerticesByCenter(thk.num, bh)));
-	bo->o = vector2(bx1, (by0 + by1) / 2);
-	bo->fixed = true;
-	bo->innerColor = col;
-	bo->read_cfg(cfg);
-	bo->Init();
-	bs.push_back(bo);
+	body = msh<Body>(msh<Shape>(getRectVerticesByCenter(thk.num, bh)));
+	body->o = vector2(bx1, (by0 + by1) / 2);
+	body->fixed = true;
+	body->innerColor = color;
+	body->read_cfg(cfg);
+	body->Init();
+	bs.push_back(body);
 
-	bo = msh<Body>(msh<Shape>(getRectVerticesByCenter(bw, thk.num)));
-	bo->o = vector2((bx0 + bx1) / 2, by0);
-	bo->fixed = true;
-	bo->innerColor = col;
-	bo->read_cfg(cfg);
-	bo->Init();
-	bs.push_back(bo);
+	body = msh<Body>(msh<Shape>(getRectVerticesByCenter(bw, thk.num)));
+	body->o = vector2((bx0 + bx1) / 2, by0);
+	body->fixed = true;
+	body->innerColor = color;
+	body->read_cfg(cfg);
+	body->Init();
+	bs.push_back(body);
 
-	bo = msh<Body>(msh<Shape>(getRectVerticesByCenter(bw, thk.num)));
-	bo->o = vector2((bx0 + bx1) / 2, by1);
-	bo->fixed = true;
-	bo->innerColor = col;
-	bo->read_cfg(cfg);
-	bo->Init();
-	bs.push_back(bo);
-	cur.scene_changed = true;
+	body = msh<Body>(msh<Shape>(getRectVerticesByCenter(bw, thk.num)));
+	body->o = vector2((bx0 + bx1) / 2, by1);
+	body->fixed = true;
+	body->innerColor = color;
+	body->read_cfg(cfg);
+	body->Init();
+	bs.push_back(body);
+	cur.isSceneChanged = true;
 }
-void Gear(Cur& cur, Var const& r, Var const& n, Var const& h, Var const& cfg) {
+void Gear(Cur& cur, Var const& r, Var const& n, Var const& h, Var const& cfg)
+{
 	vector<ptr<Shape>> shs;
 	shs.push_back(msh<Shape>(r.num));
-	rep(i, 0, n.num) {
-		double phi0 = 2 * PI * i / (int)n.num;
-		double phi1 = 2 * PI * (i + 1) / (int)n.num;
+	rep(i, 0, n.num)
+	{
+		double phi0 = 2 * PI * i / (int) n.num;
+		double phi1 = 2 * PI * (i + 1) / (int) n.num;
 		double phi = (phi0 + phi1) / 2;
 		vector2 v = vector2(cos(phi), sin(phi)) * (r.num + h.num);
 		vector2 v0 = vector2(cos(phi0), sin(phi0)) * r.num;
@@ -346,22 +368,23 @@ void Gear(Cur& cur, Var const& r, Var const& n, Var const& h, Var const& cfg) {
 	root->Init();
 	bs.push_back(root);
 
-	auto con = msh<Connection>();
-	con->type = CON_LINK;
-	con->body0 = &*root;
-	con->body1 = &*wheel;
-	con->signUpToBodies();
-	con->updatePosition();
-	cur.cons.push_back(con);
-	cur.scene_changed = true;
+	auto connection = msh<Connection>();
+	connection->type = CON_LINK;
+	connection->body0 = &*root;
+	connection->body1 = &*wheel;
+	connection->signUpToBodies();
+	connection->updatePosition();
+	cur.connections.push_back(connection);
+	cur.isSceneChanged = true;
 }
 void Strand(Cur& cur, Var const& _p0, Var const& _p1,
-	Var const& _n, Var const& ratio, Var const& cfg_body, Var const& cfg_conn) {
-	
+	Var const& _n, Var const& ratio, Var const& cfg_body, Var const& cfg_conn)
+{
+
 	vector2 p0 = tv2(_p0), p1 = tv2(_p1);
 	int n = _n.num;
 	ptr<Body> b0, b1;
-	ptr<Connection> con;
+	ptr<Connection> connection;
 	double len = (p1 - p0).len() / n;
 	double rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * rad);
@@ -374,7 +397,8 @@ void Strand(Cur& cur, Var const& _p0, Var const& _p1,
 	b0->Init();
 	bs.push_back(b0);
 
-	rep(i, 1, n + 1) {
+	rep(i, 1, n + 1)
+	{
 		mkp(b1)(msh<Shape>(rad));
 		b1->innerColor = col;
 		b1->o = (p0 * (n - i) + p1 * i) / n;
@@ -382,28 +406,29 @@ void Strand(Cur& cur, Var const& _p0, Var const& _p1,
 		b1->Init();
 		bs.push_back(b1);
 
-		mkp(con)();
-		con->body0 = &*b0;
-		con->body1 = &*b1;
-		con->len = gap;
-		con->p0Relative = +rad * (p1 - p0).normalize();
-		con->p1Relative = -rad * (p1 - p0).normalize();
-		con->read_cfg(cfg_conn);
-		con->signUpToBodies();
-		con->updatePosition();
-		cur.cons.push_back(con);
+		mkp(connection)();
+		connection->body0 = &*b0;
+		connection->body1 = &*b1;
+		connection->len = gap;
+		connection->p0Relative = +rad * (p1 - p0).normalize();
+		connection->p1Relative = -rad * (p1 - p0).normalize();
+		connection->read_cfg(cfg_conn);
+		connection->signUpToBodies();
+		connection->updatePosition();
+		cur.connections.push_back(connection);
 
 		b0 = b1;
 	}
-	cur.scene_changed = true;
+	cur.isSceneChanged = true;
 }
 void Necklace(Cur& cur, Var const& _o, Var const& rad,
-	Var const& _n, Var const& ratio, Var const& cfg_body, Var const& cfg_conn) {
+	Var const& _n, Var const& ratio, Var const& cfg_body, Var const& cfg_conn)
+{
 
 	ptr<Body> beg, b0, b1;
 	int n = _n.num;
 	vector2 o = tv2(_o);
-	ptr<Connection> con;
+	ptr<Connection> connection;
 	double len = 2 * PI * rad.num / n;
 	double ball_rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * ball_rad);
@@ -417,7 +442,8 @@ void Necklace(Cur& cur, Var const& _o, Var const& rad,
 	bs.push_back(b0);
 	beg = b0;
 
-	rep(i, 1, n) {
+	rep(i, 1, n)
+	{
 		double phi = 2 * PI * i / n;
 		mkp(b1)(msh<Shape>(ball_rad));
 		b1->innerColor = col;
@@ -426,32 +452,32 @@ void Necklace(Cur& cur, Var const& _o, Var const& rad,
 		b1->Init();
 		bs.push_back(b1);
 
-		mkp(con)();
-		con->body0 = &*b0;
-		con->body1 = &*b1;
-		con->len = gap;
-		con->p1Relative = ball_rad * vector2(+sin(phi), -cos(phi));
+		mkp(connection)();
+		connection->body0 = &*b0;
+		connection->body1 = &*b1;
+		connection->len = gap;
+		connection->p1Relative = ball_rad * vector2(+sin(phi), -cos(phi));
 		phi = 2 * PI * (i - 1) / n;
-		con->p0Relative = ball_rad * vector2(-sin(phi), +cos(phi));
-		con->read_cfg(cfg_conn);
-		con->signUpToBodies();
-		con->updatePosition();
-		cur.cons.push_back(con);
+		connection->p0Relative = ball_rad * vector2(-sin(phi), +cos(phi));
+		connection->read_cfg(cfg_conn);
+		connection->signUpToBodies();
+		connection->updatePosition();
+		cur.connections.push_back(connection);
 
 		b0 = b1;
 	}
 	double phi = 2 * PI * (n) / n;
 	b1 = beg;
-	mkp(con)();
-	con->body0 = &*b0;
-	con->body1 = &*b1;
-	con->len = gap;
-	con->p1Relative = ball_rad * vector2(+sin(phi), -cos(phi));
+	mkp(connection)();
+	connection->body0 = &*b0;
+	connection->body1 = &*b1;
+	connection->len = gap;
+	connection->p1Relative = ball_rad * vector2(+sin(phi), -cos(phi));
 	phi = 2 * PI * (n - 1) / n;
-	con->p0Relative = ball_rad * vector2(-sin(phi), +cos(phi));
-	con->read_cfg(cfg_conn);
-	con->signUpToBodies();
-	con->updatePosition();
-	cur.cons.push_back(con);
-	cur.scene_changed = true;
+	connection->p0Relative = ball_rad * vector2(-sin(phi), +cos(phi));
+	connection->read_cfg(cfg_conn);
+	connection->signUpToBodies();
+	connection->updatePosition();
+	cur.connections.push_back(connection);
+	cur.isSceneChanged = true;
 }

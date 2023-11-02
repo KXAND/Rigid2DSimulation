@@ -16,20 +16,20 @@
 
 BtPause::BtPause() : Button(150) {}
 void BtPause::Update(App& app) {
-	txt = cur.paused ? loc(L"start") : loc(L"pause");
+	txt = cur.isPaused ? loc(L"start") : loc(L"pause");
 	Button::Update(app);
 }
-void BtPause::OnClick(App& app) { cur.paused = !cur.paused; }
+void BtPause::OnClick(App& app) { cur.isPaused = !cur.isPaused; }
 
 BtReset::BtReset() : BtLan(150, L"bt_reset") {}
 void BtReset::OnClick(App& app) { cur.Reset(); }
 
 BtMute::BtMute() : Button(150) {}
 void BtMute::Update(App& app) {
-	txt = cur.mute ? loc(L"unmute") : loc(L"mute");
+	txt = cur.isMuted ? loc(L"unmute") : loc(L"mute");
 	Button::Update(app);
 }
-void BtMute::OnClick(App& app) { cur.mute = !cur.mute; }
+void BtMute::OnClick(App& app) { cur.isMuted = !cur.isMuted; }
 
 BtMode::BtMode() : Button(150) {}
 void BtMode::Update(App& app) {

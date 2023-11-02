@@ -46,8 +46,8 @@ void Cur::Save(wstring const& nm) const
 	// 可能会保存一些即将被删除的元素，但是也无所谓。
 	sz = bs.size(); fwt(sz);
 	for (auto b : bs) { b->save(f); }
-	sz = cons.size(); fwt(sz);
-	for (auto c : cons) { c->save(*this, f); }
+	sz = connections.size(); fwt(sz);
+	for (auto c : connections) { c->save(*this, f); }
 
 	fclose(f);
 }
@@ -61,8 +61,8 @@ void Cur::Load(wstring const& nm)
 	frd(sz);
 	rep(i, 0, sz) { bs.push_back(msh<Body>(*this, f)); }
 	frd(sz);
-	rep(i, 0, sz) { cons.push_back(msh<Connection>(*this, f)); }
-	scene_changed = true;
+	rep(i, 0, sz) { connections.push_back(msh<Connection>(*this, f)); }
+	isSceneChanged = true;
 
 	Execute(gl, Compile(cmd)); fclose(f);
 }
@@ -73,7 +73,7 @@ void Cur::Reset()
 	bs.clear();
 	grps.clear();
 	cols.clear();
-	cons.clear();
+	connections.clear();
 	dbstr.clear();
 
 	gl[L"left_bgr"] = msh<Var>(bgr.tl.x);
@@ -83,7 +83,7 @@ void Cur::Reset()
 
 	body_sel = NULL;
 	con_sel = NULL;
-	scene_changed = false;
+	isSceneChanged = false;
 	gravity = vector2();
 	max_real_dt = 0.05;
 	t = 0; n_step = 60;
@@ -93,14 +93,14 @@ void Cur::Reset()
 	s_grid = 50;
 	energy_mul = 4e-6;
 	chargeMultiplier = 1;
-	show_track = false;
+	isTrackShown = false;
 
-	electrostatic = false;
+	hasElectrostatic = false;
 	coulomb = 1e5;
 
 	eps_paralell = 1e-3;
 	equal_repos = false;
-	v_ang_drag = 2;
+	velocityAngularDrag = 2;
 
 	mkp(creator)();
 }
@@ -125,26 +125,26 @@ void Cur::Update()
 			cl->csp = 0;
 			cl = (cl == &*cl0) ? &*cl1 : &*cl0;
 		}
-		if (!mute) { cl->play(wv.wvin); }
+		if (!isMuted) { cl->play(wv.wvin); }
 	}
 
 	if (!kb)
 	{
-		if (kbc(L' ')) { paused = !paused; }
+		if (kbc(L' ')) { isPaused = !isPaused; }
 	}
 
 	for (auto b : bs) if (b->del) for (auto c : b->connections) { c->del = true; }
 	if (body_sel && body_sel->del) { body_sel = NULL; }
 	if (con_sel && con_sel->del) { con_sel = NULL; }
-	for (auto c : cons) if (c->del)
+	for (auto c : connections) if (c->del)
 	{
 		auto& cons0 = c->body0->connections;
 		cons0.erase(remove(cons0.begin(), cons0.end(), &*c), cons0.end());
 		auto& cons1 = c->body1->connections;
 		cons1.erase(remove(cons1.begin(), cons1.end(), &*c), cons1.end());
 	}
-	cons.erase(remove_if(cons.begin(), cons.end(),
-		[](ptr<Connection> c) { return c->del; }), cons.end());
+	connections.erase(remove_if(connections.begin(), connections.end(),
+		[](ptr<Connection> c) { return c->del; }), connections.end());
 	bs.erase(remove_if(bs.begin(), bs.end(),
 		[](ptr<Body> b) { return b->del; }), bs.end());
 
@@ -153,9 +153,9 @@ void Cur::Update()
 	gl[L"dt"] = msh<Var>(real_dt);
 	nx_grid = ceil(rect_scene.w / s_grid);
 	ny_grid = ceil(rect_scene.h / s_grid);
-	if (scene_changed) { scene_changed = false; grps = FormGroups(bs); }
+	if (isSceneChanged) { isSceneChanged = false; grps = FormGroups(bs); }
 	for (auto b : bs) { b->Update(*this); }
-	if (!paused && real_dt != 0)
+	if (!isPaused && real_dt != 0)
 	{
 		double sdt = real_dt / n_step;
 
@@ -166,7 +166,7 @@ void Cur::Update()
 			// for (auto b : bs) { b->warp(rect_scene); }
 			for (auto g : grps) { g->Warp(rect_scene); }
 
-			if (electrostatic) rep(i, 0, bs.size() - 1) rep(j, i + 1, bs.size())
+			if (hasElectrostatic) rep(i, 0, bs.size() - 1) rep(j, i + 1, bs.size())
 			{
 				Electrostatic(*bs[i], *bs[j], sdt, coulomb);
 			}
@@ -180,13 +180,19 @@ void Cur::Update()
 			CollideBodies();
 			for (auto c : cols) { c->simulate(equal_repos); }
 			// for (auto c : cols) { c->Render(*this); }
-			for (auto c : cons) { c->Simulate(sdt, equal_repos); }
+			for (auto c : connections) { c->Simulate(sdt, equal_repos); }
 			t += sdt;
 		}
 	}
 
-	for (auto b : bs) { b->updatePositionAndAABB(); b->Render(*this); }
-	for (auto c : cons) { c->updatePosition(); c->Render(*this); }
+	for (auto& b : bs)
+	{
+		b->updatePositionAndAABB(); b->Render(*this);
+	}
+	for (auto& connection : connections)
+	{
+		connection->updatePosition(); connection->Render(*this);
+	}
 
 	if (mode == MODE_CREATE) { creator->Update(*this); }
 	ui.Update(*this);
@@ -198,16 +204,16 @@ void Cur::set_cfg(Var const& v)
 	getv(vol);
 	getv(energy_mul); getv(chargeMultiplier);
 	getv(eps_paralell); getv(max_real_dt);
-	getv(electrostatic); getv(coulomb);
+	getv(hasElectrostatic); getv(coulomb);
 	getv(n_step); n_step = max(1, n_step);
-	getv(s_grid);  getv(equal_repos); getv(t); getv(show_track);
+	getv(s_grid);  getv(equal_repos); getv(t); getv(isTrackShown);
 	if (found(L"left_scene")) { rect_scene.topLeftPosition.x = dic[L"left_scene"]->num; }
 	if (found(L"top_scene")) { rect_scene.topLeftPosition.y = dic[L"top_scene"]->num; }
 	if (found(L"w_scene")) { rect_scene.w = dic[L"w_scene"]->num; }
 	if (found(L"h_scene")) { rect_scene.h = dic[L"h_scene"]->num; }
 	if (found(L"gravity")) { gravity = tv2(*dic[L"gravity"]); }
 
-	scene_changed = true;
+	isSceneChanged = true;
 }
 
 #define colpars cols, eps_paralell
@@ -326,7 +332,7 @@ void Cur::init_def_fun()
 
 	auto f9 = [this](vector<ptr<Var>> const& in)
 		{
-			if (in.size() >= 1) { CreateConn(*this, *in[0]); }
+			if (in.size() >= 1) { CreateConnetion(*this, *in[0]); }
 			return msh<Var>();
 		};
 	gl[L"create_conn"] = msh<Var>(f9);

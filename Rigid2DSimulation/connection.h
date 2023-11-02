@@ -9,6 +9,9 @@ int constexpr CON_CORD = 4;
 struct Var;
 struct Cur;
 struct Body;
+/// <summary>
+/// 定义一个两两连接关系，根据连接物理材质的不同，更新位置
+/// </summary>
 struct Connection {
 	bool del = false;
 	int type = 0;

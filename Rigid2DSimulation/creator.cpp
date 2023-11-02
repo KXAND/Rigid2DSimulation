@@ -38,7 +38,7 @@ Creator::Creator(Var const& v) : Creator()
 	}
 	getv(thick); getv(rad);
 	if (found(L"cfg_body")) { mkp(cfg_body)(*dic[L"cfg_body"]); }
-	if (found(L"cfg_conn")) { mkp(cfg_conn)(*dic[L"cfg_conn"]); }
+	if (found(L"cfg_conn")) { mkp(cfg_connection)(*dic[L"cfg_conn"]); }
 }
 
 double Creator::dep() const
@@ -54,7 +54,7 @@ double Creator::dep() const
 	return dep_body;
 }
 
-void Creator::update_box(Cur& cur)
+void Creator::updateBox(Cur& cur)
 {
 	if (active)
 	{
@@ -76,7 +76,7 @@ void Creator::update_box(Cur& cur)
 			if (body)
 			{
 				cur.bs.push_back(body);
-				body = NULL; cur.scene_changed = true;
+				body = NULL; cur.isSceneChanged = true;
 			}
 		}
 	}
@@ -88,7 +88,7 @@ void Creator::update_box(Cur& cur)
 		}
 	}
 }
-void Creator::update_ball(Cur& cur)
+void Creator::updateBall(Cur& cur)
 {
 	if (active)
 	{
@@ -109,7 +109,7 @@ void Creator::update_ball(Cur& cur)
 			if (body)
 			{
 				cur.bs.push_back(body);
-				body = NULL; cur.scene_changed = true;
+				body = NULL; cur.isSceneChanged = true;
 			}
 		}
 	}
@@ -121,7 +121,7 @@ void Creator::update_ball(Cur& cur)
 		}
 	}
 }
-void Creator::update_plate(Cur& cur)
+void Creator::updatePlate(Cur& cur)
 {
 	if (active)
 	{
@@ -145,7 +145,7 @@ void Creator::update_plate(Cur& cur)
 			if (body)
 			{
 				cur.bs.push_back(body);
-				body = NULL; cur.scene_changed = true;
+				body = NULL; cur.isSceneChanged = true;
 			}
 		}
 	}
@@ -157,39 +157,39 @@ void Creator::update_plate(Cur& cur)
 		}
 	}
 }
-void Creator::update_con(Cur& cur)
+void Creator::updateConnection(Cur& cur)
 {
 	if (active)
 	{
-		mkp(con)();
-		if (cfg_conn) { con->read_cfg(*cfg_conn); }
+		mkp(connection)();
+		if (cfg_connection) { connection->read_cfg(*cfg_connection); }
 		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
 		// 但也没啥办法是吧。
 		if (!msd[0])
 		{
-			if (b1)
+			if (body1)
 			{
-				con->body0 = b0;
-				con->body1 = b1;
-				con->p0Relative = p0_rel;
-				con->p1Relative = p1_rel;
+				connection->body0 = body0;
+				connection->body1 = body1;
+				connection->p0Relative = p0Relative;
+				connection->p1Relative = p1Relative;
 
-				con->signUpToBodies();
-				con->updatePosition();
-				con->len = (con->p0 - con->p1).len();
-				cur.cons.push_back(con);
-				cur.scene_changed = true;
+				connection->signUpToBodies();
+				connection->updatePosition();
+				connection->len = (connection->p0 - connection->p1).len();
+				cur.connections.push_back(connection);
+				cur.isSceneChanged = true;
 			}
-			con = NULL;
-			b0 = b1 = NULL; active = false;
+			connection = NULL;
+			body0 = body1 = NULL; active = false;
 		}
 	}
 	else
 	{
-		if (b0) { active = true; }
+		if (body0) { active = true; }
 	}
 }
-void Creator::update_point(Cur& cur)
+void Creator::updatePoint(Cur& cur)
 {
 	if (hovered && msc(0))
 	{
@@ -198,30 +198,31 @@ void Creator::update_point(Cur& cur)
 		if (cfg_body) { body->read_cfg(*cfg_body); }
 		body->Init();
 		cur.bs.push_back(body);
-		body = NULL; cur.scene_changed = true;
+		body = NULL; 
+		cur.isSceneChanged = true;
 	}
 }
-void Creator::update_nail(Cur& cur)
+void Creator::updateNail(Cur& cur)
 {
-	if (b0)
+	if (body0)
 	{
-		mkp(body)(b0->o + b0->transform * p0_rel);
+		mkp(body)(body0->o + body0->transform * p0Relative);
 		body->Init();
 		cur.bs.push_back(body);
-		mkp(con)();
-		con->type = CON_LINK;
-		con->body0 = b0;
-		con->body1 = &*body;
-		con->p0Relative = p0_rel;
-		con->signUpToBodies();
-		con->updatePosition();
-		cur.cons.push_back(con);
+		mkp(connection)();
+		connection->type = CON_LINK;
+		connection->body0 = body0;
+		connection->body1 = &*body;
+		connection->p0Relative = p0Relative;
+		connection->signUpToBodies();
+		connection->updatePosition();
+		cur.connections.push_back(connection);
 
-		b0 = NULL; con = NULL;
-		body = NULL; cur.scene_changed = true;
+		body0 = NULL; connection = NULL;
+		body = NULL; cur.isSceneChanged = true;
 	}
 }
-void Creator::update_particle(Cur& cur)
+void Creator::updateParticle(Cur& cur)
 {
 	if (hovered && msc(0))
 	{
@@ -231,38 +232,38 @@ void Creator::update_particle(Cur& cur)
 		if (cfg_body) { body->read_cfg(*cfg_body); }
 		body->Init();
 		cur.bs.push_back(body);
-		body = NULL; cur.scene_changed = true;
+		body = NULL; cur.isSceneChanged = true;
 	}
 }
 void Creator::Update(Cur& cur)
 {
 	hovered = (hvd == this);
-	body = NULL; con = NULL;
+	body = NULL; connection = NULL;
 
 	switch (mode)
 	{
-		case CREATE_BOX: update_box(cur); break;
-		case CREATE_BALL: update_ball(cur); break;
-		case CREATE_PLATE: update_plate(cur); break;
-		case CREATE_CONN: update_con(cur); break;
-		case CREATE_POINT: update_point(cur); break;
-		case CREATE_NAIL: update_nail(cur); break;
-		case CREATE_PARTICLE: update_particle(cur); break;
+		case CREATE_BOX: updateBox(cur); break;
+		case CREATE_BALL: updateBall(cur); break;
+		case CREATE_PLATE: updatePlate(cur); break;
+		case CREATE_CONN: updateConnection(cur); break;
+		case CREATE_POINT: updatePoint(cur); break;
+		case CREATE_NAIL: updateNail(cur); break;
+		case CREATE_PARTICLE: updateParticle(cur); break;
 	}
 
 
 	if (body) { body->Render(cur); }
-	if (con && b0)
+	if (connection && body0)
 	{
-		con->p0 = b0->o + b0->transform * p0_rel;
-		con->p1 = (vector2) msp;
-		con->Render(cur);
+		connection->p0 = body0->o + body0->transform * p0Relative;
+		connection->p1 = (vector2) msp;
+		connection->Render(cur);
 	}
 }
 void Creator::Discard(Cur& cur)
 {
-	rmv; b0 = b1 = NULL;
-	body = NULL; con = NULL;
+	rmv; body0 = body1 = NULL;
+	body = NULL; connection = NULL;
 	hovered = active = false;
 }
 void Creator::PreUpdate(Cur& cur)

@@ -3,46 +3,63 @@
 #include "connection.h"
 #include "cur.h"
 
-void Group::Warp(dRect rc) {
-	for (auto b : bs) if (b->invMass == 0 || b->dragged) { return; }
-	bool ok = false;
+void Group::Warp(dRect rect)
+{
+	for (auto b : bodies)
+		if (b->invMass == 0 || b->dragged) { return; }
+	bool isInRect = false;
 
-	ok = true;
-	for (auto b : bs) if (b->o.x > rc.left()) { ok = false; break; }
-	if (ok) for (auto b : bs) { b->o.x += rc.w; b->track.clear(); }
+	isInRect = true;
+	for (auto b : bodies)
+		if (b->o.x > rect.left()) { isInRect = false; break; }
+	if (isInRect)
+		for (auto b : bodies) { b->o.x += rect.w; b->track.clear(); }
 
-	ok = true;
-	for (auto b : bs) if (b->o.x < rc.right()) { ok = false; break; }
-	if (ok) for (auto b : bs) { b->o.x -= rc.w; b->track.clear(); }
+	isInRect = true;
+	for (auto b : bodies)
+		if (b->o.x < rect.right()) { isInRect = false; break; }
+	if (isInRect)
+		for (auto b : bodies) { b->o.x -= rect.w; b->track.clear(); }
 
-	ok = true;
-	for (auto b : bs) if (b->o.y > rc.top()) { ok = false; break; }
-	if (ok) for (auto b : bs) { b->o.y += rc.h;  b->track.clear(); }
+	isInRect = true;
+	for (auto b : bodies)
+		if (b->o.y > rect.top()) { isInRect = false; break; }
+	if (isInRect)
+		for (auto b : bodies) { b->o.y += rect.h;  b->track.clear(); }
 
-	ok = true;
-	for (auto b : bs) if (b->o.y < rc.bottom()) { ok = false; break; }
-	if (ok) for (auto b : bs) { b->o.y -= rc.h;  b->track.clear(); }
+	isInRect = true;
+	for (auto b : bodies)
+		if (b->o.y < rect.bottom()) { isInRect = false; break; }
+	if (isInRect)
+		for (auto b : bodies) { b->o.y -= rect.h; b->track.clear(); }
 }
 
-void find_component(vector<Body*>& out, Body* b) {
-	b->visited = true;
-	out.push_back(b);
-	for (auto c : b->connections) {
-		auto tmp = getTheOtherBody(b, *c);
-		if (tmp && !tmp->visited) {
-			find_component(out, tmp);
+void findBodiesInGroup(vector<Body*>& out, Body* body)
+{
+	body->visited = true;
+	out.push_back(body);
+	for (auto connnection : body->connections)
+	{
+		auto tmp = getTheOtherBody(body, *connnection);
+		if (tmp && !tmp->visited)
+		{
+			findBodiesInGroup(out, tmp);
 		}
 	}
 }
-vector<ptr<Group>> FormGroups(vector<ptr<Body>> const& bs) {
+vector<ptr<Group>> FormGroups(vector<ptr<Body>> const& bodies)
+{
 	vector<ptr<Group>> out;
-	vector<Body*> tmp;
-	for (auto b : bs) { b->visited = false; }
-	for (auto b : bs) {
-		if (!b->visited) {
-			tmp.clear();
-			find_component(tmp, &*b);
-			out.push_back(msh<Group>(tmp));
+	vector<Body*> connectedBodies;
+	for (auto& b : bodies) { b->visited = false; }
+	for (auto& b : bodies)
+	{
+		if (!b->visited)
+		{
+			connectedBodies.clear();
+			findBodiesInGroup(connectedBodies, &*b);
+			out.push_back(msh<Group>(connectedBodies));
 		}
-	} return out;
+	}
+	return out;
 }

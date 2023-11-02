@@ -6,105 +6,133 @@
 #include "draw_geo.h"
 
 #include "my_def.h"
-
+//	疑似废弃
 void Collision::Render(Cur& cur) const
 {
-	drawEllipse(scr, dscr, 100, c, 5, 5, bgr.viewPort(), dColor(255, 255, 0));
+	drawEllipse(scr, dscr, 100, c, 5, 5, bgr.viewPort(), dColor::YELLOW);
 }
 void Collision::simulate(bool equalResponse)
 {
-	double elasticity = min(b0->elasticity, b1->elasticity);
-	double fDynamic = min(b0->frictionDynamic, b1->frictionDynamic);
-	double fStatic = min(b0->frictionStatic, b1->frictionStatic);
+	/*命名约定：
+		碰撞点：c
+		物体：1，2
+	*/
 
-	vector2 r0 = c - b0->o;
-	vector2 r1 = c - b1->o;
-	r0 = vector2(-r0.y, r0.x);//逆时针转90度
-	r1 = vector2(-r1.y, r1.x);
-	vector2 v0 = b0->velocity + b0->velocityAngular * r0;
-	vector2 v1 = b1->velocity + b1->velocityAngular * r1;
+	double elasticity = min(body0->elasticity, body1->elasticity);
+	double frictionDynamic = min(body0->frictionDynamic, body1->frictionDynamic);
+	double frictionStatic = min(body0->frictionStatic, body1->frictionStatic);
 
-	vector2 j;
-	double rn0 = dot(r0, n);
-	double rn1 = dot(r1, n);
-	double inv_i0 = b0->invMass + rn0 * rn0 * b0->invInertia;
-	double inv_i1 = b1->invMass + rn1 * rn1 * b1->invInertia;
-	double jNormal = (1 + elasticity) * max(0.0, dot(v0 - v1, n)) / (inv_i0 + inv_i1); // 法向方向的冲量
+	// c 点处两个物体的切向量（tangent vector）和对应速度
+	vector2 tanC1 = c - body0->o;
+	vector2 tanC2 = c - body1->o;
+	tanC1 = vector2(-tanC1.y, tanC1.x);//逆时针转90度
+	tanC2 = vector2(-tanC2.y, tanC2.x);
+	vector2 velocity0 = body0->velocity + body0->velocityAngular * tanC1;
+	vector2 velocity1 = body1->velocity + body1->velocityAngular * tanC2;
 
-	j = -jNormal * n;
-	b0->velocity += j * b0->invMass;
-	b1->velocity -= j * b1->invMass;
-	b0->velocityAngular += dot(j, r0) * b0->invInertia;
-	b1->velocityAngular -= dot(j, r1) * b1->invInertia;
+	// 法线方向
+	// @todo：这里需要补物理知识
+	double tanC0normal = dot(tanC1, n);
+	double tanC1normal = dot(tanC2, n);
+	double inverse_i0 = body0->invMass + tanC0normal * tanC0normal * body0->invInertia;
+	double inverse_i1 = body1->invMass + tanC1normal * tanC1normal * body1->invInertia;
+	double impulseNormal = (1 + elasticity) * max(0.0, dot(velocity0 - velocity1, n)) / (inverse_i0 + inverse_i1); // 法向方向的冲量
 
-	vector2 u0 = b0->velocity + b0->velocityAngular * r0;
-	vector2 u1 = b1->velocity + b1->velocityAngular * r1;
+	vector2 impulse;
+	impulse = -impulseNormal * n;
+	body0->velocity += impulse * body0->invMass;
+	body1->velocity -= impulse * body1->invMass;
+	body0->velocityAngular += dot(impulse, tanC1) * body0->invInertia;
+	body1->velocityAngular -= dot(impulse, tanC2) * body1->invInertia;
 
-	double js = fStatic * jNormal;
-	double jd = fDynamic * jNormal;
+	vector2 updatedVelocity0 = body0->velocity + body0->velocityAngular * tanC1;
+	vector2 updatedVelocity1 = body1->velocity + body1->velocityAngular * tanC2;
 
-	vector2 t = vector2(-n.y, n.x);
-	double jTangential = dot(u0 - u1, t);
-	if (jTangential < 0) { jTangential = -jTangential; t = -t; }
-	double rt0 = dot(r0, t);
-	double rt1 = dot(r1, t);
-	double inv_it0 = b0->invMass + rt0 * rt0 * b0->invInertia;
-	double inv_it1 = b1->invMass + rt1 * rt1 * b1->invInertia;
-	jTangential /= inv_it0 + inv_it1;
+	double staticFrictionImpulse = frictionStatic * impulseNormal;
+	double dynamicFrictionImpulse = frictionDynamic * impulseNormal;
 
-	if (jTangential < js) { j = -jTangential * t; }
-	else { j = -jd * t; }
 
-	b0->velocity += j * b0->invMass;
-	b1->velocity -= j * b1->invMass;
-	b0->velocityAngular += dot(j, r0) * b0->invInertia;
-	b1->velocityAngular -= dot(j, r1) * b1->invInertia;
+	// 切线方向
+	vector2 tangentDirection = vector2(-n.y, n.x);
+	double impulseTangential = dot(updatedVelocity0 - updatedVelocity1, tangentDirection);
+	if (impulseTangential < 0)
+	{
+		impulseTangential = -impulseTangential; tangentDirection = -tangentDirection;
+	}
+	double tanCtan0 = dot(tanC1, tangentDirection);// tantan？？？
+	double tanCtan1 = dot(tanC2, tangentDirection);
+	double inverse_it0 = body0->invMass + tanCtan0 * tanCtan0 * body0->invInertia;
+	double inverse_it1 = body1->invMass + tanCtan1 * tanCtan1 * body1->invInertia;
+	impulseTangential /= inverse_it0 + inverse_it1;
+
+	if (impulseTangential < staticFrictionImpulse)
+	{
+		impulse = -impulseTangential * tangentDirection;
+	}
+	else
+	{
+		impulse = -dynamicFrictionImpulse * tangentDirection;
+	}
+
+	body0->velocity += impulse * body0->invMass;
+	body1->velocity -= impulse * body1->invMass;
+	body0->velocityAngular += dot(impulse, tanC1) * body0->invInertia;
+	body1->velocityAngular -= dot(impulse, tanC2) * body1->invInertia;
 
 	if (equalResponse)
 	{
-		if (b0->invMass == 0) { b1->o += n * d; }
-		else if (b1->invMass == 0) { b0->o -= n * d; }
+		if (body0->invMass == 0) { body1->o += n * d; }
+		else if (body1->invMass == 0) { body0->o -= n * d; }
 		else
 		{
-			b0->o -= n * d / 2;
-			b1->o += n * d / 2;
-		} return;
+			body0->o -= n * d / 2;
+			body1->o += n * d / 2;
+		}
+		return;
 	}
 	// 我是真的不知道这个有没有道理。
-	double sum = b0->invMass + b1->invMass;
-	b0->o -= n * d * b0->invMass / sum;
-	b1->o += n * d * b1->invMass / sum;
+	double sum = body0->invMass + body1->invMass;
+	body0->o -= n * d * body0->invMass / sum;
+	body1->o += n * d * body1->invMass / sum;
 }
 
 void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralell)
 {
+	// 不可能发生碰撞的情况
 	if (b0.invMass == 0 && b1.invMass == 0) { return; }
 	if (!isOverlap(b0.box, b1.box)) { return; }
 
-	for (auto sh0 : b0.shapes) for (auto sh1 : b1.shapes)
-	{
-		Collision col;
-		col.b0 = &b0; col.b1 = &b1;
-		if (sh0->isCircle && sh1->isCircle)
+	for (auto& shape0 : b0.shapes)
+		for (auto& shape1 : b1.shapes)
 		{
-			if (!collide_balls(*sh0, *sh1, col)) { continue; }
-		}
-		else
-		{
-			if (!collide(*sh0, *sh1, col, false)) { continue; }
-			if (!collide(*sh1, *sh0, col, true)) { continue; }
-		}
+			Collision collision;
 
-		// 下面的小于号有一点重要。
-		if (!sh0->isCircle && !sh1->isCircle && col.diff < eps_paralell)
-		{
-			double dsqr_close = DBL_MAX;
-			find_contact(*sh0, *sh1, col.c, dsqr_close);
-			find_contact(*sh1, *sh0, col.c, dsqr_close);
+			collision.body0 = &b0; collision.body1 = &b1;
+			if (shape0->isCircle && shape1->isCircle)
+			{
+				// 都是球
+				if (!collide_balls(*shape0, *shape1, collision)) { continue; }
+			}
+			else
+			{
+				if (!collide(*shape0, *shape1, collision, false)) { continue; }
+				if (!collide(*shape1, *shape0, collision, true)) { continue; }
+			}
+
+			// 仅有一边是圆时，寻找最近的接触点
+			if (!shape0->isCircle && !shape1->isCircle && collision.diff < eps_paralell)
+			{
+				double distanceSquareClosest = DBL_MAX;
+				findClosestContactVertex(*shape0, *shape1, collision.c, distanceSquareClosest);
+				findClosestContactVertex(*shape1, *shape0, collision.c, distanceSquareClosest);
+			}
+
+			out.push_back(msh<Collision>(collision));
 		}
-		out.push_back(msh<Collision>(col));
-	}
 }
+
+/***need be move to private↓***/
+
 bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 {
 	vector2 c;
@@ -123,7 +151,8 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 				out.c = c;
 				out.n = reverse ? -n : n;
 			}
-		} return true;
+		}
+		return true;
 	}
 
 	rep(i, 0, sh0.vertices.size())
@@ -144,18 +173,19 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 		}
 	} return true;
 }
-void find_contact(Shape& sh0, Shape& sh1, vector2& c, double& dsqr_close)
+void findClosestContactVertex(Shape& shape0, Shape& shape1, vector2& contactP, double& closestDistanceSqr)
 {
-	rep(i, 0, sh0.vertices.size())
+	rep(i, 0, shape0.vertices.size())
 	{
-		int j = (i + 1) % sh0.vertices.size();
-		for (auto v : sh1.vertices)
+		int j = (i + 1) % shape0.vertices.size();
+		for (auto v : shape1.vertices)
 		{
-			double dsqr = dist_sqr(sh0.vertices[i], sh0.vertices[j], v);
-			// 这里的小于号很重要。
-			if (dsqr < dsqr_close)
+			//算出该顶点到 shape0 当前顶点和下一个顶点所构成的线段的距离平方
+			double distanceSquare = getDistanceSquare(shape0.vertices[i], shape0.vertices[j], v);
+			if (distanceSquare < closestDistanceSqr)
 			{
-				dsqr_close = dsqr; c = v;
+				closestDistanceSqr = distanceSquare;
+				contactP = v;
 			}
 		}
 	}

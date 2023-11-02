@@ -4,11 +4,23 @@
 struct Cur;
 struct Body;
 struct Connection;
+/// <summary>
+/// Group 是一系列通过 connection 连接的图形
+/// </summary>
 struct Group {
-	vector<Body*> bs;
-	Group(vector<Body*> const& bs) : bs(bs) {}
-	void Warp(dRect rc);
+	vector<Body*> bodies;
+	Group(vector<Body*> const& bs) : bodies(bs) {}
+	/// <summary>
+	/// @todo
+	/// </summary>
+	/// <param name="rect"></param>
+	void Warp(dRect rect);
 };
 
-void find_component(vector<Body*>& out, Body* b);
-vector<ptr<Group>> FormGroups(vector<ptr<Body>> const& bs);
+void findBodiesInGroup(vector<Body*>& out, Body* b);
+/// <summary>
+/// 将输入的 body 划分为 group
+/// </summary>
+/// <param name="bodies"></param>
+/// <returns></returns>
+vector<ptr<Group>> FormGroups(vector<ptr<Body>> const& bodies);
