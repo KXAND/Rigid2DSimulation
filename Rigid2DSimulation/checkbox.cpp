@@ -56,4 +56,4 @@ void Checkbox::PreUpdate(App& app) {
 }
 
 CbLan::CbLan(wstring const& id, bool big) : Checkbox(big), id_txt(id) {}
-void CbLan::Update(App& app) { txt = loc(id_txt); Checkbox::Update(app); }
+void CbLan::Update(App& app) { txt = getLocalizedString(id_txt); Checkbox::Update(app); }

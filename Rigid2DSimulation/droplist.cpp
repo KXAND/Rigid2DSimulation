@@ -99,4 +99,4 @@ void Droplist::PreUpdate(App& app) {
 }
 
 DpLan::DpLan(wstring const& id, int w, DpNm const& nm) : Droplist(w, nm), id_txt(id) {}
-void DpLan::Update(App& app) { txt = loc(id_txt); Droplist::Update(app); }
+void DpLan::Update(App& app) { txt = getLocalizedString(id_txt); Droplist::Update(app); }

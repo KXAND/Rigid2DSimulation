@@ -22,8 +22,8 @@ wstring tw(expr const& ex) {
 	else if (ex.typ == L"num") { tmp += L":" + tw2(ex.num); }
 	else if (ex.typ == L"str") { tmp += L":" + ex.str; }
 	else if (ex.typ == L"access") {
-		if (!ex.loc || !ex.ind) { return {}; }
-		tmp += L":" + tw(*ex.loc) + L"," + tw(*ex.ind);
+		if (!ex.getLocalizedString || !ex.ind) { return {}; }
+		tmp += L":" + tw(*ex.getLocalizedString) + L"," + tw(*ex.ind);
 	}
 	else if (ex.typ == L"vec") {
 		tmp += L":";
@@ -147,7 +147,7 @@ expr parsing_vec(vector<bra> const& in) {
 }
 expr parsing_access(vector<bra> const& in) {
 	expr ex(L"access");
-	ex.loc = parsing_expr(vector<bra>(in.begin(), in.end() - 1));
+	ex.getLocalizedString = parsing_expr(vector<bra>(in.begin(), in.end() - 1));
 	ex.ind = parsing_expr(in.back().bras); return ex;
 }
 

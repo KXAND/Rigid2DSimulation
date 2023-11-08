@@ -64,4 +64,4 @@ void DragbarX::PreUpdate(App& app) {
 }
 
 DbXLan::DbXLan(wstring const& id, int w) : DragbarX(w), id_txt(id) {}
-void DbXLan::Update(App& app) { txt = loc(id_txt); DragbarX::Update(app); }
+void DbXLan::Update(App& app) { txt = getLocalizedString(id_txt); DragbarX::Update(app); }

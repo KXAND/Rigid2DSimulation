@@ -72,13 +72,14 @@ void App::addLog(wstring const& s)
 	if (!f_log) { print_console(L"运行记录打开失败。", true); }
 	else { fwprintf(f_log, s.c_str()); fclose(f_log); }
 }
-wstring App::loc(wstring const& id) const
+wstring App::getLocalizedString(wstring const& id) const
 {
 	if (id.empty()) { return {}; }
-	auto it = dict.find(id);
-	if (it == dict.end()) { return {}; }
-	auto const& strs = it->second;
-	return lan >= strs.size() ? L"" : strs[lan];
+
+	auto it = localizationDict.find(id);
+	if (it == localizationDict.end()) { return {}; }
+	auto const& translations = it->second;
+	return languageIdx >= translations.size() ? L"" : translations[languageIdx];
 }
 
 void App::init_bmi()
@@ -115,12 +116,12 @@ void App::loadLocalizationFile()
 		{
 			if (!strs.empty())
 			{
-				dict[id] = strs;
+				localizationDict[id] = strs;
 				strs.clear(); id.clear();
 			} id += c;
 		} c = getwc(f);
 	}
-	if (!strs.empty()) { dict[id] = strs; }
+	if (!strs.empty()) { localizationDict[id] = strs; }
 	fclose(f);
 }
 void App::register_window_class()

@@ -7,7 +7,7 @@
 #include "connection.h"
 
 #include "my_def.h"
-#define bs (cur.bs)
+#define bodies (cur.bodies)
 #define found(s) (dic.find(s) != dic.end())
 #define getv(nm) if (found(L#nm)) { nm = dic.at(L#nm)->num; }
 
@@ -257,22 +257,22 @@ void CreateBody(Cur& cur, Var const& shs_cfg, Var const& cfg)
 	bool repos_o = false;
 	getv(repos_o);
 	bo->Init(repos_o);
-	bs.push_back(bo);
+	bodies.push_back(bo);
 	cur.isSceneChanged = true;
 }
 void CreateConnetion(Cur& cur, Var const& cfg)
 {
-	int idx0 = generateRadomInt(bs.size());
-	int idx1 = generateRadomInt(bs.size());
+	int idx0 = generateRadomInt(bodies.size());
+	int idx1 = generateRadomInt(bodies.size());
 	auto dic = cfg.dic;
 	getv(idx0); getv(idx1);
-	idx0 = clamp(idx0, 0, (int) bs.size());
-	idx1 = clamp(idx1, 0, (int) bs.size());
+	idx0 = clamp(idx0, 0, (int) bodies.size());
+	idx1 = clamp(idx1, 0, (int) bodies.size());
 
 	ptr<Connection> connection;
 	mkp(connection)();
-	connection->body0 = &*bs[idx0];
-	connection->body1 = &*bs[idx1];
+	connection->body0 = &*bodies[idx0];
+	connection->body1 = &*bodies[idx1];
 	connection->p0Relative = connection->body0->generateRandomPointInside();
 	connection->p1Relative = connection->body1->generateRandomPointInside();
 	bool absolute = false;
@@ -317,7 +317,7 @@ void Boundary(Cur& cur, Var const& thk, Var const& cfg)
 	body->innerColor = color;
 	body->read_cfg(cfg);
 	body->Init();
-	bs.push_back(body);
+	bodies.push_back(body);
 
 	body = msh<Body>(msh<Shape>(getRectVerticesByCenter(thk.num, bh)));
 	body->o = vector2(bx1, (by0 + by1) / 2);
@@ -325,7 +325,7 @@ void Boundary(Cur& cur, Var const& thk, Var const& cfg)
 	body->innerColor = color;
 	body->read_cfg(cfg);
 	body->Init();
-	bs.push_back(body);
+	bodies.push_back(body);
 
 	body = msh<Body>(msh<Shape>(getRectVerticesByCenter(bw, thk.num)));
 	body->o = vector2((bx0 + bx1) / 2, by0);
@@ -333,7 +333,7 @@ void Boundary(Cur& cur, Var const& thk, Var const& cfg)
 	body->innerColor = color;
 	body->read_cfg(cfg);
 	body->Init();
-	bs.push_back(body);
+	bodies.push_back(body);
 
 	body = msh<Body>(msh<Shape>(getRectVerticesByCenter(bw, thk.num)));
 	body->o = vector2((bx0 + bx1) / 2, by1);
@@ -341,7 +341,7 @@ void Boundary(Cur& cur, Var const& thk, Var const& cfg)
 	body->innerColor = color;
 	body->read_cfg(cfg);
 	body->Init();
-	bs.push_back(body);
+	bodies.push_back(body);
 	cur.isSceneChanged = true;
 }
 void Gear(Cur& cur, Var const& r, Var const& n, Var const& h, Var const& cfg)
@@ -362,11 +362,11 @@ void Gear(Cur& cur, Var const& r, Var const& n, Var const& h, Var const& cfg)
 	wheel->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
 	wheel->read_cfg(cfg);
 	wheel->Init();
-	bs.push_back(wheel);
+	bodies.push_back(wheel);
 	auto root = msh<Body>(wheel->o);
 	root->innerColor = wheel->innerColor;
 	root->Init();
-	bs.push_back(root);
+	bodies.push_back(root);
 
 	auto connection = msh<Connection>();
 	connection->type = CON_LINK;
@@ -395,7 +395,7 @@ void Strand(Cur& cur, Var const& _p0, Var const& _p1,
 	b0->o = p0;
 	b0->read_cfg(cfg_body);
 	b0->Init();
-	bs.push_back(b0);
+	bodies.push_back(b0);
 
 	rep(i, 1, n + 1)
 	{
@@ -404,7 +404,7 @@ void Strand(Cur& cur, Var const& _p0, Var const& _p1,
 		b1->o = (p0 * (n - i) + p1 * i) / n;
 		b1->read_cfg(cfg_body);
 		b1->Init();
-		bs.push_back(b1);
+		bodies.push_back(b1);
 
 		mkp(connection)();
 		connection->body0 = &*b0;
@@ -439,7 +439,7 @@ void Necklace(Cur& cur, Var const& _o, Var const& rad,
 	b0->o = o + vector2(rad.num, 0);
 	b0->read_cfg(cfg_body);
 	b0->Init();
-	bs.push_back(b0);
+	bodies.push_back(b0);
 	beg = b0;
 
 	rep(i, 1, n)
@@ -450,7 +450,7 @@ void Necklace(Cur& cur, Var const& _o, Var const& rad,
 		b1->o = o + vector2(cos(phi), sin(phi)) * rad.num;
 		b1->read_cfg(cfg_body);
 		b1->Init();
-		bs.push_back(b1);
+		bodies.push_back(b1);
 
 		mkp(connection)();
 		connection->body0 = &*b0;

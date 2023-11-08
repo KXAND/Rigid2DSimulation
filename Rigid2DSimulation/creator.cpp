@@ -75,7 +75,7 @@ void Creator::updateBox(Cur& cur)
 			active = false;
 			if (body)
 			{
-				cur.bs.push_back(body);
+				cur.bodies.push_back(body);
 				body = NULL; cur.isSceneChanged = true;
 			}
 		}
@@ -108,7 +108,7 @@ void Creator::updateBall(Cur& cur)
 			active = false;
 			if (body)
 			{
-				cur.bs.push_back(body);
+				cur.bodies.push_back(body);
 				body = NULL; cur.isSceneChanged = true;
 			}
 		}
@@ -144,7 +144,7 @@ void Creator::updatePlate(Cur& cur)
 			active = false;
 			if (body)
 			{
-				cur.bs.push_back(body);
+				cur.bodies.push_back(body);
 				body = NULL; cur.isSceneChanged = true;
 			}
 		}
@@ -197,7 +197,7 @@ void Creator::updatePoint(Cur& cur)
 		body->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
 		if (cfg_body) { body->read_cfg(*cfg_body); }
 		body->Init();
-		cur.bs.push_back(body);
+		cur.bodies.push_back(body);
 		body = NULL; 
 		cur.isSceneChanged = true;
 	}
@@ -208,7 +208,7 @@ void Creator::updateNail(Cur& cur)
 	{
 		mkp(body)(body0->o + body0->transform * p0Relative);
 		body->Init();
-		cur.bs.push_back(body);
+		cur.bodies.push_back(body);
 		mkp(connection)();
 		connection->type = CON_LINK;
 		connection->body0 = body0;
@@ -231,7 +231,7 @@ void Creator::updateParticle(Cur& cur)
 		body->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
 		if (cfg_body) { body->read_cfg(*cfg_body); }
 		body->Init();
-		cur.bs.push_back(body);
+		cur.bodies.push_back(body);
 		body = NULL; cur.isSceneChanged = true;
 	}
 }

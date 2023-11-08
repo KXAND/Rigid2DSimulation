@@ -6,17 +6,17 @@
 
 LbFPS::LbFPS() { w = 450; fixed_w = true; }
 void LbFPS::Sync(App& app) {
-	txt = loc(L"frm_tm") + tw2(cur.fps.frm_time * 1000) +
+	txt = getLocalizedString(L"frm_tm") + tw2(cur.fps.frm_time * 1000) +
 		L", FPS: " + tw2(cur.fps.fps);
 }
 
 LbTime::LbTime() { w = 200; fixed_w = true; }
 void LbTime::Sync(App& app) {
-	txt = loc(L"lb_time") + tw2(cur.t);
+	txt = getLocalizedString(L"lb_time") + tw2(cur.t);
 }
 LbMouse::LbMouse() { w = 300; fixed_w = true; }
 void LbMouse::Sync(App& app) {
-	txt = loc(L"lb_mouse") + tw(msp);
+	txt = getLocalizedString(L"lb_mouse") + tw(msp);
 }
 
 PnBottom::PnBottom(App& app) : Panel(Panel::bottom(app)) {

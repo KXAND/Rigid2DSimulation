@@ -13,8 +13,8 @@ struct App {
 	dbuf dscr, ini_dscr;
 
 	font ft;
-	int lan = 0;
-	map<wstring, vector<wstring>> dict;
+	int languageIdx = 0;
+	map<wstring, vector<wstring>> localizationDict;
 
 	app_wv wv;
 	app_fps fps;
@@ -39,7 +39,7 @@ struct App {
 	void reset_dscr();
 	void present_scr();
 	void addLog(wstring const& s);
-	wstring loc(wstring const& id) const;
+	wstring getLocalizedString(wstring const& id) const;
 
 	void init_bmi();
 	void loadLocalizationFile();

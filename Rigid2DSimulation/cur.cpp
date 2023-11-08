@@ -19,7 +19,7 @@ Cur::Cur()
 	print_console(L"字体加载完成.", true);
 	print_console(L"正在加载控件...");
 	mkp(ui)(*this); ui->Init(*this);
-	mkp(bgr)(*this); Reset();
+	mkp(mBgr)(*this); Reset();
 	print_console(L"控件加载完成.", true);
 	print_console(L"正在加载音乐...");
 	bool ok = false;
@@ -29,7 +29,7 @@ Cur::Cur()
 	if (!ok) { cl1 = NULL; }
 	print_console(L"音乐加载完成.", true);
 	vol = 1;
-	cl = generateRadomFloat(1) < 0.5 ? &*cl0 : &*cl1;
+	mClipPtr = generateRadomFloat(1) < 0.5 ? &*cl0 : &*cl1;
 }
 
 #define cur (*this)
@@ -44,8 +44,8 @@ void Cur::Save(wstring const& nm) const
 	int sz = 0; fwtv(cmd); save_par(f);
 
 	// 可能会保存一些即将被删除的元素，但是也无所谓。
-	sz = bs.size(); fwt(sz);
-	for (auto b : bs) { b->save(f); }
+	sz = bodies.size(); fwt(sz);
+	for (auto b : bodies) { b->save(f); }
 	sz = connections.size(); fwt(sz);
 	for (auto c : connections) { c->save(*this, f); }
 
@@ -59,38 +59,38 @@ void Cur::Load(wstring const& nm)
 	tmp_cmd = cmd; load_par(f);
 
 	frd(sz);
-	rep(i, 0, sz) { bs.push_back(msh<Body>(*this, f)); }
+	rep(i, 0, sz) { bodies.push_back(msh<Body>(*this, f)); }
 	frd(sz);
 	rep(i, 0, sz) { connections.push_back(msh<Connection>(*this, f)); }
 	isSceneChanged = true;
 
-	Execute(gl, Compile(cmd)); fclose(f);
+	Execute(curScope, Compile(cmd)); fclose(f);
 }
 void Cur::Reset()
 {
-	gl.clear(); init_def_fun(); pars.clear();
+	curScope.clear(); init_def_fun(); pars.clear();
 
-	bs.clear();
-	grps.clear();
-	cols.clear();
+	bodies.clear();
+	groups.clear();
+	collisions.clear();
 	connections.clear();
 	dbstr.clear();
 
-	gl[L"left_bgr"] = msh<Var>(bgr.topLeft.x);
-	gl[L"top_bgr"] = msh<Var>(bgr.topLeft.y);
-	gl[L"w_bgr"] = msh<Var>(bgr.width);
-	gl[L"h_bgr"] = msh<Var>(bgr.height);
+	curScope[L"left_bgr"] = msh<Var>(bgr.topLeft.x);
+	curScope[L"top_bgr"] = msh<Var>(bgr.topLeft.y);
+	curScope[L"w_bgr"] = msh<Var>(bgr.width);
+	curScope[L"h_bgr"] = msh<Var>(bgr.height);
 
 	bodySelecting = NULL;
 	connectionSelecting = NULL;
 	isSceneChanged = false;
 	gravity = vector2();
 	max_real_dt = 0.05;
-	t = 0; n_step = 60;
-	rect_scene.topLeftPosition = bgr.topLeft;
-	rect_scene.w = bgr.width;
-	rect_scene.h = bgr.height;
-	s_grid = 50;
+	t = 0; stepNum = 60;
+	rectScene.topLeftPosition = bgr.topLeft;
+	rectScene.w = bgr.width;
+	rectScene.h = bgr.height;
+	gridSize = 50;
 	energy_mul = 4e-6;
 	chargeMultiplier = 1;
 	isTrackShown = false;
@@ -106,37 +106,40 @@ void Cur::Reset()
 }
 void Cur::Update()
 {
-	bgr.PreUpdate(*this);
+	(*mBgr).PreUpdate(*this);
 	if (mode == MODE_CREATE) { creator->PreUpdate(*this); }
-	for (auto b : bs) { b->PreUpdate(*this); }
+	for (auto& b : bodies) { b->PreUpdate(*this); }
 	ui.PreUpdate(*this);
-	basic_update();
+	basicUpdate();
 
-	if (gl.find(L"update") != gl.end())
+	if (curScope.find(L"update") != curScope.end())
 	{
-		auto tmp = *gl[L"update"];
-		Execute(gl, tmp.procs);
+		auto tmp = *curScope[L"update"];
+		Execute(curScope, tmp.procs);
 	}
 
 	if (cl0 && cl1)
 	{
-		if (cl->csp >= cl->n())
+		if (mClipPtr->csp >= mClipPtr->n())
 		{
-			cl->csp = 0;
-			cl = (cl == &*cl0) ? &*cl1 : &*cl0;
+			mClipPtr->csp = 0;
+			mClipPtr = (mClipPtr == &*cl0) ? &*cl1 : &*cl0;
 		}
-		if (!isMuted) { cl->play(wv.wvin); }
+		if (!isMuted) { mClipPtr->play(wv.wvin); }
 	}
 
+	// 检查暂停
 	if (!keyboardOwner)
 	{
 		if (kbc(L' ')) { isPaused = !isPaused; }
 	}
 
-	for (auto b : bs) if (b->del) for (auto c : b->connections) { c->del = true; }
+	// 删除被标记为删除的图形和其上的连接
+	for (auto b : bodies) if (b->del)
+		for (auto c : b->connections) { c->del = true; }
 	if (bodySelecting && bodySelecting->del) { bodySelecting = NULL; }
 	if (connectionSelecting && connectionSelecting->del) { connectionSelecting = NULL; }
-	for (auto c : connections) if (c->del)
+	for (auto& c : connections) if (c->del)//将该连接从其两端的物体的连接列表中移除。
 	{
 		auto& cons0 = c->body0->connections;
 		cons0.erase(remove(cons0.begin(), cons0.end(), &*c), cons0.end());
@@ -145,53 +148,59 @@ void Cur::Update()
 	}
 	connections.erase(remove_if(connections.begin(), connections.end(),
 		[](ptr<Connection> c) { return c->del; }), connections.end());
-	bs.erase(remove_if(bs.begin(), bs.end(),
-		[](ptr<Body> b) { return b->del; }), bs.end());
+	bodies.erase(remove_if(bodies.begin(), bodies.end(),
+		[](ptr<Body> b) { return b->del; }), bodies.end());
 
 	bgr.Update(*this);
 	real_dt = min(max_real_dt, dt);
-	gl[L"dt"] = msh<Var>(real_dt);
-	nx_grid = ceil(rect_scene.w / s_grid);
-	ny_grid = ceil(rect_scene.h / s_grid);
-	if (isSceneChanged) { isSceneChanged = false; grps = FormGroups(bs); }
-	for (auto b : bs) { b->Update(*this); }
+	curScope[L"dt"] = msh<Var>(real_dt);
+	gridNumX = ceil(rectScene.w / gridSize);
+	gridNumY = ceil(rectScene.h / gridSize);
+	if (isSceneChanged) { isSceneChanged = false; groups = FormGroups(bodies); }
+	for (const auto& b : bodies) { b->Update(*this); }
 	if (!isPaused && real_dt != 0)
 	{
-		double sdt = real_dt / n_step;
+		double sdt = real_dt / stepNum;
 
-		rep(i, 0, n_step)
+		rep(i, 0, stepNum)
 		{
-			gl[L"t"] = msh<Var>(t);
-			for (auto b : bs) { b->Step(*this, sdt); }
-			// for (auto b : bs) { b->warp(rect_scene); }
-			for (auto g : grps) { g->Warp(rect_scene); }
+			curScope[L"t"] = msh<Var>(t);
+			for (const auto& b : bodies) { b->Step(*this, sdt); }
+			// for (auto b : bodies) { b->warp(rectScene); }
+			for (auto g : groups) { g->Warp(rectScene); }
 
-			if (hasElectrostatic) rep(i, 0, bs.size() - 1) rep(j, i + 1, bs.size())
+			//计算静电
+			if (hasElectrostatic)
+				rep(i, 0, bodies.size() - 1)
+				rep(j, i + 1, bodies.size())
 			{
-				Electrostatic(*bs[i], *bs[j], sdt, coulomb);
+				Electrostatic(*bodies[i], *bodies[j], sdt, coulomb);
 			}
 
 			out_grid.clear();
 			grid.clear();
-			grid.resize(nx_grid * ny_grid);
-			for (auto b : bs) { b->register_grid(*this); }
+			grid.resize(gridNumX * gridNumY);
+			for (auto& b : bodies) { b->registerGrid(*this); }
 
-			cols.clear();
+			// 处理连接和碰撞
+			collisions.clear();
 			CollideBodies();
-			for (auto c : cols) { c->simulate(equal_repos); }
-			// for (auto c : cols) { c->Render(*this); }
-			for (auto c : connections) { c->Simulate(sdt, equal_repos); }
+			for (auto& collision : collisions) { collision->simulate(equal_repos); }
+			// for (auto collision : collisions) { collision->Render(*this); }
+			for (auto& connnection : connections) { connnection->Simulate(sdt, equal_repos); }
 			t += sdt;
 		}
 	}
 
-	for (auto& b : bs)
+	for (auto& b : bodies)
 	{
-		b->updatePositionAndAABB(); b->Render(*this);
+		b->updatePositionAndAABB();
+		b->Render(*this);
 	}
 	for (auto& connection : connections)
 	{
-		connection->updatePosition(); connection->Render(*this);
+		connection->updatePosition();
+		connection->Render(*this);
 	}
 
 	if (mode == MODE_CREATE) { creator->Update(*this); }
@@ -205,52 +214,55 @@ void Cur::set_cfg(Var const& v)
 	getv(energy_mul); getv(chargeMultiplier);
 	getv(eps_paralell); getv(max_real_dt);
 	getv(hasElectrostatic); getv(coulomb);
-	getv(n_step); n_step = max(1, n_step);
-	getv(s_grid);  getv(equal_repos); getv(t); getv(isTrackShown);
-	if (found(L"left_scene")) { rect_scene.topLeftPosition.x = dic[L"left_scene"]->num; }
-	if (found(L"top_scene")) { rect_scene.topLeftPosition.y = dic[L"top_scene"]->num; }
-	if (found(L"w_scene")) { rect_scene.w = dic[L"w_scene"]->num; }
-	if (found(L"h_scene")) { rect_scene.h = dic[L"h_scene"]->num; }
+	getv(stepNum); stepNum = max(1, stepNum);
+	getv(gridSize);  getv(equal_repos); getv(t); getv(isTrackShown);
+	if (found(L"left_scene")) { rectScene.topLeftPosition.x = dic[L"left_scene"]->num; }
+	if (found(L"top_scene")) { rectScene.topLeftPosition.y = dic[L"top_scene"]->num; }
+	if (found(L"w_scene")) { rectScene.w = dic[L"w_scene"]->num; }
+	if (found(L"h_scene")) { rectScene.h = dic[L"h_scene"]->num; }
 	if (found(L"gravity")) { gravity = tv2(*dic[L"gravity"]); }
 
 	isSceneChanged = true;
 }
 
-#define colpars cols, eps_paralell
+#define colpars collisions, eps_paralell
 void Cur::CollideBodies()
 {
-	rep(i, 0, nx_grid) rep(j, 0, ny_grid)
+	rep(i, 0, gridNumX)
+		rep(j, 0, gridNumY)
 	{
-		auto& gp = grid[j * nx_grid + i];
+		auto& gp = grid[j * gridNumX + i];
 		rep(k, 0, gp.size())
 		{
 			auto& b0 = *gp[k];
 			rep(m, k + 1, gp.size()) { Collide(b0, *gp[m], colpars); }
 			for (auto pb1 : out_grid) { Collide(b0, *pb1, colpars); }
 
-			if (i + 1 < nx_grid)
+			if (i + 1 < gridNumX)// 检查右邻
 			{
 				int a = i + 1, b = j;
-				for (auto pb1 : grid[b * nx_grid + a]) { Collide(b0, *pb1, colpars); }
+				for (auto pb1 : grid[b * gridNumX + a]) { Collide(b0, *pb1, colpars); }
 			}
-			if (j + 1 >= ny_grid) { continue; }
+			if (j + 1 >= gridNumY) { continue; }// 检查下邻，没有下邻就无法进行下列操作了
 
-			if (i - 1 >= 0)
+			if (i - 1 >= 0) //检查左下
 			{
 				int a = i - 1, b = j + 1;
-				for (auto pb1 : grid[b * nx_grid + a]) { Collide(b0, *pb1, colpars); }
+				for (auto pb1 : grid[b * gridNumX + a]) { Collide(b0, *pb1, colpars); }
 			}
-			if (i + 1 < nx_grid)
+			if (i + 1 < gridNumX)// 检查右下
 			{
 				int a = i + 1, b = j + 1;
-				for (auto pb1 : grid[b * nx_grid + a]) { Collide(b0, *pb1, colpars); }
+				for (auto pb1 : grid[b * gridNumX + a]) { Collide(b0, *pb1, colpars); }
 			}
 			int a = i, b = j + 1;
-			for (auto pb1 : grid[b * nx_grid + a]) { Collide(b0, *pb1, colpars); }
+			for (auto pb1 : grid[b * gridNumX + a]) { Collide(b0, *pb1, colpars); }
 		}
 	}
 
-	rep(i, 0, out_grid.size() - 1) rep(j, i + 1, out_grid.size())
+	// out_grid向量中的物体是那些跨越多个网格的物体。吗？
+	rep(i, 0, out_grid.size() - 1)
+		rep(j, i + 1, out_grid.size())
 	{
 		Collide(*out_grid[i], *out_grid[j], colpars);
 	}
@@ -273,97 +285,97 @@ void Cur::init_def_fun()
 			if (in.size() >= 1) { mkp(creator)(*in[0]); }
 			return msh<Var>();
 		};
-	gl[L"set_creator"] = msh<Var>(f0);
+	curScope[L"set_creator"] = msh<Var>(f0);
 
 	auto f1 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 2) { CreateBody(*this, *in[0], *in[1]); }
 			return msh<Var>();
 		};
-	gl[L"create_body"] = msh<Var>(f1);
+	curScope[L"create_body"] = msh<Var>(f1);
 
 	auto f2 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 2) { return Box(*in[0], *in[1]); }
 			return msh<Var>();
 		};
-	gl[L"box"] = msh<Var>(f2);
+	curScope[L"box"] = msh<Var>(f2);
 
 	auto f3 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 1) { return Ball(*in[0]); }
 			return msh<Var>();
 		};
-	gl[L"ball"] = msh<Var>(f3);
+	curScope[L"ball"] = msh<Var>(f3);
 
 	auto f4 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 2) { return Parallelogram(*in[0], *in[1], *in[2]); }
 			return msh<Var>();
 		};
-	gl[L"parallelogram"] = msh<Var>(f4);
+	curScope[L"parallelogram"] = msh<Var>(f4);
 
 	auto f5 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 3) { return Trapezoid(*in[0], *in[1], *in[2]); }
 			return msh<Var>();
 		};
-	gl[L"trapezoid"] = msh<Var>(f5);
+	curScope[L"trapezoid"] = msh<Var>(f5);
 
 	auto f6 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 2) { return RegularPoly(*in[0], *in[1]); }
 			return msh<Var>();
 		};
-	gl[L"regular_poly"] = msh<Var>(f6);
+	curScope[L"regular_poly"] = msh<Var>(f6);
 
 	auto f7 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 2) { return Cross(*in[0], *in[1]); }
 			return msh<Var>();
 		};
-	gl[L"cross"] = msh<Var>(f7);
+	curScope[L"cross"] = msh<Var>(f7);
 
 	auto f8 = [this](vector<ptr<Var>> const& in)
 		{
-			return msh<Var>(bs.size());
+			return msh<Var>(bodies.size());
 		};
-	gl[L"n_bodies"] = msh<Var>(f8);
+	curScope[L"n_bodies"] = msh<Var>(f8);
 
 	auto f9 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 1) { CreateConnetion(*this, *in[0]); }
 			return msh<Var>();
 		};
-	gl[L"create_conn"] = msh<Var>(f9);
+	curScope[L"create_conn"] = msh<Var>(f9);
 
 	auto f10 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 1) { set_cfg(*in[0]); }
 			return msh<Var>();
 		};
-	gl[L"set_cfg"] = msh<Var>(f10);
+	curScope[L"set_cfg"] = msh<Var>(f10);
 
 	auto f11 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 2) { Boundary(*this, *in[0], *in[1]); }
 			return msh<Var>();
 		};
-	gl[L"boundary"] = msh<Var>(f11);
+	curScope[L"boundary"] = msh<Var>(f11);
 
 	auto f12 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 3) { return FramedBox(*in[0], *in[1], *in[2]); }
 			return msh<Var>();
 		};
-	gl[L"framed_box"] = msh<Var>(f12);
+	curScope[L"framed_box"] = msh<Var>(f12);
 
 	auto f13 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 4) { Gear(*this, *in[0], *in[1], *in[2], *in[3]); }
 			return msh<Var>();
 		};
-	gl[L"gear"] = msh<Var>(f13);
+	curScope[L"gear"] = msh<Var>(f13);
 
 	auto f14 = [this](vector<ptr<Var>> const& in)
 		{
@@ -373,7 +385,7 @@ void Cur::init_def_fun()
 			}
 			return msh<Var>();
 		};
-	gl[L"strand"] = msh<Var>(f14);
+	curScope[L"strand"] = msh<Var>(f14);
 
 	auto f15 = [this](vector<ptr<Var>> const& in)
 		{
@@ -383,18 +395,20 @@ void Cur::init_def_fun()
 			}
 			return msh<Var>();
 		};
-	gl[L"necklace"] = msh<Var>(f15);
+	curScope[L"necklace"] = msh<Var>(f15);
 }
-void Cur::basic_update()
+void Cur::basicUpdate()
 {
-	title = loc(L"title");
-	if (gl.find(L"dbstr") != gl.end()) { dbstr = gl[L"dbstr"]->str; }
-	if (gl.find(L"update") != gl.end())
-	{
-		auto f = gl[L"update"];  Execute(gl, f->procs);
-	}
+	title = getLocalizedString(L"title");
+	if (curScope.find(L"dbstr") != curScope.end()) { dbstr = curScope[L"dbstr"]->str; }
+	if (curScope.find(L"update") != curScope.end()) { auto f = curScope[L"update"];  Execute(curScope, f->procs); }
 
-	pars.erase(remove_if(pars.begin(), pars.end(),
-		[](ptr<param> p) { return p->del; }), pars.end());
-	for (auto& p : pars) { gl[p->nm] = msh<Var>(p->val); }
+	// 删除标记为删除的键
+	pars.erase(
+		remove_if(pars.begin(), pars.end(),
+			[](ptr<param> p) { return p->del; }),
+		pars.end());
+
+	//更新对应键的值
+	for (auto& p : pars) { curScope[p->nm] = msh<Var>(p->val); }
 }

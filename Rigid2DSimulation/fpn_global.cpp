@@ -13,28 +13,28 @@ void BtLoad::OnClick(App& app) { cur.Load(ui.fpn_global->tb_load->str); }
 
 void RLbGlobal::Sync(App& app) {
 	txt = L"";
-	txt += loc(L"vol") + tw2(cur.vol) + L"\n";
-	txt += loc(L"n_step") + tw(cur.n_step) + L"\n";
-	txt += loc(L"s_grid") + tw2(cur.s_grid) + L"\n";
-	txt += loc(L"max_real_dt") + tw2(cur.max_real_dt) + L"\n";
-	txt += loc(L"tl_scene") + tw(cur.rect_scene.topLeftPosition) + L"\n";
-	txt += loc(L"w_scene") + tw(cur.rect_scene.w) + L"\n";
-	txt += loc(L"h_scene") + tw(cur.rect_scene.h) + L"\n";
-	txt += loc(L"gravity") + toWstring(cur.gravity) + L"\n";
-	txt += loc(L"electrostatic") + tw(cur.hasElectrostatic) + L"\n";
-	txt += loc(L"coulomb") + tw2(cur.coulomb) + L"\n";
+	txt += getLocalizedString(L"vol") + tw2(cur.vol) + L"\n";
+	txt += getLocalizedString(L"n_step") + tw(cur.stepNum) + L"\n";
+	txt += getLocalizedString(L"s_grid") + tw2(cur.gridSize) + L"\n";
+	txt += getLocalizedString(L"max_real_dt") + tw2(cur.max_real_dt) + L"\n";
+	txt += getLocalizedString(L"tl_scene") + tw(cur.rectScene.topLeftPosition) + L"\n";
+	txt += getLocalizedString(L"w_scene") + tw(cur.rectScene.w) + L"\n";
+	txt += getLocalizedString(L"h_scene") + tw(cur.rectScene.h) + L"\n";
+	txt += getLocalizedString(L"gravity") + toWstring(cur.gravity) + L"\n";
+	txt += getLocalizedString(L"electrostatic") + tw(cur.hasElectrostatic) + L"\n";
+	txt += getLocalizedString(L"coulomb") + tw2(cur.coulomb) + L"\n";
 
 	wstring s;
 	switch (cur.creator->mode) {
-	case CREATE_BALL: s = loc(L"crt_ball"); break;
-	case CREATE_BOX: s = loc(L"crt_box"); break;
-	case CREATE_CONN: s = loc(L"crt_conn"); break;
-	case CREATE_NAIL: s = loc(L"crt_nail"); break;
-	case CREATE_PARTICLE: s = loc(L"crt_particle"); break;
-	case CREATE_PLATE: s = loc(L"crt_plate"); break;
-	case CREATE_POINT: s = loc(L"crt_point"); break;
+	case CREATE_BALL: s = getLocalizedString(L"crt_ball"); break;
+	case CREATE_BOX: s = getLocalizedString(L"crt_box"); break;
+	case CREATE_CONN: s = getLocalizedString(L"crt_conn"); break;
+	case CREATE_NAIL: s = getLocalizedString(L"crt_nail"); break;
+	case CREATE_PARTICLE: s = getLocalizedString(L"crt_particle"); break;
+	case CREATE_PLATE: s = getLocalizedString(L"crt_plate"); break;
+	case CREATE_POINT: s = getLocalizedString(L"crt_point"); break;
 	}
-	txt += loc(L"creator_mode") + s + L"\n";
+	txt += getLocalizedString(L"creator_mode") + s + L"\n";
 }
 
 FPnGlobal::FPnGlobal(App& app) : FPnLan(app, 400, 600, L"fpn_global") {

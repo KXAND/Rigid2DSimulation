@@ -11,7 +11,7 @@
 #include "connection.h"
 
 #include "my_def.h"
-#define tls (cur.rect_scene.topLeftPosition)
+#define tls (cur.rectScene.topLeftPosition)
 #define found(s) (dic.find(s) != dic.end())
 #define getv(nm) if (found(L#nm)) { nm = dic.at(L#nm)->num; }
 
@@ -174,23 +174,23 @@ void Body::warp(dRect rc)
 	if (o.y < rc.top()) { o.y += rc.h; }
 	else if (o.y > rc.bottom()) { o.y -= rc.h; }
 }
-void Body::register_grid(Cur& cur)
+void Body::registerGrid(Cur& cur)
 {
 	if (point) { return; }
 
-	int x0 = floor((box.x0 - tls.x) / cur.s_grid);
-	int y0 = floor((box.y0 - tls.y) / cur.s_grid);
-	int x1 = floor((box.x1 - tls.x) / cur.s_grid);
-	int y1 = floor((box.y1 - tls.y) / cur.s_grid);
-	x0 = clamp(x0, 0, cur.nx_grid - 1);
-	x1 = clamp(x1, 0, cur.nx_grid - 1);
-	y0 = clamp(y0, 0, cur.ny_grid - 1);
-	y1 = clamp(y1, 0, cur.ny_grid - 1);
+	int x0 = floor((box.x0 - tls.x) / cur.gridSize);
+	int y0 = floor((box.y0 - tls.y) / cur.gridSize);
+	int x1 = floor((box.x1 - tls.x) / cur.gridSize);
+	int y1 = floor((box.y1 - tls.y) / cur.gridSize);
+	x0 = clamp(x0, 0, cur.gridNumX - 1);
+	x1 = clamp(x1, 0, cur.gridNumX - 1);
+	y0 = clamp(y0, 0, cur.gridNumY - 1);
+	y1 = clamp(y1, 0, cur.gridNumY - 1);
 	if (x1 > x0 + 1 || y1 > y0 + 1)
 	{
 		cur.out_grid.push_back(this); return;
 	}
-	cur.grid[y0 * cur.nx_grid + x0].push_back(this);
+	cur.grid[y0 * cur.gridNumX + x0].push_back(this);
 }
 
 void Body::Init(bool repos_o)

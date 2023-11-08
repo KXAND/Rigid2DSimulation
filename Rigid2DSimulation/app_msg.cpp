@@ -21,7 +21,7 @@ int set_cursor(App* app, WPARAM wp, LPARAM lp) {
 	return 0;
 }
 int bar_clicked(App* app, WPARAM wp, LPARAM lp) {
-	app->input.bar_clicked = true;
+	app->input.isBbarClicked = true;
 	app->input.kbd.fill(false);
 	return 0;
 }

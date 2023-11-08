@@ -3,7 +3,8 @@
 #include "tile.h"
 
 struct Cur;
-struct Bgr {
+struct Background
+{
 	dVector2 topLeft;
 	double depth = 0;
 	tile black;
@@ -12,7 +13,7 @@ struct Bgr {
 	bool hovered = false;
 	bool wheeled = false;
 
-	Bgr(Cur& cur);
+	Background(Cur& cur);
 	dRect viewPort() const { return { topLeft, width, height }; }
 	void render(Cur& cur);
 

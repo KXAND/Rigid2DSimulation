@@ -20,19 +20,20 @@ struct Collision;
 struct Connection;
 
 struct UI;
-struct Bgr;
+struct Background;
 struct clip;
 struct param;
-struct Cur : App {
+struct Cur : App
+{
 	ptr<UI> ui;
-	ptr<Bgr> bgr;
+	ptr<Background> mBgr;
 
-	Scope gl;
+	Scope curScope;
 	wstring dbstr, cmd, tmp_cmd;
 	vector<ptr<param>> pars;
 
 	ptr<clip> cl0, cl1;
-	clip* cl = NULL;
+	clip* mClipPtr = NULL;
 	double vol = 0;
 
 	int mode = 0;
@@ -48,22 +49,22 @@ struct Cur : App {
 	bool hasElectrostatic = false;
 	double max_real_dt = 0;
 	double real_dt = 0, t = 0;
-	int n_step = 0;
-	dRect rect_scene;
+	int stepNum = 0;
+	dRect rectScene;
 	ptr<Creator> creator;
-	Body *bodySelecting = NULL;
+	Body* bodySelecting = NULL;
 	Connection* connectionSelecting = NULL;
-	vector<ptr<Body>> bs;
-	vector<ptr<Group>> grps;
-	vector<ptr<Collision>> cols;
+	vector<ptr<Body>> bodies;
+	vector<ptr<Group>> groups;
+	vector<ptr<Collision>> collisions;
 	vector<ptr<Connection>> connections;
 
 	double eps_paralell = 0;
 	bool equal_repos = false;
 	double velocityAngularDrag = 0;
 
-	double s_grid = 0;
-	int nx_grid = 0, ny_grid = 0;
+	double gridSize = 0;
+	int gridNumX = 0, gridNumY = 0;
 	vector<Body*> out_grid;
 	vector<vector<Body*>> grid;
 
@@ -79,5 +80,5 @@ struct Cur : App {
 	void save_par(FILE* f) const;
 	void load_par(FILE* f);
 	void init_def_fun();
-	void basic_update();
+	void basicUpdate();
 };

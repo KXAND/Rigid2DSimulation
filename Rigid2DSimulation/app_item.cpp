@@ -32,7 +32,7 @@ void AppInput::reset() {
 	msw = 0; chs.clear();
 	// msp 在 App 中已经做过了。
 	msd_old = msd; kbd_old = kbd;
-	kbmsg.fill(0); bar_clicked = false;
+	kbmsg.fill(0); isBbarClicked = false;
 }
 
 app_fps::app_fps() { frm_cnt_max = 10; }

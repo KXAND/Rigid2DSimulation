@@ -24,9 +24,9 @@ void Connection::save(Cur const& cur, FILE* f) const
 	int sz = 0;
 	fwt(type); fwtv(cmd);
 	auto pred0 = [this](ptr<Body> b) { return &*b == body0; };
-	int ind0 = find_if(cur.bs.begin(), cur.bs.end(), pred0) - cur.bs.begin();
+	int ind0 = find_if(cur.bodies.begin(), cur.bodies.end(), pred0) - cur.bodies.begin();
 	auto pred1 = [this](ptr<Body> b) { return &*b == body1; };
-	int ind1 = find_if(cur.bs.begin(), cur.bs.end(), pred1) - cur.bs.begin();
+	int ind1 = find_if(cur.bodies.begin(), cur.bodies.end(), pred1) - cur.bodies.begin();
 	fwt(ind0); fwt(ind1);
 	fwt(p0Relative); fwt(p1Relative); fwt(len); fwt(hooke);
 }
@@ -36,7 +36,7 @@ Connection::Connection(Cur& cur, FILE* f) : Connection()
 	frd(type); frdv(cmd); tmp_cmd = cmd;
 	int ind0 = 0, ind1 = 0;
 	frd(ind0); frd(ind1);
-	body0 = &*cur.bs[ind0]; body1 = &*cur.bs[ind1];
+	body0 = &*cur.bodies[ind0]; body1 = &*cur.bodies[ind1];
 	frd(p0Relative); frd(p1Relative); frd(len); frd(hooke);
 	refresh(cur); signUpToBodies(); updatePosition();
 }

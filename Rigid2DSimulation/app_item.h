@@ -9,7 +9,7 @@ struct AppInput {
 	array<int, 256> kbmsg{};
 	array<BYTE, 256> kbd{}, kbd_old{};
 	// 比如说播音乐, 在窗口移动时可以使音乐暂停。
-	bool bar_clicked = false;
+	bool isBbarClicked = false;
 
 	// 我觉得这个鼠标逻辑还是比较奇怪，可能有多余之处。
 	// 以后要改一下，但请注意这里各种不合理的布置都是有理由的。
@@ -17,8 +17,8 @@ struct AppInput {
 	bool mouse_tracked = false;
 	TRACKMOUSEEVENT mouse_track{};
 
-	bool msc(int m) { return msd[m] && !msd_old[m]; }
-	bool kbc(int k) { return kbd[k] && !kbd_old[k]; }
+	bool isMouseClickedDown(int m) { return msd[m] && !msd_old[m]; }
+	bool isKeyPressedDown(int k) { return kbd[k] && !kbd_old[k]; }
 
 	void track_mouse();
 	bool sync_mouse(HWND hwnd);

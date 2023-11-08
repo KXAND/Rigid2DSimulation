@@ -5,7 +5,7 @@
 #define dscr (app.dscr)
 #define vpscr (scr.rect())
 #define ft (app.ft)
-#define loc (app.loc)
+#define getLocalizedString (app.getLocalizedString)
 
 #define msw (app.input.msw)
 #define chs (app.input.chs)
@@ -14,11 +14,11 @@
 #define msd (app.input.msd)
 #define msd_old (app.input.msd_old)
 #define msnd (!msd[0] && !msd[1] && !msd[2])
-#define msc (app.input.msc)
+#define msc (app.input.isMouseClickedDown)
 #define kbmsg (app.input.kbmsg)
 #define kbd (app.input.kbd)
 #define kbd_old (app.input.kbd_old)
-#define kbc (app.input.kbc)
+#define kbc (app.input.isKeyPressedDown)
 
 #define own (app.own)
 #define keyboardOwner (own.keyboardOwner)

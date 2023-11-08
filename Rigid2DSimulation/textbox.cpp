@@ -254,4 +254,4 @@ void Textbox::PreUpdate(App& app) {
 }
 
 TbLan::TbLan(wstring const& id, int w) : Textbox(w), id_txt(id) {}
-void TbLan::Update(App& app) { txt = loc(id_txt); Textbox::Update(app); }
+void TbLan::Update(App& app) { txt = getLocalizedString(id_txt); Textbox::Update(app); }

@@ -3,7 +3,7 @@
 #include "draw_str.h"
 #include "draw_tile.h"
 
-Bgr::Bgr(Cur& cur)
+Background::Background(Cur& cur)
 {
 	width = 1630; height = 860;
 	topLeft = { 170, 0 }; depth = -100000;
@@ -12,14 +12,14 @@ Bgr::Bgr(Cur& cur)
 
 #include "my_def.h"
 
-void Bgr::render(Cur& cur)
+void Background::render(Cur& cur)
 {
 	draw_tile_raw(scr, topLeft, scr.rect(), black, black.rect());
 	draw_str(scr, dscr, 999, dbstr,
-		dColor(255), ft, topLeft + dVector2(10, 10), width - 20, bgr.viewPort());
+		dColor(110), ft, topLeft + dVector2(10, 10), width - 20, bgr.viewPort());
 }
 
-void Bgr::Update(Cur& cur)
+void Background::Update(Cur& cur)
 {
 	hovered = (hvd == this);
 	wheeled = (whd == this);
@@ -31,7 +31,7 @@ void Bgr::Update(Cur& cur)
 	}
 	render(cur);
 }
-void Bgr::PreUpdate(Cur& cur)
+void Background::PreUpdate(Cur& cur)
 {
 	bool haveDeeperValue = hoveredDepth <= depth && isInside(msp, viewPort());
 	if (haveDeeperValue) { hoveredDepth = depth; hvd = this; }

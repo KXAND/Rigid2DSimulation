@@ -49,7 +49,7 @@ void Button::PreUpdate(App& app) {
 }
 
 BtLan::BtLan(int w, wstring const& id) : Button(w), id_txt(id) {}
-void BtLan::Update(App& app) { txt = loc(id_txt); Button::Update(app); }
+void BtLan::Update(App& app) { txt = getLocalizedString(id_txt); Button::Update(app); }
 
 BtFPn::BtFPn(FloatPanel* fpn) : Button(150), fpn(fpn) {}
 void BtFPn::OnClick(App& app) { fpn->show(app); }

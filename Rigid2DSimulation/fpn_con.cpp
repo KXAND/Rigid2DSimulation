@@ -41,19 +41,19 @@ void ClyCon::Discard(App& app) {
 }
 
 void RLbCon::Sync(App& app) {
-	if (!pcsel) { txt = loc(L"conn_not_sel"); return; }
+	if (!pcsel) { txt = getLocalizedString(L"conn_not_sel"); return; }
 	txt.clear();
 
 	wstring type;
 	switch (csel.type) {
-	case CON_ROPE: type = loc(L"conn_rope"); break;
-	case CON_LINK: type = loc(L"conn_link"); break;
-	case CON_SPRING: type = loc(L"conn_spring"); break;
-	case CON_CORD: type = loc(L"conn_cord"); break;
+	case CON_ROPE: type = getLocalizedString(L"conn_rope"); break;
+	case CON_LINK: type = getLocalizedString(L"conn_link"); break;
+	case CON_SPRING: type = getLocalizedString(L"conn_spring"); break;
+	case CON_CORD: type = getLocalizedString(L"conn_cord"); break;
 	}
-	txt += loc(L"conn_type") + type + L"\n";
-	txt += loc(L"conn_len") + tw2(csel.len) + L"\n";
-	txt += loc(L"conn_hooke") + tw2(csel.hooke) + L"\n";
+	txt += getLocalizedString(L"conn_type") + type + L"\n";
+	txt += getLocalizedString(L"conn_len") + tw2(csel.len) + L"\n";
+	txt += getLocalizedString(L"conn_hooke") + tw2(csel.hooke) + L"\n";
 }
 
 FPnCon::FPnCon(App& app) : FPnLan(app, 400, 600, L"fpn_con") {

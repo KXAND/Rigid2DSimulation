@@ -16,7 +16,7 @@ struct expr {
 	wstring fun;
 	vector<expr> pars;
 	vector<expr> vec;
-	vptr<expr> loc, ind;
+	vptr<expr> getLocalizedString, ind;
 
 	expr() = default;
 	expr(wstring const& typ);

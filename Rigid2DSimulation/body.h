@@ -66,7 +66,7 @@ struct Body
 	void read_cfg(Var const& cfg);
 	void updatePositionAndAABB();
 	void warp(dRect rc);
-	void register_grid(Cur& cur);
+	void registerGrid(Cur& cur);
 private:
 	double getDepth() const;
 	void updateAABB();

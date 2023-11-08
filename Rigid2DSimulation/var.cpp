@@ -77,7 +77,7 @@ bool default_fun(Scope& gl, Scope& sc, expr const& ex, Var& out) {
 }
 
 ptr<Var> eval_call(Scope& gl, Scope& sc, expr const& ex) {
-	Var tmp; Scope loc;
+	Var tmp; Scope getLocalizedString;
 	if (default_fun(gl, sc, ex, tmp)) { return msh<Var>(tmp); }
 
 	// 下面必须是值复制，这是为了避免函数自己被抹去。
@@ -90,27 +90,27 @@ ptr<Var> eval_call(Scope& gl, Scope& sc, expr const& ex) {
 	}
 
 	rep(i, 0, min(fun->pars.size(), ex.pars.size())) {
-		loc[fun->pars[i]] = eval(gl, sc, ex.pars[i]);
+		getLocalizedString[fun->pars[i]] = eval(gl, sc, ex.pars[i]);
 	} bool ret = false; 
-	return Execute(ret, gl, loc, fun->procs);
+	return Execute(ret, gl, getLocalizedString, fun->procs);
 }
 ptr<Var> eval_access(Scope& gl, Scope& sc, expr const& ex) {
-	if (!ex.loc || !ex.ind) { return msh<Var>(); }
-	auto loc = eval(gl, sc, *ex.loc);
+	if (!ex.getLocalizedString || !ex.ind) { return msh<Var>(); }
+	auto getLocalizedString = eval(gl, sc, *ex.getLocalizedString);
 	auto ind = eval(gl, sc, *ex.ind);
 
 	if (ind->typ == L"num") {
-		if (loc->typ != L"vec") { *loc = {}; loc->typ = L"vec"; }
-		rep(i, loc->vec.size() - 1, ind->num) {
-			loc->vec.push_back(msh<Var>());
-		} return loc->vec[ind->num];
+		if (getLocalizedString->typ != L"vec") { *getLocalizedString = {}; getLocalizedString->typ = L"vec"; }
+		rep(i, getLocalizedString->vec.size() - 1, ind->num) {
+			getLocalizedString->vec.push_back(msh<Var>());
+		} return getLocalizedString->vec[ind->num];
 	}
 
 	if (ind->typ == L"str") {
-		if (loc->typ != L"dic") { *loc = {}; loc->typ = L"dic"; }
-		if (loc->dic.find(ind->str) == loc->dic.end()) {
-			loc->dic[ind->str] = msh<Var>();
-		} return loc->dic[ind->str];
+		if (getLocalizedString->typ != L"dic") { *getLocalizedString = {}; getLocalizedString->typ = L"dic"; }
+		if (getLocalizedString->dic.find(ind->str) == getLocalizedString->dic.end()) {
+			getLocalizedString->dic[ind->str] = msh<Var>();
+		} return getLocalizedString->dic[ind->str];
 	} 
 	
 	return msh<Var>();

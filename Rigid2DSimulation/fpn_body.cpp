@@ -28,12 +28,12 @@ LbBodyCon::LbBodyCon(int id) : id(id), Label() {
 void LbBodyCon::Sync(App& app) {
 	wstring type;
 	switch (pcon->type) {
-	case CON_ROPE: type = loc(L"conn_rope"); break;
-	case CON_LINK: type = loc(L"conn_link"); break;
-	case CON_SPRING: type = loc(L"conn_spring"); break;
-	case CON_CORD: type = loc(L"conn_cord"); break;
+	case CON_ROPE: type = getLocalizedString(L"conn_rope"); break;
+	case CON_LINK: type = getLocalizedString(L"conn_link"); break;
+	case CON_SPRING: type = getLocalizedString(L"conn_spring"); break;
+	case CON_CORD: type = getLocalizedString(L"conn_cord"); break;
 	}
-	txt = loc(L"conn") + tw(id) + L": " + type;
+	txt = getLocalizedString(L"conn") + tw(id) + L": " + type;
 }
 
 CbBodyCon::CbBodyCon(int id) : id(id), CbLan(L"cb_body_con") {}
@@ -81,21 +81,21 @@ void ClyBody::Discard(App& app) {
 }
 
 void RLbBody::Sync(App& app) {
-	if (!ptr_body_sel) { txt = loc(L"body_not_sel"); return; }
+	if (!ptr_body_sel) { txt = getLocalizedString(L"body_not_sel"); return; }
 	txt.clear();
 	
-	txt += loc(L"body_o") + toWstring(bsel.o) + L"\n";
-	txt += loc(L"body_v") + toWstring(bsel.velocity) + L"\n";
-	txt += loc(L"body_ang") + tw2(bsel.radian) + L"\n";
-	txt += loc(L"body_v_ang") + tw2(bsel.velocityAngular) + L"\n";
-	txt += loc(L"body_fixed") + tw(bsel.fixed) + L"\n";
-	txt += loc(L"body_density") + tw2(bsel.density) + L"\n";
-	txt += loc(L"body_charge_density") + tw2(bsel.chargeDensity) + L"\n";
-	txt += loc(L"body_e") + tw2(bsel.elasticity) + L"\n";
-	txt += loc(L"body_mu_s") + tw2(bsel.frictionStatic) + L"\n";
-	txt += loc(L"body_mu_d") + tw2(bsel.frictionDynamic) + L"\n";
-	txt += loc(L"body_damp_v") + tw2(bsel.dampCoeff) + L"\n";
-	txt += loc(L"body_damp_v_ang") + tw2(bsel.dampCoeffAngular) + L"\n";
+	txt += getLocalizedString(L"body_o") + toWstring(bsel.o) + L"\n";
+	txt += getLocalizedString(L"body_v") + toWstring(bsel.velocity) + L"\n";
+	txt += getLocalizedString(L"body_ang") + tw2(bsel.radian) + L"\n";
+	txt += getLocalizedString(L"body_v_ang") + tw2(bsel.velocityAngular) + L"\n";
+	txt += getLocalizedString(L"body_fixed") + tw(bsel.fixed) + L"\n";
+	txt += getLocalizedString(L"body_density") + tw2(bsel.density) + L"\n";
+	txt += getLocalizedString(L"body_charge_density") + tw2(bsel.chargeDensity) + L"\n";
+	txt += getLocalizedString(L"body_e") + tw2(bsel.elasticity) + L"\n";
+	txt += getLocalizedString(L"body_mu_s") + tw2(bsel.frictionStatic) + L"\n";
+	txt += getLocalizedString(L"body_mu_d") + tw2(bsel.frictionDynamic) + L"\n";
+	txt += getLocalizedString(L"body_damp_v") + tw2(bsel.dampCoeff) + L"\n";
+	txt += getLocalizedString(L"body_damp_v_ang") + tw2(bsel.dampCoeffAngular) + L"\n";
 }
 
 FPnBody :: FPnBody(App& app) : FPnLan(app, 400, 600, L"fpn_body") {

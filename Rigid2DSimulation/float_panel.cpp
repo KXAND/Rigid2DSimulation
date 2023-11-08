@@ -191,7 +191,7 @@ void FloatPanel::PreUpdate(App& app) {
 FPnLan::FPnLan(App& app, int w, int h, wstring const& id) :
 	FloatPanel(app, w, h), id_txt(id) {}
 void FPnLan::Update(App& app) {
-	txt = loc(id_txt); FloatPanel::Update(app);
+	txt = getLocalizedString(id_txt); FloatPanel::Update(app);
 }
 
 bool less_fpn(FloatPanel* const fp0, FloatPanel* const fp1) {

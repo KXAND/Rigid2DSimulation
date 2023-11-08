@@ -9,7 +9,7 @@ struct Connection;
 /// </summary>
 struct Group {
 	vector<Body*> bodies;
-	Group(vector<Body*> const& bs) : bodies(bs) {}
+	Group(vector<Body*> const& bodies) : bodies(bodies) {}
 	/// <summary>
 	/// @todo
 	/// </summary>
