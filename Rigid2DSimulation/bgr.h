@@ -17,6 +17,6 @@ struct Background
 	dRect viewPort() const { return { topLeft, width, height }; }
 	void render(Cur& cur);
 
-	void Update(Cur& cur);
 	void PreUpdate(Cur& cur);
+	void Update(Cur& cur);
 };

@@ -243,7 +243,6 @@ void Cur::set_cfg(Var const& v)
 	isSceneChanged = true;
 }
 
-#define colpars collisions, eps_paralell
 void Cur::DetectCollisions()
 {
 	rep(i, 0, gridNumX)
@@ -262,7 +261,7 @@ void Cur::DetectCollisions()
 			if (i + 1 < gridNumX)
 			{
 				int a = i + 1, b = j;
-				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, colpars); }
+				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, eps_paralell); }
 			}
 			if (j + 1 >= gridNumY) { continue; }// 检查下邻，没有下邻就无法进行下列操作了
 
@@ -270,17 +269,17 @@ void Cur::DetectCollisions()
 			if (i - 1 >= 0)
 			{
 				int a = i - 1, b = j + 1;
-				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, colpars); }
+				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, eps_paralell); }
 			}
 			// 检查右下
 			if (i + 1 < gridNumX)
 			{
 				int a = i + 1, b = j + 1;
-				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, colpars); }
+				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, eps_paralell); }
 			}
 			// 检查正下
 			int a = i, b = j + 1;
-			for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, colpars); }
+			for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, eps_paralell); }
 		}
 	}
 
@@ -288,7 +287,7 @@ void Cur::DetectCollisions()
 	rep(i, 0, multiGridBodies.size() - 1)
 		rep(j, i + 1, multiGridBodies.size())
 	{
-		Collide(*multiGridBodies[i], *multiGridBodies[j], colpars);
+		Collide(*multiGridBodies[i], *multiGridBodies[j], collisions, eps_paralell);
 	}
 }
 
