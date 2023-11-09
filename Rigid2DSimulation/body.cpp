@@ -139,7 +139,7 @@ vector2 Body::generateRandomPointInside() const
 	return shapes.back()->generateRandomPointInside();
 }
 
-void Body::updatePositionAndAABB()
+void Body::updateShapesPositionAndAABB()
 {
 	transform = matrix2::rotate(radian);
 	for (auto& shape : shapes)
@@ -164,9 +164,9 @@ void Body::updateAABB()
 	}
 }
 
+// 这个方法已经过时了。
 void Body::warp(dRect rc)
 {
-	// 这个方法已经过时了。
 	if (invMass == 0 || dragged) { return; }
 
 	if (o.x < rc.left()) { o.x += rc.w; }
@@ -174,6 +174,7 @@ void Body::warp(dRect rc)
 	if (o.y < rc.top()) { o.y += rc.h; }
 	else if (o.y > rc.bottom()) { o.y -= rc.h; }
 }
+
 void Body::registerGrid(Cur& cur)
 {
 	if (point) { return; }
@@ -188,7 +189,9 @@ void Body::registerGrid(Cur& cur)
 	y1 = clamp(y1, 0, cur.gridNumY - 1);
 	if (x1 > x0 + 1 || y1 > y0 + 1)
 	{
-		cur.out_grid.push_back(this); return;
+		// 是多个跨越多个grid的物体
+		cur.multiGridBodies.push_back(this);
+		return;
 	}
 	cur.grid[y0 * cur.gridNumX + x0].push_back(this);
 }
@@ -240,7 +243,7 @@ void Body::Init(bool repos_o)
 		sh->oRelative -= center;
 		for (auto& v : sh->verticesRelative) { v -= center; }
 	}
-	updatePositionAndAABB();
+	updateShapesPositionAndAABB();
 }
 void Body::Render(Cur& cur) const
 {
@@ -354,7 +357,7 @@ void Body::Step(Cur& cur, double stepDt)
 		else { handleDragPoint(cur); }
 	}
 
-	updatePositionAndAABB();
+	updateShapesPositionAndAABB();
 }
 
 void Body::followPresetO(Cur& cur, double stepDt)

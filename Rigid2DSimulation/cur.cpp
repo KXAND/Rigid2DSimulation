@@ -106,6 +106,7 @@ void Cur::Reset()
 }
 void Cur::Update()
 {
+	// pre update
 	(*mBgr).PreUpdate(*this);
 	if (mode == MODE_CREATE) { creator->PreUpdate(*this); }
 	for (auto& b : bodies) { b->PreUpdate(*this); }
@@ -117,7 +118,8 @@ void Cur::Update()
 		auto tmp = *curScope[L"update"];
 		Execute(curScope, tmp.procs);
 	}
-
+	
+	// 音乐
 	if (cl0 && cl1)
 	{
 		if (mClipPtr->csp >= mClipPtr->n())
@@ -139,27 +141,36 @@ void Cur::Update()
 		for (auto c : b->connections) { c->del = true; }
 	if (bodySelecting && bodySelecting->del) { bodySelecting = NULL; }
 	if (connectionSelecting && connectionSelecting->del) { connectionSelecting = NULL; }
-	for (auto& c : connections) if (c->del)//将该连接从其两端的物体的连接列表中移除。
+	for (auto& c : connections) if (c->del)
 	{
+		//将该连接从其两端的物体的连接列表中移除。
 		auto& cons0 = c->body0->connections;
 		cons0.erase(remove(cons0.begin(), cons0.end(), &*c), cons0.end());
 		auto& cons1 = c->body1->connections;
 		cons1.erase(remove(cons1.begin(), cons1.end(), &*c), cons1.end());
 	}
-	connections.erase(remove_if(connections.begin(), connections.end(),
-		[](ptr<Connection> c) { return c->del; }), connections.end());
-	bodies.erase(remove_if(bodies.begin(), bodies.end(),
-		[](ptr<Body> b) { return b->del; }), bodies.end());
-
-	bgr.Update(*this);
+	connections.erase(
+		remove_if(connections.begin(), connections.end(),
+			[](ptr<Connection> c) { return c->del; }),
+		connections.end());
+	bodies.erase(
+		remove_if(bodies.begin(), bodies.end(),
+			[](ptr<Body> b) { return b->del; }),
+		bodies.end());
+	
+	// 更新运行信息
+	(*mBgr).Update(*this);
 	real_dt = min(max_real_dt, dt);
 	curScope[L"dt"] = msh<Var>(real_dt);
 	gridNumX = ceil(rectScene.w / gridSize);
 	gridNumY = ceil(rectScene.h / gridSize);
 	if (isSceneChanged) { isSceneChanged = false; groups = FormGroups(bodies); }
 	for (const auto& b : bodies) { b->Update(*this); }
+
+	// 物理模拟
 	if (!isPaused && real_dt != 0)
 	{
+		// 标准时长
 		double sdt = real_dt / stepNum;
 
 		rep(i, 0, stepNum)
@@ -167,34 +178,41 @@ void Cur::Update()
 			curScope[L"t"] = msh<Var>(t);
 			for (const auto& b : bodies) { b->Step(*this, sdt); }
 			// for (auto b : bodies) { b->warp(rectScene); }
-			for (auto g : groups) { g->Warp(rectScene); }
+			for (auto& g : groups) { g->Warp(rectScene); }
 
 			//计算静电
 			if (hasElectrostatic)
-				rep(i, 0, bodies.size() - 1)
-				rep(j, i + 1, bodies.size())
 			{
-				Electrostatic(*bodies[i], *bodies[j], sdt, coulomb);
+				rep(i, 0, bodies.size() - 1)
+					rep(j, i + 1, bodies.size())
+				{
+					Electrostatic(*bodies[i], *bodies[j], sdt, coulomb);
+				}
 			}
 
-			out_grid.clear();
+			// 重新检查物体在grid中的情况
+			multiGridBodies.clear();
 			grid.clear();
 			grid.resize(gridNumX * gridNumY);
 			for (auto& b : bodies) { b->registerGrid(*this); }
 
-			// 处理连接和碰撞
+			// 碰撞
 			collisions.clear();
-			CollideBodies();
+			DetectCollisions();
 			for (auto& collision : collisions) { collision->simulate(equal_repos); }
 			// for (auto collision : collisions) { collision->Render(*this); }
+
+			// 连接
 			for (auto& connnection : connections) { connnection->Simulate(sdt, equal_repos); }
+
 			t += sdt;
 		}
 	}
 
+	// 渲染
 	for (auto& b : bodies)
 	{
-		b->updatePositionAndAABB();
+		b->updateShapesPositionAndAABB();
 		b->Render(*this);
 	}
 	for (auto& connection : connections)
@@ -226,45 +244,51 @@ void Cur::set_cfg(Var const& v)
 }
 
 #define colpars collisions, eps_paralell
-void Cur::CollideBodies()
+void Cur::DetectCollisions()
 {
 	rep(i, 0, gridNumX)
 		rep(j, 0, gridNumY)
 	{
-		auto& gp = grid[j * gridNumX + i];
-		rep(k, 0, gp.size())
+		auto& bodies = grid[j * gridNumX + i];
+		rep(k, 0, bodies.size())
 		{
-			auto& b0 = *gp[k];
-			rep(m, k + 1, gp.size()) { Collide(b0, *gp[m], colpars); }
-			for (auto pb1 : out_grid) { Collide(b0, *pb1, colpars); }
+			auto& bo = *bodies[k];
 
-			if (i + 1 < gridNumX)// 检查右邻
+			// 检查同grid和跨grid的情况，输出到collisions中
+			rep(m, k + 1, bodies.size()) { Collide(bo, *bodies[m], collisions, eps_paralell); }
+			for (auto pb1 : multiGridBodies) { Collide(bo, *pb1, collisions, eps_paralell); }
+
+			// 检查右邻
+			if (i + 1 < gridNumX)
 			{
 				int a = i + 1, b = j;
-				for (auto pb1 : grid[b * gridNumX + a]) { Collide(b0, *pb1, colpars); }
+				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, colpars); }
 			}
 			if (j + 1 >= gridNumY) { continue; }// 检查下邻，没有下邻就无法进行下列操作了
 
-			if (i - 1 >= 0) //检查左下
+			//检查左下
+			if (i - 1 >= 0)
 			{
 				int a = i - 1, b = j + 1;
-				for (auto pb1 : grid[b * gridNumX + a]) { Collide(b0, *pb1, colpars); }
+				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, colpars); }
 			}
-			if (i + 1 < gridNumX)// 检查右下
+			// 检查右下
+			if (i + 1 < gridNumX)
 			{
 				int a = i + 1, b = j + 1;
-				for (auto pb1 : grid[b * gridNumX + a]) { Collide(b0, *pb1, colpars); }
+				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, colpars); }
 			}
+			// 检查正下
 			int a = i, b = j + 1;
-			for (auto pb1 : grid[b * gridNumX + a]) { Collide(b0, *pb1, colpars); }
+			for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, colpars); }
 		}
 	}
 
-	// out_grid向量中的物体是那些跨越多个网格的物体。吗？
-	rep(i, 0, out_grid.size() - 1)
-		rep(j, i + 1, out_grid.size())
+	// 检查多gird和多gird本身的碰撞
+	rep(i, 0, multiGridBodies.size() - 1)
+		rep(j, i + 1, multiGridBodies.size())
 	{
-		Collide(*out_grid[i], *out_grid[j], colpars);
+		Collide(*multiGridBodies[i], *multiGridBodies[j], colpars);
 	}
 }
 

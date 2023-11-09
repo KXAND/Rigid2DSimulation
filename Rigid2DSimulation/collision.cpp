@@ -119,7 +119,8 @@ void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralel
 				if (!collide(*shape1, *shape0, collision, true)) { continue; }
 			}
 
-			// 仅有一边是圆时，寻找最近的接触点
+
+			// 都不是圆，检查最近距离是否小于阈值
 			if (!shape0->isCircle && !shape1->isCircle && collision.diff < eps_paralell)
 			{
 				double distanceSquareClosest = DBL_MAX;

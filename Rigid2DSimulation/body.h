@@ -64,7 +64,7 @@ struct Body
 	bool inside(vector2 p) const;
 	void refresh(Cur& cur);
 	void read_cfg(Var const& cfg);
-	void updatePositionAndAABB();
+	void updateShapesPositionAndAABB();
 	void warp(dRect rc);
 	void registerGrid(Cur& cur);
 private:

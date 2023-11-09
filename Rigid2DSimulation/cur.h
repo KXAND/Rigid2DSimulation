@@ -65,7 +65,7 @@ struct Cur : App
 
 	double gridSize = 0;
 	int gridNumX = 0, gridNumY = 0;
-	vector<Body*> out_grid;
+	vector<Body*> multiGridBodies;
 	vector<vector<Body*>> grid;
 
 	Cur();
@@ -75,7 +75,7 @@ struct Cur : App
 	void Update() override;
 
 	void set_cfg(Var const& v);
-	void CollideBodies();
+	void DetectCollisions();
 
 	void save_par(FILE* f) const;
 	void load_par(FILE* f);
