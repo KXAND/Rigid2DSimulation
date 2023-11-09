@@ -6,36 +6,34 @@
 Background::Background(Cur& cur)
 {
 	width = 1630; height = 860;
-	topLeft = { 170, 0 }; depth = -100000;
-	black = tile(width, height, dColor{}, 255);
+	topLeft = { 170, 0 }; // tile的原点坐标位置，170的余量用于左侧UI显示
+	depth = -100000;
+	backgroundTile = tile(width, height, dColor::WHITE, 255);
 }
 
-#include "my_def.h"
-
-void Background::render(Cur& cur)
+void Background::Render(Cur& cur)
 {
-	draw_tile_raw(scr, topLeft, scr.rect(), black, black.rect());
-	draw_str(scr, dscr, 999, dbstr,
-		dColor(110), ft, topLeft + dVector2(10, 10), width - 20, bgr.viewPort());
+	drawTileRaw((cur.scr), topLeft,  backgroundTile);
+	draw_str((cur.scr), (cur.dscr), 999, (cur.dbstr),
+		dColor(110), (cur.ft), topLeft + dVector2(10, 10), width - 20, (*cur.mBgr).viewPort());
 }
 
 void Background::Update(Cur& cur)
 {
-	hovered = (hvd == this);
-	wheeled = (whd == this);
+	hovered = (((cur.own).hvd) == this);
+	wheeled = (((cur.own).whd) == this);
 
-	if (hovered && msc(0))
+	if (hovered && (cur.input.isMouseClickedDown)(0))
 	{
 		cur.bodySelecting = NULL;
 		cur.connectionSelecting = NULL;
 	}
-	render(cur);
 }
 void Background::PreUpdate(Cur& cur)
 {
-	bool haveDeeperValue = hoveredDepth <= depth && isInside(msp, viewPort());
-	if (haveDeeperValue) { hoveredDepth = depth; hvd = this; }
+	bool haveDeeperValue = ((cur.own).hoveredDepth) <= depth && isInside(cur.input.msp, viewPort());
+	if (haveDeeperValue) { ((cur.own).hoveredDepth) = depth; ((cur.own).hvd) = this; }
 
-	haveDeeperValue = whdDepth <= depth && isInside(msp, viewPort());
-	if (haveDeeperValue) { whdDepth = depth; whd = this; }
+	haveDeeperValue = (cur.own.whdDepth) <= depth && isInside((cur.input.msp), viewPort());
+	if (haveDeeperValue) { (cur.own.whdDepth) = depth; (cur.own.whd) = this; }
 }

@@ -160,6 +160,7 @@ void Cur::Update()
 	
 	// 更新运行信息
 	(*mBgr).Update(*this);
+	(*mBgr).Render(*this);
 	real_dt = min(max_real_dt, dt);
 	curScope[L"dt"] = msh<Var>(real_dt);
 	gridNumX = ceil(rectScene.w / gridSize);

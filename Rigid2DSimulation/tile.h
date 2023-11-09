@@ -11,6 +11,7 @@ struct dColor
 	static const dColor YELLOW;
 	static const dColor YELLOW;
 	static const dColor MAGENTA;
+	static const dColor WHITE;
 	static const dColor BLACK;
 
 

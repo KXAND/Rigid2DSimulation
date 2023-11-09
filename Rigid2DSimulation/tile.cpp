@@ -6,7 +6,8 @@ const dColor dColor::BLUE = dColor(0, 0, 255);
 const dColor dColor::CYAN = dColor(0, 255, 255);
 const dColor dColor::MAGENTA = dColor(255, 0, 255);
 const dColor dColor::YELLOW = dColor(255, 255, 0);
-const dColor dColor::BLACK = dColor(255, 255, 255);
+const dColor dColor::WHITE = dColor(255, 255, 255);
+const dColor dColor::BLACK = dColor(0, 0, 0);
 
 dColor::dColor(wstring const& s)
 {
@@ -32,8 +33,8 @@ void cover(dColor& bc, BYTE& ba, dColor fc, BYTE fa)
 	bc = dColor(r, g, b); ba = a;
 }
 
-tile::tile(int w, int h, dColor c, BYTE a) :
-	width(w), height(h), colors(area(), c), as(area(), a)
+tile::tile(int w, int h, dColor color, BYTE a) :
+	width(w), height(h), colors(area(), color), as(area(), a)
 {
 }
 tile::tile(int w, int h, tile const& src, dRect vp_src) : tile(w, h)

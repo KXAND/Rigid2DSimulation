@@ -11,7 +11,7 @@
 
 Connection::Connection()
 {
-	colorRope = dColor::BLACK;
+	colorRope = dColor::WHITE;
 	colorRopeTight = dColor::RED;
 	colorLink = dColor::BLUE;
 	colorSpringCompress = dColor::GREEN;
