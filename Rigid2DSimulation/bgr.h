@@ -26,7 +26,7 @@ struct Background
 	/// <param name="cur"></param>
 	void Render(Cur& cur);
 	/// <summary>
-	/// 更新深度
+	/// 更新owner深度
 	/// </summary>
 	/// <param name="cur"></param>
 	void PreUpdate(Cur& cur);

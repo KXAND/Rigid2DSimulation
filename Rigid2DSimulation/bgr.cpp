@@ -8,7 +8,7 @@ Background::Background(Cur& cur)
 	width = 1630; height = 860;
 	topLeft = { 170, 0 }; // tile的原点坐标位置，170的余量用于左侧UI显示
 	depth = -100000;
-	backgroundTile = tile(width, height, dColor::WHITE, 255);
+	backgroundTile = tile(width, height, dColor::BLACK, 255);
 }
 
 void Background::Render(Cur& cur)
