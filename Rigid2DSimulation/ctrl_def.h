@@ -23,9 +23,9 @@
 #define own (app.own)
 #define keyboardOwner (own.keyboardOwner)
 #define free_kb (own.free_kb)
-#define hvd (own.hvd)
+#define hvd (own.hovered)
 #define hoveredDepth (own.hoveredDepth)
-#define whd (own.whd)
-#define whdDepth (own.whdDepth)
+#define whd (own.wheeled)
+#define whdDepth (own.wheeledDepth)
 #define rmv own.remove(this);
 #define rhvd (hovered && msnd)

@@ -20,10 +20,10 @@
 #define kbc (cur.input.isKeyPressedDown)
 
 #define own (cur.own)
-#define hvd (own.hvd)
+#define hvd (own.hovered)
 #define hoveredDepth (own.hoveredDepth)
-#define whd (own.whd)
-#define whdDepth (own.whdDepth)
+#define whd (own.wheeled)
+#define whdDepth (own.wheeledDepth)
 #define keyboardOwner (own.keyboardOwner)
 #define free_kb (own.free_kb)
 #define rmv own.remove(this);

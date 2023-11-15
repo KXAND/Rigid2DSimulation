@@ -13,15 +13,15 @@ Background::Background(Cur& cur)
 
 void Background::Render(Cur& cur)
 {
-	drawTileRaw((cur.scr), topLeft,  backgroundTile);
+	drawBasedTile((cur.scr), topLeft,  backgroundTile);
 	draw_str((cur.scr), (cur.dscr), 999, (cur.dbstr),
 		dColor(110), (cur.ft), topLeft + dVector2(10, 10), width - 20, (*cur.mBgr).viewPort());
 }
 
 void Background::Update(Cur& cur)
 {
-	hovered = (((cur.own).hvd) == this);
-	wheeled = (((cur.own).whd) == this);
+	hovered = ((cur.own.hovered) == this);
+	wheeled = ((cur.own.wheeled) == this);
 
 	if (hovered && (cur.input.isMouseClickedDown)(0))
 	{
@@ -32,8 +32,8 @@ void Background::Update(Cur& cur)
 void Background::PreUpdate(Cur& cur)
 {
 	bool haveDeeperValue = ((cur.own).hoveredDepth) <= depth && isInside(cur.input.msp, viewPort());
-	if (haveDeeperValue) { ((cur.own).hoveredDepth) = depth; ((cur.own).hvd) = this; }
+	if (haveDeeperValue) { ((cur.own).hoveredDepth) = depth; ((cur.own).hovered) = this; }
 
-	haveDeeperValue = (cur.own.whdDepth) <= depth && isInside((cur.input.msp), viewPort());
-	if (haveDeeperValue) { (cur.own.whdDepth) = depth; (cur.own.whd) = this; }
+	haveDeeperValue = (cur.own.wheeledDepth) <= depth && isInside(cur.input.msp, viewPort());
+	if (haveDeeperValue) { (cur.own.wheeledDepth) = depth; (cur.own.wheeled) = this; }
 }

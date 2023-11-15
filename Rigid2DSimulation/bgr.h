@@ -25,7 +25,14 @@ struct Background
 	/// </summary>
 	/// <param name="cur"></param>
 	void Render(Cur& cur);
-
+	/// <summary>
+	/// 更新深度
+	/// </summary>
+	/// <param name="cur"></param>
 	void PreUpdate(Cur& cur);
+	/// <summary>
+	/// 检查是否点击了背景
+	/// </summary>
+	/// <param name="cur"></param>
 	void Update(Cur& cur);
 };

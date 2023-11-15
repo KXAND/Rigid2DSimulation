@@ -1,6 +1,6 @@
 #include "draw_tile.h"
 
-void drawTileRaw(tile& dest, dVector2 tl, tile const& src)
+void drawBasedTile(tile& dest, dVector2 tl, tile const& src)
 {
 	auto viewportDest = dest.rect();
 	auto viewportSrc = dest.rect();
@@ -15,38 +15,43 @@ void drawTileRaw(tile& dest, dVector2 tl, tile const& src)
 	{
 		int destP = j * dest.width + l;
 		int srcP = (j - tl.y + viewportSrc.top()) * src.width +
-			(l - tl.x + viewportSrc.left());//算式变复杂是因为需要从世界坐标系转换到scrtile的内部坐标系
+			(l - tl.x + viewportSrc.left());//将点/像素从世界坐标系转换到scrtile的内部坐标系
 		int rowSize = sizeof(dColor) * (r - l);
 		memcpy(dest.colors.data() + destP, src.colors.data() + srcP, rowSize);
 	}
 }
 
-void draw_tile(tile& dest, dbuf& ds, double dep, dVector2 tl,
-	dRect vp_dest, tile const& src, dRect vp_src)
+void drawTile(tile& dest, dbuf& zBuffer, double dep, dVector2 tl,
+	dRect vp_dest, tile const& src, dRect viewportSrc)
 {
-	int a = max(vp_dest.left(), tl.x);
-	int b = min(vp_dest.right(), tl.x + vp_src.w);
-	int c = max(vp_dest.top(), tl.y);
-	int d = min(vp_dest.bottom(), tl.y + vp_src.h);
-	if (a >= b || c >= d) { return; }
+	int l = max(vp_dest.left(), tl.x);
+	int r = min(vp_dest.right(), tl.x + viewportSrc.w);
+	int t = max(vp_dest.top(), tl.y);
+	int b = min(vp_dest.bottom(), tl.y + viewportSrc.h);
+	if (l >= r || t >= b) { return; }
 
-	rep(j, c, d)
+	rep(j, t, b)
 	{
-		int dp = j * dest.width + a;
-		int sp = (j - tl.y + vp_src.top()) * src.width +
-			(a - tl.x + vp_src.left());
-		rep(i, a, b)
+		int destPxl = j * dest.width + l;
+		int srcPxl = (j - tl.y + viewportSrc.top()) * src.width +
+			(l - tl.x + viewportSrc.left());
+		rep(i, l, r)
 		{
-			if (ds[dp] <= dep && src.as[sp] != 0)
+			if (zBuffer[destPxl] <= dep && src.as[srcPxl] != 0)
 			{
-				ds[dp] = dep; dest.colors[dp] = src.colors[sp];
-			} dp++; sp++;
+				zBuffer[destPxl] = dep; dest.colors[destPxl] = src.colors[srcPxl];
+			}
+			destPxl++;
+			srcPxl++;
 		}
 	}
 }
-bool hit_tile(dVector2 p, dVector2 tl, tile const& src, dRect vp_src)
+
+// 疑似弃用
+bool hitTile(dVector2 p, dVector2 tl, tile const& tileSrc, dRect viewportSrc)
 {
-	dVector2 s_pnt = vp_src.topLeftPosition + p - tl;
-	int sp = s_pnt.y * src.width + s_pnt.x;
-	return isInside(s_pnt, vp_src) && src.as[sp] != 0;
+	// 假设了vpsrc和 tilesrc 左上角对齐
+	dVector2 pSrc = viewportSrc.topLeftPosition + p - tl;
+	int pxl = pSrc.y * tileSrc.width + pSrc.x;
+	return isInside(pSrc, viewportSrc) && tileSrc.as[pxl] != 0;
 }

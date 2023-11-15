@@ -50,12 +50,12 @@ void app_fps::update() {
 }
 
 void app_owners::reset() {
-	hoveredDepth = whdDepth = -DBL_MAX; keyboardOwner = hvd = whd = NULL;
+	hoveredDepth = wheeledDepth = -DBL_MAX; keyboardOwner = hovered = wheeled = NULL;
 }
 void app_owners::remove(void* o) {
 	if (keyboardOwner == o) { keyboardOwner = NULL; }
-	if (hvd == o) { hvd = NULL; }
-	if (whd == o) { whd = NULL; }
+	if (hovered == o) { hovered = NULL; }
+	if (wheeled == o) { wheeled = NULL; }
 }
 void app_owners::free_kb(void* o) {
 	if (keyboardOwner == o) { keyboardOwner = NULL; }

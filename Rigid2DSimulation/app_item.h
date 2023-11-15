@@ -45,9 +45,9 @@ struct app_fps {
 
 struct app_owners {
 	void* keyboardOwner = NULL;
-	void* hvd = NULL;
-	void* whd = NULL;
-	double hoveredDepth = -DBL_MAX, whdDepth = -DBL_MAX;
+	void* hovered = NULL;
+	void* wheeled = NULL;
+	double hoveredDepth = -DBL_MAX, wheeledDepth = -DBL_MAX;
 
 	void reset();
 	void remove(void* o);
