@@ -3,7 +3,7 @@
 void drawBasedTile(tile& dest, dVector2 tl, tile const& src)
 {
 	auto viewportDest = dest.rect();
-	auto viewportSrc = dest.rect();
+	auto viewportSrc = src.rect();
 
 	int l = max(viewportDest.left(), tl.x);
 	int r = min(viewportDest.right(), tl.x + viewportSrc.w);
