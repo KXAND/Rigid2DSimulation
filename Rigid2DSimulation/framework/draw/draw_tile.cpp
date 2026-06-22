@@ -9,13 +9,13 @@ void drawBasedTile(tile& dest, dVector2 tl, tile const& src)
 	int r = min(viewportDest.right(), tl.x + viewportSrc.w);
 	int t = max(viewportDest.top(), tl.y);
 	int b = min(viewportDest.bottom(), tl.y + viewportSrc.h);
-	if (l >= r || t >= b) { return; } // ï¿½ï¿½ï¿½ï¿½ÏµÎªï¿½ï¿½ï¿½ï¿½ÎªÔ­ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ l<r, t<b
+	if (l >= r || t >= b) { return; } // ×ø±êÏµÎª×óÉÏÎªÔ­µã£¬ËùÒÔÕý³£Çé¿öÊÇ l<r, t<b
 
 	rep(j, t, b)
 	{
 		int destP = j * dest.width + l;
 		int srcP = (j - tl.y + viewportSrc.top()) * src.width +
-			(l - tl.x + viewportSrc.left());//ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµ×ªï¿½ï¿½ï¿½ï¿½scrtileï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½Ïµ
+			(l - tl.x + viewportSrc.left());//½«µã/ÏñËØ´ÓÊÀ½ç×ø±êÏµ×ª»»µ½scrtileµÄÄÚ²¿×ø±êÏµ
 		int rowSize = sizeof(dColor) * (r - l);
 		memcpy(dest.colors.data() + destP, src.colors.data() + srcP, rowSize);
 	}
@@ -47,10 +47,10 @@ void drawTile(tile& dest, dbuf& zBuffer, double dep, dVector2 tl,
 	}
 }
 
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// ÒÉËÆÆúÓÃ
 bool hitTile(dVector2 p, dVector2 tl, tile const& tileSrc, dRect viewportSrc)
 {
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½vpsrcï¿½ï¿½ tilesrc ï¿½ï¿½ï¿½Ï½Ç¶ï¿½ï¿½ï¿½
+	// ¼ÙÉèÁËvpsrcºÍ tilesrc ×óÉÏ½Ç¶ÔÆë
 	dVector2 pSrc = viewportSrc.topLeftPosition + p - tl;
 	int pxl = pSrc.y * tileSrc.width + pSrc.x;
 	return isInside(pSrc, viewportSrc) && tileSrc.as[pxl] != 0;

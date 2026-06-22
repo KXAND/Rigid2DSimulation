@@ -2,7 +2,7 @@
 #include "vector2.h"
 #include "tile.h"
 
-// @todo: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ drawRectangle ï¿½Æµï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
+// @todo: °ÑÁ½¸ö drawRectangle ÒÆµ½±ðµÄÎÄ¼þÖÐ
 void drawRectangleRaw(tile& targetTile, dVector2 topLeft, int w, int h, dRect viewPort, dColor color);
 
 void drawRectangle(tile& targetTile, dbuf& zBuffer, double depth,

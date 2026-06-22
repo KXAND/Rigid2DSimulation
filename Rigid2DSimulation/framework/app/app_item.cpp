@@ -30,7 +30,7 @@ void AppInput::init(HWND hwnd) {
 }
 void AppInput::reset() {
 	msw = 0; chs.clear();
-	// msp ï¿½ï¿½ App ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¡ï¿½
+	// msp ÔÚ App ÖÐÒÑ¾­×ö¹ýÁË¡£
 	msd_old = msd; kbd_old = kbd;
 	kbmsg.fill(0); isBbarClicked = false;
 }

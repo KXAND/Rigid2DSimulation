@@ -33,7 +33,7 @@ void cam::calc() {
 	p.z = sin(phi);
 	p = p * r + look;
 
-	// 锟斤拷锟斤拷锟斤拷芑锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷
+	// 下面可能会产生奇异的情况。
 	vector3 vy = (look - p).normalize();
 	vector3 vx = cross(vy, vector3(0, 0, 1)).normalize();
 	vector3 vz = cross(vx, vy);
@@ -42,7 +42,7 @@ void cam::calc() {
 	ct = vp.topLeftPosition + dVector2(vp.w, vp.h) / 2;
 }
 void cam::calcFirstPerson() {
-	// 锟斤拷一锟剿筹拷模式锟斤拷锟斤拷锟斤拷锟斤拷 look, r锟斤拷
+	// 第一人称模式，舍弃了 look, r。
 	vector3 vy;
 	vy.z = sin(phi);
 	vy.x = cos(phi) * sin(theta);

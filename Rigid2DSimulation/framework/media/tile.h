@@ -25,7 +25,7 @@ struct dColor
 		g = clamp<int>(0, 255, (int) c.g() * 255);
 		b = clamp<int>(0, 255, (int) c.b() * 255);
 	}
-	// ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Îª vector3ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+	// ÔÊÐí×ª»»Îª vector3£¬½ûÖ¹ÏÔÊ½²Ù×÷
 	explicit operator vector3() const { return vector3(r, g, b) / 255; }
 };
 inline bool operator==(dColor a, dColor b)
@@ -44,7 +44,7 @@ struct tile
 
 	tile() = default;
 	tile(int w, int h, dColor c = {}, BYTE a = 0);
-	tile(int w, int h, tile const& src, dRect vp_src);// src ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ¡ï¿½
+	tile(int w, int h, tile const& src, dRect vp_src);// src ²»ÄÜÎª¿Õ¡£
 	tile(wstring const& fileName, bool* ok = NULL);
 	void save(wstring const& fileName) const;
 

@@ -4,7 +4,7 @@
 
 struct Cur;
 /// <summary>
-/// Background О©╫О©╫в╟О©╫О©╫р╩О©╫О©╫tileО©╫О©╫О©╫О©╫О©╫п╣О©╫О©╫к╤О©╫О©╫О©╫О©╫О©╫х╬О©╫О©╫О©╫О©╫О©╫О©╫ background ж╝О©╫о╫О©╫О©╫п╣О©╫
+/// Background ╥Бв╟акр╩╦Жtileё╛кЫсп╣дтк╤╞╨мДжх╬╤╪йгтз background ж╝ио╫Ьпп╣д
 /// </summary>
 struct Background
 {
@@ -20,18 +20,18 @@ struct Background
 	dRect viewPort() const { return { topLeft, width, height }; }
 	
 	/// <summary>
-	/// @todo:О©╫О©╫О©╫ц╨О©╫О©╫О©╫О©╫д╣О©╫О©╫ц╢О©╫updateО©╫О©╫О©╫ф╤О©╫О©╫О©╫О©╫О©╫curО©╫пёО©╫ж╢О©╫п╣О©╫кЁО©╫О©╫О©╫О©╫х╩т╤О©╫О©╫О©╫О©╫О©╫О©╫renderО©╫О©╫О©╫О©╫ж╝г╟О©╫О©╫О©╫О©╫О©╫О©╫О©╫п╢О©╫О©╫О©╫х╥
-	/// @todo:О©╫О©╫О©╫О©╫х╔О©╫О©╫О©╫О©╫О©╫О©╫О©╫н╫О©╫д╢О©╫О©╫О©╫
+	/// @todo:╫╚╦ц╨╞йЩ╣д╣Всц╢сupdateжпрф╤╞╣╫акcurжпё╛ж╢пп╣дкЁпРрюх╩т╤тзфДкШrender╨╞йЩж╝г╟ё╛юМсисп╢ЩцВх╥
+	/// @todo:©╪бгх╔╣ТуБ╦Жнчн╫╣д╢╚╡н
 	/// </summary>
 	/// <param name="cur"></param>
 	void Render(Cur& cur);
 	/// <summary>
-	/// О©╫О©╫О©╫О©╫ownerО©╫О©╫О©╫
+	/// ╦ЭпбownerиН╤х
 	/// </summary>
 	/// <param name="cur"></param>
 	void PreUpdate(Cur& cur);
 	/// <summary>
-	/// О©╫О©╫О©╫О©╫г╥О©╫О©╫О©╫О©╫к╠О©╫О©╫О©╫
+	/// ╪Л╡Ийг╥Я╣Ц╩Вак╠Ё╬╟
 	/// </summary>
 	/// <param name="cur"></param>
 	void Update(Cur& cur);

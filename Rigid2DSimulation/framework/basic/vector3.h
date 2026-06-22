@@ -11,7 +11,7 @@ struct vector3 {
 	vector3(double a) : vector3(a, a, a) {}
 	explicit vector3(wstring const& s);
 
-	// @todo:for dColor,Ó¦ï¿½ï¿½É¾ï¿½ï¿½
+	// @todo:for dColor,Ó¦¸ÃÉ¾³ý
 	double& r() { return x; }
 	double& g() { return y; }
 	double& b() { return z; }
@@ -91,22 +91,22 @@ struct matrix3 {
 		};
 	}
 	static matrix3 cross(vector3 v) {
-		// Ö¸ï¿½ï¿½ï¿½ï¿½ u = v ï¿½ï¿½ uï¿½ï¿½
+		// Ö¸µÄÊÇ u = v ¡Á u¡£
 		matrix3 m;
 		m.a01 = -v.z;  m.a02 = v.y;
 		m.a12 = -v.x;  m.a10 = v.z;
 		m.a20 = -v.y;  m.a21 = v.x; return m;
 	}
 
-	// ï¿½ï¿½ï¿½ï¿½ b^T * A
-	// @todo: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+	// ÕÅÁ¿ b^T * A
+	// @todo: ²ÎÊý»»Î»ÖÃ
 	static matrix3 tensor(vector3 a, vector3 b) {
 		return matrix3(b.x * a, b.y * a, b.z * a);
 	}
 
-	// ï¿½Þµï¿½ï¿½ï¿½ï¿½Ë¹ï¿½ï¿½×ªï¿½ï¿½Ê½ï¿½ï¿½
+	// ÂÞµÂÀï¸ñË¹Ðý×ª¹«Ê½¡£
 	static matrix3 rotate(vector3 axis, double theta) {
-		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ axis ï¿½Çµï¿½Î»ï¿½Ä¡ï¿½
+		// ÕâÀï¼ÙÉèÁË axis ÊÇµ¥Î»µÄ¡£
 		matrix3 mz = tensor(axis, axis);
 		matrix3 mx = matrix3::I() - mz;
 		matrix3 my = cross(axis);
@@ -137,7 +137,7 @@ struct matrix3 {
 	}
 	matrix3& operator/=(double a) { return *this *= 1 / a; }
 
-	// ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½
+	// ¾ØÕó×ªÖÃ
 	matrix3 transpose() const
 	{
 		return {
@@ -147,12 +147,12 @@ struct matrix3 {
 		};
 	}
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½
+	// Äæ¾ØÕó
 	matrix3 inverse() const
 	{
-		// m ï¿½ï¿½ a ï¿½Ä°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½Ã¾ï¿½ï¿½ï¿½
-		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôªï¿½ØµÄ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ÉµÄ¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½È¥ï¿½ï¿½Ôªï¿½Ø¸ï¿½ï¿½Ð¸ï¿½ï¿½Ðºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½Öµ
-		// ï¿½ï¿½ï¿½ï¿½ï¿½ = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ / ï¿½ï¿½ï¿½ï¿½Ê½Öµ
+		// m ÊÇ a µÄ°éËæ¾ØÕóµÄ×ªÖÃ¾ØÕó
+		// °éËæ¾ØÕó£ºÔªËØµÄ´úÊýÓà×ÓÊ½¹¹³ÉµÄ¾ØÕó ´úÊýÓà×ÓÊ½£ºÈ¥µôÔªËØ¸ÃÐÐ¸ÃÁÐºó×öÐÐÁÐÊ½¼ÆËãµÃµ½µÄÖµ
+		// Äæ¾ØÕó = °éËæ¾ØÕó / ÐÐÁÐÊ½Öµ
 		matrix3 m;
 		m.a00 = a11 * a22 - a12 * a21;
 		m.a10 = a12 * a20 - a10 * a22;
@@ -166,7 +166,7 @@ struct matrix3 {
 		return m / det();
 	}
 
-	// ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+	// ÐÐÁÐÊ½ÔËËã
 	double det() const {
 		return
 			a00 * (a11 * a22 - a12 * a21) +
@@ -206,7 +206,7 @@ struct cam {
 	vector3 look;
 	double scl = 0;
 	double r = 0;
-	// min_y ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Ë·ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½
+	// min_y ±ØÐëÎªÕýÊý£¬ÎªÁË·ÀÖ¹³ýÒÔ 0¡£
 	double min_d = 0, max_d = 0;
 	double theta = 0, phi = 0, psi = 0;
 

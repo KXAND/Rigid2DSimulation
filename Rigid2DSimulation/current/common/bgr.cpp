@@ -6,7 +6,7 @@
 Background::Background(Cur& cur)
 {
 	width = 1630; height = 860;
-	topLeft = { 170, 0 }; // tile锟斤拷原锟斤拷锟斤拷锟斤拷位锟矫ｏ拷170锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟経I锟斤拷示
+	topLeft = { 170, 0 }; // tile的原点坐标位置，170的余量用于左侧UI显示
 	depth = -100000;
 	backgroundTile = tile(width, height, dColor::BLACK, 255);
 }

@@ -16,8 +16,8 @@ struct Collision
 };
 
 void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralell);
-// ï¿½ï¿½ï¿½ï¿½ b0, b1 ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¡ï¿½
-/***need be move to privateï¿½ï¿½***/
+// ¼ÙÉè b0, b1 ÒÑ¾­±»ÌîÈëÁË¡£
+/***need be move to private¡ý***/
 bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse);
 void findClosestContactVertex(Shape& sh0, Shape& sh1, vector2& c, double& dsqr_close);
 bool collide_balls(Shape& sh0, Shape& sh1, Collision& out);

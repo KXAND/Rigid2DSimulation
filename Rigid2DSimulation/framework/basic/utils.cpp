@@ -1,8 +1,8 @@
 #include "utils.h"
 
-// ï¿½Ğ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½Ä¸ï¿½Ê½ï¿½ï¿½ï¿½Å°æµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½
-// ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½È¶ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½á¡£
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ©ï¿½Ø·ï¿½ï¿½ï¿½ï¿½ß¼ï¿½Êµï¿½ï¿½ï¿½ï¿½Ì«ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½ï¿½ parse ï¿½ï¿½Ò»ï¿½ï¿½Ä¡ï¿½
+// ÓĞ¸ö´óÎÊÌâÊÇ´úÂëµÄ¸ñÊ½ÓëÅÅ°æµ½µ×ÊÇÔõÑùµÄ¡£
+// ÓÖÏëÒª²»ËÀ°å½ÌÌõ£¬ÓÖÏëÒªÎÈ¶¨ĞÔ£¬ÓÖÏëÒª¶ÁÆğÀ´ºÃ¿´£¬ºÜ¾À½á¡£
+// ºóÃæÓĞĞ©µØ·½µÄÂß¼­ÊµÔÚÊÇÌ«ÂÒÁË£¬µãÃû parse ÄÇÒ»¿éµÄ¡£
 
 int generateRadomInt(int a, int b)
 {
@@ -36,13 +36,13 @@ double generateNormalRadomFloat(double mean, double stddev)
 	return d(generator);
 }
 
-// ï¿½ï¿½ sprintf_s ï¿½ï¿½ï¿½Ô±ï¿½Ö¤ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öªï¿½ï¿½ 1024 ï¿½Ä¿Õ¼ï¿½ï¿½Ç·ï¿½ï¿½ã¹»ï¿½ï¿½
+// ÓÃ sprintf_s ¿ÉÒÔ±£Ö¤°²È«£¬µ«²»ÖªµÀ 1024 µÄ¿Õ¼äÊÇ·ñ×ã¹»¡£
 wstring tw2(double d)
 {
 	static wchar_t tmp[1024];
 	swprintf_s(tmp, L"%.2lf", d); return tmp;
 }
-// ï¿½ï¿½ï¿½ï¿½Ä¹æ·¶Ó¦ï¿½Ã²Î¿ï¿½ MSDNï¿½ï¿½
+// ÏÂÃæµÄ¹æ·¶Ó¦¸Ã²Î¿¼ MSDN¡£
 wstring tw(string const& s)
 {
 	vector<wchar_t> tmp(s.size() + 1);
@@ -51,14 +51,14 @@ wstring tw(string const& s)
 }
 string to_string(wstring const& s)
 {
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ğºï¿½Êµï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½Ë¡ï¿½
+	// ÎÒÍüÁËÓĞÃ»ÓĞºËÊµ¹ıÒ»¶¨ÊÇÕâ¸ö´óĞ¡ÁË¡£
 	vector<char> tmp(2 * s.size() + 2);
 	sprintf_s(tmp.data(), tmp.size(), "%S", s.c_str());
 	return tmp.data();
 }
 double atof(string const& s) { return atof(s.c_str()); }
 double wtof(wstring const& s) { return atof(to_string(s)); }
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ _wfopenï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¡£
+// ±ØĞëÓÃ _wfopen£¬·ñÔòÓĞ±àÂëÎÊÌâ¡£
 FILE* wfopen(wstring const& nm, wstring const& arg)
 {
 	FILE* f = NULL;
@@ -92,7 +92,7 @@ void print_console(wstring const& s, bool newline, int width)
 }
 
 void set_locale() { setlocale(LC_ALL, "zh-CN"); }
-// ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Lock ï¿½ï¿½ Unlock ï¿½ï¿½Ê²Ã´ï¿½ï¿½Ë¼ï¿½ï¿½
+// ÎÒ²»¶®ÏÂÃæµÄ Lock ºÍ Unlock ÊÇÊ²Ã´ÒâË¼¡£
 wstring get_clipboard()
 {
 	wstring clip;
@@ -106,7 +106,7 @@ wstring get_clipboard()
 		CloseClipboard();
 	} return clip;
 }
-// ï¿½ï¿½ MSDN ï¿½ï¿½ï¿½ï¿½ï¿½Ó¸ÄµÄ£ï¿½ï¿½ï¿½Ì«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½
+// ´Ó MSDN µÄÀı×Ó¸ÄµÄ£¬²»Ì«¶®£¬¿ÉÄÜÓĞ´í¡£
 void set_clipboard(wstring const& s)
 {
 	if (OpenClipboard(NULL))

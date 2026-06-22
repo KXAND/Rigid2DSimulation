@@ -8,15 +8,15 @@ struct Control {
 
 	virtual ~Control() {}
 	virtual void Update(App& app) {}
-	// 锟斤拷锟斤拷锟斤拷之前要执锟斤拷 Discard锟斤拷
+	// 在析构之前要执行 Discard。
 	virtual void Discard(App& app) {}
 	virtual void PreUpdate(App& app) {}
 
 	virtual int GetW() const { return 0; }
 	virtual int GetH() const { return 0; }
 };
-// Delegate 锟斤拷锟皆讹拷 Discard 锟斤拷锟侥筹拷员锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷 CtrlList 锟斤拷同锟斤拷一锟姐。
-// Delegate 要锟斤拷 c 一直锟斤拷锟斤拷效锟侥ｏ拷锟斤拷使锟斤拷锟斤拷 c 锟斤拷锟斤拷锟角碉拷锟斤拷一帧锟斤拷
+// Delegate 会自动 Discard 它的成员，这是它与 CtrlList 不同的一点。
+// Delegate 要求 c 一直是有效的，即使是在 c 被覆盖的那一帧。
 struct Delegate : Control {
 	Control* c = NULL;
 	void set_c(App& app, Control* _c);

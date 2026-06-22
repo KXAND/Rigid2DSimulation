@@ -22,7 +22,7 @@ struct RichTextbox : Control {
 	wstring str;
 	vector2 tl_str_rel;
 	int edit_a = 0, edit_b = 0;
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ rel ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ tl_str_rel ï¿½Ä¡ï¿½
+	// ÏÂÃæµÄ rel ÊÇÏà¶ÔÓÚ tl_str_rel µÄ¡£
 	int x_cs_rel_hist = 0;
 
 	bool edit = false;

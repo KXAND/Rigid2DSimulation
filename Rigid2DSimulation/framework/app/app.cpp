@@ -4,29 +4,29 @@
 App::App()
 {
 	w = 800; h = 600;
-	title = L"ï¿½ï¿½ï¿½ï¿½"; class_name = L"class";
+	title = L"³ÌÐò"; class_name = L"class";
 }
 void App::Init()
 {
-	addLog(L"ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ø³ï¿½ï¿½ï¿½.\n");
+	addLog(L"¿ªÊ¼¼ÓÔØ³ÌÐò.\n");
 	set_locale(); scr = tile(w, h);
 	dscr = ini_dscr = dbuf(w * h, -DBL_MAX);
 	bool ret = ft.init();
-	addLog(ret ? L"ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½.\n" : L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½Ê§ï¿½ï¿½.\n");
+	addLog(ret ? L"³É¹¦¼ÓÔØ×ÖÌåÄ£¿é.\n" : L"¼ÓÔØ×ÖÌåÄ£¿éÊ§°Ü.\n");
 
 	HRESULT hr = SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-	addLog(hr == S_OK ? L"ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ DPI ï¿½ï¿½Öª.\n" : L"ï¿½ï¿½ï¿½ï¿½ DPI ï¿½ï¿½ÖªÊ§ï¿½ï¿½.\n");
+	addLog(hr == S_OK ? L"³É¹¦ÉèÖÃ DPI ¸ÐÖª.\n" : L"ÉèÖÃ DPI ¸ÐÖªÊ§°Ü.\n");
 	hinst = GetModuleHandle(NULL);
-	addLog(hinst ? L"ï¿½É¹ï¿½È¡ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½.\n" : L"È¡ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½.\n");
+	addLog(hinst ? L"³É¹¦È¡µÃÄ£¿é¾ä±ú.\n" : L"È¡µÃÄ£¿é¾ä±úÊ§°Ü.\n");
 
 	register_window_class(); create_window(); ret = wv.init();
-	addLog(ret ? L"ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½.\n" : L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½Ê§ï¿½ï¿½.\n");
+	addLog(ret ? L"³É¹¦¼ÓÔØÉùÒôÄ£¿é.\n" : L"¼ÓÔØÉùÒôÄ£¿éÊ§°Ü.\n");
 	input.init(hwnd); init_bmi(); loadLocalizationFile();
 
 	hdc = GetDC(hwnd);
-	addLog(hdc ? L"ï¿½É¹ï¿½È¡ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.\n" : L"È¡ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½.\n");
+	addLog(hdc ? L"³É¹¦È¡µÃÉè±¸»·¾³¾ä±ú.\n" : L"È¡µÃÉè±¸»·¾³¾ä±úÊ§°Ü.\n");
 	sys_hcs = LoadCursorW(NULL, IDC_ARROW);
-	addLog(sys_hcs ? L"ï¿½É¹ï¿½ï¿½ï¿½ï¿½Ø¹ï¿½ï¿½.\n" : L"ï¿½ï¿½ï¿½Ø¹ï¿½ï¿½Ê§ï¿½ï¿½.\n");
+	addLog(sys_hcs ? L"³É¹¦¼ÓÔØ¹â±ê.\n" : L"¼ÓÔØ¹â±êÊ§°Ü.\n");
 }
 void App::Run(bool console)
 {
@@ -44,16 +44,16 @@ void App::Run(bool console)
 		else
 		{
 			bool ret = SetWindowText(hwnd, title.c_str());
-			if (!ret) { addLog(L"ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½Ê§ï¿½ï¿½.\n"); }
+			if (!ret) { addLog(L"ÉèÖÃ±êÌâÊ§°Ü.\n"); }
 			fps.update(); reset_dscr();
 			ret = input.sync_mouse(hwnd);
-			if (!ret) { addLog(L"Í¬ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½Ê§ï¿½ï¿½.\n"); }
+			if (!ret) { addLog(L"Í¬²½Êó±êÎ»ÖÃÊ§°Ü.\n"); }
 			Update(); ret = wv.play();
-			if (!ret) { addLog(L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½.\n"); }
+			if (!ret) { addLog(L"²¥·ÅÉùÒôÊ§°Ü.\n"); }
 			present_scr(); input.reset(); own.reset();
 		}
 	} ReleaseDC(hwnd, hdc);
-	wv.exit(); addLog(L"ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½.\n\n");
+	wv.exit(); addLog(L"ÍË³ö³ÌÐò.\n\n");
 }
 
 void App::reset_dscr()
@@ -64,12 +64,12 @@ void App::present_scr()
 {
 	int ret = SetDIBitsToDevice(hdc, 0, 0, w, h,
 		0, 0, 0, h, scr.colors.data(), &bmi, DIB_RGB_COLORS);
-	if (!ret) { addLog(L"Õ¹Ê¾ï¿½ï¿½Ä»Ê§ï¿½ï¿½.\n"); }
+	if (!ret) { addLog(L"Õ¹Ê¾ÆÁÄ»Ê§°Ü.\n"); }
 }
 void App::addLog(wstring const& s)
 {
-	FILE* f_log = wfopen(L"ï¿½ï¿½ï¿½Ð¼ï¿½Â¼.log", L"a");
-	if (!f_log) { print_console(L"ï¿½ï¿½ï¿½Ð¼ï¿½Â¼ï¿½ï¿½Ê§ï¿½Ü¡ï¿½", true); }
+	FILE* f_log = wfopen(L"ÔËÐÐ¼ÇÂ¼.log", L"a");
+	if (!f_log) { print_console(L"ÔËÐÐ¼ÇÂ¼´ò¿ªÊ§°Ü¡£", true); }
 	else { fwprintf(f_log, s.c_str()); fclose(f_log); }
 }
 wstring App::getLocalizedString(wstring const& id) const
@@ -133,19 +133,19 @@ void App::register_window_class()
 	wc.lpszClassName = class_name.c_str();
 
 	ATOM ret = RegisterClassExW(&wc);
-	addLog(ret ? L"ï¿½É¹ï¿½×¢ï¿½á´°ï¿½ï¿½ï¿½ï¿½.\n" : L"×¢ï¿½á´°ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½.\n");
+	addLog(ret ? L"³É¹¦×¢²á´°¿ÚÀà.\n" : L"×¢²á´°¿ÚÀàÊ§°Ü.\n");
 }
 void App::create_window()
 {
 	RECT cr{}; cr.right = w; cr.bottom = h;
 	DWORD sty = WS_SYSMENU | WS_CAPTION;
 	BOOL ret = AdjustWindowRect(&cr, sty, FALSE);
-	addLog(ret ? L"ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¾ï¿½ï¿½ï¿½.\n" : L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¾ï¿½ï¿½ï¿½Ê§ï¿½ï¿½.\n");
+	addLog(ret ? L"³É¹¦µ÷Õû´°¿Ú¾ØÐÎ.\n" : L"µ÷Õû´°¿Ú¾ØÐÎÊ§°Ü.\n");
 	int rw = cr.right - cr.left;
 	int rh = cr.bottom - cr.top;
 
 	hwnd = CreateWindowExW(0, class_name.c_str(),
 		title.c_str(), sty, 0, 0, rw, rh, NULL, NULL, hinst, this);
-	addLog(hwnd ? L"ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.\n" : L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½.\n");
+	addLog(hwnd ? L"³É¹¦´´½¨´°¿Ú.\n" : L"´´½¨´°¿ÚÊ§°Ü.\n");
 }
 

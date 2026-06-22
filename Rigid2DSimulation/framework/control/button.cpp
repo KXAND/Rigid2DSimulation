@@ -7,7 +7,7 @@
 
 Button::Button(int w) : w(w) {
 	gap = { 10, 10 }; dep = 1000;
-	txt = L"ï¿½ï¿½Å¥"; h = 30;
+	txt = L"°´Å¥"; h = 30;
 
 	c_txt = { 255, 255, 255 };
 	c_frame = { 150, 150, 150 };

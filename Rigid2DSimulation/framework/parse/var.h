@@ -6,7 +6,7 @@ struct Var;
 typedef function<ptr<Var>(vector<ptr<Var>> const&)> Function;
 typedef vector<proc> Program;
 struct Var {
-	// ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½Çºï¿½È·ï¿½ï¿½ typ ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð©ï¿½Òµï¿½ï¿½ï¿½
+	// ÆäÊµ»¹²»ÊÇºÜÈ·¶¨ typ ÓÐÃ»ÓÐÓÃ£¬ÕâÀï»áÓÐÐ©ÂÒµô¡£
 	wstring typ = L"null";
 	// null, num, str, fun, vec, user, dic
 	double num = 0;
@@ -32,14 +32,14 @@ vector3 tv3(Var const& v);
 
 typedef map<wstring, ptr<Var>> Scope;
 ptr<Var> findvar(Scope& curScope, Scope& sc, wstring nm, bool isgl);
-// ï¿½ï¿½ï¿½æ²»ï¿½Ã³ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Ë¼ï¿½ï¿½Ù²ï¿½ï¿½ï¿½Òªï¿½Ä¸ï¿½ï¿½Æ¡ï¿½ï¿½ï¿½ï¿½ï¿½ËµÊµï¿½ï¿½ï¿½Ò²ï¿½Öªï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð±ï¿½Òªï¿½ï¿½
+// ÏÂÃæ²»ÓÃ³£ÖµÒýÓÃÊÇÎªÁË¼õÉÙ²»±ØÒªµÄ¸´ÖÆ¡£µ«ÊÇËµÊµ»°ÎÒ²»ÖªµÀÓÐÃ»ÓÐ±ØÒª¡£
 bool default_fun(Scope& curScope, Scope& sc, expr const& ex, Var& out);
 
 ptr<Var> eval_call(Scope& curScope, Scope& sc, expr const& ex);
 ptr<Var> eval_access(Scope& curScope, Scope& sc, expr const& ex);
 ptr<Var> eval(Scope& curScope, Scope& sc, expr const& ex);
 
-// ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á²»ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ð¹ï¿½ï¿½ï¿½ï¿½Ð°ï¿½ï¿½Ô¼ï¿½Ä¨È¥ï¿½ï¿½Òª×¢ï¿½ï¿½ï¿½ï¿½Î¹ï¿½Üµï¿½ï¿½ï¿½
+// ÓÐÒ»¸ö·çÏÕÊÇÒ»¸öº¯Êý»á²»»áÔÚÖ´ÐÐ¹ý³ÌÖÐ°Ñ×Ô¼ºÄ¨È¥£¬Òª×¢ÒâÈçºÎ¹æ±Üµô¡£
 ptr<Var> Execute(bool& ret, Scope& curScope, Scope& sc, Program const& ps);
 ptr<Var> Execute(Scope& curScope, Program const& ps);
 Program Compile(wstring const& code);

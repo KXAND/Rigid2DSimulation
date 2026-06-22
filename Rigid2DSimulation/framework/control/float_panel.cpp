@@ -10,7 +10,7 @@
 
 FloatPanel::FloatPanel() {
 	dep = 1000;
-	txt = L"ï¿½ï¿½ï¿½ï¿½";
+	txt = L"´°¿Ú";
 	wheel_mtp = 40;
 	tl_show_rel = { 10, 40 };
 
@@ -70,7 +70,7 @@ void FloatPanel::set_c(App& app, Control* _c) {
 void FloatPanel::set_tl(App& app, dVector2 const& p) {
 	if (c) {
 		c->tl += p - tl;
-		// ï¿½Úµï¿½ï¿½ï¿½ vp_show Ö®Ç°ï¿½ï¿½Òªï¿½È¸ï¿½ï¿½ï¿½ tlï¿½ï¿½
+		// ÔÚµ÷ÓÃ vp_show Ö®Ç°ÐèÒªÏÈ¸üÐÂ tl¡£
 		tl = p; c->vp = vp_show(app);
 	}
 	sb->tl = p + dVector2(w - sb->w, h_bar);
@@ -148,7 +148,7 @@ void FloatPanel::render(App& app) {
 }
 
 void FloatPanel::Init(App& app) { init_c(app); init_sb(); }
-// ï¿½ï¿½Ò²ï¿½Ç±È½ï¿½ï¿½ï¿½ï¿½â£¬ï¿½àµ±ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ Discardï¿½ï¿½
+// ÕâÒ²ÊÇ±È½ÏÌØÊâ£¬Ïàµ±ÓÚÒª´¦Àí×Ô¼ºµÄ Discard¡£
 void FloatPanel::Update(App& app) {
 	if (!shown) { return; }
 	full = (c != NULL) && h_show < c->GetH();
@@ -157,10 +157,10 @@ void FloatPanel::Update(App& app) {
 
 	wheel_and_clamp_cy(app);
 	if (hovered && app.input.isMouseClickedDown(0)) { t_click = app.fps.dur(); }
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ hide Ö¸ï¿½î¡£
+	// ÕâÏî°ÚÔÚ×îºóÊÇÒòÎªËû¿ÉÄÜÖ´ÐÐ hide Ö¸Áî¡£
 	deal_caption(app);
 
-	// ï¿½Ò¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½Ë¡ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¹ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½Ã¡ï¿½
+	// ÎÒ¾õµÃÕâÀïÂÒµôÁË¡£µ«ÊÇÎªÁËÕâ¸öÖØ¹¹ºÃÏñ²»ÖµµÃ¡£
 	if (shown) {
 		render(app);
 		if (c) { c->Update(app); }

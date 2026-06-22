@@ -88,7 +88,7 @@ void Connection::simulateTypeRopeLink(bool equalReponse)
 
 	vector2 r0 = p0 - body0->o;
 	vector2 r1 = p1 - body1->o;
-	//ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½×ª90ï¿½ï¿½
+	//ÄæÊ±ÕëÐý×ª90¶È
 	r0 = vector2(-r0.y, r0.x);
 	r1 = vector2(-r1.y, r1.x);
 	vector2 v0 = body0->velocity + body0->velocityAngular * r0;
@@ -98,7 +98,7 @@ void Connection::simulateTypeRopeLink(bool equalReponse)
 	double currLenth = d.len();
 	d = d.normalize();
 	isTight = currLenth > len;
-	if (!isTight && type == CON_ROPE) { return; }// ropeï¿½ï¿½Ñ¹ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½linkÒ»ï¿½ï¿½ï¿½ï¿½ï¿½Î±ï¿½
+	if (!isTight && type == CON_ROPE) { return; }// ropeÔÚÑ¹ËõÊ±²»ÊÜÁ¦£¬À­ÉìÊ±ºÍlinkÒ»Ñù²»ÐÎ±ä
 
 	double torque0 = dot(r0, d);
 	double torque1 = dot(r1, d);
@@ -142,7 +142,7 @@ void Connection::simulateTypeCordSpring(double deltaTime)
 
 	vector2 r0 = p0 - body0->o;
 	vector2 r1 = p1 - body1->o;
-	//ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½×ª90ï¿½ï¿½
+	//ÄæÊ±ÕëÐý×ª90¶È
 	r0 = vector2(-r0.y, r0.x);
 	r1 = vector2(-r1.y, r1.x);
 	vector2 v0 = body0->velocity + body0->velocityAngular * r0;
@@ -154,14 +154,14 @@ void Connection::simulateTypeCordSpring(double deltaTime)
 	if (p0p1Vec.zero()) { p0p1Vec = vector2(1, 0); }
 
 	isTight = currLenth > len;
-	if (!isTight && type == CON_CORD) { return; }// cordï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½springÒ»ï¿½ï¿½
+	if (!isTight && type == CON_CORD) { return; }// cordÔÚÑ¹Ëõ²»ÊÜÁ¦£¬À­ÉìºÍspringÒ»Ñù
 
-	// @todo:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ¹ï¿½Ê½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Æµï¿½
+	// @todo:¹ØÓÚÁ¦¾ØµÄ¹«Ê½ÎÒÒÑ¾­ÍüÁË£¬ÐèÒªÔÙÍÆµ¼
 	double torgue0 = dot(r0, p0p1Vec);
 	double torgue1 = dot(r1, p0p1Vec);
 	vector2 springsForce = (currLenth - len) * hooke * deltaTime * p0p1Vec;
 
-	// Ã¿ cur.fps.dt()ï¿½Ú¼ï¿½ï¿½ï¿½Ò»ï¿½Î£ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó¼ï¿½ï¿½Ï¼ï¿½ï¿½Ù¶ï¿½
+	// Ã¿ dtÄÚ¼ÆËãÒ»´Î£¬¿ÉÒÔÖ±½Ó¼ÓÉÏ¼ÓËÙ¶È
 	body0->velocity += springsForce * body0->invMass;
 	body1->velocity -= springsForce * body1->invMass;
 	body0->velocityAngular += dot(springsForce, r0) * body0->invInertia;

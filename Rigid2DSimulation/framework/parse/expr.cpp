@@ -40,7 +40,7 @@ pre_expr::pre_expr(expr const& ex) : ex(ex) {}
 pre_expr::pre_expr(token const& tk) : tk(tk) { istk = true; }
 
 bool is_uni_operator(token const& tk) {
-	// О©╫О©╫О©╫О©╫ +О©╫О©╫- О©╫О©╫О©╫О©╫О©╫О©╫О©╫тёО©╫О©╫О©╫О©╫г╤О©╫О©╫О©╫О©╫О©╫О©╫и╤О©╫т╙О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	// сисз +ё╛- ╣дльйБптё╛кЭцг╤╪╠╩╣╠Ёи╤Чт╙тккЦ╥Ш╢╕юМ║ё
 	if (tk.typ.empty()) { return false; }
 	auto const& s = tk.typ;
 	return s == L"!";

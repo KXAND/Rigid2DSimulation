@@ -6,7 +6,7 @@
 Label::Label(bool big) {
 	gap = { 10, 10 }; dep = 1000;
 	h = big ? 30 : 20;
-	c_txt = { 255, 255, 255 }; txt = L"О©╫д╠О©╫";
+	c_txt = { 255, 255, 255 }; txt = L"нд╠╬";
 }
 int Label::GetW() const { return w + gap.x; }
 int Label::GetH() const { return h + gap.y; }

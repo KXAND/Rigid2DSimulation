@@ -14,20 +14,20 @@
 Cur::Cur()
 {
 	w = 1800; h = 900; set_locale(); wv.len_block = 4 * 5e-4;
-	print_console(L"ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...");
+	print_console(L"ÕýÔÚ¼ÓÔØ×ÖÌå...");
 	App::Init();
-	print_console(L"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.", true);
-	print_console(L"ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½Ø¿Ø¼ï¿½...");
+	print_console(L"×ÖÌå¼ÓÔØÍê³É.", true);
+	print_console(L"ÕýÔÚ¼ÓÔØ¿Ø¼þ...");
 	mkp(ui)(*this); ui->Init(*this);
 	mkp(mBgr)(*this); Reset();
-	print_console(L"ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.", true);
-	print_console(L"ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...");
+	print_console(L"¿Ø¼þ¼ÓÔØÍê³É.", true);
+	print_console(L"ÕýÔÚ¼ÓÔØÒôÀÖ...");
 	bool ok = false;
 	mkp(cl0)(L"sound/bgm0.clip", &ok);
 	if (!ok) { cl0 = NULL; }
 	mkp(cl1)(L"sound/bgm1.clip", &ok);
 	if (!ok) { cl1 = NULL; }
-	print_console(L"ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.", true);
+	print_console(L"ÒôÀÖ¼ÓÔØÍê³É.", true);
 	vol = 1;
 	mClipPtr = generateRadomFloat(1) < 0.5 ? &*cl0 : &*cl1;
 }
@@ -42,7 +42,7 @@ void Cur::Save(wstring const& nm) const
 	if (!f) { return; }
 	int sz = 0; fwtv(cmd); save_par(f);
 
-	// ï¿½ï¿½ï¿½Ü»á±£ï¿½ï¿½Ò»Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½Ôªï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½Î½ï¿½ï¿½
+	// ¿ÉÄÜ»á±£´æÒ»Ð©¼´½«±»É¾³ýµÄÔªËØ£¬µ«ÊÇÒ²ÎÞËùÎ½¡£
 	sz = bodies.size(); fwt(sz);
 	for (auto b : bodies) { b->save(f); }
 	sz = connections.size(); fwt(sz);
@@ -118,7 +118,7 @@ void Cur::Update()
 		Execute(curScope, tmp.procs);
 	}
 	
-	// ï¿½ï¿½ï¿½ï¿½
+	// ÒôÀÖ
 	if (cl0 && cl1)
 	{
 		if (mClipPtr->csp >= mClipPtr->n())
@@ -129,20 +129,20 @@ void Cur::Update()
 		if (!isMuted) { mClipPtr->play(wv.wvin); }
 	}
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½Í£
+	// ¼ì²éÔÝÍ£
 	if (!cur.own.keyboardOwner)
 	{
 		if (cur.input.isKeyPressedDown(L' ')) { isPaused = !isPaused; }
 	}
 
-	// É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÉ¾ï¿½ï¿½ï¿½ï¿½Í¼ï¿½Îºï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½
+	// É¾³ý±»±ê¼ÇÎªÉ¾³ýµÄÍ¼ÐÎºÍÆäÉÏµÄÁ¬½Ó
 	for (auto b : bodies) if (b->del)
 		for (auto c : b->connections) { c->del = true; }
 	if (bodySelecting && bodySelecting->del) { bodySelecting = NULL; }
 	if (connectionSelecting && connectionSelecting->del) { connectionSelecting = NULL; }
 	for (auto& c : connections) if (c->del)
 	{
-		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½
+		//½«¸ÃÁ¬½Ó´ÓÆäÁ½¶ËµÄÎïÌåµÄÁ¬½ÓÁÐ±íÖÐÒÆ³ý¡£
 		auto& cons0 = c->body0->connections;
 		cons0.erase(remove(cons0.begin(), cons0.end(), &*c), cons0.end());
 		auto& cons1 = c->body1->connections;
@@ -157,7 +157,7 @@ void Cur::Update()
 			[](ptr<Body> b) { return b->del; }),
 		bodies.end());
 	
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+	// ¸üÐÂÔËÐÐÐÅÏ¢
 	(*mBgr).Update(*this);
 	(*mBgr).Render(*this);
 	real_dt = min(max_real_dt, cur.fps.dt());
@@ -167,10 +167,10 @@ void Cur::Update()
 	if (isSceneChanged) { isSceneChanged = false; groups = FormGroups(bodies); }
 	for (const auto& b : bodies) { b->Update(*this); }
 
-	// ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
+	// ÎïÀíÄ£Äâ
 	if (!isPaused && real_dt != 0)
 	{
-		// ï¿½ï¿½×¼Ê±ï¿½ï¿½
+		// ±ê×¼Ê±³¤
 		double sdt = real_dt / stepNum;
 
 		rep(i, 0, stepNum)
@@ -180,7 +180,7 @@ void Cur::Update()
 			// for (auto b : bodies) { b->warp(rectScene); }
 			for (auto& g : groups) { g->Warp(rectScene); }
 
-			//ï¿½ï¿½ï¿½ã¾²ï¿½ï¿½
+			//¼ÆËã¾²µç
 			if (hasElectrostatic)
 			{
 				rep(i, 0, bodies.size() - 1)
@@ -190,26 +190,26 @@ void Cur::Update()
 				}
 			}
 
-			// ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gridï¿½Ðµï¿½ï¿½ï¿½ï¿½
+			// ÖØÐÂ¼ì²éÎïÌåÔÚgridÖÐµÄÇé¿ö
 			multiGridBodies.clear();
 			grid.clear();
 			grid.resize(gridNumX * gridNumY);
 			for (auto& b : bodies) { b->registerGrid(*this); }
 
-			// ï¿½ï¿½×²
+			// Åö×²
 			collisions.clear();
 			DetectCollisions();
 			for (auto& collision : collisions) { collision->simulate(equal_repos); }
 			// for (auto collision : collisions) { collision->Render(*this); }
 
-			// ï¿½ï¿½ï¿½ï¿½
+			// Á¬½Ó
 			for (auto& connnection : connections) { connnection->Simulate(sdt, equal_repos); }
 
 			t += sdt;
 		}
 	}
 
-	// ï¿½ï¿½È¾
+	// äÖÈ¾
 	for (auto& b : bodies)
 	{
 		b->updateShapesPositionAndAABB();
@@ -253,37 +253,37 @@ void Cur::DetectCollisions()
 		{
 			auto& bo = *bodies[k];
 
-			// ï¿½ï¿½ï¿½Í¬gridï¿½Í¿ï¿½gridï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½collisionsï¿½ï¿½
+			// ¼ì²éÍ¬gridºÍ¿çgridµÄÇé¿ö£¬Êä³öµ½collisionsÖÐ
 			rep(m, k + 1, bodies.size()) { Collide(bo, *bodies[m], collisions, eps_paralell); }
 			for (auto pb1 : multiGridBodies) { Collide(bo, *pb1, collisions, eps_paralell); }
 
-			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			// ¼ì²éÓÒÁÚ
 			if (i + 1 < gridNumX)
 			{
 				int a = i + 1, b = j;
 				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, eps_paralell); }
 			}
-			if (j + 1 >= gridNumY) { continue; }// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ú¾ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½ï¿½ï¿½
+			if (j + 1 >= gridNumY) { continue; }// ¼ì²éÏÂÁÚ£¬Ã»ÓÐÏÂÁÚ¾ÍÎÞ·¨½øÐÐÏÂÁÐ²Ù×÷ÁË
 
-			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			//¼ì²é×óÏÂ
 			if (i - 1 >= 0)
 			{
 				int a = i - 1, b = j + 1;
 				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, eps_paralell); }
 			}
-			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			// ¼ì²éÓÒÏÂ
 			if (i + 1 < gridNumX)
 			{
 				int a = i + 1, b = j + 1;
 				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, eps_paralell); }
 			}
-			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			// ¼ì²éÕýÏÂ
 			int a = i, b = j + 1;
 			for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, eps_paralell); }
 		}
 	}
 
-	// ï¿½ï¿½ï¿½ï¿½girdï¿½Í¶ï¿½girdï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²
+	// ¼ì²é¶àgirdºÍ¶àgird±¾ÉíµÄÅö×²
 	rep(i, 0, multiGridBodies.size() - 1)
 		rep(j, i + 1, multiGridBodies.size())
 	{
@@ -426,13 +426,13 @@ void Cur::basicUpdate()
 	if (curScope.find(L"cur.dbstr") != curScope.end()) { cur.dbstr = curScope[L"cur.dbstr"]->str; }
 	if (curScope.find(L"update") != curScope.end()) { auto f = curScope[L"update"];  Execute(curScope, f->procs); }
 
-	// É¾ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÉ¾ï¿½ï¿½ï¿½Ä¼ï¿½
+	// É¾³ý±ê¼ÇÎªÉ¾³ýµÄ¼ü
 	pars.erase(
 		remove_if(pars.begin(), pars.end(),
 			[](ptr<param> p) { return p->del; }),
 		pars.end());
 
-	//ï¿½ï¿½ï¿½Â¶ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Öµ
+	//¸üÐÂ¶ÔÓ¦¼üµÄÖµ
 	for (auto& p : pars) { curScope[p->nm] = msh<Var>(p->val); }
 }
 

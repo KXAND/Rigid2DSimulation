@@ -1,7 +1,7 @@
 #pragma once
 #include "utils.h"
 
-// 锟斤拷锟斤反锟斤拷锟斤拷锟矫ｏ拷锟斤拷知锟斤拷锟斤拷没锟叫革拷锟矫碉拷实锟街凤拷式锟斤拷
+// 这里反正能用，不知道有没有更好的实现方式。
 struct wvblk {
 	WAVEHDR hdr{};
 	vector<int16_t> dat;
@@ -23,7 +23,7 @@ struct app_wv {
 
 	int n_play = 0;
 	vector<double> wvin;
-	// 实锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷指锟斤拷锟角憋拷要锟斤拷, 锟斤拷锟斤拷锟芥及锟斤拷锟斤拷锟狡伙拷锟叫达拷锟襟，匡拷锟杰革拷 winapi 锟叫关★拷
+	// 实践发现下面用指针是必要的, 否则涉及到复制会有错误，可能跟 winapi 有关。
 	deque<ptr<wvblk>> wvblks;
 
 	app_wv();

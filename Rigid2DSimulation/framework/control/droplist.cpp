@@ -5,7 +5,7 @@
 #include "draw_comp.h"
 
 
-wstring nm_none(int id, App &app) { return L"锟斤拷"; }
+wstring nm_none(int id, App &app) { return L"空"; }
 Droplist::Droplist(int w, DpNm const& nm) : w(w), nm(nm) {
 	gap = { 10, 10 }; dep = 1000;
 	h_item = 25; h = 30;
@@ -14,7 +14,7 @@ Droplist::Droplist(int w, DpNm const& nm) : w(w), nm(nm) {
 	sign_margin = 15;
 	x_txt_margin = 5;
 
-	// 锟斤拷锟斤拷锟斤拷锟街憋拷签锟斤拷锟斤拷锟捷碉拷锟斤拷色锟剿★拷
+	// 懒得区分标签和内容的颜色了。
 	c_txt = { 255, 255, 255 };
 	c_mark = { 255, 255, 255 };
 	c_edit = { 150, 60, 60 };
@@ -67,7 +67,7 @@ void Droplist::render(App& app) {
 	render_main(app); render_items(app);
 }
 
-// 锟斤拷锟斤拷锟捷可憋拷锟斤拷锟斤拷锟斤拷锟斤拷锟矫达拷锟斤拷锟斤拷一锟矫伙拷锟斤拷锟斤拷锟侥★拷
+// 在内容可变的情形下怎么处理我还没想清楚的。
 void Droplist::Update(App& app) {
 	hovered = (app.own.hovered == this);
 	w_txt = str_wh(txt, app.ft, 0).x;

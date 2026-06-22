@@ -18,7 +18,7 @@ bool wvblk::finish(HWAVEOUT hwo) {
 }
 
 app_wv::app_wv() {
-	// ï¿½ï¿½ï¿½ï¿½ÊµÊ±ï¿½ï¿½ï¿½ÅµÄ´ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Öªï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½Ã¡ï¿½
+	// ÕâÀïÊµÊ±²¥·ÅµÄ´¦ÀíÎÒ»¹²»ÖªµÀÔõÃ´×öµÄ¸üºÃ¡£
 	sp = 44100; len_block = 5e-4;
 	n_safe = 120; n_blocks = 512;
 }
@@ -27,7 +27,7 @@ bool app_wv::init() {
 	wofm.wFormatTag = WAVE_FORMAT_PCM;
 	wofm.nChannels = 1;
 	wofm.nSamplesPerSec = sp;
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï²»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½Ã»ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ºÃÏñÕâÀï²»ÄÜÊÇÆäËüÊýÁË£¬Ã»ÔõÃ´¸ãÇå³þ¡£
 	wofm.wBitsPerSample = 16;
 	wofm.nBlockAlign = 2;
 	wofm.nAvgBytesPerSec = 2 * sp;

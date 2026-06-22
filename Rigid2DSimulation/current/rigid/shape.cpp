@@ -42,10 +42,10 @@ vector2 Shape::generateRandomPointInside() const
 		auto p = verticesRelative[i];
 		auto q = verticesRelative[j];
 
-		// ï¿½ï¿½ï¿½Ã¶ï¿½Î¬ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½opï¿½ï¿½oqï¿½ï¿½ï¿½ï¿½ï¿½Éµï¿½Æ½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		// ÀûÓÃ¶þÎ¬¿Õ¾ØÕóÐÐÁÐÊ½½á¹ûµÈÓÚÁ½¸öÏòÁ¿£¨op£¬oq£©¹¹³ÉµÄÆ½ÐÐËÄ±ßÐÎµÄÃæ»ýµÃ
 		randomArea -= matrix2(p - oRelative, q - oRelative).det() / 2;
 
-		// ï¿½Úµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		// ÔÚµÚÒ»¸öÁîÃæ»ýÎª¸ºµÄÇøÓòÖÐËæ»ú
 		if (randomArea < 0 || i == vertices.size() - 1)
 			return generateRadomPointInTriangle(oRelative, p, q);
 
@@ -86,7 +86,7 @@ vector2 Shape::generateRadomPointInTriangle(vector2 v0, vector2 v1, vector2 v2) 
 	double x1 = generateRadomFloat(1);
 	if (x0 + x1 > 1)
 	{
-		// @quesï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÊ²Ã´ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ÇºÜ¶ï¿½
+		// @ques£ºÕâÀïÎªÊ²Ã´½»»»Öµ²»ÊÇºÜ¶®
 		swap(x0, x1);
 		x0 = 1 - x0;
 		x1 = 1 - x1;
@@ -96,7 +96,7 @@ vector2 Shape::generateRadomPointInTriangle(vector2 v0, vector2 v1, vector2 v2) 
 
 bool Shape::isInsideTriangle(vector2 v, vector2 v0, vector2 v1, vector2 v2) const
 {
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// Æë´Î×ø±ê
 	vector3 u(v.x, v.y, 1);
 	vector3 u0(v0.x, v0.y, 1);
 	vector3 u1(v1.x, v1.y, 1);

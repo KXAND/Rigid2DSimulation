@@ -3,13 +3,13 @@
 #include "tile.h"
 
 
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğµï¿½ï¿½ï¿½
+// ½öÔÚÕûĞÍÏòÁ¿»æÖÆÖĞµ÷ÓÃ
 bool preDrawLineSegment(dVector2& pa, dVector2& pb, dRect viewPort);
 
 void drawLineSegment(tile& targetTile, dbuf& zBuffer,
 	dVector2 pa, dVector2 pb, double d, dRect viewPort, dColor color);
 
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// ¸¡µãÏòÁ¿µÄÖØÔØ
 void drawLineSegment(tile& targetTile, dbuf& zBuffer,
 	vector2 pa, vector2 pb, double depth, dRect viewPort, dColor color);
 

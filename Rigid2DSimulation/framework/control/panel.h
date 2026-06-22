@@ -15,7 +15,7 @@ struct Panel {
 	dColor c_frame, c_panel;
 
 	bool use_sb = false;
-	// ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÉ¶Òªï¿½ï¿½Ö¸ï¿½ë¡£ï¿½Ðµï¿½ï¿½ï¿½ÔµÄ¸Ð¾ï¿½ï¿½Ë¡ï¿½
+	// ÎÒÒ²²»Çå³þÎªÉ¶ÒªÓÃÖ¸Õë¡£ÓÐµã¹ßÐÔµÄ¸Ð¾õÁË¡£
 	ptr<ScrollbarY> sb;
 
 	int h_show = 0;
@@ -29,7 +29,7 @@ struct Panel {
 
 	int min_y() const;
 	dRect vp_show(App& app) const;
-	// ï¿½ï¿½ï¿½ï¿½ delegate ï¿½ï¿½ï¿½ï¿½×¨ï¿½Åµï¿½ set_c ï¿½ï¿½Òªï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ²»ÓÃ delegate ¶øÓÃ×¨ÃÅµÄ set_c Ö÷ÒªÊÇÏ£ÍûÄÜÖØÖÃ¹ö¶¯¡£
 	void set_c(App& app, Control* _c);
 	void init_c(App& app);
 	void init_sb();
@@ -37,7 +37,7 @@ struct Panel {
 
 	void Init(App& app);
 	virtual void Update(App& app);
-	// ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½É¾ï¿½ï¿½ï¿½ï¿½ Panel ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// Èç¹ûÓÐ¿ÉÉ¾³ýµÄ Panel ¾ÍÓÃÕâ¸ö¡£
 	virtual void Discard(App& app);
 	virtual void PreUpdate(App& app);
 };

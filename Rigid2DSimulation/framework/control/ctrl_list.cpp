@@ -17,7 +17,7 @@ void CtrlListX::Update(App& app) {
 	for (auto c : cs) {
 		c->vp = vp;
 		c->tl.x = cur_x; c->tl.y = tl.y;
-		// ï¿½ï¿½Ô±ï¿½ï¿½Òªï¿½ï¿½ Update È»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÈµÄ¡ï¿½
+		// ³ÉÔ±ÊÇÒªÏÈ Update È»ºóÔÙÇó¿í¶ÈµÄ¡£
 		c->Update(app); cur_x += c->GetW();
 	}
 }

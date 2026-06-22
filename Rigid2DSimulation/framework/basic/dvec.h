@@ -1,7 +1,7 @@
 #pragma once
 #include "utils.h"
 
-// 锟斤拷锟斤拷锟斤拷锟斤拷
+// 整型向量
 struct dVector2 {
 	int x = 0;
 	int y = 0;
@@ -46,6 +46,6 @@ struct dRect {
 	dVector2 center() const { return topLeftPosition + dVector2(w, h) / 2; }
 };
 bool isInside(dVector2 v, dRect r);
-// 锟斤拷锟斤拷锟斤拷芑锟斤拷锟街革拷锟斤拷 dRect锟斤拷
+// 这里可能会出现负的 dRect。
 dRect getOverlapRect(dRect a, dRect b);
 

@@ -6,7 +6,7 @@
 RichLabel::RichLabel(int w) : w(w) {
 	gap = { 10, 10 }; dep = 1000;
 	fixed_w = true;
-	c_txt = { 255, 255, 255 }; txt = L"О©╫О©╫О©╫О©╫д╠О©╫";
+	c_txt = { 255, 255, 255 }; txt = L"╢С╤ннд╠╬";
 }
 int RichLabel::GetW() const { return w + gap.x; }
 int RichLabel::GetH() const { return h + gap.y; }

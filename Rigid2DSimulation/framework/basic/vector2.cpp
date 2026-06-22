@@ -18,14 +18,14 @@ bool isInside(vector2 v, rect r)
 		isBetween(v.y, r.top(), r.bottom());
 }
 /// <summary>
-/// ï¿½Ý¹ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÄµï¿½
+/// µÝ¹é¼ÆËã»ñÈ¡ÈÎÒâ´Î±´Èû¶ûÇúÏßÉÏµÄµã
 /// </summary>
-/// <param name="controlPoints">ï¿½ï¿½ï¿½Æµã¼¯</param>
-/// <param name="t">[0,1]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ä²ï¿½ï¿½ï¿½</param>
+/// <param name="controlPoints">¿ØÖÆµã¼¯</param>
+/// <param name="t">[0,1]£¬½á¹ûµã¶ÔÓ¦µÄ²ÎÊý</param>
 /// <returns></returns>
 vector2 getPositionOnBezier(vector<vector2> controlPoints, double t)
 {
-// @todoï¿½ï¿½ï¿½ï¿½Öªï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½ï¿½Å»ï¿½ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½Ö¡ï¿½
+// @todo£º²»ÖªµÀÄÜ²»ÄÜÓÅ»¯£¬Í¬Ê±¶þ´ÎºÍÈý´ÎÓ¦¸ÃÓÐµ¥¶ÀµÄÊµÏÖ¡£
 	if (controlPoints.size() == 2) { return controlPoints[0] * (1 - t) + controlPoints[1] * t; }
 
 	vector<vector2> ps0, ps1;
@@ -46,8 +46,8 @@ double getDistanceSquare(vector2 a, vector2 b, vector2 p)
 	double ab = (a - b).lensqr();
 	double diff = ap - bp;
 	return
-		ab + bp < ap ? bp : // bp Ì«ï¿½Ì£ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î£ï¿½ï¿½ï¿½Í¬
+		ab + bp < ap ? bp : // bp Ì«¶Ì£¬ÎÞ·¨¹¹³ÉÈý½ÇÐÎ£¬ÏÂÍ¬
 		ab + ap < bp ? ap :
-		(ap + bp) / 2 - ab / 4 - diff * diff / (4 * ab);// @todoï¿½ï¿½ï¿½ï¿½Ï°ï¿½Æµï¿½
+		(ap + bp) / 2 - ab / 4 - diff * diff / (4 * ab);// @todo£ºÁ·Ï°ÍÆµ¼
 }
 

@@ -4,7 +4,7 @@
 void drawEllipseBorder(tile& targetTile, dbuf& zBuffer, double depth,
 	vector2 center, double a, double b, dRect viewPort, dColor color, int n) 
 {
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½xï¿½ï¿½yï¿½ï¿½=(h + a cos t,k + b sin t)
+	// ²ÎÊý·½³Ì £¨x£¬y£©=(h + a cos t,k + b sin t)
 	auto p0 = center + vector2(a, 0);
 	for (int i = 0; i < n-1; ++i) 
 	{

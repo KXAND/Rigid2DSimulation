@@ -105,7 +105,7 @@ void RichTextbox::hdl_right(App& app) {
 
 	if (selected()) { edit_a = edit_b = edit_end(); }
 	else {
-		// ï¿½ï¿½ï¿½æ²»Òªï¿½ï¿½Ò»ï¿½ï¿½
+		// ÏÂÃæ²»Òª¼õÒ»¡£
 		if (++edit_a > str.size()) { edit_a = str.size(); }
 		edit_b = edit_a;
 	} update_x_cs_rel_hist(app);
@@ -160,7 +160,7 @@ void RichTextbox::hdl_delete(App& app) {
 		auto b = str.end();
 		str = left() + wstring(a, b);
 	}
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ delete ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ÂµÄ¡ï¿½
+	// °´µÀÀí delete ²»ÓÃ¸üÐÂµÄ¡£
 	// update_x_cs_rel_hist(app);
 }
 void RichTextbox::hdl_clip(App& app) {
@@ -217,14 +217,14 @@ void RichTextbox::clamp_cs_not_selecting(App& app) {
 	} else if (p_cs_rel(app).x < edit_mg.x) {
 		tl_str_rel.x += edit_mg.x - p_cs_rel(app).x;
 	}
-	// ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ y ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÊµÏ¸ï¿½ï¿½Í¦ï¿½ï¿½ÖµÄ¡ï¿½
+	// ÎÒÃÇ²»¶Ô y ÕâÃ´×ö£¬Ö÷ÒªÊÇÎªÁËÈÃÊó±ê¹öÂÖÕý³££¬ÆäÊµÏ¸ÏëÍ¦Ææ¹ÖµÄ¡£
 }
 void RichTextbox::clamp_cursor(App& app) {
 	if (selecting) { clamp_cs_selecting(app); }
 	else { clamp_cs_not_selecting(app); }
 }
 void RichTextbox::clamp_str(App& app) {
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¬clamp_selecting ï¿½ï¿½ wheel ï¿½ï¿½Ò²ï¿½ï¿½Òªï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
+	// ³ýÁËÎÄ×Ö¹ýÉÙÒÔÍâ£¬clamp_selecting ºÍ wheel ºóÒ²ÐèÒªÕâÒ»²½¡£
 	dVector2 p_end_rel = (dVector2)tl_str_rel + str_wh(str, app.ft, w_str);
 	if (p_end_rel.x < max_x_cs_rel()) {
 		tl_str_rel.x += max_x_cs_rel() - p_end_rel.x;
@@ -232,7 +232,7 @@ void RichTextbox::clamp_str(App& app) {
 	if (p_end_rel.y < max_y_cs_rel()) {
 		tl_str_rel.y += max_y_cs_rel() - p_end_rel.y;
 	}
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½
+	// ÏÂÃæÁ½ÐÐÊÇÅäºÏÉÏÃæµÄ¡£
 	if (tl_str_rel.x > edit_mg.x) { tl_str_rel.x = edit_mg.x; }
 	if (tl_str_rel.y > edit_mg.y) { tl_str_rel.y = edit_mg.y; }
 }
@@ -265,9 +265,9 @@ void RichTextbox::render(App& app) {
 void RichTextbox::Update(App& app) {
 	hovered = (app.own.hovered == this);
 	if (edit) {
-		// ï¿½Ò¸Ð¾ï¿½ selecting ï¿½Ð¹Øµï¿½ï¿½ß¼ï¿½Ò²ï¿½ï¿½ï¿½Ðµï¿½ï¿½ÒµÄ¡ï¿½
-		// ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ UI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¡£ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-		// ï¿½Ð¾ï¿½ï¿½ï¿½ï¿½Ç²ï¿½Òªï¿½ï¿½Å£ï¿½Ç¼â£¬ï¿½ï¿½Ï¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½Ä£ï¿½ï¿½ï¿½ï¿½
+		// ÎÒ¸Ð¾õ selecting ÓÐ¹ØµÄÂß¼­Ò²ÊÇÓÐµãÂÒµÄ¡£
+		// ÎÒ¸Ð¾õ selecting ÓÐ¹ØµÄÂß¼­Ò²ÊÇÓÐµãÂÒµÄ¡£
+		// ÔõÃ´¿´´ý UI ½»»¥ÕæµÄÊÇ¸ö´óÎÊÌâ¡£ÔõÃ´ÇåÎúµÄ±í´ïÐèÇó¡£
 		if (selecting) { select_b(app); }
 		if (enabled && hovered && app.input.isMouseClickedDown(0)) { select_a(app); }
 		if (!app.input.msd[0]) { selecting = false; }
@@ -275,7 +275,7 @@ void RichTextbox::Update(App& app) {
 
 		if (enabled && !hovered && app.input.isMouseClickedDown(0)) { OnDone(app); }
 		if (!enabled || !hovered && app.input.isMouseClickedDown(0)) {
-			// ï¿½ï¿½×¢ï¿½ï¿½ kb_owner ï¿½ÄµÇ¼ï¿½ï¿½ï¿½ PreUpdate ï¿½Ð½ï¿½ï¿½Ð¡ï¿½
+			// Çë×¢Òâ kb_owner µÄµÇ¼ÇÔÚ PreUpdate ÖÐ½øÐÐ¡£
 			app.own.free_kb(this); edit = selecting = false;
 			edit_a = edit_b = 0; x_cs_rel_hist = 0;
 		}

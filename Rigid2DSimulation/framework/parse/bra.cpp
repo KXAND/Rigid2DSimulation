@@ -34,7 +34,7 @@ vector<bra> bra_analysis(vector<token> const& in) {
 		if (zero) {
 			if (b.typ) { b.bras = bra_analysis(tmp); tmp.clear(); } 
 			else { b.tk = tk; } out.push_back(b); b = {};
-			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄµØ·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ê¡ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ã¡£
+			// ÆäËü²»Ïà¹ØµÄµØ·½ĞèÒªÊÇÁãÖµ£¬ºóÃæÎªÁËÊ¡ÊÂÓĞÊ±»áÀûÓÃÕâÒ»µã¡£
 		} else { tmp.push_back(tk); }
 	} return zero ? out : vector<bra>();
 }

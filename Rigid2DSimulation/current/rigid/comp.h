@@ -17,7 +17,7 @@ shared_ptr<Var> FramedBox(Var const& w, Var const& h, Var const& thk);
 void CreateBody(Cur& cur, Var const& shs_cfg, Var const& cfg);
 
 /// <summary>
-/// ï¿½ï¿½ï¿½Ñ¡È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å½¨ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+/// Ëæ»úÑ¡È¡Á½¸öÎïÌå½¨Á¢Ò»ÌõÁ¬½Ó
 /// </summary>
 /// <param name="cur"></param>
 /// <param name="cfg"></param>

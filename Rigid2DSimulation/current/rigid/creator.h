@@ -44,17 +44,17 @@ private:
 	void updatePlate(Cur& cur);
 	void updateConnection(Cur& cur);
 	/// <summary>
-	/// ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ÕµØ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	/// ÔÚÒ»¸ö¿ÕµØ·½µã»÷£¬¿ªÊ¼´´½¨Ò»¸öÐÂÎïÌå
 	/// </summary>
 	/// <param name="cur"></param>
 	void updatePoint(Cur& cur);
 	/// <summary>
-	/// ï¿½ï¿½body0ï¿½Ì¶ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½
+	/// ½«body0¹Ì¶¨¶¤ÔÚÔ­µØ
 	/// </summary>
 	/// <param name="cur"></param>
 	void updateNail(Cur& cur);
 	/// <summary>
-	/// ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã´ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ë¾¶Îª radius ï¿½ï¿½Ô²/ï¿½ï¿½ï¿½ï¿½
+	/// ÔÚÊó±êÎ»ÖÃ´´½¨Ò»¸ö°ë¾¶Îª radius µÄÔ²/Á£×Ó
 	/// </summary>
 	/// <param name="cur"></param>
 	void updateParticle(Cur& cur);

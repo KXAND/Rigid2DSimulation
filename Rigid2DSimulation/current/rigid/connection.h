@@ -10,7 +10,7 @@ struct Var;
 struct Cur;
 struct Body;
 /// <summary>
-/// 锟斤拷锟斤拷一锟斤拷锟斤拷锟斤拷锟斤拷锟接癸拷系锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟绞的诧拷同锟斤拷锟斤拷锟斤拷位锟斤拷
+/// 定义一个两两连接关系，根据连接物理材质的不同，更新位置
 /// </summary>
 struct Connection {
 	bool del = false;
@@ -24,7 +24,7 @@ struct Connection {
 	double hooke = 0;
 	bool isTight = false;
 
-	// @todo:应锟矫革拷锟捷憋拷connection锟斤拷锟斤拷锟酵撅拷锟斤拷锟解几锟斤拷锟斤拷锟侥筹拷锟街碉拷
+	// @todo:应该根据变connection的类型决定这几个量的出现的
 	dColor colorRopeTight, colorRope;
 	dColor colorLink;
 	dColor colorCordTight, colorCord;

@@ -11,8 +11,8 @@ struct Droplist : Control {
 	wstring txt;
 	int w = 0, h = 0;
 
-	// ï¿½ï¿½Ê¹Ä³Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ picked ï¿½ï¿½ï¿½ï¿½È¡ -1ï¿½ï¿½Ä¬ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0 ï¿½É¡ï¿½
-	// ï¿½ï¿½ï¿½ï¿½ picked ï¿½ï¿½È¡Ê²Ã´Öµï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½Ü²ï¿½ï¿½ï¿½È¡ -1 Ö®ï¿½à£¬ÒªÊµï¿½ï¿½ï¿½ÐµÃµï¿½ï¿½ï¿½
+	// ¼´Ê¹Ä³Ð©Éè¼ÆÖÐ picked ¿ÉÒÔÈ¡ -1£¬Ä¬ÈÏÖµ»¹ÊÇÉè³É 0 °É¡£
+	// ÕâÀï picked ÄÜÈ¡Ê²Ã´Öµ»¹Ã»ÏëÇå³þµÄ£¬ÄÜ²»ÄÜÈ¡ -1 Ö®Àà£¬ÒªÊµ¼ùÖÐµÃµ½¡£
 	int picked = 0;
 	int h_item = 0;
 	int n_item = 0;
@@ -23,7 +23,7 @@ struct Droplist : Control {
 	int x_txt_margin = 0;
 	dColor c_txt, c_mark, c_edit, c_frame, c_normal, c_invalid, hoveredColor;
 
-	// -1 ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½æ¡£
+	// -1 ´ú±íÃ»ÓÐÐü¸¡ÔÚÈÎºÎÑ¡ÏîÉÏÃæ¡£
 	int item_hv = -1;
 	int w_txt = 0;
 	bool edit = false;
@@ -40,7 +40,7 @@ struct Droplist : Control {
 	void render_items(App& app);
 	void render(App& app);
 	virtual void Sync(App& app) {}
-	// ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ïµï¿½ï¿½ï¿½ Upload ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ö»ï¿½Ä±ï¿½Ä¿ï¿½ï¿½Öµï¿½ï¿½
+	// ÏÖÔÚÄ¬ÈÏµÄÊÇ Upload µÄÐ£Õý²»¸Ä±ä¿Ø¼þ±¾ÉíÖµ£¬Ö»¸Ä±äÄ¿±êÖµ¡£
 	virtual void Upload(App& app) const {}
 
 	void Update(App& app) override;

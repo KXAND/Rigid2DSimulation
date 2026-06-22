@@ -28,7 +28,7 @@ void drawRectangle(tile& targetTile, dbuf& zBuffer, double depth,
 
 	rep(i, a, b) rep(j, c, d)
 	{
-		int position = j * targetTile.width + i;// j ï¿½ï¿½ i ï¿½ï¿½
+		int position = j * targetTile.width + i;// j ÐÐ i ÁÐ
 		if (zBuffer[position] <= depth)
 		{
 			zBuffer[position] = depth;
@@ -42,7 +42,7 @@ void drawRectangleWithTransform(tile& targetTile, dbuf& zBuffer, double depth,
 {
 	matrix2 transformInverse = transformMatrix.inverse();
 	vector2 transformHalfWidthHeight = transformMatrix.abs() * vector2(width, height) / 2;
-	// ï¿½ï¿½ï¿½ 1 ï¿½Ç¾ï¿½ï¿½é¹«Ê½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½
+	// Õâ¸ö 1 ÊÇ¾­Ñé¹«Ê½¡£ÎÒÃ»×öÑÏ¸ñÂÛÖ¤¡£
 	int a = max(viewPort.left(), int(center.x - transformHalfWidthHeight.x) - 1);
 	int b = min(viewPort.right(), int(center.x + transformHalfWidthHeight.x) + 1);
 	int c = max(viewPort.top(), int(center.y - transformHalfWidthHeight.y) - 1);
@@ -52,7 +52,7 @@ void drawRectangleWithTransform(tile& targetTile, dbuf& zBuffer, double depth,
 	rep(i, a, b) rep(j, c, d)
 	{
 		dVector2 dPoint(i, j);
-		// ï¿½ï¿½ï¿½ï¿½Ê½ï¿½Óµï¿½ï¿½ï¿½È·ï¿½Ô´ï¿½ï¿½ï¿½ä»»ï¿½È½ï¿½ï¿½ï¿½ï¿½×¿ï¿½ï¿½ï¿½Òª×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½
+		// ÏÂÃæÊ½×ÓµÄÕýÈ·ÐÔ´ÓÄæ±ä»»±È½ÏÈÝÒ×¿´£¬Òª×¢ÒâËÄÔòÔËËãµÄÓÅÏÈ¼¶¡£
 		vector2 uPoint = vector2(0.5) +
 			transformInverse * (vector2(dPoint) - center) / vector2(width, height);
 		if (isInside(uPoint, { 1, 1 }))
@@ -80,7 +80,7 @@ void drawEllipse(tile& targetTile, dbuf& zBuffer, double depth,
 	rep(i, left, right) rep(j, top, bottom)
 	{
 
-		// Ó¦ï¿½ï¿½ï¿½ï¿½Ô²ï¿½Ä±ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½
+		// Ó¦ÓÃÍÖÔ²µÄ±ê×¼·½³ÌÅÐ¶ÏÊÇ·ñÔÚÍÖÔ²ÄÚ
 		vector2 v = vector2(i, j) - center;
 		double tmp =
 			v.x * v.x * inv_aax +

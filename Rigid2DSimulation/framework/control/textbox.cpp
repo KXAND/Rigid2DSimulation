@@ -53,7 +53,7 @@ wstring Textbox::right() const {
 int Textbox::edit_begin() const { return min(edit_a, edit_b); }
 int Textbox::edit_end() const { return max(edit_a, edit_b); }
 bool Textbox::selected() const { return edit_a != edit_b; }
-// ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶ÔµÄ£ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ò»ï¿½ï¿½Ò»Ê²Ã´ï¿½Ä¡ï¿½
+// ÏÂÃæÊÇ¶ÔµÄ£¬²»ÐèÒª¼ÓÒ»¼õÒ»Ê²Ã´µÄ¡£
 int Textbox::max_x_cs_rel() const { return w - w_edit_mg; }
 int Textbox::x_cs_rel(App& app) const {
 	wstring tmp(str.begin(), str.begin() + edit_b);
@@ -94,7 +94,7 @@ void Textbox::hdl_right(App& app) {
 
 	if (selected()) { edit_a = edit_b = edit_end(); }
 	else {
-		// ï¿½ï¿½ï¿½æ²»Òªï¿½ï¿½Ò»ï¿½ï¿½
+		// ÏÂÃæ²»Òª¼õÒ»¡£
 		if (++edit_a > str.size()) { edit_a = str.size(); }
 		edit_b = edit_a;
 	}
@@ -226,7 +226,7 @@ void Textbox::Update(App& app) {
 
 		if (enabled && !hovered && app.input.isMouseClickedDown(0)) { OnDone(app); }
 		if (!enabled || !hovered && app.input.isMouseClickedDown(0)) {
-			// ï¿½ï¿½×¢ï¿½ï¿½ kb_owner ï¿½ÄµÇ¼ï¿½ï¿½ï¿½ PreUpdate ï¿½Ð½ï¿½ï¿½Ð¡ï¿½
+			// Çë×¢Òâ kb_owner µÄµÇ¼ÇÔÚ PreUpdate ÖÐ½øÐÐ¡£
 			app.own.free_kb(this); edit = selecting = false;
 			edit_a = edit_b = 0;
 		}

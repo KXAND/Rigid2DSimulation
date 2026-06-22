@@ -4,7 +4,7 @@
 
 struct Cur;
 /// <summary>
-/// 锟斤拷锟斤拷一锟斤拷图锟斤拷
+/// 定义一个图形
 /// </summary>
 struct Shape
 {

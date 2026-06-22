@@ -3,9 +3,9 @@
 
 struct App;
 struct Control;
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ß¶È³ï¿½ï¿½ï¿½ï¿½Ë·ï¿½Î§ï¿½ï¿½Scrollbar ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-// ï¿½ï¿½Ò»È¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Panel ï¿½È¶ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½
-// Scrollbar ï¿½ï¿½ï¿½Ç¿Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½ Control ï¿½à¡£
+// Èç¹û¶ÔÏóµÄ¸ß¶È³¬¹ýÁË·¶Î§£¬Scrollbar ²»»á×Ô¶¯¸üÕý¡£
+// ÕâÒ»È¨ÏÞÁô¸ø Panel µÈ¶ÔÏóµÄÖ±½ÓÉÏ¼¶¡£
+// Scrollbar ²»ÊÇ¿Ø¼þ£¬²»¼Ì³Ð Control Àà¡£
 struct ScrollbarY {
 	dVector2 tl;
 	double dep = 0;
@@ -22,7 +22,7 @@ struct ScrollbarY {
 	bool hovered_node = false;
 
 	ScrollbarY();
-	// Ã»ï¿½ï¿½ set_c ï¿½ï¿½ï¿½ï¿½ Discard Ö®Ç°ï¿½Ä¶ï¿½ï¿½ï¿½
+	// Ã»ÓÐ set_c ²»»á Discard Ö®Ç°µÄ¶ÔÏó¡£
 	void render(App& app);
 
 	virtual void Update(App& app);

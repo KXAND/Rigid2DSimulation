@@ -18,7 +18,7 @@ double constexpr EU = 2.7182818284;
 #define frdv(x) frd(sz); (x).resize(sz); frds(&*(x).begin(), sz);
 #define fwtv(x) sz = (x).size(); fwt(sz); fwts(&*(x).begin(), sz);
 
-// ×¢ï¿½ï¿½ insd ï¿½Ç¿ï¿½ï¿½ï¿½ï¿½ä£¬clmp ï¿½ï¿½ï¿½ï¿½ï¿½ä¡£
+// ×¢Òâ insd ÊÇ¿ªÇø¼ä£¬clmp ±ÕÇø¼ä¡£
 template<class T>
 bool isBetween(T v, T low, T high) { return low <= v && v < high; }
 template<class T>
@@ -28,7 +28,7 @@ inline int mod(int a, int b) { return (a % b + b) % b; }
 inline double modf(double a, double b) { return fmod(fmod(a, b) + b, b); }
 inline double modp(double an) { return modf(an + PI, 2 * PI) - PI; }
 
-// ×¢ï¿½ï¿½ [a, b] ï¿½Ç±ï¿½ï¿½ï¿½ï¿½ä£¬ï¿½ï¿½ sz ï¿½Ç¿ï¿½ï¿½Ä¡ï¿½
+// ×¢Òâ [a, b] ÊÇ±ÕÇø¼ä£¬µ« sz ÊÇ¿ªµÄ¡£
 int generateRadomInt(int a, int b);
 int generateRadomInt(int sz);
 double generateRadomFloat(double a, double b);

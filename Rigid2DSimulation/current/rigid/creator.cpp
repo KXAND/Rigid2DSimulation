@@ -162,8 +162,8 @@ void Creator::updateConnection(Cur& cur)
 	{
 		mkp(connection)();
 		if (cfg_connection) { connection->read_cfg(*cfg_connection); }
-		// 要锟斤拷 creator 锟侥革拷锟斤拷锟斤拷 body 锟斤拷锟斤拷园桑锟斤拷遣锟斤拷锟斤拷锟斤拷太锟斤拷锟剿★拷
-		// 锟斤拷也没啥锟届法锟角吧★拷
+		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
+		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
 		if (!cur.input.msd[0])
 		{
 			if (body1)

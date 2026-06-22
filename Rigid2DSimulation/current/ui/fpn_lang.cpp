@@ -4,7 +4,7 @@
 
 #define cur (*(Cur*)&app)
 
-BtChi::BtChi() : Button(150) { txt = L"ï¿½ï¿½ï¿½ï¿½"; }
+BtChi::BtChi() : Button(150) { txt = L"ÖÐÎÄ"; }
 void BtChi::OnClick(App& app) { cur.languageIdx = LAN_CHI; cur.ui->fpn_lang->hide(app); }
 BtEng::BtEng() : Button(150) { txt = L"English"; }
 void BtEng::OnClick(App& app) { cur.languageIdx = LAN_ENG; cur.ui->fpn_lang->hide(app); }

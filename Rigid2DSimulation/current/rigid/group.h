@@ -5,7 +5,7 @@ struct Cur;
 struct Body;
 struct Connection;
 /// <summary>
-/// Group ï¿½ï¿½Ò»Ïµï¿½ï¿½Í¨ï¿½ï¿½ connection ï¿½ï¿½ï¿½Óµï¿½Í¼ï¿½ï¿½
+/// Group ÊÇÒ»ÏµÁÐÍ¨¹ý connection Á¬½ÓµÄÍ¼ÐÎ
 /// </summary>
 struct Group {
 	vector<Body*> bodies;
@@ -19,7 +19,7 @@ struct Group {
 
 void findBodiesInGroup(vector<Body*>& out, Body* b);
 /// <summary>
-/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ body ï¿½ï¿½ï¿½ï¿½Îª group
+/// ½«ÊäÈëµÄ body »®·ÖÎª group
 /// </summary>
 /// <param name="bodies"></param>
 /// <returns></returns>

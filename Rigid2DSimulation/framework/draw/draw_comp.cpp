@@ -4,30 +4,30 @@
 void drawRectangleWithBorderRaw(tile& targetTile, 
 	dVector2 topLeft, int width, int height, dRect viewPort, dColor color, dColor borderColor)
 {
-	// ï¿½ï¿½ï¿½ï¿½ÎªÔ­ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ×óÉÏÎªÔ­µã£¬ÏòÏÂÏò×ó
 
-	// ï¿½Ú²ï¿½
+	// ÄÚ²¿
 	drawRectangleRaw(targetTile, topLeft, width, height, viewPort, color);
 
 	dVector2 topRight = topLeft + dVector2(width, 0);
 	dVector2 bottomLeft = topLeft + dVector2(0, height);
 
-	// ï¿½ï¿½ï¿½ï¿½É«
+	// ¿òÑÕÉ«
 	drawRectangleRaw(targetTile, topLeft, width, 1, viewPort, borderColor);
 	drawRectangleRaw(targetTile, bottomLeft, width, 1, viewPort, borderColor);
 	drawRectangleRaw(targetTile, topLeft, 1, height, viewPort, borderColor);
 	drawRectangleRaw(targetTile, topRight, 1, height, viewPort, borderColor);
 }
 
-// ï¿½ï¿½ï¿½ï¿½ÈµÄ¾ï¿½ï¿½ï¿½
+// º¬Éî¶ÈµÄ¾ØÐÎ
 void drawRectangleWithBorder(tile& targetTile, dbuf& zBuffer, double depth,
 	dVector2 topLeft, int width, int height, dRect viewPort, dColor color, dColor borderColor)
 {
-	// ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ¾ØÐÎÄÚ²¿»æÖÆ
 	drawRectangle(targetTile, zBuffer, depth, topLeft, width, height, viewPort, color);
 
 
-	// ï¿½ï¿½ï¿½Æ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// »æÖÆ¾ØÐÎÍâ¿ò
 	dVector2 topRight = topLeft + dVector2(width, 0);
 	dVector2 bottomLeft = topLeft + dVector2(0, height);
 

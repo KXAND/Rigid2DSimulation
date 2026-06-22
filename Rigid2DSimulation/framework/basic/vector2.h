@@ -12,10 +12,10 @@ struct vector2
 	explicit operator dVector2() const { return dVector2(int(x), int(y)); }
 
 
-	// ï¿½ï¿½Ê¹ï¿½ï¿½ operator+ ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-	// inline ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ì£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ôªï¿½Æ»ï¿½ï¿½ï¿½Ä·ï¿½×°ï¿½ï¿½
-	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+	// ²»Ê¹ÓÃ operator+ ¿ÉÒÔ±ÜÃâ¶îÍâµÄÁÙÊ±±äÁ¿¹¹Ôì
+	// inline ÎÞ·¨½â¾ö·µ»ØÖµ²úÉúµÄ¿½±´¹¹Ôì
+	// ¶¨ÒåÔÚÀàÍâ¿ÉÒÔ±ÜÃâÒ»´ÎÁÙÊ±±äÁ¿µÄ¹¹Ôì£¬µ«ÊÇÐèÒªÓÑÔªÆÆ»µÀàµÄ·â×°ÐÔ
+	/* ÔËËã·ûÖØÔØ */
 	vector2 operator+() const { return *this; }
 	vector2 operator-() const { return vector2(-x, -y); }
 	vector2 operator+(const vector2& other) const { return vector2(this->x + other.x, this->y + other.y); }
@@ -52,7 +52,7 @@ struct vector2
 	double lensqr() const { return x * x + y * y; }
 };
 inline double dot(const vector2& a, const vector2& b) { return a.x * b.x + a.y * b.y; }
-//Ë³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//Ë³ÐòÎÊÌâ
 inline vector2 operator*(const double& scale, const vector2& vector) { return vector2(vector.x * scale, vector.y * scale); }
 
 wstring toWstring(vector2 v);
@@ -113,7 +113,7 @@ struct matrix2
 	{
 		return matrix2(::abs(a00), ::abs(a01), ::abs(a10), ::abs(a11));
 	}
-	// ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+	// ÐÐÁÐÊ½ÔËËã
 	double det() const { return a00 * a11 - a01 * a10; }
 };
 inline matrix2 operator+(matrix2 a, matrix2 b) { return a += b; }
@@ -138,6 +138,6 @@ inline matrix2 operator*(matrix2 a, matrix2 b)
 	};
 }
 
-vector2 getPositionOnBezier(vector<vector2> ps, double t);// @todoï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+vector2 getPositionOnBezier(vector<vector2> ps, double t);// @todo£ºÃ»ÓÐÒýÓÃ
 double getDistanceSquare(vector2 a, vector2 b, vector2 p);
 

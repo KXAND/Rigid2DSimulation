@@ -3,13 +3,13 @@
 
 void draw_char(tile& dest, dbuf& ds, double dep,
 	dVector2 tl, dRect vp_dest, tile const& src, dColor col);
-// w Îª 0 Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½
+// w Îª 0 Ê±´ú±í²»»»ÐÐ¡£
 void draw_str(tile& dest, dbuf& ds, double d, wstring const& s,
 	dColor col, font const& ft, dVector2& tl_cur, int& x_cur, int w, dRect vp);
 void draw_str(tile& dest, dbuf& ds, double d, wstring const& s,
 	dColor col, font const& ft, dVector2 tl, int w, dRect vp);
 
 dVector2 str_wh(wstring const& s, font const& ft, int w, int* x_last = NULL);
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¿¼ï¿½Ç¸ßµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ p.y = 0ï¿½ï¿½
+// Èç¹û²»Ïë¿¼ÂÇ¸ßµÄ»°£¬¾ÍÉèÖÃ p.y = 0¡£
 int str_index_at_pos(wstring const& s, font const& ft, dVector2 p, int w);
 

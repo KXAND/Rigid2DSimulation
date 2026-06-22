@@ -10,7 +10,7 @@ struct Cur;
 struct Shape;
 struct Connection;
 /// <summary>
-/// ï¿½ï¿½ï¿½åµ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+/// ¶¨Òåµ¥¸öÎïÌåµÄÎïÀíÊôĞÔ
 /// </summary>
 struct Body
 {
@@ -30,10 +30,10 @@ struct Body
 	matrix2 transform = matrix2::I();
 	wstring cmd, tmp_cmd;
 	double radian = 0, velocityAngular = 0;
-	double invMass = 0;// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½å²»ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½
-	double invInertia = 0;// ×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	double invMass = 0;// ÖÊÁ¿µ¹Êı£¬Îª0±íÊ¾´ËÎïÌå²»²ÎÓëÔË¶¯¼ÆËã
+	double invInertia = 0;// ×ª¶¯¹ßÁ¿µ¹Êı
 	double area = 0, density = 0;
-	double elasticity = 0;// ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½
+	double elasticity = 0;// µ¯ĞÔÏµÊı
 	double frictionStatic = 0, frictionDynamic = 0;
 	double dampCoeff = 0, dampCoeffAngular = 0;
 	double chargeDensity = 0, charge = 0;

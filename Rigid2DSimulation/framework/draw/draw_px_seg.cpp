@@ -1,15 +1,15 @@
 #include "draw_px_seg.h"
 
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¾­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½Öªï¿½Ü²ï¿½ï¿½Ü´ï¿½ï¿½ï¿½Ò»ï¿½Â¡ï¿½
-// ï¿½ï¿½ int ï¿½ï¿½ï¿½ï¿½ long long ï¿½Ë£ï¿½Ó¦ï¿½Ã»ï¿½ï¿½Ð°ï¿½ï¿½ï¿½ï¿½ï¿½
+// ºÃÏñÕâÀï¾­³£·¢ÉúÒç³öÎÊÌâ£¬²»ÖªÄÜ²»ÄÜ´¦ÀíÒ»ÏÂ¡£
+// °Ñ int »»³É long long ÁË£¬Ó¦¸Ã»áÓÐ°ïÖú¡£
 bool preDrawLineSegment(dVector2& pa, dVector2& pb, dRect viewPort) {
 	long long x0 = viewPort.left();
 	long long x1 = viewPort.right() - 1;
 	long long y0 = viewPort.top();
 	long long y1 = viewPort.bottom() - 1;
 
-	// ï¿½ï¿½ï¿½Ô²ï¿½Öµ
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë²ï¿½ï¿½á·¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 0 ï¿½ï¿½ï¿½ï¿½ï¿½â¡£
+	// ÏßÐÔ²åÖµ
+	// ÏÂÃæ¼ÙÉèÁË²»»á·¢Éú³ýÒÔ 0 µÄÎÊÌâ¡£
 #define TMP(a, b, x, y, bd, symbol)\
 if (p##a.x symbol bd) {\
 	p##a.y +=  (p##b.y - p##a.y) * (bd - p##a.x) / (p##b.x - p##a.x);\

@@ -5,37 +5,37 @@
 #include "shape.h"
 #include "draw_geo.h"
 
-//	ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½
+//	ÒÉËÆ·ÏÆú
 void Collision::Render(Cur& cur) const
 {
 	drawEllipse(cur.scr, cur.dscr, 100, c, 5, 5, cur.mBgr->viewPort(), dColor::YELLOW);
 }
 void Collision::simulate(bool equalResponse)
 {
-	/*ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½
-		ï¿½ï¿½×²ï¿½ã£ºc
-		ï¿½ï¿½ï¿½å£º1ï¿½ï¿½2
+	/*ÃüÃûÔ¼¶¨£º
+		Åö×²µã£ºc
+		ÎïÌå£º1£¬2
 	*/
 
 	double elasticity = min(body0->elasticity, body1->elasticity);
 	double frictionDynamic = min(body0->frictionDynamic, body1->frictionDynamic);
 	double frictionStatic = min(body0->frictionStatic, body1->frictionStatic);
 
-	// c ï¿½ã´¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½tangent vectorï¿½ï¿½ï¿½Í¶ï¿½Ó¦ï¿½Ù¶ï¿½
+	// c µã´¦Á½¸öÎïÌåµÄÇÐÏòÁ¿£¨tangent vector£©ºÍ¶ÔÓ¦ËÙ¶È
 	vector2 tanC1 = c - body0->o;
 	vector2 tanC2 = c - body1->o;
-	tanC1 = vector2(-tanC1.y, tanC1.x);//ï¿½ï¿½Ê±ï¿½ï¿½×ª90ï¿½ï¿½
+	tanC1 = vector2(-tanC1.y, tanC1.x);//ÄæÊ±Õë×ª90¶È
 	tanC2 = vector2(-tanC2.y, tanC2.x);
 	vector2 velocity0 = body0->velocity + body0->velocityAngular * tanC1;
 	vector2 velocity1 = body1->velocity + body1->velocityAngular * tanC2;
 
-	// ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½
-	// @todoï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖªÊ¶
+	// ·¨Ïß·½Ïò
+	// @todo£ºÕâÀïÐèÒª²¹ÎïÀíÖªÊ¶
 	double tanC0normal = dot(tanC1, n);
 	double tanC1normal = dot(tanC2, n);
 	double inverse_i0 = body0->invMass + tanC0normal * tanC0normal * body0->invInertia;
 	double inverse_i1 = body1->invMass + tanC1normal * tanC1normal * body1->invInertia;
-	double impulseNormal = (1 + elasticity) * max(0.0, dot(velocity0 - velocity1, n)) / (inverse_i0 + inverse_i1); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½
+	double impulseNormal = (1 + elasticity) * max(0.0, dot(velocity0 - velocity1, n)) / (inverse_i0 + inverse_i1); // ·¨Ïò·½ÏòµÄ³åÁ¿
 
 	vector2 impulse;
 	impulse = -impulseNormal * n;
@@ -51,14 +51,14 @@ void Collision::simulate(bool equalResponse)
 	double dynamicFrictionImpulse = frictionDynamic * impulseNormal;
 
 
-	// ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½
+	// ÇÐÏß·½Ïò
 	vector2 tangentDirection = vector2(-n.y, n.x);
 	double impulseTangential = dot(updatedVelocity0 - updatedVelocity1, tangentDirection);
 	if (impulseTangential < 0)
 	{
 		impulseTangential = -impulseTangential; tangentDirection = -tangentDirection;
 	}
-	double tanCtan0 = dot(tanC1, tangentDirection);// tantanï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	double tanCtan0 = dot(tanC1, tangentDirection);// tantan£¿£¿£¿
 	double tanCtan1 = dot(tanC2, tangentDirection);
 	double inverse_it0 = body0->invMass + tanCtan0 * tanCtan0 * body0->invInertia;
 	double inverse_it1 = body1->invMass + tanCtan1 * tanCtan1 * body1->invInertia;
@@ -89,7 +89,7 @@ void Collision::simulate(bool equalResponse)
 		}
 		return;
 	}
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä²ï¿½Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½
+	// ÎÒÊÇÕæµÄ²»ÖªµÀÕâ¸öÓÐÃ»ÓÐµÀÀí¡£
 	double sum = body0->invMass + body1->invMass;
 	body0->o -= n * d * body0->invMass / sum;
 	body1->o += n * d * body1->invMass / sum;
@@ -97,7 +97,7 @@ void Collision::simulate(bool equalResponse)
 
 void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralell)
 {
-	// ï¿½ï¿½ï¿½ï¿½ï¿½Ü·ï¿½ï¿½ï¿½ï¿½ï¿½×²ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ²»¿ÉÄÜ·¢ÉúÅö×²µÄÇé¿ö
 	if (b0.invMass == 0 && b1.invMass == 0) { return; }
 	if (!isOverlap(b0.box, b1.box)) { return; }
 
@@ -109,7 +109,7 @@ void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralel
 			collision.body0 = &b0; collision.body1 = &b1;
 			if (shape0->isCircle && shape1->isCircle)
 			{
-				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				// ¶¼ÊÇÇò
 				if (!collide_balls(*shape0, *shape1, collision)) { continue; }
 			}
 			else
@@ -119,7 +119,7 @@ void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralel
 			}
 
 
-			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½Öµ
+			// ¶¼²»ÊÇÔ²£¬¼ì²é×î½ü¾àÀëÊÇ·ñÐ¡ÓÚãÐÖµ
 			if (!shape0->isCircle && !shape1->isCircle && collision.diff < eps_paralell)
 			{
 				double distanceSquareClosest = DBL_MAX;
@@ -131,7 +131,7 @@ void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralel
 		}
 }
 
-/***need be move to privateï¿½ï¿½***/
+/***need be move to private¡ý***/
 
 bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 {
@@ -180,7 +180,7 @@ void findClosestContactVertex(Shape& shape0, Shape& shape1, vector2& contactP, d
 		int j = (i + 1) % shape0.vertices.size();
 		for (auto v : shape1.vertices)
 		{
-			//ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ãµ½ shape0 ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éµï¿½ï¿½ß¶ÎµÄ¾ï¿½ï¿½ï¿½Æ½ï¿½ï¿½
+			//Ëã³ö¸Ã¶¥µãµ½ shape0 µ±Ç°¶¥µãºÍÏÂÒ»¸ö¶¥µãËù¹¹³ÉµÄÏß¶ÎµÄ¾àÀëÆ½·½
 			double distanceSquare = getDistanceSquare(shape0.vertices[i], shape0.vertices[j], v);
 			if (distanceSquare < closestDistanceSqr)
 			{

@@ -18,7 +18,7 @@ DragbarX::DragbarX(int w) : bw(w) {
 int DragbarX::GetW() const { return bw + gap.x + w_txt; }
 int DragbarX::GetH() const { return nh + gap.y; }
 
-// ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½È·ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ò»ï¿½ï¿½Ò»Ê²Ã´ï¿½Ä¡ï¿½
+// ÏÂÃæµÄ±í´ïÊ½ÊÇÕýÈ·µÄ£¬²»ÐèÒª¼ÓÒ»¼õÒ»Ê²Ã´µÄ¡£
 double DragbarX::uval() const { return (double)nx_rel / (bw - nw); }
 void DragbarX::set_nx_rel(double uv) {
 	int tmp = uv * (bw - nw);
@@ -43,7 +43,7 @@ void DragbarX::Update(App& app) {
 	w_txt = str_wh(txt, app.ft, 0).x;
 	if (dragged) {
 		nx_rel = clamp(app.input.msp.x - (tl.x + w_txt + nw / 2), 0, bw - nw);
-		// ï¿½Ú¸Õ¸ï¿½×¥×¡ï¿½ï¿½ï¿½ï¿½Ò»Ö¡Ã»ï¿½Ð¸ï¿½ï¿½Â£ï¿½ï¿½Ú·ï¿½ï¿½Âµï¿½ï¿½ï¿½Ò»Ö¡ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½Â¡ï¿½Ê¡ï¿½Â¡ï¿½
+		// ÔÚ¸Õ¸Õ×¥×¡µÄÄÇÒ»Ö¡Ã»ÓÐ¸üÐÂ£¬ÔÚ·ÅÏÂµÄÄÇÒ»Ö¡»¹ÔÚ¸üÐÂ¡£Ê¡ÊÂ¡£
 		Upload(app);
 		if (enabled && !app.input.msd[0]) { OnDone(app); }
 		dragged = enabled && app.input.msd[0];

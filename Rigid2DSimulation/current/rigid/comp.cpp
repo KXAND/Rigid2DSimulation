@@ -14,7 +14,7 @@ shared_ptr<Var> Ball(Var const& r)
 {
 	vector<shared_ptr<Var>> vs;
 	vector<shared_ptr<Var>> v;
-	// Ó¦ï¿½ï¿½ï¿½Ð¸ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½ Var ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ÅºÃ¡ï¿½
+	// Ó¦¸ÃÓÐ¸ö¿ì½Ý´´½¨ Var µÄ·½·¨²ÅºÃ¡£
 	v.push_back(make_shared<Var>(1));
 	v.push_back(make_shared<Var>(r));
 	vs.push_back(make_shared<Var>(v));
@@ -24,7 +24,7 @@ shared_ptr<Var> Box(Var const& w, Var const& h)
 {
 	vector<ptr<Var>> vs;
 	vector<ptr<Var>> v;
-	// Ó¦ï¿½ï¿½ï¿½Ð¸ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½ Var ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ÅºÃ¡ï¿½
+	// Ó¦¸ÃÓÐ¸ö¿ì½Ý´´½¨ Var µÄ·½·¨²ÅºÃ¡£
 	v.push_back(msh<Var>(0));
 	vector<ptr<Var>> tmp;
 	tmp.push_back(msh<Var>(
@@ -220,11 +220,11 @@ void CreateBody(Cur& cur, Var const& shs_cfg, Var const& cfg)
 {
 	bool point = false;
 	auto dic = cfg.dic;
-	// point ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Body Ö®ï¿½ï¿½ï¿½Ü±ä¶¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½â¿¼ï¿½Ç¡ï¿½
+	// point ±äÁ¿ÔÚ Body Ö®ºó²»ÄÜ±ä¶¯£¬ËùÒÔÒªÌØÊâ¿¼ÂÇ¡£
 	getv(point);
 	ptr<Body> bo;
 	vector<ptr<Shape>> shs;
-	// ï¿½ï¿½ï¿½ï¿½Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ vec ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¾ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ã¡ï¿½
+	// °ÑÕâÐ©³éÏó³É vec µÄÒ»¸ö·½·¨ÎÒ¾õµÃ»á¸üºÃ¡£
 	for (auto v : shs_cfg.vec)
 	{
 		if (v->vec.empty()) { continue; }

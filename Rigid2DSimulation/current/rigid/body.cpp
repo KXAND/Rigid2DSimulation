@@ -14,7 +14,7 @@
 #define found(s) (dic.find(s) != dic.end())
 #define getv(nm) if (found(L#nm)) { nm = dic.at(L#nm)->num; }
 
-// ï¿½ï¿½Ð©ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ÄºÜ»ï¿½ï¿½Ò¡ï¿½
+// ÕâÐ©¹¹Ôìº¯ÊýÕæµÄºÜ»ìÂÒ¡£
 Body::Body()
 {
 	density = 1;
@@ -95,7 +95,7 @@ void Body::refresh(Cur& cur)
 	if (cur.curScope.find(L"body") == cur.curScope.end()) { return; }
 	read_cfg(*cur.curScope[L"body"]);
 
-	// ï¿½ï¿½Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½Ö»ï¿½ï¿½Í¨ï¿½ï¿½ cmd ï¿½ï¿½Ã£ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½æ¡£
+	// ÕâÐ©µ¥¶À·ÅÊÇÒòÎªËüÃÇÎÞ·¨Ö»ÄÜÍ¨¹ý cmd »ñµÃ£¬ÎÞ·¨±£´æ¡£
 	auto dic = cur.curScope[L"body"]->dic;
 	getv(preset_o); getv(preset_ang); getv(preset_v_ang);
 	if (found(L"o_prog")) { mkp(o_prog)(dic.at(L"o_prog")->procs); }
@@ -155,7 +155,7 @@ void Body::updateShapesPositionAndAABB()
 
 void Body::updateAABB()
 {
-	// @todoï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½expandï¿½ï¿½ï¿½ï¿½
+	// @todo£º¿¼ÂÇÉè¼ÆÒ»¸öexpandº¯Êý
 	box = aabb();
 	for (const auto& shape : shapes)
 	{
@@ -163,7 +163,7 @@ void Body::updateAABB()
 	}
 }
 
-// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½Ê±ï¿½Ë¡ï¿½
+// Õâ¸ö·½·¨ÒÑ¾­¹ýÊ±ÁË¡£
 void Body::warp(dRect rc)
 {
 	if (invMass == 0 || dragged) { return; }
@@ -188,7 +188,7 @@ void Body::registerGrid(Cur& cur)
 	y1 = clamp(y1, 0, cur.gridNumY - 1);
 	if (x1 > x0 + 1 || y1 > y0 + 1)
 	{
-		// ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½gridï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		// ÊÇ¶à¸ö¿çÔ½¶à¸ögridµÄÎïÌå
 		cur.multiGridBodies.push_back(this);
 		return;
 	}
@@ -197,7 +197,7 @@ void Body::registerGrid(Cur& cur)
 
 void Body::Init(bool repos_o)
 {
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®Ç°Ã»ï¿½ï¿½ï¿½Ò¸Ä³ï¿½Ô±ï¿½ï¿½
+	// ÕâÀï¼ÙÉèÊÇÖ®Ç°Ã»ÓÐÂÒ¸Ä³ÉÔ±¡£
 	if (point) { return; }
 
 	area = 0; vector2 center;
@@ -293,7 +293,7 @@ void Body::Render(Cur& cur) const
 			drawEllipseBorder(cur.scr, cur.dscr, getDepth(),
 				shape->o, shape->r, shape->r, cur.mBgr->viewPort(), borderColor, 30);
 
-			// ï¿½ï¿½Ê¾Ò»ï¿½ï¿½ï¿½ë¾¶ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Ô²ï¿½ï¿½ï¿½ï¿½×ªï¿½Ç¶ï¿½
+			// ÏÔÊ¾Ò»Ìõ°ë¾¶ÒÔ±ãÓÚÎÒÃÇÅÐ¶ÏÔ²µÄÐý×ª½Ç¶È
 			auto peakPoint = vector2(cos(shape->radian), sin(shape->radian)) * shape->r + shape->o;
 			drawLineSegment(cur.scr, cur.dscr, shape->o, peakPoint, getDepth(), cur.mBgr->viewPort(), borderColor);
 			continue;
@@ -370,7 +370,7 @@ void Body::followPresetO(Cur& cur, double stepDt)
 	auto positionNew = tv2(Execute(ret, cur.curScope, scope, *o_prog)->vec);
 	auto velocityNew = (positionNew - positionOld) / stepDt;
 
-	// ï¿½ï¿½Êµï¿½Ò¾ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Ñ¡ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½Öµï¿½ï¿½
+	// ÆäÊµÎÒ¾õµÃÓ¦µ±Ñ¡ÓÃÊ±¼ä½ÏÐ¡µÄÖµ¡£
 	o = positionNew;
 	velocity = velocityNew;
 }
@@ -418,7 +418,7 @@ void Body::updateDragAngle(Cur& cur)
 
 void Body::handleDragPoint(Cur& cur)
 {
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½o,p,mï¿½ï¿½ï¿½ï¿½Îªbodyï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½×§ï¿½ã¼°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½
+	// ÏÂÁÐÃüÃûÖ¸¶¨o,p,mÈýµãÎªbodyÖÐÐÄ¡¢±»ÍÏ×§µã¼°Êó±êÏÖÔÚµã
 	vector2 mousePos = vector2(cur.input.msp);
 	vector2 pPos = o + transform * pDragRelative;
 	vector2 mouseVelocity = vector2(cur.input.msp - cur.input.msp_old) / cur.real_dt;
@@ -438,7 +438,7 @@ void Body::handleDragPoint(Cur& cur)
 }
 
 /// <summary>
-/// ï¿½ï¿½ï¿½Ðµï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×§Î»ï¿½ï¿½
+/// ËùÓÐµãÍ¬²½±»ÍÏ×§Î»ÒÆ
 /// </summary>
 /// <param name="cur"></param>
 void Body::handleDragWhole(Cur& cur)
@@ -450,21 +450,21 @@ void Body::handleDragWhole(Cur& cur)
 	velocity = newVelocity;
 	radian = radianDrag;
 	velocityAngular = velocityAngularDrag;
-	o += mousePos - dragPointPos; // ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½Î»ï¿½ï¿½
+	o += mousePos - dragPointPos; // ÖÐÐÄÆ½ÐÐÎ»ÒÆ
 }
 
 void Body::handleDragForce(Cur& cur, double deltaTime)
 {
-	// ï¿½Ë¶ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ÔË¶¯Â·¾¶·½Ïò
 	vector2 p1 = vector2(cur.input.msp);
 	vector2 p0 = o + transform * pDragRelative;
 	vector2 d = (p1 - p0).normalize();
 
-	// ï¿½ï¿½
+	// Á¦
 	double k = 1e6;
 	vector2 impulse = k * (p1 - p0).len() * deltaTime * d;
 
-	// ï¿½ï¿½ï¿½ï¿½ë¾¶
+	// ¸ÕÌå°ë¾¶
 	vector2 r0 = p0 - o;
 	r0 = vector2(-r0.y, r0.x);
 
@@ -479,7 +479,7 @@ void Body::Update(Cur& cur)
 	if (cur.mode == MODE_SEL && hovered && cur.input.isMouseClickedDown(0)) { cur.bodySelecting = this; }
 	if (dragged)
 	{
-		// ï¿½ï¿½ï¿½ï¿½ï¿½×§Ä£Ê½ï¿½ï¿½Ó¦ï¿½Ãºï¿½ï¿½ï¿½
+		// ¼ì²éÍÏ×§Ä£Ê½£¬Ó¦ÓÃº¯Êý
 		updateDragAngle(cur);
 		if (cur.input.msd[2])
 		{
@@ -498,11 +498,11 @@ void Body::Update(Cur& cur)
 	}
 	else
 	{
-		// ï¿½ï¿½ï¿½ dragedï¿½Ç·ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½Â±ï¿½ï¿½ï¿½×§ï¿½Ç¶ï¿½
+		// ¼ì²é dragedÊÇ·ñÅÐ¶ÏÕýÈ·£¬¸üÐÂ±»ÍÏ×§½Ç¶È
 		dragged = hovered && cur.input.isMouseClickedDown(0) && (cur.mode == MODE_DRAG);
 		if (dragged)
 		{
-			// pï¿½Æµï¿½mï¿½ï¿½ï¿½ï¿½Ã´mo = ï¿½ä»»*Ô­ï¿½ï¿½ï¿½ï¿½ = ï¿½ä»»*Ô­ï¿½ï¿½ï¿½Î»ï¿½ï¿½=poï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½
+			// pÒÆµ½m£¬ÄÇÃ´mo = ±ä»»*Ô­¾àÀë = ±ä»»*Ô­Ïà¶ÔÎ»ÖÃ=po£¬¹ÊÓÐ¡£
 			pDragRelative = transform.inverse() * ((vector2) cur.input.msp - o);
 			updateDragAngle(cur);
 		}
@@ -510,16 +510,16 @@ void Body::Update(Cur& cur)
 
 	if (this == cur.bodySelecting && cur.isTrackShown && !cur.isPaused)
 	{
-		// ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½ï¿½ì¼£
+		// »æÖÆÔË¶¯¹ì¼£
 		track.push_back(o);
 	}
 	else if (this != cur.bodySelecting || !cur.isTrackShown)
 	{
-		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Õ¹ì¼£ï¿½ï¿½Ï¢
+		//²»·ûºÏÌõ¼þÊ±Çå¿Õ¹ì¼£ÐÅÏ¢
 		track.clear();
 	}
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ´´ÔìÁ¬½Ó
 	bool canCreate = hovered && cur.mode == MODE_CREATE &&
 		(cur.creator->mode == CREATE_CONN || cur.creator->mode == CREATE_NAIL);
 	if (canCreate)

@@ -22,7 +22,7 @@ wstring tw(dColor c)
 }
 void cover(dColor& bc, BYTE& ba, dColor fc, BYTE fa)
 {
-	// 目前锟斤拷锟斤拷锟斤拷锟狡碉拷锟斤拷式锟斤拷应锟斤拷锟叫简化的空间。
+	// 目前还不会推导公式，应该有简化的空间。
 	if (fa == 0) { return; }
 	if (fa == 255) { bc = fc; ba = 255; return; }
 

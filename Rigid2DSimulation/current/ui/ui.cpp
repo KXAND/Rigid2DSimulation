@@ -23,9 +23,9 @@ void UI::Init(Cur& cur) {
 	mkfp(fpn_lang);
 	mkfp(fpn_about);
 
-	// pn_menu 锟斤拷锟节猴拷锟斤拷锟斤拷锟斤拷为要锟斤拷 float_panel 锟饺硷拷锟斤拷锟疥。
-	// 锟斤拷锟斤拷要锟斤拷 BtFPn 锟斤拷原锟斤拷
-	// 锟斤拷锟斤拷锟斤拷模锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟揭撅拷锟斤拷太锟介烦锟剿★拷
+	// pn_menu 放在后面是因为要等 float_panel 先加载完。
+	// pn_menu 放在后面是因为要等 float_panel 先加载完。
+	// 这主要是 BtFPn 的原因。
 	mkp(pn_menu)(cur);
 	mkp(pn_bottom)(cur);
 }

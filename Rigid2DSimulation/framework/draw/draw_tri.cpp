@@ -3,8 +3,8 @@
 void subDrawTriangle(tile& dest, dbuf& zBuffer,
 	dVector2 pa, dVector2 pb, dVector2 pc, double depth, dColor color, bool same_y)
 {
-	// ï¿½ï¿½ï¿½ï¿½ pa, pb, pc  ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¡ï¿½
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÑºÛ£ï¿½ï¿½ï¿½Öªï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½
+	// ¼ÙÉè pa, pb, pc  ÒÑ¾­½»»»¹ýÁË¡£
+	// ÓÃËü»­Ð±µÄ³¤·½ÐÎÓÐµÄÊ±ºò»á³öÏÖÁÑºÛ£¬²»ÖªµÀÄÜ²»ÄÜÐÞ¸´¡£
 	if (pa.y == pb.y)  return;
 	int dy = pb.y > pa.y ? 1 : -1;
 	int dx = pc.x > pb.x ? 1 : -1;
@@ -22,28 +22,28 @@ void subDrawTriangle(tile& dest, dbuf& zBuffer,
 void drawTriangle(tile& targetTile, dbuf& zBuffer, dRect const& viewPort,
 	dVector2 pa, dVector2 pb, dVector2 pc, double depth, dColor color)
 {
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ÃºÃ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½×³ï¿½ bug ï¿½Íºï¿½ï¿½Ë¡ï¿½
-	// @todo:ï¿½ï¿½ï¿½Ç±Ê¼ï¿½ï¿½Ðµï¿½ SH ï¿½ã·¨
+	// Èç¹û¿ÉÒÔÈÃÕâÀïÐ´µÃºÃ¿´ÓÐÌõÀí£¬ÈÝÒ×ÐÞ¸ÄÇÒ²»ÈÝÒ×³ö bug ¾ÍºÃÁË¡£
+	// @todo:¿¼ÂÇ±Ê¼ÇÖÐµÄ SH Ëã·¨
 
 #define EdgeCut(a, c, x, y, sgn, borderLine)\
-if (p##c.y sgn borderLine) { return; }/*ï¿½ï¿½Ð¡Öµï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½*/\
-if (p##a.y sgn borderLine)/*ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ß½ç£¬ï¿½Ð¸ï¿½*/ \
+if (p##c.y sgn borderLine) { return; }/*×îÐ¡Öµ³¬³ö±ß½ç*/\
+if (p##a.y sgn borderLine)/*×î´óÖµ³¬³ö±ß½ç£¬ÇÐ¸î*/ \
 {\
-	/*acï¿½ß±ï¿½ï¿½Ð¸ï¿½*/\
+	/*ac±ß±»ÇÐ¸î*/\
 	dVector2 pac = p##c;\
 	pac.y = borderLine;\
 	pac.x += (p##a.x - p##c.x) * (borderLine - p##c.y) / (p##a.y - p##c.y);\
 	if (pb.y sgn borderLine)\
 	{\
-		/*bcï¿½ï¿½Ò²ï¿½ï¿½ï¿½Ð¸î£¬ï¿½Ãµï¿½Ò»ï¿½ï¿½ï¿½ï¿½cï¿½ï¿½pacï¿½ï¿½pbcï¿½ï¿½Éµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/					\
+		/*bc±ßÒ²±»ÇÐ¸î£¬µÃµ½Ò»¸öÓÉc¡¢pac¡¢pbc×é³ÉµÄÈý½ÇÐÎ*/					\
 		dVector2 p1 = p##c;\
 		p1.y = borderLine;\
 		p1.x += (pb.x - p##c.x) * (borderLine - p##c.y) / (p##b.y - p##c.y);\
 		drawTriangle(targetTile, zBuffer, viewPort, pac, p1, p##c, depth, color);\
-		return;/*ï¿½ÚµÝ¹ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½Ð¸î£¬ï¿½ï¿½ï¿½Ôµï¿½ï¿½Ë½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬*/\
+		return;/*ÔÚµÝ¹éµÄÏÂÒ»¼¶»á¶ÔÆäËû²¿·Ö½øÐÐÇÐ¸î£¬ËùÒÔµ½´Ë½áÊø£¬ÏÂÍ¬*/\
 	}\
 	else {\
-		/*bcï¿½ß²ï¿½ï¿½ï¿½ï¿½Ð¸î£¬ï¿½Ãµï¿½Ò»ï¿½ï¿½ï¿½ï¿½cï¿½ï¿½pacï¿½ï¿½pabï¿½ï¿½bï¿½ï¿½Éµï¿½ï¿½Ä±ï¿½ï¿½ï¿½*/\
+		/*bc±ß²»±»ÇÐ¸î£¬µÃµ½Ò»¸öÓÉc¡¢pac¡¢pab¡¢b×é³ÉµÄËÄ±ßÐÎ*/\
 		dVector2 p1 = pb;\
 		p1.y = borderLine;\
 		p1.x += (p##a.x - pb.x) * (borderLine - pb.y) / (p##a.y - pb.y);\
@@ -53,16 +53,16 @@ if (p##a.y sgn borderLine)/*ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ß½ç£¬ï¿½Ð¸ï¿½*/ \
 	}\
 }
 
-	// ï¿½ï¿½Ö¤xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¡ï¿½cbaï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½
-	// ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½Ð§ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½È½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½Ó°ï¿½ì²»ï¿½ï¿½
+	// ±£Ö¤xÖáÉÏ×óµ½ÓÒÊÇ¡¡cba¡¡µÄË³Ðò
+	// ÕâÀïÓÐµãµÍÐ§£¬ÖØ¸´±È½ÏÁË£¬µ«ÊÇ×ÜµÄÓ°Ïì²»´ó¡£
 	if (pa.x < pb.x) swap(pa, pb);
 	if (pa.x < pc.x) swap(pa, pc);
 	if (pb.x < pc.x) swap(pb, pc);
 
-	if (pa.x == pc.x) { return; } // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã²»ï¿½ï¿½ï¿½Ü¹ï¿½ï¿½ï¿½
+	if (pa.x == pc.x) { return; } // Èý½ÇÐÎÈýµã²»¿ÉÄÜ¹²Ïß
 	int dx = pa.x - pc.x;
 
-	// ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½Ð¸ï¿½Í¼ï¿½ï¿½
+	// ÓÃÆÁÄ»±ßÇÐ¸îÍ¼ÐÎ
 	EdgeCut(a, c, y, x, > , (long long) viewPort.right() - 1);
 	EdgeCut(c, a, y, x, < , (long long) viewPort.left());
 
@@ -74,7 +74,7 @@ if (p##a.y sgn borderLine)/*ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ß½ç£¬ï¿½Ð¸ï¿½*/ \
 	EdgeCut(a, c, x, y, > , (long long) viewPort.bottom() - 1);
 	EdgeCut(c, a, x, y, < , (long long) viewPort.top());
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½Ç³ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½È¶ï¿½ï¿½ÔµÄ¿ï¿½ï¿½Ç½ï¿½ï¿½ï¿½Ò»ï¿½Â·ï¿½ï¿½ò£¬·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎºÜ±ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½
+	// ÕâÀïÊÇ³öÓÚÊýÖµÎÈ¶¨ÐÔµÄ¿¼ÂÇ½»»»Ò»ÏÂ·½Ïò£¬·ñÔòÈç¹ûÈý½ÇÐÎºÜ±âµÄ»°»áÆæ¹Ö¡£
 	bool y_big = dy > dx;
 	if (!y_big)
 	{
@@ -85,7 +85,7 @@ if (p##a.y sgn borderLine)/*ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ß½ç£¬ï¿½Ð¸ï¿½*/ \
 	}
 	dVector2 pd = pb;
 	pd.x = pa.x * (pb.y - pc.y) + pc.x * (pa.y - pb.y); pd.x /= pa.y - pc.y;
-	// @quesï¿½ï¿½ï¿½ï¿½ï¿½Çºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê²Ã´Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// @ques£º²»ÊÇºÜÀí½âÕâÀïÎÊÊ²Ã´Òª×öÁ½±é
 	subDrawTriangle(targetTile, zBuffer, pa, pb, pd, depth, color, y_big);
 	subDrawTriangle(targetTile, zBuffer, pc, pb, pd, depth, color, y_big);
 }

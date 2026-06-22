@@ -27,7 +27,7 @@ wstring tw(proc const& p) {
 
 proc parsing_def(vector<bra> const& in) {
 	if (in.size() < 4) { return proc(L"error"); }
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äºï¿½ï¿½ï¿½ï¿½Í²ï¿½ï¿½ï¿½Ò²Ç£ï¿½ï¿½ï¿½ï¿½ global ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½ï¿½Ð¾ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½
+	// ²»ÏëÈÃÕâÀïµÄº¯ÊýºÍ²ÎÊýÒ²Ç£³¶µ½ global ÀïÃæÈ¥£¬¸Ð¾õÍêÈ«²»±ØÒª¡£
 	if (in[1].tk.typ != L"var" || in[1].tk.global) { return proc(L"error"); }
 	proc p(L"define"); p.def_fun = in[1].tk.var;
 	bool comma = true;

@@ -51,7 +51,7 @@ dVector2 str_wh(wstring const& s, font const& ft, int w, int* x_last) {
 				w_out = max(w_out, x_cur);
 				h_out += ft.h; x_cur = 0;
 			}
-			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½ï¿½É±ï¿½ï¿½Ò¶ï¿½ï¿½ï¿½ï¿½ï¿½
+			// ÏÂÃæÁ½¸öË³Ðò¿É±ðÂÒ¶¯°¡¡£
 			x_cur += t.width; w_out = max(w_out, x_cur);
 		}
 	} 

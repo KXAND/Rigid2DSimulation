@@ -63,7 +63,7 @@ token get_tk_mark(wstring const& in, int& id) {
 }
 token get_tk_gl_var(wstring const& in, int& id) {
 	wstring tmp; bool ok = true;
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶Ïµï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ok ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½Ò±ß¡ï¿½
+	// ÏÂÃæÕâĞĞÅĞ¶ÏµÄË³ĞòºÜÖØÒª£¬ok ²»ÄÜÒÆµ½ÓÒ±ß¡£
 	while (ok && ++id != in.size()) {
 		auto c = in[id];
 		ok = iswalpha(c) || c == L'_' || iswdigit(c);
@@ -72,7 +72,7 @@ token get_tk_gl_var(wstring const& in, int& id) {
 }
 token get_tk_var_res(wstring const& in, int& id) {
 	wstring tmp = { in[id] }; bool ok = true;
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶Ïµï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ok ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½Ò±ß¡ï¿½
+	// ÏÂÃæÕâĞĞÅĞ¶ÏµÄË³ĞòºÜÖØÒª£¬ok ²»ÄÜÒÆµ½ÓÒ±ß¡£
 	while (ok && ++id != in.size()) {
 		auto c = in[id];
 		ok = iswalpha(c) || c == L'_' || iswdigit(c);
@@ -113,7 +113,7 @@ vector<token> deal_sgn(vector<token> const& in) {
 vector<token> tokenize(wstring const& in) {
 	int id = 0; vector<token> tmp;
 	while (id != in.size()) {
-		// ï¿½ï¿½Ö®Ç°ï¿½ï¿½ tk Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ const &ï¿½ï¿½Ç§ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¡ï¿½
+		// ÄãÖ®Ç°ÔÚ tk Ç°Ãæ¼ÓÁË const &£¬Ç§Íò²»ÒªÔÚÕâÑùÁË¡£
 		auto tk = get_token(in, id);
 		bool blank =
 			tk.typ == L" " || tk.typ == L"\n";

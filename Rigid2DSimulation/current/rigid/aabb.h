@@ -2,7 +2,7 @@
 #include "vector2.h"
 
 /// <summary>
-/// aabbï¿½ï¿½Î§ï¿½ï¿½
+/// aabb°üÎ§ºÐ
 /// </summary>
 struct aabb {
 	double x0 = DBL_MAX, x1 = -DBL_MAX;

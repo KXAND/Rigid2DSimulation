@@ -3,8 +3,8 @@
 #include "vector3.h"
 #include "proc.h"
 
-// Ã¿ï¿½Î¶ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ bugï¿½ï¿½ï¿½Ü¿ï¿½ï¿½Ü»ï¿½ï¿½ï¿½Ò»Ð© bugï¿½ï¿½
-// Í¬Ê±ï¿½Ù¶ï¿½ï¿½ï¿½Ò²ï¿½ÐºÜ¶ï¿½Ä½ï¿½ï¿½Õ¼ä¡£
+// Ã¿´Î¶¼ÄÜÕÒµ½ÐÂ bug£¬ºÜ¿ÉÄÜ»¹ÓÐÒ»Ð© bug¡£
+// Í¬Ê±ËÙ¶ÈÉÏÒ²ÓÐºÜ¶à¸Ä½ø¿Õ¼ä¡£
 
 Var::Var(double num) : num(num) { typ = L"num"; }
 Var::Var(wstring const& str) : str(str) { typ = L"str"; }
@@ -48,9 +48,9 @@ ptr<Var> findvar(Scope& gl, Scope& sc, wstring nm, bool isgl)
 bool default_fun(Scope& gl, Scope& sc, expr const& ex, Var& out)
 {
 	auto const& f = ex.fun;
-	// ï¿½ï¿½ï¿½ï¿½ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®Ç° Eval ï¿½ï¿½Îªï¿½ï¿½ï¿½Ù¶È£ï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-	// ËµÊµï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½Ðµã»³ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ä²ï¿½ï¿½Ô¹ï¿½ï¿½ï¿½
-	// ï¿½ï¿½Öªï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ÏÂÃæÓÃºê¶ø²»ÊÇÔÚÔËËãÖ®Ç° Eval ÊÇÎªÁËËÙ¶È£¬²âÊÔ·¢ÏÖÐèÒªÕâÑù¡£
+	// ËµÊµ»°ÆäÊµÏÖÔÚÓÐµã»³ÒÉÓÐÃ»ÓÐÕæµÄ²âÊÔ¹ý¡£
+	// ²»ÖªµÀÓÐÃ»ÓÐ±ðµÄÌæ´ú·½·¨¡£
 #define d0 eval(gl, sc, ex.pars[0])->num
 #define d1 eval(gl, sc, ex.pars[1])->num
 #define s0 eval(gl, sc, ex.pars[0])->str
@@ -91,7 +91,7 @@ ptr<Var> eval_call(Scope& gl, Scope& sc, expr const& ex)
 	Var tmp; Scope getLocalizedString;
 	if (default_fun(gl, sc, ex, tmp)) { return msh<Var>(tmp); }
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Ë±ï¿½ï¿½âº¯ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½Ä¨È¥ï¿½ï¿½
+	// ÏÂÃæ±ØÐëÊÇÖµ¸´ÖÆ£¬ÕâÊÇÎªÁË±ÜÃâº¯Êý×Ô¼º±»Ä¨È¥¡£
 	auto fun = findvar(gl, sc, ex.fun, ex.global);
 	if (fun->typ == L"user" && fun->fun)
 	{

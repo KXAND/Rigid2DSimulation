@@ -2,7 +2,7 @@
 #include "vector2.h"
 #include "tile.h"
 /// <summary>
-/// ï¿½ï¿½×²ï¿½ï¿½Tileï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Backgroundï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+/// ×îµ×²ãµÄTile£¬ÓÃÓÚBackground£¬ÎÞÐè¼ì²éÉî¶È
 /// </summary>
 /// <param name="dest"></param>
 /// <param name="tl"></param>
@@ -10,12 +10,12 @@
 void drawBasedTile(tile& dest, dVector2 tl, tile const& src);
 
 /// <summary>
-/// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÈµÄ»ï¿½ï¿½ï¿½ Tileï¿½ï¿½ï¿½ï¿½
-/// ï¿½ï¿½ï¿½ï¿½ vp_dest ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0ï¿½ï¿½ï¿½ì³£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ vp_src ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ»ï¿½Ã»ï¿½ï¿½Ã¡ï¿½
+/// ´øÓÐÉî¶ÈµÄ»æÖÆ Tile»æÖÆ
+/// ÕâÀï vp_dest ÔÊÐí¿í¶ÈÎª0µÈÒì³£Çé¿ö£¬µ«ÊÇ vp_src ²»ÔÊÐí¡£ÈçºÎ¼ÓÒÔÏÞÖÆ»¹Ã»ÏëºÃ¡£
 /// </summary>
 void drawTile(tile& dest, dbuf& ds, double dep, dVector2 tl, dRect vp_dest, tile const& src, dRect vp_src);
 /// <summary>
-/// ï¿½ï¿½ï¿½Ã£ï¿½
+/// ÆúÓÃ£¿
 /// </summary>
 /// <param name="p"></param>
 /// <param name="tl"></param>

@@ -48,8 +48,8 @@ struct RLbBody : RichLabel {
 	void Sync(App& app) override;
 };
 
-// 锟揭撅拷锟斤拷 delegate 没锟斤拷啥锟斤拷值锟剿★拷
-// 锟斤拷实 Panel 锟斤拷 set_c 锟斤拷锟斤拷也没啥锟斤拷值锟剿吧★拷
+// 我觉得 delegate 没有啥价值了。
+// 其实 Panel 的 set_c 方法也没啥价值了吧。
 struct ClyBody : CtrlListY {
 	Body* bo = NULL;
 	ptr<ClYBodyCons> cly_cons;

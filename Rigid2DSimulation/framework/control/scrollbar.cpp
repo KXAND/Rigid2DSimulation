@@ -30,7 +30,7 @@ void ScrollbarY::Update(App& app) {
 	hovered = (app.own.hovered == this);
 	hovered_node = hovered && isInside(app.input.msp, { tl + dVector2(0, ny_rel), w, nh });
 
-	// ï¿½ï¿½ï¿½×´Ì¬ï¿½ä»¯ï¿½ï¿½Ò»ï¿½ï¿½Ä¿Ø¼ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ÓµÄ¡ï¿½
+	// Õâ¸ö×´Ì¬±ä»¯±ÈÒ»°ãµÄ¿Ø¼şÊÇÒª¸´ÔÓµÄ¡£
 	if (full) {
 		nh = h_show * h / c->GetH();
 		if (dragged) {

@@ -11,7 +11,7 @@ int SeparatorY::GetW() const { return w + gap.x; }
 int SeparatorY::GetH() const { return 1 + gap.y; }
 
 void SeparatorY::render(App& app) {
-	// ï¿½ï¿½È» dep Ã»Ê²Ã´ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ß»ï¿½ï¿½Ç±ï¿½ï¿½ï¿½ï¿½Ë¡ï¿½
+	// ËäÈ» dep Ã»Ê²Ã´ÓÃ£¬µ«³öÓÚÏ°¹ß»¹ÊÇ±£ÁôÁË¡£
 	drawRectangleRaw(app.scr, tl, w, 1, vp, c_mark);
 }
 void SeparatorY::Update(App& app) { render(app); }
