@@ -1,0 +1,114 @@
+#include "panel.h"
+#include "app.h"
+#include "control.h"
+#include "draw_comp.h"
+#include "scrollbar.h"
+
+
+Panel::Panel() {
+	dep = 1000;
+	wheel_mtp = 40;
+	tl_show_rel = { 10, 10 };
+
+	c_frame = { 150, 150, 150 };
+	c_panel = { 0, 0, 0 };
+}
+// �˵���ť�Ŀ���: 150.
+Panel Panel::menu(App& app) {
+	Panel pn;
+	pn.w = 169;
+	pn.h = app.h - 40;
+	pn.h_show = pn.h - 20;
+
+	dRect tmp;
+	tmp.topLeftPosition = dVector2(10 - 2, 10 - 2);
+	tmp.w = pn.w - 20 + 4;
+	tmp.h = pn.h - 20 + 4;
+	pn.vp_show_rel = tmp; return pn;
+}
+Panel Panel::bottom(App& app) {
+	Panel pn;
+	pn.w = app.w;
+	pn.h = 40;
+	pn.tl.y = app.h - pn.h;
+	pn.h_show = pn.h;
+
+	dRect tmp;
+	tmp.topLeftPosition = dVector2(10 - 2, 10 - 2);
+	tmp.w = pn.w - 20 + 4;
+	tmp.h = pn.h - 20 + 4;
+	pn.vp_show_rel = tmp; return pn;
+}
+
+int Panel::min_y() const {
+	return tl.y + tl_show_rel.y + h_show - c->GetH();
+}
+dRect Panel::vp_show(App& app) const {
+	dRect vp = vp_show_rel;
+	vp.topLeftPosition += tl; return getOverlapRect(app.scr.rect(), vp);
+}
+void Panel::set_c(App& app, Control* _c) {
+	if (c != _c) {
+		if (c) { c->Discard(app); }
+		if (c = _c) {
+			c->tl = tl + tl_show_rel;
+			c->vp = vp_show(app);
+		} sb->c = c;
+	}
+}
+void Panel::init_c(App& app) {
+	if (c) {
+		c->tl = tl + tl_show_rel;
+		c->vp = vp_show(app);
+	}
+}
+void Panel::init_sb() {
+	mkp(sb)();
+	sb->c = c;
+	sb->h = h;
+	sb->tl = tl + dVector2(w - sb->w, 0);
+	sb->h_show = h_show;
+	sb->top_show = tl.y + tl_show_rel.y;
+}
+void Panel::render(App& app) {
+	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.rect(), c_panel, c_frame);
+}
+
+void Panel::Init(App& app) { init_c(app); init_sb(); }
+void Panel::Update(App& app) {
+	full = (c != NULL) && h_show < c->GetH();
+	hovered = (app.own.hovered == this);
+	wheeled = (app.own.wheeled == this);
+
+	if (full) {
+		int cy = c->tl.y;
+		if (wheeled) { cy += app.input.msw * wheel_mtp; }
+		c->tl.y = clamp(cy, min_y(), tl.y + tl_show_rel.y);
+	}
+	else if (c) { c->tl.y = tl.y + tl_show_rel.y; }
+
+	// ���� Update ˳����Ϊ�˷�����ƣ�����Ӧ�ÿؼ��ȸ��¸߶ȵġ�
+	// �����Ϊ���ٶȵ���������֪����û�б�Ҫ��
+	// һ�����ܵĸĽ���ʽ���Ƿ��� Update �� Render������δ���á�
+	render(app);
+	if (c) { c->Update(app); }
+	if (use_sb) { sb->Update(app); }
+}
+void Panel::Discard(App& app) {
+	app.own.remove(this); sb->Discard(app);
+	if (c) { c->Discard(app); }
+}
+void Panel::PreUpdate(App& app) {
+	bool ok = app.own.hoveredDepth <= dep &&
+		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.rect());
+	if (ok) { app.own.hoveredDepth = dep; app.own.hovered = this; }
+
+	ok = app.own.wheeledDepth <= dep &&
+		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.rect());
+	if (ok) { app.own.wheeledDepth = dep; app.own.wheeled = this; }
+
+	if (c) { c->PreUpdate(app); }
+	if (use_sb) { sb->PreUpdate(app); }
+}
+
+

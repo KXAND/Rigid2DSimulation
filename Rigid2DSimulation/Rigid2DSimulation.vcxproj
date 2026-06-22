@@ -76,6 +76,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -90,6 +91,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -104,6 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -118,6 +121,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>4244;4267;26451</DisableSpecificWarnings>
     </ClCompile>
@@ -129,129 +133,127 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="aabb.cpp" />
-    <ClCompile Include="app.cpp" />
-    <ClCompile Include="app_item.cpp" />
-    <ClCompile Include="app_msg.cpp" />
-    <ClCompile Include="app_wv.cpp" />
-    <ClCompile Include="bgr.cpp" />
-    <ClCompile Include="body.cpp" />
-    <ClCompile Include="bra.cpp" />
-    <ClCompile Include="button.cpp" />
-    <ClCompile Include="checkbox.cpp" />
-    <ClCompile Include="clip.cpp" />
-    <ClCompile Include="collision.cpp" />
-    <ClCompile Include="comp.cpp" />
-    <ClCompile Include="connection.cpp" />
-    <ClCompile Include="control.cpp" />
-    <ClCompile Include="creator.cpp" />
-    <ClCompile Include="ctrl_list.cpp" />
-    <ClCompile Include="cur.cpp" />
-    <ClCompile Include="dragbar.cpp" />
-    <ClCompile Include="draw_comp.cpp" />
-    <ClCompile Include="draw_curve.cpp" />
-    <ClCompile Include="draw_geo.cpp" />
-    <ClCompile Include="draw_px_seg.cpp" />
-    <ClCompile Include="draw_str.cpp" />
-    <ClCompile Include="draw_tile.cpp" />
-    <ClCompile Include="draw_tri.cpp" />
-    <ClCompile Include="droplist.cpp" />
-    <ClCompile Include="dvec.cpp" />
-    <ClCompile Include="expr.cpp" />
-    <ClCompile Include="float_panel.cpp" />
-    <ClCompile Include="font.cpp" />
-    <ClCompile Include="fpn_about.cpp" />
-    <ClCompile Include="fpn_body.cpp" />
-    <ClCompile Include="fpn_cmd.cpp" />
-    <ClCompile Include="fpn_con.cpp" />
-    <ClCompile Include="fpn_global.cpp" />
-    <ClCompile Include="fpn_lang.cpp" />
-    <ClCompile Include="fpn_par.cpp" />
-    <ClCompile Include="ft_constant.cpp" />
-    <ClCompile Include="group.cpp" />
-    <ClCompile Include="label.cpp" />
+    <ClCompile Include="current\rigid\aabb.cpp" />
+    <ClCompile Include="framework\app\app.cpp" />
+    <ClCompile Include="framework\app\app_item.cpp" />
+    <ClCompile Include="framework\app\app_msg.cpp" />
+    <ClCompile Include="framework\app\app_wv.cpp" />
+    <ClCompile Include="current\common\bgr.cpp" />
+    <ClCompile Include="current\rigid\body.cpp" />
+    <ClCompile Include="framework\parse\bra.cpp" />
+    <ClCompile Include="framework\control\button.cpp" />
+    <ClCompile Include="framework\control\checkbox.cpp" />
+    <ClCompile Include="framework\media\clip.cpp" />
+    <ClCompile Include="current\rigid\collision.cpp" />
+    <ClCompile Include="current\rigid\comp.cpp" />
+    <ClCompile Include="current\rigid\connection.cpp" />
+    <ClCompile Include="framework\control\control.cpp" />
+    <ClCompile Include="current\rigid\creator.cpp" />
+    <ClCompile Include="framework\control\ctrl_list.cpp" />
+    <ClCompile Include="current\common\cur.cpp" />
+    <ClCompile Include="framework\control\dragbar.cpp" />
+    <ClCompile Include="framework\draw\draw_comp.cpp" />
+    <ClCompile Include="framework\draw\draw_curve.cpp" />
+    <ClCompile Include="framework\draw\draw_geo.cpp" />
+    <ClCompile Include="framework\draw\draw_px_seg.cpp" />
+    <ClCompile Include="framework\draw\draw_str.cpp" />
+    <ClCompile Include="framework\draw\draw_tile.cpp" />
+    <ClCompile Include="framework\draw\draw_tri.cpp" />
+    <ClCompile Include="framework\control\droplist.cpp" />
+    <ClCompile Include="framework\basic\dvec.cpp" />
+    <ClCompile Include="framework\parse\expr.cpp" />
+    <ClCompile Include="framework\control\float_panel.cpp" />
+    <ClCompile Include="framework\media\font.cpp" />
+    <ClCompile Include="current\ui\fpn_about.cpp" />
+    <ClCompile Include="current\ui\fpn_body.cpp" />
+    <ClCompile Include="current\ui\fpn_cmd.cpp" />
+    <ClCompile Include="current\ui\fpn_con.cpp" />
+    <ClCompile Include="current\ui\fpn_global.cpp" />
+    <ClCompile Include="current\ui\fpn_lang.cpp" />
+    <ClCompile Include="current\ui\fpn_par.cpp" />
+    <ClCompile Include="framework\media\ft_constant.cpp" />
+    <ClCompile Include="current\rigid\group.cpp" />
+    <ClCompile Include="framework\control\label.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="panel.cpp" />
-    <ClCompile Include="par.cpp" />
-    <ClCompile Include="pn_bottom.cpp" />
-    <ClCompile Include="pn_menu.cpp" />
-    <ClCompile Include="proc.cpp" />
-    <ClCompile Include="rich_label.cpp" />
-    <ClCompile Include="rich_textbox.cpp" />
-    <ClCompile Include="scrollbar.cpp" />
-    <ClCompile Include="separator.cpp" />
-    <ClCompile Include="shape.cpp" />
-    <ClCompile Include="textbox.cpp" />
-    <ClCompile Include="tile.cpp" />
-    <ClCompile Include="token.cpp" />
-    <ClCompile Include="ui.cpp" />
-    <ClCompile Include="utils.cpp" />
-    <ClCompile Include="var.cpp" />
-    <ClCompile Include="vector2.cpp" />
-    <ClCompile Include="vector3.cpp" />
+    <ClCompile Include="framework\control\panel.cpp" />
+    <ClCompile Include="current\common\par.cpp" />
+    <ClCompile Include="current\ui\pn_bottom.cpp" />
+    <ClCompile Include="current\ui\pn_menu.cpp" />
+    <ClCompile Include="framework\parse\proc.cpp" />
+    <ClCompile Include="framework\control\rich_label.cpp" />
+    <ClCompile Include="framework\control\rich_textbox.cpp" />
+    <ClCompile Include="framework\control\scrollbar.cpp" />
+    <ClCompile Include="framework\control\separator.cpp" />
+    <ClCompile Include="current\rigid\shape.cpp" />
+    <ClCompile Include="framework\control\textbox.cpp" />
+    <ClCompile Include="framework\media\tile.cpp" />
+    <ClCompile Include="framework\parse\token.cpp" />
+    <ClCompile Include="current\ui\ui.cpp" />
+    <ClCompile Include="framework\basic\utils.cpp" />
+    <ClCompile Include="framework\parse\var.cpp" />
+    <ClCompile Include="framework\basic\vector2.cpp" />
+    <ClCompile Include="framework\basic\vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="aabb.h" />
-    <ClInclude Include="app.h" />
-    <ClInclude Include="app_item.h" />
-    <ClInclude Include="app_wv.h" />
-    <ClInclude Include="bgr.h" />
-    <ClInclude Include="body.h" />
-    <ClInclude Include="bra.h" />
-    <ClInclude Include="button.h" />
-    <ClInclude Include="checkbox.h" />
-    <ClInclude Include="clip.h" />
-    <ClInclude Include="collision.h" />
-    <ClInclude Include="comp.h" />
-    <ClInclude Include="connection.h" />
-    <ClInclude Include="control.h" />
-    <ClInclude Include="creator.h" />
-    <ClInclude Include="ctrl_def.h" />
-    <ClInclude Include="ctrl_list.h" />
-    <ClInclude Include="cur.h" />
-    <ClInclude Include="dragbar.h" />
-    <ClInclude Include="draw_comp.h" />
-    <ClInclude Include="draw_curve.h" />
-    <ClInclude Include="draw_geo.h" />
-    <ClInclude Include="draw_px_seg.h" />
-    <ClInclude Include="draw_str.h" />
-    <ClInclude Include="draw_tile.h" />
-    <ClInclude Include="draw_tri.h" />
-    <ClInclude Include="droplist.h" />
-    <ClInclude Include="dvec.h" />
-    <ClInclude Include="expr.h" />
-    <ClInclude Include="float_panel.h" />
-    <ClInclude Include="font.h" />
-    <ClInclude Include="fpn_about.h" />
-    <ClInclude Include="fpn_body.h" />
-    <ClInclude Include="fpn_cmd.h" />
-    <ClInclude Include="fpn_con.h" />
-    <ClInclude Include="fpn_global.h" />
-    <ClInclude Include="fpn_lang.h" />
-    <ClInclude Include="fpn_par.h" />
-    <ClInclude Include="group.h" />
-    <ClInclude Include="include.h" />
-    <ClInclude Include="label.h" />
-    <ClInclude Include="my_def.h" />
-    <ClInclude Include="panel.h" />
-    <ClInclude Include="par.h" />
-    <ClInclude Include="pn_bottom.h" />
-    <ClInclude Include="pn_menu.h" />
-    <ClInclude Include="proc.h" />
-    <ClInclude Include="rich_label.h" />
-    <ClInclude Include="rich_textbox.h" />
-    <ClInclude Include="scrollbar.h" />
-    <ClInclude Include="separator.h" />
-    <ClInclude Include="shape.h" />
-    <ClInclude Include="textbox.h" />
-    <ClInclude Include="tile.h" />
-    <ClInclude Include="token.h" />
-    <ClInclude Include="ui.h" />
-    <ClInclude Include="utils.h" />
-    <ClInclude Include="var.h" />
-    <ClInclude Include="vector2.h" />
-    <ClInclude Include="vector3.h" />
-    <ClInclude Include="vptr.h" />
+    <ClInclude Include="current\rigid\aabb.h" />
+    <ClInclude Include="framework\app\app.h" />
+    <ClInclude Include="framework\app\app_item.h" />
+    <ClInclude Include="framework\app\app_wv.h" />
+    <ClInclude Include="current\common\bgr.h" />
+    <ClInclude Include="current\rigid\body.h" />
+    <ClInclude Include="framework\parse\bra.h" />
+    <ClInclude Include="framework\control\button.h" />
+    <ClInclude Include="framework\control\checkbox.h" />
+    <ClInclude Include="framework\media\clip.h" />
+    <ClInclude Include="current\rigid\collision.h" />
+    <ClInclude Include="current\rigid\comp.h" />
+    <ClInclude Include="current\rigid\connection.h" />
+    <ClInclude Include="framework\control\control.h" />
+    <ClInclude Include="current\rigid\creator.h" />
+    <ClInclude Include="framework\control\ctrl_list.h" />
+    <ClInclude Include="current\common\cur.h" />
+    <ClInclude Include="framework\control\dragbar.h" />
+    <ClInclude Include="framework\draw\draw_comp.h" />
+    <ClInclude Include="framework\draw\draw_curve.h" />
+    <ClInclude Include="framework\draw\draw_geo.h" />
+    <ClInclude Include="framework\draw\draw_px_seg.h" />
+    <ClInclude Include="framework\draw\draw_str.h" />
+    <ClInclude Include="framework\draw\draw_tile.h" />
+    <ClInclude Include="framework\draw\draw_tri.h" />
+    <ClInclude Include="framework\control\droplist.h" />
+    <ClInclude Include="framework\basic\dvec.h" />
+    <ClInclude Include="framework\parse\expr.h" />
+    <ClInclude Include="framework\control\float_panel.h" />
+    <ClInclude Include="framework\media\font.h" />
+    <ClInclude Include="current\ui\fpn_about.h" />
+    <ClInclude Include="current\ui\fpn_body.h" />
+    <ClInclude Include="current\ui\fpn_cmd.h" />
+    <ClInclude Include="current\ui\fpn_con.h" />
+    <ClInclude Include="current\ui\fpn_global.h" />
+    <ClInclude Include="current\ui\fpn_lang.h" />
+    <ClInclude Include="current\ui\fpn_par.h" />
+    <ClInclude Include="current\rigid\group.h" />
+    <ClInclude Include="framework\basic\include.h" />
+    <ClInclude Include="framework\control\label.h" />
+    <ClInclude Include="framework\control\panel.h" />
+    <ClInclude Include="current\common\par.h" />
+    <ClInclude Include="current\ui\pn_bottom.h" />
+    <ClInclude Include="current\ui\pn_menu.h" />
+    <ClInclude Include="framework\parse\proc.h" />
+    <ClInclude Include="framework\control\rich_label.h" />
+    <ClInclude Include="framework\control\rich_textbox.h" />
+    <ClInclude Include="framework\control\scrollbar.h" />
+    <ClInclude Include="framework\control\separator.h" />
+    <ClInclude Include="current\rigid\shape.h" />
+    <ClInclude Include="framework\control\textbox.h" />
+    <ClInclude Include="framework\media\tile.h" />
+    <ClInclude Include="framework\parse\token.h" />
+    <ClInclude Include="current\ui\ui.h" />
+    <ClInclude Include="framework\basic\utils.h" />
+    <ClInclude Include="framework\parse\var.h" />
+    <ClInclude Include="framework\basic\vector2.h" />
+    <ClInclude Include="framework\basic\vector3.h" />
+    <ClInclude Include="framework\basic\vptr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
