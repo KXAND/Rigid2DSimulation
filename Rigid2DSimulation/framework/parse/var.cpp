@@ -50,42 +50,34 @@ ptr<Var> findvar(Scope& gl, Scope& sc, wstring nm, bool isgl)
 bool default_fun(Scope& gl, Scope& sc, ScriptExpr const& ex, Var& out)
 {
 	auto const& f = ex.fun;
-	// 下面用宏而不是在运算之前 Eval 是为了速度，测试发现需要这样。
-	// 说实话其实现在有点怀疑有没有真的测试过。
-	// 不知道有没有别的替代方法。
-#define d0 eval(gl, sc, ex.pars[0])->num
-#define d1 eval(gl, sc, ex.pars[1])->num
-#define s0 eval(gl, sc, ex.pars[0])->str
-#define s1 eval(gl, sc, ex.pars[1])->str
+	// 保持按需 eval，避免在确定运算符前提前计算所有参数。
+	auto numArg = [&](int index) { return eval(gl, sc, ex.pars[index])->num; };
+	auto strArg = [&](int index) -> wstring const& { return eval(gl, sc, ex.pars[index])->str; };
 
-	if (f == L"!") { out = Var(!d0); return true; }
-	if (f == L"++") { out = Var(d0); return true; }
-	if (f == L"--") { out = Var(-d0); return true; }
-	if (f == L"sin") { out = Var(sin(d0));  return true; }
-	if (f == L"cos") { out = Var(cos(d0));  return true; }
-	if (f == L"abs") { out = Var(abs(d0));  return true; }
-	if (f == L"+") { out = Var(d0 + d1); return true; }
-	if (f == L"-") { out = Var(d0 - d1); return true; }
-	if (f == L"*") { out = Var(d0 * d1); return true; }
-	if (f == L"/") { out = Var(d0 / d1); return true; }
-	if (f == L"<") { out = Var(d0 < d1); return true; }
-	if (f == L">") { out = Var(d0 > d1); return true; }
-	if (f == L"<=") { out = Var(d0 <= d1); return true; }
-	if (f == L">=") { out = Var(d0 >= d1); return true; }
-	if (f == L"==") { out = Var(d0 == d1); return true; }
-	if (f == L"!=") { out = Var(d0 != d1); return true; }
-	if (f == L"&&") { out = Var(d0 && d1); return true; }
-	if (f == L"||") { out = Var(d0 || d1); return true; }
-	if (f == L"pow") { out = Var(pow(d0, d1)); return true; }
-	if (f == L"rand") { out = Var(GenerateRandomFloat(d0, d1)); return true; }
-	if (f == L"rand_int") { out = Var(GenerateRandomInt(d0, d1)); return true; }
-	if (f == L"str") { out = Var(tw2(d0)); return true; }
-	if (f == L".") { out = Var(s0 + s1); return true; }
+	if (f == L"!") { out = Var(!numArg(0)); return true; }
+	if (f == L"++") { out = Var(numArg(0)); return true; }
+	if (f == L"--") { out = Var(-numArg(0)); return true; }
+	if (f == L"sin") { out = Var(sin(numArg(0)));  return true; }
+	if (f == L"cos") { out = Var(cos(numArg(0)));  return true; }
+	if (f == L"abs") { out = Var(abs(numArg(0)));  return true; }
+	if (f == L"+") { out = Var(numArg(0) + numArg(1)); return true; }
+	if (f == L"-") { out = Var(numArg(0) - numArg(1)); return true; }
+	if (f == L"*") { out = Var(numArg(0) * numArg(1)); return true; }
+	if (f == L"/") { out = Var(numArg(0) / numArg(1)); return true; }
+	if (f == L"<") { out = Var(numArg(0) < numArg(1)); return true; }
+	if (f == L">") { out = Var(numArg(0) > numArg(1)); return true; }
+	if (f == L"<=") { out = Var(numArg(0) <= numArg(1)); return true; }
+	if (f == L">=") { out = Var(numArg(0) >= numArg(1)); return true; }
+	if (f == L"==") { out = Var(numArg(0) == numArg(1)); return true; }
+	if (f == L"!=") { out = Var(numArg(0) != numArg(1)); return true; }
+	if (f == L"&&") { out = Var(numArg(0) && numArg(1)); return true; }
+	if (f == L"||") { out = Var(numArg(0) || numArg(1)); return true; }
+	if (f == L"pow") { out = Var(pow(numArg(0), numArg(1))); return true; }
+	if (f == L"rand") { out = Var(GenerateRandomFloat(numArg(0), numArg(1))); return true; }
+	if (f == L"rand_int") { out = Var(GenerateRandomInt(numArg(0), numArg(1))); return true; }
+	if (f == L"str") { out = Var(tw2(numArg(0))); return true; }
+	if (f == L".") { out = Var(strArg(0) + strArg(1)); return true; }
 	return false;
-#undef d0
-#undef d1
-#undef s0
-#undef s1
 }
 
 ptr<Var> eval_call(Scope& gl, Scope& sc, ScriptExpr const& ex)
