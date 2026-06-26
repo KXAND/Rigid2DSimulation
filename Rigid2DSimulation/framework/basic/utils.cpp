@@ -4,31 +4,31 @@
 // 又想要不死板教条，又想要稳定性，又想要读起来好看，很纠结。
 // 后面有些地方的逻辑实在是太乱了，点名 parse 那一块的。
 
-int generateRadomInt(int a, int b)
+int GenerateRandomInt(int a, int b)
 {
 	static std::random_device rd;
 	static std::mt19937 generator(rd());
 	std::uniform_int_distribution<int> d(a, b);
 	return d(generator);
 }
-int generateRadomInt(int sz)
+int GenerateRandomInt(int sz)
 {
-	return generateRadomInt(0, sz - 1);
+	return GenerateRandomInt(0, sz - 1);
 }
 
-double generateRadomFloat(double lowerBound, double upperBound)
+double GenerateRandomFloat(double lowerBound, double upperBound)
 {
 	static std::random_device seed;
 	static std::mt19937 generator(seed());
 	std::uniform_real_distribution<double> d(lowerBound, upperBound);
 	return d(generator);
 }
-double generateRadomFloat(double upperBound)
+double GenerateRandomFloat(double upperBound)
 {
-	return generateRadomFloat(0, upperBound);
+	return GenerateRandomFloat(0, upperBound);
 }
 
-double generateNormalRadomFloat(double mean, double stddev)
+double GenerateNormalRandomFloat(double mean, double stddev)
 {
 	static std::random_device rd;
 	static std::mt19937 generator(rd());

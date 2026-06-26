@@ -10,7 +10,7 @@ struct Shape
 {
 private:
 
-	vector2 generateRadomPointInTriangle(vector2 v0, vector2 v1, vector2 v2) const;
+	vector2 GenerateRandomPointInTriangle(vector2 v0, vector2 v1, vector2 v2) const;
 	bool isInsideTriangle(vector2 v, vector2 v0, vector2 v1, vector2 v2) const;
 public:
 	bool isCircle = false;

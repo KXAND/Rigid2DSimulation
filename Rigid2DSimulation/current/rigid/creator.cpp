@@ -61,7 +61,7 @@ void Creator::updateBox(SimulationApp& cur)
 		{
 			mkp(body)(msh<Shape>(getRectVerticesByCenter(x1 - x0, y1 - y0)));
 			body->o = vector2(x0 + x1, y0 + y1) / 2;
-			body->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
+			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (cfg_body) { body->read_cfg(*cfg_body); }
 			body->Init();
 		}
@@ -94,7 +94,7 @@ void Creator::updateBall(SimulationApp& cur)
 		{
 			mkp(body)(msh<Shape>(r));
 			body->o = vector2(p_rec);
-			body->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
+			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (cfg_body) { body->read_cfg(*cfg_body); }
 			body->Init();
 		}
@@ -130,7 +130,7 @@ void Creator::updatePlate(SimulationApp& cur)
 			mkp(body)(msh<Shape>(getRectVerticesByCenter(len + thk, thk)));
 			body->o = vector2(p_rec + cur.input.msp) / 2;
 			body->radian = atan2(v.y, v.x);
-			body->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
+			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (cfg_body) { body->read_cfg(*cfg_body); }
 			body->Init();
 		}
@@ -190,7 +190,7 @@ void Creator::updatePoint(SimulationApp& cur)
 	if (hovered && cur.input.isMouseClickedDown(0))
 	{
 		mkp(body)((vector2) cur.input.msp);
-		body->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
+		body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 		if (cfg_body) { body->read_cfg(*cfg_body); }
 		body->Init();
 		cur.bodies.push_back(body);
@@ -224,7 +224,7 @@ void Creator::updateParticle(SimulationApp& cur)
 	{
 		mkp(body)(msh<Shape>(rad));
 		body->o = (vector2) cur.input.msp;
-		body->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
+		body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 		if (cfg_body) { body->read_cfg(*cfg_body); }
 		body->Init();
 		cur.bodies.push_back(body);

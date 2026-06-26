@@ -30,12 +30,12 @@ vector2 Shape::generateRandomPointInside() const
 {
 	if (isCircle)
 	{
-		double randomRadian = generateRadomFloat(2 * PI);
-		double randomRadius = sqrt(generateRadomFloat(1)) * r;
+		double randomRadian = GenerateRandomFloat(2 * PI);
+		double randomRadius = sqrt(GenerateRandomFloat(1)) * r;
 		return vector2(cos(randomRadian), sin(randomRadian)) * randomRadius;
 	}
 
-	double randomArea = generateRadomFloat(area);
+	double randomArea = GenerateRandomFloat(area);
 	rep(i, 0, vertices.size())
 	{
 		int j = ((long long) i + 1) % vertices.size();
@@ -47,7 +47,7 @@ vector2 Shape::generateRandomPointInside() const
 
 		// 在第一个令面积为负的区域中随机
 		if (randomArea < 0 || i == vertices.size() - 1)
-			return generateRadomPointInTriangle(oRelative, p, q);
+			return GenerateRandomPointInTriangle(oRelative, p, q);
 
 	}
 	return {};
@@ -80,10 +80,10 @@ aabb Shape::getBoundingBox() const
 	return box;
 }
 
-vector2 Shape::generateRadomPointInTriangle(vector2 v0, vector2 v1, vector2 v2) const
+vector2 Shape::GenerateRandomPointInTriangle(vector2 v0, vector2 v1, vector2 v2) const
 {
-	double x0 = generateRadomFloat(1);
-	double x1 = generateRadomFloat(1);
+	double x0 = GenerateRandomFloat(1);
+	double x1 = GenerateRandomFloat(1);
 	if (x0 + x1 > 1)
 	{
 		// @ques：这里为什么交换值不是很懂

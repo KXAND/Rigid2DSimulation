@@ -37,7 +37,7 @@ void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 	}
 	if (point) { mkp(bo)(vector2()); }
 	else { mkp(bo)(shs); }
-	bo->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
+	bo->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	bo->read_cfg(cfg);
 	bool repos_o = false;
 	try_read_config_number(cfg, L"repos_o", repos_o);
@@ -48,8 +48,8 @@ void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 void CreateConnetion(SimulationApp& cur, Var const& cfg)
 {
 	auto& bodies = cur.bodies;
-	int idx0 = generateRadomInt(bodies.size());
-	int idx1 = generateRadomInt(bodies.size());
+	int idx0 = GenerateRandomInt(bodies.size());
+	int idx1 = GenerateRandomInt(bodies.size());
 	try_read_config_number(cfg, L"idx0", idx0);
 	try_read_config_number(cfg, L"idx1", idx1);
 	idx0 = clamp(idx0, 0, (int)bodies.size());
@@ -94,7 +94,7 @@ void Boundary(SimulationApp& cur, Var const& thk, Var const& cfg)
 	double bx0 = cur.background->topLeft.x, bx1 = bx0 + bw;
 	double by0 = cur.background->topLeft.y, by1 = by0 + bh;
 	ptr<Body> body;
-	dColor color = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
+	dColor color = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	body = msh<Body>(msh<Shape>(getRectVerticesByCenter(thk.num, bh)));
 	body->o = vector2(bx0, (by0 + by1) / 2);
 	body->fixed = true;
@@ -140,7 +140,7 @@ void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var cons
 		shs.push_back(msh<Shape>(vector<vector2>{ v0, v, v1 }));
 	}
 	auto wheel = msh<Body>(shs);
-	wheel->innerColor = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
+	wheel->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	wheel->read_cfg(cfg);
 	wheel->Init();
 	cur.bodies.push_back(wheel);
@@ -167,7 +167,7 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	double len = (p1 - p0).len() / n;
 	double rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * rad);
-	dColor col = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
+	dColor col = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	mkp(b0)(msh<Shape>(rad));
 	b0->innerColor = col;
 	b0->o = p0;
@@ -206,7 +206,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 	double len = 2 * PI * rad.num / n;
 	double ball_rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * ball_rad);
-	dColor col = dColor(generateRadomInt(256), generateRadomInt(256), generateRadomInt(256));
+	dColor col = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	mkp(b0)(msh<Shape>(ball_rad));
 	b0->innerColor = col;
 	b0->o = o + vector2(rad.num, 0);

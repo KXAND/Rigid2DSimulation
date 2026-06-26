@@ -123,7 +123,7 @@ vector2 Body::generateRandomPointInside() const
 {
 	if (point) { return {}; }
 
-	double randomArea = generateRadomFloat(area);
+	double randomArea = GenerateRandomFloat(area);
 	for (const auto& shape : shapes)
 	{
 		randomArea -= shape->area;

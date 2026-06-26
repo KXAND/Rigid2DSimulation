@@ -31,7 +31,7 @@ SimulationApp::SimulationApp()
 	if (!ok) { cl1 = NULL; }
 	print_console(L"“Ù¿÷º”‘ÿÕÍ≥….", true);
 	vol = 1;
-	mClipPtr = generateRadomFloat(1) < 0.5 ? &*cl0 : &*cl1;
+	mClipPtr = GenerateRandomFloat(1) < 0.5 ? &*cl0 : &*cl1;
 }
 
 void SimulationApp::Save(wstring const& nm) const
