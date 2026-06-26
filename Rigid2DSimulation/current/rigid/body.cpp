@@ -96,9 +96,9 @@ void Body::refresh(SimulationApp& cur)
 	TryReadConfigNumber(body_cfg, L"preset_o", preset_o);
 	TryReadConfigNumber(body_cfg, L"preset_ang", preset_ang);
 	TryReadConfigNumber(body_cfg, L"preset_v_ang", preset_v_ang);
-	if (auto value = FindConfigValue(body_cfg, L"o_prog")) { mkp(o_prog)(value->procs); }
-	if (auto value = FindConfigValue(body_cfg, L"ang_prog")) { mkp(ang_prog)(value->procs); }
-	if (auto value = FindConfigValue(body_cfg, L"v_ang_prog")) { mkp(v_ang_prog)(value->procs); }
+	if (auto value = FindConfigValue(body_cfg, L"o_prog")) { mkp(positionProgram)(value->procs); }
+	if (auto value = FindConfigValue(body_cfg, L"ang_prog")) { mkp(angleProgram)(value->procs); }
+	if (auto value = FindConfigValue(body_cfg, L"v_ang_prog")) { mkp(angularVelocityProgram)(value->procs); }
 	Init();
 }
 
@@ -359,13 +359,13 @@ void Body::Step(SimulationApp& cur, double stepDt)
 
 void Body::followPresetO(SimulationApp& cur, double stepDt)
 {
-	if (!o_prog) { return; }
+	if (!positionProgram) { return; }
 	Scope scope;
 	bool ret = false;
 	scope[L"t"] = msh<Var>(cur.t);
-	auto positionOld = tv2(Execute(ret, cur.curScope, scope, *o_prog)->vec);
+	auto positionOld = tv2(Execute(ret, cur.curScope, scope, *positionProgram)->vec);
 	scope.clear(); scope[L"t"] = msh<Var>(cur.t + stepDt); ret = false;
-	auto positionNew = tv2(Execute(ret, cur.curScope, scope, *o_prog)->vec);
+	auto positionNew = tv2(Execute(ret, cur.curScope, scope, *positionProgram)->vec);
 	auto velocityNew = (positionNew - positionOld) / stepDt;
 
 	// 其实我觉得应当选用时间较小的值。
@@ -375,16 +375,16 @@ void Body::followPresetO(SimulationApp& cur, double stepDt)
 
 void Body::followPresetAngle(SimulationApp& cur, double stepDt)
 {
-	if (!ang_prog) { return; }
+	if (!angleProgram) { return; }
 
 	Scope scope;
 	bool ret = false;
 	scope[L"t"] = msh<Var>(cur.t);
-	auto radianOld = Execute(ret, cur.curScope, scope, *ang_prog)->num;
+	auto radianOld = Execute(ret, cur.curScope, scope, *angleProgram)->num;
 	scope.clear();
 	scope[L"t"] = msh<Var>(cur.t + stepDt);
 	ret = false;
-	auto radianNew = Execute(ret, cur.curScope, scope, *ang_prog)->num;
+	auto radianNew = Execute(ret, cur.curScope, scope, *angleProgram)->num;
 	auto velocityAngularNew = (radianNew - radianOld) / stepDt;
 
 	radian = radianNew;
@@ -393,12 +393,12 @@ void Body::followPresetAngle(SimulationApp& cur, double stepDt)
 
 void Body::followPresetVelocityAngular(SimulationApp& cur)
 {
-	if (!v_ang_prog) { return; }
+	if (!angularVelocityProgram) { return; }
 
 	Scope sc;
 	bool ret = false;
 	sc[L"t"] = msh<Var>(cur.t);
-	auto velocityAngularNew = Execute(ret, cur.curScope, sc, *v_ang_prog)->num;
+	auto velocityAngularNew = Execute(ret, cur.curScope, sc, *angularVelocityProgram)->num;
 
 	velocityAngular = velocityAngularNew;
 }

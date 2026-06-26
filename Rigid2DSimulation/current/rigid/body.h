@@ -17,7 +17,7 @@ struct Body
 	bool del = false;
 	bool point = false;
 	bool fixed = false;
-	ptr<Program> o_prog, ang_prog, v_ang_prog;
+	ptr<Program> positionProgram, angleProgram, angularVelocityProgram;
 	double inertia = 0;
 	bool preset_o = false;
 	bool preset_ang = false;
