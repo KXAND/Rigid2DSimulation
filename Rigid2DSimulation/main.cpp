@@ -1,5 +1,6 @@
-#include "cur.h"
+#include "simulation_app.h"
 
 int main() {
-	Cur().Run();
+	SimulationApp().Run();
 }
+

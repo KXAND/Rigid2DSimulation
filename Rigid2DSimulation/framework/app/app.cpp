@@ -47,7 +47,8 @@ void App::Run(bool console)
 			if (!ret) { addLog(L"设置标题失败.\n"); }
 			fps.update(); reset_dscr();
 			ret = input.sync_mouse(hwnd);
-			if (!ret) { addLog(L"同步鼠标位置失败.\n"); }
+			if (!ret) { addLog(L"同步鼠标位置失败.\n");
+			}
 			Update(); ret = wv.play();
 			if (!ret) { addLog(L"播放声音失败.\n"); }
 			present_scr(); input.reset(); own.reset();

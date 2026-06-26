@@ -51,3 +51,4 @@ double getDistanceSquare(vector2 a, vector2 b, vector2 p)
 		(ap + bp) / 2 - ab / 4 - diff * diff / (4 * ab);// @todo£ºÁ·Ï°ÍÆµ¼
 }
 
+

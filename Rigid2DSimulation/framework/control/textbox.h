@@ -4,7 +4,7 @@
 
 struct Textbox : Control {
 	dVector2 gap;
-	double dep = 0;
+	double depth = 0;
 	wstring txt;
 	int w = 0, h = 0;
 	bool clr_upon_edit = false;
@@ -82,4 +82,5 @@ struct TbLan : Textbox {
 	TbLan(wstring const& id, int w);
 	void Update(App& app) override;
 };
+
 

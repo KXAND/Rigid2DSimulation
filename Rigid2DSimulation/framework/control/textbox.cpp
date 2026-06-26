@@ -8,7 +8,7 @@
 
 Textbox::Textbox(int w) : w(w) {
 	gap = { 10, 10 }; 
-	dep = 1000; h = 30;
+	depth = 1000; h = 30;
 
 	c_txt = { 255, 255, 255 };
 	c_str = { 255, 255, 255 };
@@ -188,7 +188,7 @@ void Textbox::clamp_str(App& app) {
 
 void Textbox::render_main(App& app) {
 	dVector2 tl_txt = tl + dVector2(0, (h - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, dep, txt, c_txt, app.ft, tl_txt, 0, vp);
+	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
 	dColor const& c =
 		!enabled ? c_invalid :
@@ -198,9 +198,9 @@ void Textbox::render_main(App& app) {
 
 	int x_cur = 0;
 	dVector2 tl_str = tl_box() + dVector2(x_str_rel, (h - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, dep, left(), c_str, app.ft, tl_str, x_cur, 0, vp_show_txt());
-	draw_str(app.scr, app.dscr, dep, mid(), selectedColor, app.ft, tl_str, x_cur, 0, vp_show_txt());
-	draw_str(app.scr, app.dscr, dep, right(), c_str, app.ft, tl_str, x_cur, 0, vp_show_txt());
+	draw_str(app.scr, app.dscr, depth, left(), c_str, app.ft, tl_str, x_cur, 0, vp_show_txt());
+	draw_str(app.scr, app.dscr, depth, mid(), selectedColor, app.ft, tl_str, x_cur, 0, vp_show_txt());
+	draw_str(app.scr, app.dscr, depth, right(), c_str, app.ft, tl_str, x_cur, 0, vp_show_txt());
 }
 void Textbox::render_cursor(App& app) {
 	bool show_cursor = edit &&
@@ -247,12 +247,13 @@ void Textbox::Discard(App& app) {
 void Textbox::PreUpdate(App& app) {
 	if (edit) { app.own.keyboardOwner = this; }
 
-	bool ok = app.own.hoveredDepth <= dep &&
+	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl_box(), w, h }) && isInside(app.input.msp, vp);
-	if (ok) { app.own.hoveredDepth = dep; app.own.hovered = this; }
+	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
 TbLan::TbLan(wstring const& id, int w) : Textbox(w), id_txt(id) {}
 void TbLan::Update(App& app) { txt = app.getLocalizedString(id_txt); Textbox::Update(app); }
+
 
 

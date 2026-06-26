@@ -6,7 +6,7 @@
 
 
 Panel::Panel() {
-	dep = 1000;
+	depth = 1000;
 	wheel_mtp = 40;
 	tl_show_rel = { 10, 10 };
 
@@ -99,16 +99,17 @@ void Panel::Discard(App& app) {
 	if (c) { c->Discard(app); }
 }
 void Panel::PreUpdate(App& app) {
-	bool ok = app.own.hoveredDepth <= dep &&
+	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.rect());
-	if (ok) { app.own.hoveredDepth = dep; app.own.hovered = this; }
+	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 
-	ok = app.own.wheeledDepth <= dep &&
+	ok = app.own.wheeledDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.rect());
-	if (ok) { app.own.wheeledDepth = dep; app.own.wheeled = this; }
+	if (ok) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
 
 	if (c) { c->PreUpdate(app); }
 	if (use_sb) { sb->PreUpdate(app); }
 }
+
 
 

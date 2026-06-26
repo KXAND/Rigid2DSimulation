@@ -9,7 +9,7 @@
 
 
 FloatPanel::FloatPanel() {
-	dep = 1000;
+	depth = 1000;
 	txt = L"´°¿Ú";
 	wheel_mtp = 40;
 	tl_show_rel = { 10, 40 };
@@ -128,7 +128,7 @@ void FloatPanel::render_main(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h_bar, app.scr.rect(), c_bar, c_frame);
 
 	dVector2 tl_title = tl + dVector2(margin_title, (h_bar - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, dep, txt, c_txt, app.ft, tl_title, 0, app.scr.rect());
+	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_title, 0, app.scr.rect());
 }
 void FloatPanel::render_close(App& app) {
 	dColor const& c_close =
@@ -139,9 +139,9 @@ void FloatPanel::render_close(App& app) {
 
 	dVector2 mark_ct = tl_close() + dVector2(s_close, s_close) / 2;
 	dVector2 mark_arm = { half_s_mark , half_s_mark };
-	drawLineSegment(app.scr, app.dscr, mark_ct - mark_arm, mark_ct + mark_arm, dep, app.scr.rect(), c_mark);
+	drawLineSegment(app.scr, app.dscr, mark_ct - mark_arm, mark_ct + mark_arm, depth, app.scr.rect(), c_mark);
 	mark_arm = { -half_s_mark , half_s_mark };
-	drawLineSegment(app.scr, app.dscr, mark_ct - mark_arm, mark_ct + mark_arm, dep, app.scr.rect(), c_mark);
+	drawLineSegment(app.scr, app.dscr, mark_ct - mark_arm, mark_ct + mark_arm, depth, app.scr.rect(), c_mark);
 }
 void FloatPanel::render(App& app) {
 	render_main(app); render_close(app);
@@ -175,13 +175,13 @@ void FloatPanel::Discard(App& app) {
 }
 void FloatPanel::PreUpdate(App& app) {
 	if (!shown) return;
-	bool ok = app.own.hoveredDepth <= dep &&
+	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.rect());
-	if (ok) { app.own.hoveredDepth = dep; app.own.hovered = this; }
+	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 
-	ok = app.own.wheeledDepth <= dep &&
+	ok = app.own.wheeledDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.rect());
-	if (ok) { app.own.wheeledDepth = dep; app.own.wheeled = this; }
+	if (ok) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
 
 	if (c) { c->PreUpdate(app); }
 	if (use_sb) { sb->PreUpdate(app); }
@@ -196,5 +196,6 @@ void FPnLan::Update(App& app) {
 bool less_fpn(FloatPanel* const fp0, FloatPanel* const fp1) {
 	return fp0->t_click < fp1->t_click;
 }
+
 
 

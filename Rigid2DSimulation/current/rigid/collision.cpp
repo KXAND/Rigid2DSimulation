@@ -1,20 +1,20 @@
 #include "collision.h"
-#include "cur.h"
-#include "bgr.h"
+#include "simulation_app.h"
+#include "background.h"
 #include "body.h"
 #include "shape.h"
 #include "draw_geo.h"
 
 //	疑似废弃
-void Collision::Render(Cur& cur) const
+void Collision::Render(SimulationApp& cur) const
 {
-	drawEllipse(cur.scr, cur.dscr, 100, c, 5, 5, cur.mBgr->viewPort(), dColor::YELLOW);
+	drawEllipse(cur.scr, cur.dscr, 100, c, 5, 5, cur.background->viewPort(), dColor::YELLOW);
 }
 void Collision::simulate(bool equalResponse)
 {
 	/*命名约定：
-		碰撞点：c
-		物体：1，2
+		?????c
+		???壺1??2
 	*/
 
 	double elasticity = min(body0->elasticity, body1->elasticity);
@@ -223,5 +223,6 @@ double sub_collide_poly(vector2 n, vector2 o, Shape const& sh, vector2& c)
 		}
 	} return -out;
 }
+
 
 

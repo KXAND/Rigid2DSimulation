@@ -6,7 +6,7 @@
 
 Checkbox::Checkbox(bool big) {
 	h = big ? 30 : 20;
-	gap = { 10, 10 }; dep = 1000;
+	gap = { 10, 10 }; depth = 1000;
 	s_box = 20; s_box_in = 10;
 
 	c_txt = { 255, 255, 255 };
@@ -24,7 +24,7 @@ int Checkbox::GetH() const { return h + gap.y; }
 dVector2 Checkbox::tl_box() const { return tl + dVector2(w_txt, (h - s_box) / 2); }
 void Checkbox::render(App& app) {
 	dVector2 tl_txt = tl + dVector2(0, (h - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, dep, txt, c_txt, app.ft, tl_txt, 0, vp);
+	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
 	dColor const& c =
 		!enabled ? c_invalid :
@@ -49,12 +49,13 @@ void Checkbox::Discard(App& app) {
 	hovered = false; 
 }
 void Checkbox::PreUpdate(App& app) {
-	bool ok = app.own.hoveredDepth <= dep &&
+	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl_box(), s_box, s_box }) && isInside(app.input.msp, vp);
-	if (ok) { app.own.hoveredDepth = dep; app.own.hovered = this; }
+	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
 CbLan::CbLan(wstring const& id, bool big) : Checkbox(big), id_txt(id) {}
 void CbLan::Update(App& app) { txt = app.getLocalizedString(id_txt); Checkbox::Update(app); }
+
 
 

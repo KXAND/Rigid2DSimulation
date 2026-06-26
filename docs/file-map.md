@@ -44,16 +44,16 @@
 ## 5. 脚本语言：词法、语法、执行
 
 - `Rigid2DSimulation/framework/parse/token.h` / `Rigid2DSimulation/framework/parse/token.cpp`: 词法分析，把源码切成 token。
-- `Rigid2DSimulation/framework/parse/bra.h` / `Rigid2DSimulation/framework/parse/bra.cpp`: 括号层级分析，把 token 序列组织成嵌套结构。
-- `Rigid2DSimulation/framework/parse/expr.h` / `Rigid2DSimulation/framework/parse/expr.cpp`: 表达式 AST 与解析。
-- `Rigid2DSimulation/framework/parse/proc.h` / `Rigid2DSimulation/framework/parse/proc.cpp`: 语句 AST 与解析，覆盖赋值、函数定义、`if`、`while`、`return`。
+- `Rigid2DSimulation/framework/parse/bracket_group.h` / `Rigid2DSimulation/framework/parse/bracket_group.cpp`: 括号层级分析，把 token 序列组织成嵌套结构。
+- `Rigid2DSimulation/framework/parse/script_expr.h` / `Rigid2DSimulation/framework/parse/script_expr.cpp`: 表达式 AST 与解析。
+- `Rigid2DSimulation/framework/parse/script_statement.h` / `Rigid2DSimulation/framework/parse/script_statement.cpp`: 语句 AST 与解析，覆盖赋值、函数定义、`if`、`while`、`return`。
 - `Rigid2DSimulation/framework/parse/var.h` / `Rigid2DSimulation/framework/parse/var.cpp`: 动态值类型、作用域查找、脚本执行器和 `Compile` 入口。
-- `Rigid2DSimulation/current/common/par.h` / `Rigid2DSimulation/current/common/par.cpp`: 用户参数对象，支持保存/加载。
+- `Rigid2DSimulation/current/common/scene_parameter.h` / `Rigid2DSimulation/current/common/scene_parameter.cpp`: 用户参数对象，支持保存/加载。
 
 ## 6. 场景、物理与创建逻辑
 
-- `Rigid2DSimulation/current/common/cur.h` / `Rigid2DSimulation/current/common/cur.cpp`: 全项目核心状态与主调度器，统筹脚本、物理、UI、音频、序列化、输入模式。
-- `Rigid2DSimulation/current/common/bgr.h` / `Rigid2DSimulation/current/common/bgr.cpp`: 背景区域、视口、背景 tile 与背景 hover/wheel owner。
+- `Rigid2DSimulation/current/common/simulation_app.h` / `Rigid2DSimulation/current/common/simulation_app.cpp`: 全项目核心状态与主调度器，统筹脚本、物理、UI、音频、序列化、输入模式。
+- `Rigid2DSimulation/current/common/background.h` / `Rigid2DSimulation/current/common/background.cpp`: 背景区域、视口、背景 tile 与背景 hover/wheel owner。
 - `Rigid2DSimulation/current/rigid/shape.h` / `Rigid2DSimulation/current/rigid/shape.cpp`: 圆与凸多边形几何表示、点内测试、随机点生成、包围盒计算。
 - `Rigid2DSimulation/current/rigid/body.h` / `Rigid2DSimulation/current/rigid/body.cpp`: 刚体核心对象，负责质量属性、积分、拖拽、渲染、脚本配置刷新、序列化。
 - `Rigid2DSimulation/current/rigid/collision.h` / `Rigid2DSimulation/current/rigid/collision.cpp`: 碰撞检测结果与碰撞冲量/摩擦求解。
@@ -94,7 +94,7 @@
 
 ## 9. 需要单独注意的文件
 
-- `Rigid2DSimulation/current/common/cur.cpp`: 核心调度最集中，也是后续重构最先应该拆的文件。
+- `Rigid2DSimulation/current/common/simulation_app.cpp`: 核心调度最集中，也是后续重构最先应该拆的文件。
 - `Rigid2DSimulation/current/rigid/body.cpp`: 体量最大，物理、交互、渲染、脚本混在一起。
 - `Rigid2DSimulation/current/rigid/comp.cpp`: 组合构建函数很多，是脚本能力的主要“标准库”。
 - `Rigid2DSimulation/framework/control/rich_textbox.cpp`: 多行编辑器逻辑集中，UI 复杂度最高的控件之一。

@@ -1,33 +1,29 @@
 # 命名 Review
 
-这份文档只讨论“应该怎么改名”，不直接改代码。原则是优先改那些跨模块传播、阅读成本高、且收益明显大于迁移成本的名字；局部数学变量、短生命周期临时变量，以及会影响脚本/序列化兼容性的名字，不建议轻易动。
+这份文档记录当前仓库里的命名整改情况。原则仍然是优先处理那些跨模块传播、阅读成本高、且收益明显大于迁移成本的名字；局部数学变量、短生命周期临时变量，以及会影响脚本/序列化兼容性的名字，不建议轻易动。
 
-## 1. 优先改名的对象
+## 1. 已完成的优先改名
 
-- `Cur`
-  建议改成 `SimulationApp`、`RigidSimApp` 或 `SceneApp` 这一类名字。
-  原因是它不是“当前对象”，而是整个程序的主状态与主调度器。
-- `mBgr` / `bgr`
-  建议改成 `background`。
-  这是全局可见成员，缩写价值很低，阅读成本很高。
-- `proc`
-  建议改成 `Statement`、`ScriptStmt` 或 `ScriptStatement`。
-  现在它既不像 process，也不像 procedure，语义不清。
-- `expr`
-  建议改成 `Expression` 或 `ScriptExpr`。
-  这是脚本 AST 的核心类型，值得直白命名。
-- `bra`
-  建议改成 `BracketNode`、`GroupedToken` 或 `BracketGroup`。
-  当前名字几乎不能从字面推断用途。
-- `param`
-  建议改成 `SceneParameter` 或 `NamedParameter`。
-  现在它不是通用函数参数，而是场景内可编辑参数。
-- `equal_repos`
-  建议改成 `useEqualPositionCorrection` 或 `equalPositionResponse`。
-  这是全局物理解算开关，现名很难理解。
-- `dep`
-  如果表示绘制深度，建议统一改成 `depth` 或 `zOrder`。
-  当前在 UI 和刚体里都出现，歧义偏大。
+- `Cur -> SimulationApp`
+  现在能直观看出这是整个模拟程序的主状态与主调度器。
+- `mBgr` / `bgr -> background`
+  背景对象改成了完整单词，跨模块引用时不再需要猜缩写。
+- `proc -> ScriptStatement`
+  脚本语句 AST 的语义现在是直白的。
+- `expr -> ScriptExpr`
+  脚本表达式 AST 类型不再和普通“expression”口语化缩写混在一起。
+- `bra -> BracketGroup`
+  这个类型现在直接表达“括号分组”的用途。
+- `param -> SceneParameter`
+  场景参数和普通函数参数区分开了。
+- `equal_repos -> useEqualPositionCorrection`
+  全局位置修正开关的含义已经清楚。
+- `dep -> depth`
+  绘制深度相关字段和参数已经统一成 `depth`；刚体和创建器里对应改成了 `depthShape`、`depthPoint`、`depthBody`、`depthConnection`。
+
+补充：
+
+- `current/common/simulation_app.cpp` 里的局部宏别名已经移除，核心调度代码不再依赖 `#define cur (*this)` 这类隐式上下文。
 
 ## 2. 值得逐步改名，但不必一次做完
 
@@ -41,7 +37,7 @@
 - `o`
   在 `Body` / `Shape` 里建议改成 `position` 或 `center`。
   这是典型的“作者知道，读者不知道”的命名。
-- `oRelative`
+- `uiy`
   建议改成 `localPosition` 或 `relativePosition`。
 - `v_ang_prog`
   建议改成 `angularVelocityProgram`。
@@ -73,10 +69,10 @@
 
 ## 5. 推荐的命名整改顺序
 
-1. 先改类型名：`Cur`、`proc`、`expr`、`bra`、`param`。
-2. 再改跨模块成员名：`mBgr`、`o`、`oRelative`、`equal_repos`、`dep`。
+1. 第一优先级已经完成：`Cur`、`proc`、`expr`、`bra`、`param`、`mBgr`、`equal_repos`、`dep` 都已落地改名。
+2. 下一批如果继续推进，优先看 `o`、`oRelative`、`o_prog`、`ang_prog`、`v_ang_prog`。
 3. 最后视 UI 是否重构，再统一处理 `FPn*` / `Pn*` / `RTb*` / `Bt*` 这一批缩写。
 
 ## 6. 结论
 
-这个仓库里最值得立即改的名字，其实不多，核心是那些“类型级别、全局级别、跨模块级别”的高传播名字。`Cur` 是第一优先级；UI 缩写批次和数学局部变量，不建议为了整齐感单独大动。很多地方补一行注释，比机械重命名更划算。
+这个仓库里最值得优先处理的，仍然是那些“类型级别、全局级别、跨模块级别”的高传播名字；这一批现在已经完成。后续如果继续整理，重点应该转向局部高频但仍有歧义的领域名，而不是为了整齐感去机械展开所有 UI 缩写或数学临时变量。

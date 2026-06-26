@@ -1,7 +1,7 @@
 #include "group.h"
 #include "body.h"
 #include "connection.h"
-#include "cur.h"
+#include "simulation_app.h"
 
 void Group::Warp(dRect rect)
 {

@@ -1,17 +1,19 @@
-#include "cur.h"
+#include "simulation_app.h"
+#include "utils.h"
 #include "ui.h"
-#include "bgr.h"
-#include "par.h"
+#include "background.h"
+#include "scene_parameter.h"
 #include "shape.h"
 #include "body.h"
-#include "comp.h"
+#include "shape_builtins.h"
+#include "scene_builders.h"
 #include "clip.h"
 #include "group.h"
 #include "creator.h"
 #include "collision.h"
 #include "connection.h"
 
-Cur::Cur()
+SimulationApp::SimulationApp()
 {
 	w = 1800; h = 900; set_locale(); wv.len_block = 4 * 5e-4;
 	print_console(L"正在加载字体...");
@@ -19,7 +21,7 @@ Cur::Cur()
 	print_console(L"字体加载完成.", true);
 	print_console(L"正在加载控件...");
 	mkp(ui)(*this); ui->Init(*this);
-	mkp(mBgr)(*this); Reset();
+	mkp(background)(*this); Reset();
 	print_console(L"控件加载完成.", true);
 	print_console(L"正在加载音乐...");
 	bool ok = false;
@@ -32,11 +34,7 @@ Cur::Cur()
 	mClipPtr = generateRadomFloat(1) < 0.5 ? &*cl0 : &*cl1;
 }
 
-#define cur (*this)
-#define found(s) (dic.find(s) != dic.end())
-#define getv(nm) if (found(L#nm)) { nm = dic.at(L#nm)->num; }
-
-void Cur::Save(wstring const& nm) const
+void SimulationApp::Save(wstring const& nm) const
 {
 	FILE* f = wfopen(nm, L"wb");
 	if (!f) { return; }
@@ -50,7 +48,7 @@ void Cur::Save(wstring const& nm) const
 
 	fclose(f);
 }
-void Cur::Load(wstring const& nm)
+void SimulationApp::Load(wstring const& nm)
 {
 	FILE* f = wfopen(nm, L"rb");
 	if (!f) { return; } Reset();
@@ -65,7 +63,7 @@ void Cur::Load(wstring const& nm)
 
 	Execute(curScope, Compile(cmd)); fclose(f);
 }
-void Cur::Reset()
+void SimulationApp::Reset()
 {
 	curScope.clear(); init_def_fun(); pars.clear();
 
@@ -73,12 +71,12 @@ void Cur::Reset()
 	groups.clear();
 	collisions.clear();
 	connections.clear();
-	cur.dbstr.clear();
+	dbstr.clear();
 
-	curScope[L"left_bgr"] = msh<Var>(cur.mBgr->topLeft.x);
-	curScope[L"top_bgr"] = msh<Var>(cur.mBgr->topLeft.y);
-	curScope[L"w_bgr"] = msh<Var>(cur.mBgr->width);
-	curScope[L"h_bgr"] = msh<Var>(cur.mBgr->height);
+	curScope[L"left_bgr"] = msh<Var>(background->topLeft.x);
+	curScope[L"top_bgr"] = msh<Var>(background->topLeft.y);
+	curScope[L"w_bgr"] = msh<Var>(background->width);
+	curScope[L"h_bgr"] = msh<Var>(background->height);
 
 	bodySelecting = NULL;
 	connectionSelecting = NULL;
@@ -86,9 +84,9 @@ void Cur::Reset()
 	gravity = vector2();
 	max_real_dt = 0.05;
 	t = 0; stepNum = 60;
-	rectScene.topLeftPosition = cur.mBgr->topLeft;
-	rectScene.w = cur.mBgr->width;
-	rectScene.h = cur.mBgr->height;
+	rectScene.topLeftPosition = background->topLeft;
+	rectScene.w = background->width;
+	rectScene.h = background->height;
 	gridSize = 50;
 	energy_mul = 4e-6;
 	chargeMultiplier = 1;
@@ -98,18 +96,18 @@ void Cur::Reset()
 	coulomb = 1e5;
 
 	eps_paralell = 1e-3;
-	equal_repos = false;
+	useEqualPositionCorrection = false;
 	velocityAngularDrag = 2;
 
 	mkp(creator)();
 }
-void Cur::Update()
+void SimulationApp::Update()
 {
 	// pre update
-	(*mBgr).PreUpdate(*this);
+	(*background).PreUpdate(*this);
 	if (mode == MODE_CREATE) { creator->PreUpdate(*this); }
 	for (auto& b : bodies) { b->PreUpdate(*this); }
-	cur.ui->PreUpdate(*this);
+	ui->PreUpdate(*this);
 	basicUpdate();
 
 	if (curScope.find(L"update") != curScope.end())
@@ -130,9 +128,9 @@ void Cur::Update()
 	}
 
 	// 检查暂停
-	if (!cur.own.keyboardOwner)
+	if (!own.keyboardOwner)
 	{
-		if (cur.input.isKeyPressedDown(L' ')) { isPaused = !isPaused; }
+		if (input.isKeyPressedDown(L' ')) { isPaused = !isPaused; }
 	}
 
 	// 删除被标记为删除的图形和其上的连接
@@ -158,9 +156,9 @@ void Cur::Update()
 		bodies.end());
 	
 	// 更新运行信息
-	(*mBgr).Update(*this);
-	(*mBgr).Render(*this);
-	real_dt = min(max_real_dt, cur.fps.dt());
+	(*background).Update(*this);
+	(*background).Render(*this);
+	real_dt = min(max_real_dt, fps.dt());
 	curScope[L"cur.fps.dt()"] = msh<Var>(real_dt);
 	gridNumX = ceil(rectScene.w / gridSize);
 	gridNumY = ceil(rectScene.h / gridSize);
@@ -199,11 +197,11 @@ void Cur::Update()
 			// 碰撞
 			collisions.clear();
 			DetectCollisions();
-			for (auto& collision : collisions) { collision->simulate(equal_repos); }
+			for (auto& collision : collisions) { collision->simulate(useEqualPositionCorrection); }
 			// for (auto collision : collisions) { collision->Render(*this); }
 
 			// 连接
-			for (auto& connnection : connections) { connnection->Simulate(sdt, equal_repos); }
+			for (auto& connnection : connections) { connnection->Simulate(sdt, useEqualPositionCorrection); }
 
 			t += sdt;
 		}
@@ -222,28 +220,34 @@ void Cur::Update()
 	}
 
 	if (mode == MODE_CREATE) { creator->Update(*this); }
-	cur.ui->Update(*this);
+	ui->Update(*this);
 }
 
-void Cur::set_cfg(Var const& v)
+void SimulationApp::set_cfg(Var const& v)
 {
-	auto dic = v.dic;
-	getv(vol);
-	getv(energy_mul); getv(chargeMultiplier);
-	getv(eps_paralell); getv(max_real_dt);
-	getv(hasElectrostatic); getv(coulomb);
-	getv(stepNum); stepNum = max(1, stepNum);
-	getv(gridSize);  getv(equal_repos); getv(t); getv(isTrackShown);
-	if (found(L"left_scene")) { rectScene.topLeftPosition.x = dic[L"left_scene"]->num; }
-	if (found(L"top_scene")) { rectScene.topLeftPosition.y = dic[L"top_scene"]->num; }
-	if (found(L"w_scene")) { rectScene.w = dic[L"w_scene"]->num; }
-	if (found(L"h_scene")) { rectScene.h = dic[L"h_scene"]->num; }
-	if (found(L"gravity")) { gravity = tv2(*dic[L"gravity"]); }
+	try_read_config_number(v, L"vol", vol);
+	try_read_config_number(v, L"energy_mul", energy_mul);
+	try_read_config_number(v, L"chargeMultiplier", chargeMultiplier);
+	try_read_config_number(v, L"eps_paralell", eps_paralell);
+	try_read_config_number(v, L"max_real_dt", max_real_dt);
+	try_read_config_number(v, L"hasElectrostatic", hasElectrostatic);
+	try_read_config_number(v, L"coulomb", coulomb);
+	try_read_config_number(v, L"stepNum", stepNum);
+	stepNum = max(1, stepNum);
+	try_read_config_number(v, L"gridSize", gridSize);
+	try_read_config_number(v, L"useEqualPositionCorrection", useEqualPositionCorrection);
+	try_read_config_number(v, L"t", t);
+	try_read_config_number(v, L"isTrackShown", isTrackShown);
+	if (auto value = find_config_value(v, L"left_scene")) { rectScene.topLeftPosition.x = value->num; }
+	if (auto value = find_config_value(v, L"top_scene")) { rectScene.topLeftPosition.y = value->num; }
+	if (auto value = find_config_value(v, L"w_scene")) { rectScene.w = value->num; }
+	if (auto value = find_config_value(v, L"h_scene")) { rectScene.h = value->num; }
+	if (auto value = find_config_value(v, L"gravity")) { gravity = tv2(*value); }
 
 	isSceneChanged = true;
 }
 
-void Cur::DetectCollisions()
+void SimulationApp::DetectCollisions()
 {
 	rep(i, 0, gridNumX)
 		rep(j, 0, gridNumY)
@@ -291,17 +295,17 @@ void Cur::DetectCollisions()
 	}
 }
 
-void Cur::save_par(FILE* f) const
+void SimulationApp::save_par(FILE* f) const
 {
 	int sz = pars.size(); fwt(sz);
 	for (auto p : pars) { p->save(f); }
 }
-void Cur::load_par(FILE* f)
+void SimulationApp::load_par(FILE* f)
 {
 	int sz = 0; frd(sz);
-	rep(i, 0, sz) { pars.push_back(msh<param>(f)); }
+	rep(i, 0, sz) { pars.push_back(msh<SceneParameter>(f)); }
 }
-void Cur::init_def_fun()
+void SimulationApp::init_def_fun()
 {
 	auto f0 = [this](vector<ptr<Var>> const& in)
 		{
@@ -420,20 +424,21 @@ void Cur::init_def_fun()
 		};
 	curScope[L"necklace"] = msh<Var>(f15);
 }
-void Cur::basicUpdate()
+void SimulationApp::basicUpdate()
 {
-	title = cur.getLocalizedString(L"title");
-	if (curScope.find(L"cur.dbstr") != curScope.end()) { cur.dbstr = curScope[L"cur.dbstr"]->str; }
+	title = getLocalizedString(L"title");
+	if (curScope.find(L"cur.dbstr") != curScope.end()) { dbstr = curScope[L"cur.dbstr"]->str; }
 	if (curScope.find(L"update") != curScope.end()) { auto f = curScope[L"update"];  Execute(curScope, f->procs); }
 
 	// 删除标记为删除的键
 	pars.erase(
 		remove_if(pars.begin(), pars.end(),
-			[](ptr<param> p) { return p->del; }),
+			[](ptr<SceneParameter> p) { return p->del; }),
 		pars.end());
 
 	//更新对应键的值
 	for (auto& p : pars) { curScope[p->nm] = msh<Var>(p->val); }
 }
+
 
 

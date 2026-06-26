@@ -22,15 +22,15 @@ struct Connection;
 struct UI;
 struct Background;
 struct clip;
-struct param;
-struct Cur : App
+struct SceneParameter;
+struct SimulationApp : App
 {
 	ptr<UI> ui;
-	ptr<Background> mBgr;
+	ptr<Background> background;
 
 	Scope curScope;
 	wstring dbstr, cmd, tmp_cmd;
-	vector<ptr<param>> pars;
+	vector<ptr<SceneParameter>> pars;
 
 	ptr<clip> cl0, cl1;
 	clip* mClipPtr = NULL;
@@ -60,7 +60,7 @@ struct Cur : App
 	vector<ptr<Connection>> connections;
 
 	double eps_paralell = 0;
-	bool equal_repos = false;
+	bool useEqualPositionCorrection = false;
 	double velocityAngularDrag = 0;
 
 	double gridSize = 0;
@@ -68,7 +68,7 @@ struct Cur : App
 	vector<Body*> multiGridBodies;
 	vector<vector<Body*>> grid;
 
-	Cur();
+	SimulationApp();
 	void Save(wstring const& nm) const;
 	void Load(wstring const& nm);
 	void Reset();
@@ -82,4 +82,5 @@ struct Cur : App
 	void init_def_fun();
 	void basicUpdate();
 };
+
 

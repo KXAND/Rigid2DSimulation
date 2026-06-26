@@ -226,7 +226,7 @@ UI 层本质上是一个小型自绘控件框架：
 
 ### 推荐学习顺序
 
-1. `main.cpp -> cur.h/cpp -> app.h/cpp -> app_msg.cpp`
+1. `main.cpp -> simulation_app.h/cpp -> app.h/cpp -> app_msg.cpp`
 2. `body / shape / collision / connection / group`
 3. `creator / comp / par`
 4. `token / bra / expr / proc / var`

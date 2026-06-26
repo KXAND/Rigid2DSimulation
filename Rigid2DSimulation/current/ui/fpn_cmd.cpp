@@ -1,8 +1,8 @@
 #include "fpn_cmd.h"
-#include "cur.h"
+#include "simulation_app.h"
 #include "var.h"
 
-#define cur (*(Cur*)&app)
+#define cur (*(SimulationApp*)&app)
 
 RTbCmd::RTbCmd() : RichTextbox(560, 500) {}
 void RTbCmd::Sync(App& app) { str = cur.tmp_cmd; }
@@ -23,5 +23,6 @@ FPnCmd::FPnCmd(App& app) : FPnLan(app, 600, 600, L"fpn_cmd") {
 	c = &*cly;
 	Init(app);
 }
+
 
 

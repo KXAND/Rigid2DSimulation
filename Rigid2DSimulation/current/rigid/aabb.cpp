@@ -18,4 +18,3 @@ bool isOverlap(aabb const& box0, aabb const& box1) {
 	bool by = max(box0.y0, box1.y0) <= min(box0.y1, box1.y1);
 	return bx && by;
 }
-

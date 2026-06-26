@@ -5,7 +5,7 @@
 struct Checkbox : Control {
 	int h = 0;
 	dVector2 gap;
-	double dep = 0;
+	double depth = 0;
 	wstring txt;
 	int s_box = 0, s_box_in = 0;
 	dColor c_txt, c_frame, innerColor, c_normal, c_invalid, hoveredColor;
@@ -34,4 +34,5 @@ struct CbLan : Checkbox {
 	CbLan(wstring const& id, bool big = false);
 	void Update(App& app) override;
 };
+
 

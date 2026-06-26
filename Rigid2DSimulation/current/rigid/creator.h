@@ -10,14 +10,14 @@ int constexpr CREATE_POINT = 5;
 int constexpr CREATE_NAIL = 6;
 
 struct Var;
-struct Cur;
+struct SimulationApp;
 struct Body;
 struct Connection;
 struct Creator
 {
 	int mode = 0;
-	double dep_body = 0;
-	double dep_con = 0;
+	double depthBody = 0;
+	double depthConnection = 0;
 	double thick = 0;
 	double rad = 0;
 	dVector2 p_rec;
@@ -33,30 +33,31 @@ struct Creator
 
 	Creator();
 	Creator(Var const& v);
-	double dep() const;
-	void Update(Cur& cur);
-	void Discard(Cur& cur);
-	void PreUpdate(Cur& cur);
+	double depth() const;
+	void Update(SimulationApp& cur);
+	void Discard(SimulationApp& cur);
+	void PreUpdate(SimulationApp& cur);
 
 private:
-	void updateBox(Cur& cur);
-	void updateBall(Cur& cur);
-	void updatePlate(Cur& cur);
-	void updateConnection(Cur& cur);
+	void updateBox(SimulationApp& cur);
+	void updateBall(SimulationApp& cur);
+	void updatePlate(SimulationApp& cur);
+	void updateConnection(SimulationApp& cur);
 	/// <summary>
 	/// 在一个空地方点击，开始创建一个新物体
 	/// </summary>
 	/// <param name="cur"></param>
-	void updatePoint(Cur& cur);
+	void updatePoint(SimulationApp& cur);
 	/// <summary>
 	/// 将body0固定钉在原地
 	/// </summary>
 	/// <param name="cur"></param>
-	void updateNail(Cur& cur);
+	void updateNail(SimulationApp& cur);
 	/// <summary>
 	/// 在鼠标位置创建一个半径为 radius 的圆/粒子
 	/// </summary>
 	/// <param name="cur"></param>
-	void updateParticle(Cur& cur);
+	void updateParticle(SimulationApp& cur);
 };
+
 

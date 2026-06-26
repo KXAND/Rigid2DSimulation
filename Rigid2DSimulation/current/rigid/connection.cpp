@@ -1,12 +1,10 @@
 #include "connection.h"
 #include "body.h"
-#include "cur.h" 
+#include "current/common/utils.h"
+#include "simulation_app.h" 
 #include "draw_px_seg.h"
-#include "bgr.h"
+#include "background.h"
 #include "connection.h"
-
-#define found(s) (dic.find(s) != dic.end())
-#define getv(nm) if (found(L#nm)) { nm = dic.at(L#nm)->num; }
 
 Connection::Connection()
 {
@@ -18,7 +16,7 @@ Connection::Connection()
 	colorCord = dColor::CYAN;
 	colorCordTight = dColor::MAGENTA;
 }
-void Connection::save(Cur const& cur, FILE* f) const
+void Connection::save(SimulationApp const& cur, FILE* f) const
 {
 	int sz = 0;
 	fwt(type); fwtv(cmd);
@@ -29,7 +27,7 @@ void Connection::save(Cur const& cur, FILE* f) const
 	fwt(ind0); fwt(ind1);
 	fwt(p0Relative); fwt(p1Relative); fwt(len); fwt(hooke);
 }
-Connection::Connection(Cur& cur, FILE* f) : Connection()
+Connection::Connection(SimulationApp& cur, FILE* f) : Connection()
 {
 	int sz = 0;
 	frd(type); frdv(cmd); tmp_cmd = cmd;
@@ -42,11 +40,10 @@ Connection::Connection(Cur& cur, FILE* f) : Connection()
 
 void Connection::read_cfg(Var const& cfg)
 {
-	auto dic = cfg.dic;
-	getv(len);  getv(hooke);
-	if (found(L"type"))
+	try_read_config_number(cfg, L"len", len);
+	try_read_config_number(cfg, L"hooke", hooke);
+	if (auto md = find_config_value(cfg, L"type"))
 	{
-		auto md = dic.at(L"type");
 		if (md->typ == L"str")
 		{
 			auto s = md->str;
@@ -70,7 +67,7 @@ void Connection::updatePosition()
 	p1 = body1->o + body1->transform * p1Relative;
 }
 
-void Connection::refresh(Cur& cur)
+void Connection::refresh(SimulationApp& cur)
 {
 	cur.curScope[L"conn"] = msh<Var>();
 	Execute(cur.curScope, Compile(cmd));
@@ -168,13 +165,13 @@ void Connection::simulateTypeCordSpring(double deltaTime)
 	body1->velocityAngular -= dot(springsForce, r1) * body1->invInertia;
 }
 
-void Connection::Simulate(double deltaTime, bool equal_repos)
+void Connection::Simulate(double deltaTime, bool useEqualPositionCorrection)
 {
 	switch (type)
 	{
 		case CON_ROPE:
 		case CON_LINK:
-			simulateTypeRopeLink(equal_repos);
+			simulateTypeRopeLink(useEqualPositionCorrection);
 			return;
 		case CON_CORD:
 		case CON_SPRING:
@@ -183,7 +180,7 @@ void Connection::Simulate(double deltaTime, bool equal_repos)
 	}
 }
 
-void Connection::Render(Cur& cur) const
+void Connection::Render(SimulationApp& cur) const
 {
 	dColor color;
 	switch (type)
@@ -193,7 +190,7 @@ void Connection::Render(Cur& cur) const
 		case CON_CORD: color = isTight ? colorCordTight : colorCord; break;
 		case CON_SPRING: color = isTight ? colorSpringStretch : colorSpringCompress; break;
 	}
-	drawLineSegment(cur.scr, cur.dscr, p0, p1, 2, cur.mBgr->viewPort(), color);
+	drawLineSegment(cur.scr, cur.dscr, p0, p1, 2, cur.background->viewPort(), color);
 }
 
 Body* getTheOtherBody(Body* b, Connection const& con)
@@ -208,5 +205,6 @@ Body* getTheOtherBody(Body* b, Connection const& con)
 	}
 	return con.body0 == b ? con.body1 : con.body0;
 }
+
 
 

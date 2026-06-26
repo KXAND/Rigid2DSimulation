@@ -70,13 +70,13 @@
     <ClCompile Include="framework\app\app_wv.cpp">
       <Filter>framework\app</Filter>
     </ClCompile>
-    <ClCompile Include="framework\parse\expr.cpp">
+    <ClCompile Include="framework\parse\script_expr.cpp">
       <Filter>framework\parse</Filter>
     </ClCompile>
-    <ClCompile Include="framework\parse\bra.cpp">
+    <ClCompile Include="framework\parse\bracket_group.cpp">
       <Filter>framework\parse</Filter>
     </ClCompile>
-    <ClCompile Include="framework\parse\proc.cpp">
+    <ClCompile Include="framework\parse\script_statement.cpp">
       <Filter>framework\parse</Filter>
     </ClCompile>
     <ClCompile Include="framework\parse\token.cpp">
@@ -166,13 +166,13 @@
     <ClCompile Include="current\ui\ui.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
-    <ClCompile Include="current\common\bgr.cpp">
+    <ClCompile Include="current\common\background.cpp">
       <Filter>current\common</Filter>
     </ClCompile>
-    <ClCompile Include="current\common\cur.cpp">
+    <ClCompile Include="current\common\simulation_app.cpp">
       <Filter>current\common</Filter>
     </ClCompile>
-    <ClCompile Include="current\common\par.cpp">
+    <ClCompile Include="current\common\scene_parameter.cpp">
       <Filter>current\common</Filter>
     </ClCompile>
     <ClCompile Include="framework\draw\draw_tri.cpp">
@@ -196,7 +196,10 @@
     <ClCompile Include="framework\draw\draw_curve.cpp">
       <Filter>framework\draw</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\comp.cpp">
+    <ClCompile Include="current\rigid\scene_builders.cpp">
+      <Filter>current\rigid</Filter>
+    </ClCompile>
+    <ClCompile Include="current\rigid\shape_builtins.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
     <ClCompile Include="current\ui\fpn_body.cpp">
@@ -249,13 +252,13 @@
     <ClInclude Include="framework\app\app_wv.h">
       <Filter>framework\app</Filter>
     </ClInclude>
-    <ClInclude Include="framework\parse\bra.h">
+    <ClInclude Include="framework\parse\bracket_group.h">
       <Filter>framework\parse</Filter>
     </ClInclude>
-    <ClInclude Include="framework\parse\expr.h">
+    <ClInclude Include="framework\parse\script_expr.h">
       <Filter>framework\parse</Filter>
     </ClInclude>
-    <ClInclude Include="framework\parse\proc.h">
+    <ClInclude Include="framework\parse\script_statement.h">
       <Filter>framework\parse</Filter>
     </ClInclude>
     <ClInclude Include="framework\parse\token.h">
@@ -345,13 +348,13 @@
     <ClInclude Include="current\ui\ui.h">
       <Filter>current\ui</Filter>
     </ClInclude>
-    <ClInclude Include="current\common\bgr.h">
+    <ClInclude Include="current\common\background.h">
       <Filter>current\common</Filter>
     </ClInclude>
-    <ClInclude Include="current\common\cur.h">
+    <ClInclude Include="current\common\simulation_app.h">
       <Filter>current\common</Filter>
     </ClInclude>
-    <ClInclude Include="current\common\par.h">
+    <ClInclude Include="current\common\scene_parameter.h">
       <Filter>current\common</Filter>
     </ClInclude>
     <ClInclude Include="framework\draw\draw_tri.h">
@@ -375,7 +378,13 @@
     <ClInclude Include="framework\draw\draw_curve.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
-    <ClInclude Include="current\rigid\comp.h">
+    <ClInclude Include="current\common\utils.h">
+      <Filter>current\common</Filter>
+    </ClInclude>
+    <ClInclude Include="current\rigid\scene_builders.h">
+      <Filter>current\rigid</Filter>
+    </ClInclude>
+    <ClInclude Include="current\rigid\shape_builtins.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
     <ClInclude Include="current\ui\fpn_body.h">

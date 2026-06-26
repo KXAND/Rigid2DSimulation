@@ -6,7 +6,7 @@ struct Control;
 struct ScrollbarY;
 struct Panel {
 	dVector2 tl;
-	double dep = 0;
+	double depth = 0;
 	Control* c = NULL;
 	int w = 0, h = 0;
 	double wheel_mtp = 0;
@@ -41,4 +41,5 @@ struct Panel {
 	virtual void Discard(App& app);
 	virtual void PreUpdate(App& app);
 };
+
 

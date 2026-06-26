@@ -1,8 +1,8 @@
 #include "fpn_con.h"
-#include "cur.h"
+#include "simulation_app.h"
 #include "connection.h"
 
-#define cur (*(Cur*)&app)
+#define cur (*(SimulationApp*)&app)
 #define pcsel (cur.connectionSelecting)
 #define csel (*pcsel)
 
@@ -64,5 +64,6 @@ FPnCon::FPnCon(App& app) : FPnLan(app, 400, 600, L"fpn_con") {
 	c = &*cly;
 	Init(app);
 }
+
 
 

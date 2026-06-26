@@ -1,5 +1,5 @@
 #include "ui.h"
-#include "cur.h"
+#include "simulation_app.h"
 #include "float_panel.h"
 #include "fpn_global.h"
 #include "fpn_body.h"
@@ -14,7 +14,7 @@
 #define mkfp(x) mkp(x)(cur); fpns.push_back(&*x);
 
 void UI::sort_fpns() { sort(fpns.begin(), fpns.end(), less_fpn); }
-void UI::Init(Cur& cur) {
+void UI::Init(SimulationApp& cur) {
 	mkfp(fpn_global);
 	mkfp(fpn_body);
 	mkfp(fpn_con);
@@ -29,16 +29,17 @@ void UI::Init(Cur& cur) {
 	mkp(pn_menu)(cur);
 	mkp(pn_bottom)(cur);
 }
-void UI::Update(Cur& cur) {
+void UI::Update(SimulationApp& cur) {
 	pn_menu->Update(cur);
 	pn_bottom->Update(cur);
 	for (auto fp : fpns) { fp->Update(cur); }
 }
-void UI::PreUpdate(Cur& cur) {
+void UI::PreUpdate(SimulationApp& cur) {
 	pn_menu->PreUpdate(cur);
 	pn_bottom->PreUpdate(cur);
 	sort_fpns();
 	for (auto fp : fpns) { fp->PreUpdate(cur); }
 }
+
 
 

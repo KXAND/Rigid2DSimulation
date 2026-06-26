@@ -21,7 +21,7 @@ void drawBasedTile(tile& dest, dVector2 tl, tile const& src)
 	}
 }
 
-void drawTile(tile& dest, dbuf& zBuffer, double dep, dVector2 tl,
+void drawTile(tile& dest, dbuf& zBuffer, double depth, dVector2 tl,
 	dRect vp_dest, tile const& src, dRect viewportSrc)
 {
 	int l = max(vp_dest.left(), tl.x);
@@ -37,9 +37,9 @@ void drawTile(tile& dest, dbuf& zBuffer, double dep, dVector2 tl,
 			(l - tl.x + viewportSrc.left());
 		rep(i, l, r)
 		{
-			if (zBuffer[destPxl] <= dep && src.as[srcPxl] != 0)
+			if (zBuffer[destPxl] <= depth && src.as[srcPxl] != 0)
 			{
-				zBuffer[destPxl] = dep; dest.colors[destPxl] = src.colors[srcPxl];
+				zBuffer[destPxl] = depth; dest.colors[destPxl] = src.colors[srcPxl];
 			}
 			destPxl++;
 			srcPxl++;
@@ -55,4 +55,5 @@ bool hitTile(dVector2 p, dVector2 tl, tile const& tileSrc, dRect viewportSrc)
 	int pxl = pSrc.y * tileSrc.width + pSrc.x;
 	return isInside(pSrc, viewportSrc) && tileSrc.as[pxl] != 0;
 }
+
 

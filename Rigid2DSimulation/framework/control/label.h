@@ -4,7 +4,7 @@
 
 struct Label : Control {
 	dVector2 gap;
-	double dep = 0;
+	double depth = 0;
 	int w = 0, h = 0;
 	bool fixed_w = false;
 
@@ -25,4 +25,5 @@ struct LbLan : Label {
 	LbLan(wstring const& id, bool big = false);
 	void Sync(App& app) override;
 };
+
 

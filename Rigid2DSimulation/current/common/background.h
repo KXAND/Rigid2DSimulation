@@ -2,7 +2,7 @@
 #include "vector3.h"
 #include "tile.h"
 
-struct Cur;
+struct SimulationApp;
 /// <summary>
 /// Background 封装了一个tile，所有的运动和渲染都是在 background 之上进行的
 /// </summary>
@@ -16,7 +16,7 @@ struct Background
 	bool hovered = false;
 	bool wheeled = false;
 
-	Background(Cur& cur);
+	Background(SimulationApp& cur);
 	dRect viewPort() const { return { topLeft, width, height }; }
 	
 	/// <summary>
@@ -24,15 +24,16 @@ struct Background
 	/// @todo:考虑去掉这个无谓的传参
 	/// </summary>
 	/// <param name="cur"></param>
-	void Render(Cur& cur);
+	void Render(SimulationApp& cur);
 	/// <summary>
 	/// 更新owner深度
 	/// </summary>
 	/// <param name="cur"></param>
-	void PreUpdate(Cur& cur);
+	void PreUpdate(SimulationApp& cur);
 	/// <summary>
 	/// 检查是否点击了背景
 	/// </summary>
 	/// <param name="cur"></param>
-	void Update(Cur& cur);
+	void Update(SimulationApp& cur);
 };
+

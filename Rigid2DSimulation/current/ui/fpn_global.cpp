@@ -1,9 +1,9 @@
 #include "fpn_global.h"
 #include "ui.h"
-#include "cur.h"
+#include "simulation_app.h"
 #include "creator.h"
 
-#define cur (*(Cur*)&app)
+#define cur (*(SimulationApp*)&app)
 
 BtSave::BtSave() : BtLan(80, L"bt_save") {}
 void BtSave::OnClick(App& app) { cur.Save(cur.ui->fpn_global->tb_save->str); }
@@ -52,5 +52,6 @@ FPnGlobal::FPnGlobal(App& app) : FPnLan(app, 400, 600, L"fpn_global") {
 	c = &*cly;
 	Init(app);
 }
+
 
 

@@ -1,7 +1,7 @@
 #include "body.h"
-#include "cur.h"
-#include "bgr.h"
-#include "cur.h"
+#include "current/common/utils.h"
+#include "simulation_app.h"
+#include "background.h"
 #include "creator.h"
 #include "shape.h"
 #include "draw_tri.h"
@@ -10,10 +10,6 @@
 #include "draw_px_seg.h"
 #include "connection.h"
 
-#define tls (cur.rectScene.topLeftPosition)
-#define found(s) (dic.find(s) != dic.end())
-#define getv(nm) if (found(L#nm)) { nm = dic.at(L#nm)->num; }
-
 // 这些构造函数真的很混乱。
 Body::Body()
 {
@@ -21,7 +17,7 @@ Body::Body()
 	dampCoeff = 0.1; dampCoeffAngular = 0.1;
 	elasticity = 0.7; frictionStatic = 0.5; frictionDynamic = 0.3;
 
-	dep_shape = 0; dep_point = 1;
+	depthShape = 0; depthPoint = 1;
 	r_point = 8;
 	borderColor = { 255, 255, 255 };
 	hoveredColor = { 0, 0, 255 };
@@ -55,7 +51,7 @@ void Body::save(FILE* f) const
 	fwt(dampCoeff); fwt(dampCoeffAngular);
 	fwt(chargeDensity); fwt(innerColor);
 }
-Body::Body(Cur& cur, FILE* f) : Body()
+Body::Body(SimulationApp& cur, FILE* f) : Body()
 {
 	int sz = 0;
 	frd(point); frd(fixed);
@@ -75,7 +71,7 @@ Body::Body(Cur& cur, FILE* f) : Body()
 
 double Body::getDepth() const
 {
-	return point ? dep_point : dep_shape;
+	return point ? depthPoint : depthShape;
 }
 bool Body::inside(vector2 p) const
 {
@@ -88,38 +84,39 @@ bool Body::inside(vector2 p) const
 	return false;
 }
 
-void Body::refresh(Cur& cur)
+void Body::refresh(SimulationApp& cur)
 {
 	cur.curScope[L"body"] = msh<Var>();
 	Execute(cur.curScope, Compile(cmd));
 	if (cur.curScope.find(L"body") == cur.curScope.end()) { return; }
-	read_cfg(*cur.curScope[L"body"]);
+	auto const& body_cfg = *cur.curScope[L"body"];
+	read_cfg(body_cfg);
 
 	// 这些单独放是因为它们无法只能通过 cmd 获得，无法保存。
-	auto dic = cur.curScope[L"body"]->dic;
-	getv(preset_o); getv(preset_ang); getv(preset_v_ang);
-	if (found(L"o_prog")) { mkp(o_prog)(dic.at(L"o_prog")->procs); }
-	if (found(L"ang_prog")) { mkp(ang_prog)(dic.at(L"ang_prog")->procs); }
-	if (found(L"v_ang_prog")) { mkp(v_ang_prog)(dic.at(L"v_ang_prog")->procs); }
+	try_read_config_number(body_cfg, L"preset_o", preset_o);
+	try_read_config_number(body_cfg, L"preset_ang", preset_ang);
+	try_read_config_number(body_cfg, L"preset_v_ang", preset_v_ang);
+	if (auto value = find_config_value(body_cfg, L"o_prog")) { mkp(o_prog)(value->procs); }
+	if (auto value = find_config_value(body_cfg, L"ang_prog")) { mkp(ang_prog)(value->procs); }
+	if (auto value = find_config_value(body_cfg, L"v_ang_prog")) { mkp(v_ang_prog)(value->procs); }
 	Init();
 }
 
 void Body::read_cfg(Var const& cfg)
 {
-	auto dic = cfg.dic;
-	if (found(L"o")) { o = tv2(*dic[L"o"]); }
-	if (found(L"v")) { velocity = tv2(*dic[L"v"]); }
-	if (found(L"col")) { innerColor = (dColor) tv3(*dic[L"col"]); }
-	getv(radian);
-	getv(velocityAngular);
-	getv(elasticity);
-	getv(frictionStatic);
-	getv(frictionDynamic);
-	getv(dampCoeff);
-	getv(dampCoeffAngular);
-	getv(fixed);
-	getv(density);
-	getv(chargeDensity);
+	if (auto value = find_config_value(cfg, L"o")) { o = tv2(*value); }
+	if (auto value = find_config_value(cfg, L"v")) { velocity = tv2(*value); }
+	if (auto value = find_config_value(cfg, L"col")) { innerColor = (dColor)tv3(*value); }
+	try_read_config_number(cfg, L"radian", radian);
+	try_read_config_number(cfg, L"velocityAngular", velocityAngular);
+	try_read_config_number(cfg, L"elasticity", elasticity);
+	try_read_config_number(cfg, L"frictionStatic", frictionStatic);
+	try_read_config_number(cfg, L"frictionDynamic", frictionDynamic);
+	try_read_config_number(cfg, L"dampCoeff", dampCoeff);
+	try_read_config_number(cfg, L"dampCoeffAngular", dampCoeffAngular);
+	try_read_config_number(cfg, L"fixed", fixed);
+	try_read_config_number(cfg, L"density", density);
+	try_read_config_number(cfg, L"chargeDensity", chargeDensity);
 }
 
 vector2 Body::generateRandomPointInside() const
@@ -174,14 +171,15 @@ void Body::warp(dRect rc)
 	else if (o.y > rc.bottom()) { o.y -= rc.h; }
 }
 
-void Body::registerGrid(Cur& cur)
+void Body::registerGrid(SimulationApp& cur)
 {
 	if (point) { return; }
 
-	int x0 = floor((box.x0 - tls.x) / cur.gridSize);
-	int y0 = floor((box.y0 - tls.y) / cur.gridSize);
-	int x1 = floor((box.x1 - tls.x) / cur.gridSize);
-	int y1 = floor((box.y1 - tls.y) / cur.gridSize);
+	auto const& top_left = cur.rectScene.topLeftPosition;
+	int x0 = floor((box.x0 - top_left.x) / cur.gridSize);
+	int y0 = floor((box.y0 - top_left.y) / cur.gridSize);
+	int x1 = floor((box.x1 - top_left.x) / cur.gridSize);
+	int y1 = floor((box.y1 - top_left.y) / cur.gridSize);
 	x0 = clamp(x0, 0, cur.gridNumX - 1);
 	x1 = clamp(x1, 0, cur.gridNumX - 1);
 	y0 = clamp(y0, 0, cur.gridNumY - 1);
@@ -244,7 +242,7 @@ void Body::Init(bool repos_o)
 	}
 	updateShapesPositionAndAABB();
 }
-void Body::Render(Cur& cur) const
+void Body::Render(SimulationApp& cur) const
 {
 	bool selected_con = cur.connectionSelecting &&
 		(cur.connectionSelecting->body0 == this || cur.connectionSelecting->body1 == this);
@@ -281,33 +279,33 @@ void Body::Render(Cur& cur) const
 
 	if (point)
 	{
-		drawEllipse(cur.scr, cur.dscr, getDepth(), o, r_point, r_point, cur.mBgr->viewPort(), color);
-		drawEllipseBorder(cur.scr, cur.dscr, getDepth(), o, r_point, r_point, cur.mBgr->viewPort(), borderColor, 20);
+		drawEllipse(cur.scr, cur.dscr, getDepth(), o, r_point, r_point, cur.background->viewPort(), color);
+		drawEllipseBorder(cur.scr, cur.dscr, getDepth(), o, r_point, r_point, cur.background->viewPort(), borderColor, 20);
 	}
 	for (auto& shape : shapes)
 	{
 		if (shape->isCircle)
 		{
 			drawEllipse(cur.scr, cur.dscr, getDepth(),
-				shape->o, shape->r, shape->r, cur.mBgr->viewPort(), color);
+				shape->o, shape->r, shape->r, cur.background->viewPort(), color);
 			drawEllipseBorder(cur.scr, cur.dscr, getDepth(),
-				shape->o, shape->r, shape->r, cur.mBgr->viewPort(), borderColor, 30);
+				shape->o, shape->r, shape->r, cur.background->viewPort(), borderColor, 30);
 
 			// 显示一条半径以便于我们判断圆的旋转角度
 			auto peakPoint = vector2(cos(shape->radian), sin(shape->radian)) * shape->r + shape->o;
-			drawLineSegment(cur.scr, cur.dscr, shape->o, peakPoint, getDepth(), cur.mBgr->viewPort(), borderColor);
+			drawLineSegment(cur.scr, cur.dscr, shape->o, peakPoint, getDepth(), cur.background->viewPort(), borderColor);
 			continue;
 		}
 
 		rep(i, 0, shape->vertices.size())
 		{
 			int j = (i + 1) % shape->vertices.size();
-			drawTriangle(cur.scr, cur.dscr, cur.mBgr->viewPort(), shape->o, shape->vertices[i], shape->vertices[j], getDepth(), color);
+			drawTriangle(cur.scr, cur.dscr, cur.background->viewPort(), shape->o, shape->vertices[i], shape->vertices[j], getDepth(), color);
 		}
 		rep(i, 0, shape->vertices.size())
 		{
 			int j = (i + 1) % shape->vertices.size();
-			drawLineSegment(cur.scr, cur.dscr, shape->vertices[i], shape->vertices[j], getDepth(), cur.mBgr->viewPort(), borderColor);
+			drawLineSegment(cur.scr, cur.dscr, shape->vertices[i], shape->vertices[j], getDepth(), cur.background->viewPort(), borderColor);
 		}
 	}
 
@@ -315,7 +313,7 @@ void Body::Render(Cur& cur) const
 	{
 		vector2 p1 = vector2(cur.input.msp);
 		vector2 p0 = o + transform * pDragRelative;
-		drawLineSegment(cur.scr, cur.dscr, p0, p1, getDepth(), cur.mBgr->viewPort(), dColor(0, 255, 255));
+		drawLineSegment(cur.scr, cur.dscr, p0, p1, getDepth(), cur.background->viewPort(), dColor(0, 255, 255));
 	}
 
 	if (!track.empty())
@@ -323,13 +321,13 @@ void Body::Render(Cur& cur) const
 		vector2 p0 = track.front();
 		for (auto p1 : track)
 		{
-			drawLineSegment(cur.scr, cur.dscr, p0, p1, 10, cur.mBgr->viewPort(), dColor(255, 0, 255));
+			drawLineSegment(cur.scr, cur.dscr, p0, p1, 10, cur.background->viewPort(), dColor(255, 0, 255));
 			p0 = p1;
 		}
 	}
 }
 
-void Body::Step(Cur& cur, double stepDt)
+void Body::Step(SimulationApp& cur, double stepDt)
 {
 	if (invMass)
 	{
@@ -359,7 +357,7 @@ void Body::Step(Cur& cur, double stepDt)
 	updateShapesPositionAndAABB();
 }
 
-void Body::followPresetO(Cur& cur, double stepDt)
+void Body::followPresetO(SimulationApp& cur, double stepDt)
 {
 	if (!o_prog) { return; }
 	Scope scope;
@@ -375,7 +373,7 @@ void Body::followPresetO(Cur& cur, double stepDt)
 	velocity = velocityNew;
 }
 
-void Body::followPresetAngle(Cur& cur, double stepDt)
+void Body::followPresetAngle(SimulationApp& cur, double stepDt)
 {
 	if (!ang_prog) { return; }
 
@@ -393,7 +391,7 @@ void Body::followPresetAngle(Cur& cur, double stepDt)
 	velocityAngular = velocityAngularNew;
 }
 
-void Body::followPresetVelocityAngular(Cur& cur)
+void Body::followPresetVelocityAngular(SimulationApp& cur)
 {
 	if (!v_ang_prog) { return; }
 
@@ -405,7 +403,7 @@ void Body::followPresetVelocityAngular(Cur& cur)
 	velocityAngular = velocityAngularNew;
 }
 
-void Body::updateDragAngle(Cur& cur)
+void Body::updateDragAngle(SimulationApp& cur)
 {
 	velocityAngularDrag = 0;
 	if (!cur.own.keyboardOwner)
@@ -416,7 +414,7 @@ void Body::updateDragAngle(Cur& cur)
 	radianDrag = radian + velocityAngularDrag * cur.real_dt;
 }
 
-void Body::handleDragPoint(Cur& cur)
+void Body::handleDragPoint(SimulationApp& cur)
 {
 	// 下列命名指定o,p,m三点为body中心、被拖拽点及鼠标现在点
 	vector2 mousePos = vector2(cur.input.msp);
@@ -441,7 +439,7 @@ void Body::handleDragPoint(Cur& cur)
 /// 所有点同步被拖拽位移
 /// </summary>
 /// <param name="cur"></param>
-void Body::handleDragWhole(Cur& cur)
+void Body::handleDragWhole(SimulationApp& cur)
 {
 	vector2 mousePos = vector2(cur.input.msp);
 	vector2 dragPointPos = o + transform * pDragRelative;
@@ -453,7 +451,7 @@ void Body::handleDragWhole(Cur& cur)
 	o += mousePos - dragPointPos; // 中心平行位移
 }
 
-void Body::handleDragForce(Cur& cur, double deltaTime)
+void Body::handleDragForce(SimulationApp& cur, double deltaTime)
 {
 	// 运动路径方向
 	vector2 p1 = vector2(cur.input.msp);
@@ -471,7 +469,7 @@ void Body::handleDragForce(Cur& cur, double deltaTime)
 	velocity += impulse * invMass;
 	velocityAngular += dot(impulse, r0) * invInertia;
 }
-void Body::Update(Cur& cur)
+void Body::Update(SimulationApp& cur)
 {
 	hovered = (cur.own.hovered == this);
 
@@ -536,10 +534,10 @@ void Body::Update(Cur& cur)
 		}
 	}
 }
-void Body::PreUpdate(Cur& cur)
+void Body::PreUpdate(SimulationApp& cur)
 {
 	bool ok = cur.own.hoveredDepth <= getDepth() &&
-		inside((vector2) cur.input.msp) && isInside(cur.input.msp, cur.mBgr->viewPort());
+		inside((vector2) cur.input.msp) && isInside(cur.input.msp, cur.background->viewPort());
 	if (ok) { cur.own.hoveredDepth = getDepth(); cur.own.hovered = this; }
 }
 
@@ -551,5 +549,6 @@ void Electrostatic(Body& b0, Body& b1, double sdt, double coulomb)
 	b0.velocity += je * b0.invMass;
 	b1.velocity -= je * b1.invMass;
 }
+
 
 

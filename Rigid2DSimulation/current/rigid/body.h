@@ -2,11 +2,11 @@
 #include "tile.h"
 #include "aabb.h"
 
-struct proc;
-typedef vector<proc> Program;
+struct ScriptStatement;
+typedef vector<ScriptStatement> Program;
 
 struct Var;
-struct Cur;
+struct SimulationApp;
 struct Shape;
 struct Connection;
 /// <summary>
@@ -43,7 +43,7 @@ struct Body
 	bool dragged = false;
 	double radianDrag = 0, velocityAngularDrag = 0;
 	vector2 pDragRelative;
-	double dep_shape = 0, dep_point = 0;
+	double depthShape = 0, depthPoint = 0;
 	double r_point = 0;
 
 	dColor innerColor;
@@ -57,35 +57,35 @@ struct Body
 	Body(vector2 const& _o);
 	Body(ptr<Shape> sh);
 	Body(vector<ptr<Shape>> const& _shs);
-	Body(Cur& cur, FILE* f);
+	Body(SimulationApp& cur, FILE* f);
 	void save(FILE* f) const;
 
 	vector2 generateRandomPointInside() const;
 	bool inside(vector2 p) const;
-	void refresh(Cur& cur);
+	void refresh(SimulationApp& cur);
 	void read_cfg(Var const& cfg);
 	void updateShapesPositionAndAABB();
 	void warp(dRect rc);
-	void registerGrid(Cur& cur);
+	void registerGrid(SimulationApp& cur);
 private:
 	double getDepth() const;
 	void updateAABB();
 
 public:
 	void Init(bool repos_o = false);
-	void Render(Cur& cur) const;
-	void Step(Cur& cur, double sdt);
-	void Update(Cur& cur);
-	void PreUpdate(Cur& cur);
+	void Render(SimulationApp& cur) const;
+	void Step(SimulationApp& cur, double sdt);
+	void Update(SimulationApp& cur);
+	void PreUpdate(SimulationApp& cur);
 
 private:
-	void updateDragAngle(Cur& cur);
-	void handleDragWhole(Cur& cur);
-	void handleDragPoint(Cur& cur);
-	void handleDragForce(Cur& cur, double sdt);
-	void followPresetO(Cur& cur, double sdt);
-	void followPresetAngle(Cur& cur, double sdt);
-	void followPresetVelocityAngular(Cur& cur);
+	void updateDragAngle(SimulationApp& cur);
+	void handleDragWhole(SimulationApp& cur);
+	void handleDragPoint(SimulationApp& cur);
+	void handleDragForce(SimulationApp& cur, double sdt);
+	void followPresetO(SimulationApp& cur, double sdt);
+	void followPresetAngle(SimulationApp& cur, double sdt);
+	void followPresetVelocityAngular(SimulationApp& cur);
 
 };
 

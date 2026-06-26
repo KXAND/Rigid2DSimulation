@@ -5,7 +5,7 @@
 
 
 DragbarX::DragbarX(int w) : bw(w) {
-	gap = { 10, 10 }; dep = 1000;
+	gap = { 10, 10 }; depth = 1000;
 	bh = 2; nw = 12; nh = 30;
 
 	c_txt = { 255, 255, 255 };
@@ -27,7 +27,7 @@ void DragbarX::set_nx_rel(double uv) {
 dVector2 DragbarX::tl_node() const { return tl + dVector2(w_txt + nx_rel, 0); }
 void DragbarX::render(App& app) {
 	dVector2 tl_txt = tl + dVector2(0, (nh - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, dep, txt, c_txt, app.ft, tl_txt, 0, vp);
+	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
 	dColor const& c =
 		!enabled ? c_invalid :
@@ -57,12 +57,13 @@ void DragbarX::Discard(App& app) {
 	dragged = hovered = false; 
 }
 void DragbarX::PreUpdate(App& app) {
-	bool ok = app.own.hoveredDepth <= dep &&
+	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl_node(), nw, nh }) && isInside(app.input.msp, vp);
-	if (ok) { app.own.hoveredDepth = dep; app.own.hovered = this; }
+	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
 DbXLan::DbXLan(wstring const& id, int w) : DragbarX(w), id_txt(id) {}
 void DbXLan::Update(App& app) { txt = app.getLocalizedString(id_txt); DragbarX::Update(app); }
+
 
 

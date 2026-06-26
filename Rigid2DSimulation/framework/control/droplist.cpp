@@ -7,7 +7,7 @@
 
 wstring nm_none(int id, App &app) { return L"Пе"; }
 Droplist::Droplist(int w, DpNm const& nm) : w(w), nm(nm) {
-	gap = { 10, 10 }; dep = 1000;
+	gap = { 10, 10 }; depth = 1000;
 	h_item = 25; h = 30;
 
 	sign_r = 5;
@@ -32,34 +32,34 @@ dVector2 Droplist::tl_box() const { return tl + dVector2(w_txt, 0); }
 dVector2 Droplist::tl_item() const { return tl_box() + dVector2(0, h); }
 void Droplist::render_main(App& app) {
 	dVector2 tl_txt = tl + dVector2(0, (h - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, dep, txt, c_txt, app.ft, tl_txt, 0, vp);
+	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
 	dColor const& c =
 		!enabled ? c_invalid :
 		edit ? c_edit :
 		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
-	drawRectangleWithBorder(app.scr, app.dscr, dep, tl_box(), w, h, vp, c, c_frame);
+	drawRectangleWithBorder(app.scr, app.dscr, depth, tl_box(), w, h, vp, c, c_frame);
 
 	vector2 ct_sign = (vector2)tl_box() + vector2(w - sign_margin, h / 2);
-	drawEllipse(app.scr, app.dscr, dep, ct_sign, sign_r, sign_r, vp, c_mark);
+	drawEllipse(app.scr, app.dscr, depth, ct_sign, sign_r, sign_r, vp, c_mark);
 
 	dVector2 tl_item = tl + dVector2(x_txt_margin, (h - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, dep, nm(picked, app), c_txt, app.ft, tl_txt, 0, vp);
+	draw_str(app.scr, app.dscr, depth, nm(picked, app), c_txt, app.ft, tl_txt, 0, vp);
 }
 void Droplist::render_items(App& app) {
 	if (edit) {
-		drawRectangleWithBorder(app.scr, app.dscr, dep, 
+		drawRectangleWithBorder(app.scr, app.dscr, depth, 
 			tl_item(), w, h_item * n_item, vp, c_normal, c_frame);
 		if (item_hv != -1) {
 			dVector2 tl_hovered = tl_box() + dVector2(0, h + h_item * item_hv);
-			drawRectangleWithBorder(app.scr, app.dscr, dep,
+			drawRectangleWithBorder(app.scr, app.dscr, depth,
 				tl_hovered, w, h_item, vp, hoveredColor, c_frame);
 		}
 		rep(i, 0, n_item) {
 			dVector2 tl_txt_item = tl_box() +
 				dVector2(0, h + h_item * i) +
 				dVector2(x_txt_margin, (h_item - app.ft.h) / 2);
-			draw_str(app.scr, app.dscr, dep, nm(i, app), c_txt, app.ft, tl_txt_item, 0, vp);
+			draw_str(app.scr, app.dscr, depth, nm(i, app), c_txt, app.ft, tl_txt_item, 0, vp);
 		}
 	}
 }
@@ -92,12 +92,13 @@ void Droplist::Discard(App& app) {
 }
 void Droplist::PreUpdate(App& app) {
 	int real_h = h + (edit ? n_item * h_item : 0);
-	bool ok = app.own.hoveredDepth <= dep &&
+	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl_box(), w, real_h}) && isInside(app.input.msp, vp);
-	if (ok) { app.own.hoveredDepth = dep; app.own.hovered = this; }
+	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
 DpLan::DpLan(wstring const& id, int w, DpNm const& nm) : Droplist(w, nm), id_txt(id) {}
 void DpLan::Update(App& app) { txt = app.getLocalizedString(id_txt); Droplist::Update(app); }
+
 
 

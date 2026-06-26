@@ -1,7 +1,7 @@
 #include "draw_str.h"
 #include "font.h"
 
-void draw_char(tile& dest, dbuf& ds, double dep,
+void draw_char(tile& dest, dbuf& ds, double depth,
 	dVector2 tl, dRect vp_dest, tile const& src, dColor col) {
 	int a = max(vp_dest.left(), tl.x);
 	int b = min(vp_dest.right(), tl.x + src.width);
@@ -13,8 +13,8 @@ void draw_char(tile& dest, dbuf& ds, double dep,
 		int dp = j * dest.width + a;
 		int sp = (j - tl.y) * src.width + a - tl.x;
 		rep(i, a, b) {
-			if (ds[dp] <= dep && src.as[sp] != 0) {
-				ds[dp] = dep; dest.colors[dp] = col;
+			if (ds[dp] <= depth && src.as[sp] != 0) {
+				ds[dp] = depth; dest.colors[dp] = col;
 			} dp++; sp++;
 		}
 	}
@@ -79,4 +79,5 @@ int str_index_at_pos(wstring const& s, font const& ft, dVector2 p, int w) {
 		}
 	} return s.size();
 }
+
 

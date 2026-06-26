@@ -1,8 +1,8 @@
 #include "fpn_par.h"
-#include "cur.h"
-#include "par.h"
+#include "simulation_app.h"
+#include "scene_parameter.h"
 
-#define cur (*(Cur*)&app)
+#define cur (*(SimulationApp*)&app)
 #define par (*cur.pars[id])
 
 TbParNm::TbParNm(int id) : id(id), Textbox(270) {};
@@ -39,7 +39,7 @@ void ClyPars::Update(App& app) {
 }
 
 BtAddPar::BtAddPar() : BtLan(160, L"bt_add_par") {}
-void BtAddPar::OnClick(App& app) { cur.pars.push_back(msh<param>(cur.getLocalizedString(L"unnamed_par"))); }
+void BtAddPar::OnClick(App& app) { cur.pars.push_back(msh<SceneParameter>(cur.getLocalizedString(L"unnamed_par"))); }
 
 FPnPar::FPnPar(App& app) : FPnLan(app, 400, 600, L"fpn_par") {
 	vector<Control*> tmp;
@@ -50,5 +50,6 @@ FPnPar::FPnPar(App& app) : FPnLan(app, 400, 600, L"fpn_par") {
 	c = &*cly;
 	Init(app);
 }
+
 
 

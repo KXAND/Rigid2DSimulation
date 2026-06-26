@@ -1,8 +1,8 @@
 #include "fpn_lang.h"
 #include "ui.h"
-#include "cur.h"
+#include "simulation_app.h"
 
-#define cur (*(Cur*)&app)
+#define cur (*(SimulationApp*)&app)
 
 BtChi::BtChi() : Button(150) { txt = L"ÖÐÎÄ"; }
 void BtChi::OnClick(App& app) { cur.languageIdx = LAN_CHI; cur.ui->fpn_lang->hide(app); }
@@ -18,5 +18,6 @@ FPnLang::FPnLang(App& app) : FPnLan(app, 200, 200, L"fpn_lang") {
 	c = &*cly;
 	Init(app);
 }
+
 
 

@@ -4,7 +4,7 @@
 
 
 Label::Label(bool big) {
-	gap = { 10, 10 }; dep = 1000;
+	gap = { 10, 10 }; depth = 1000;
 	h = big ? 30 : 20;
 	c_txt = { 255, 255, 255 }; txt = L"ÎÄ±¾";
 }
@@ -13,7 +13,7 @@ int Label::GetH() const { return h + gap.y; }
 
 void Label::render(App& app) {
 	dVector2 tl_txt = tl + dVector2(0, h - app.ft.h) / 2;
-	draw_str(app.scr, app.dscr, dep, txt, c_txt, app.ft, tl_txt, 0, vp);
+	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 }
 void Label::Update(App& app) {
 	Sync(app);
@@ -23,5 +23,6 @@ void Label::Update(App& app) {
 
 LbLan::LbLan(wstring const& id, bool big) : Label(big), id_txt(id) {}
 void LbLan::Sync(App& app) { txt = app.getLocalizedString(id_txt); }
+
 
 

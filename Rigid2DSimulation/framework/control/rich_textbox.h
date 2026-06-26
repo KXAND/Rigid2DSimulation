@@ -6,7 +6,7 @@
 struct RichTextbox : Control {
 	dVector2 gap;
 	int w_str = 0;
-	double dep = 0;
+	double depth = 0;
 	int w = 0, h = 0;
 	bool clr_upon_edit = false;
 	dColor c_str, c_edit, c_frame, c_normal,
@@ -81,4 +81,5 @@ struct RichTextbox : Control {
 	void Discard(App& app) override;
 	void PreUpdate(App& app) override;
 };
+
 

@@ -7,7 +7,7 @@
 
 RichTextbox::RichTextbox() : RichTextbox(0, 0) {}
 RichTextbox::RichTextbox(int w, int h, bool newline) : w(w), h(h) {
-	gap = { 10, 10 }; dep = 1000;
+	gap = { 10, 10 }; depth = 1000;
 
 	c_str = { 255, 255, 255 };
 	c_edit = { 80, 40, 40 };
@@ -246,9 +246,9 @@ void RichTextbox::render_main(App& app) {
 
 	int x_cur = 0;
 	dVector2 tl_txt = tl + (dVector2)tl_str_rel;
-	draw_str(app.scr, app.dscr, dep, left(), c_str, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
-	draw_str(app.scr, app.dscr, dep, mid(), selectedColor, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
-	draw_str(app.scr, app.dscr, dep, right(), c_str, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
+	draw_str(app.scr, app.dscr, depth, left(), c_str, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
+	draw_str(app.scr, app.dscr, depth, mid(), selectedColor, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
+	draw_str(app.scr, app.dscr, depth, right(), c_str, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
 }
 void RichTextbox::render_cursor(App& app) {
 	bool show_cursor = edit &&
@@ -298,13 +298,14 @@ void RichTextbox::Discard(App& app) {
 void RichTextbox::PreUpdate(App& app) {
 	if (edit) { app.own.keyboardOwner = this; }
 
-	bool ok = app.own.hoveredDepth <= dep &&
+	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, vp);
-	if (ok) { app.own.hoveredDepth = dep; app.own.hovered = this; }
+	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 
-	ok = app.own.wheeledDepth <= dep &&
+	ok = app.own.wheeledDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, vp);
-	if (ok) { app.own.wheeledDepth = dep; app.own.wheeled = this; }
+	if (ok) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
 }
+
 
 

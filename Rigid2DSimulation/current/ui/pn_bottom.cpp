@@ -1,7 +1,7 @@
 #include "pn_bottom.h"
-#include "cur.h"
+#include "simulation_app.h"
 
-#define cur (*(Cur*)&app)
+#define cur (*(SimulationApp*)&app)
 
 LbFPS::LbFPS() { w = 450; fixed_w = true; }
 void LbFPS::Sync(App& app) {
@@ -26,5 +26,6 @@ PnBottom::PnBottom(App& app) : Panel(Panel::bottom(app)) {
 	c = &*clx;
 	Init(app);
 }
+
 
 

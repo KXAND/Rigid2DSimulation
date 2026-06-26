@@ -1,9 +1,9 @@
 #include "fpn_body.h"
-#include "cur.h"
+#include "simulation_app.h"
 #include "body.h"
 #include "connection.h"
 
-#define cur (*(Cur*)&app)
+#define cur (*(SimulationApp*)&app)
 #define ptr_body_sel (cur.bodySelecting)
 #define bsel (*ptr_body_sel)
 #define pcsel (cur.connectionSelecting)
@@ -106,5 +106,6 @@ FPnBody :: FPnBody(App& app) : FPnLan(app, 400, 600, L"fpn_body") {
 	c = &*cly;
 	Init(app);
 }
+
 
 

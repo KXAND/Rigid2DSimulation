@@ -1,9 +1,9 @@
-#include "bgr.h"
-#include "cur.h"
+#include "background.h"
+#include "simulation_app.h"
 #include "draw_str.h"
 #include "draw_tile.h"
 
-Background::Background(Cur& cur)
+Background::Background(SimulationApp& cur)
 {
 	width = 1630; height = 860;
 	topLeft = { 170, 0 }; // tile的原点坐标位置，170的余量用于左侧UI显示
@@ -11,14 +11,14 @@ Background::Background(Cur& cur)
 	backgroundTile = tile(width, height, dColor::BLACK, 255);
 }
 
-void Background::Render(Cur& cur)
+void Background::Render(SimulationApp& cur)
 {
 	drawBasedTile((cur.scr), topLeft,  backgroundTile);
 	draw_str((cur.scr), (cur.dscr), 999, (cur.dbstr),
-		dColor(110), (cur.ft), topLeft + dVector2(10, 10), width - 20, cur.mBgr->viewPort());
+		dColor(110), (cur.ft), topLeft + dVector2(10, 10), width - 20, cur.background->viewPort());
 }
 
-void Background::Update(Cur& cur)
+void Background::Update(SimulationApp& cur)
 {
 	hovered = ((cur.own.hovered) == this);
 	wheeled = ((cur.own.wheeled) == this);
@@ -29,7 +29,7 @@ void Background::Update(Cur& cur)
 		cur.connectionSelecting = NULL;
 	}
 }
-void Background::PreUpdate(Cur& cur)
+void Background::PreUpdate(SimulationApp& cur)
 {
 	bool haveDeeperValue = ((cur.own).hoveredDepth) <= depth && isInside(cur.input.msp, viewPort());
 	if (haveDeeperValue) { ((cur.own).hoveredDepth) = depth; ((cur.own).hovered) = this; }
@@ -37,4 +37,5 @@ void Background::PreUpdate(Cur& cur)
 	haveDeeperValue = (cur.own.wheeledDepth) <= depth && isInside(cur.input.msp, viewPort());
 	if (haveDeeperValue) { (cur.own.wheeledDepth) = depth; (cur.own.wheeled) = this; }
 }
+
 

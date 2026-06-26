@@ -8,7 +8,7 @@ struct Control;
 // Scrollbar 不是控件，不继承 Control 类。
 struct ScrollbarY {
 	dVector2 tl;
-	double dep = 0;
+	double depth = 0;
 	Control* c = NULL;
 	int w = 0, h = 0;
 	int h_show = 0, top_show = 0;
@@ -29,4 +29,5 @@ struct ScrollbarY {
 	virtual void Discard(App& app);
 	virtual void PreUpdate(App& app);
 };
+
 

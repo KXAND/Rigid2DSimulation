@@ -4,7 +4,7 @@
 
 struct Button : Control {
 	dVector2 gap;
-	double dep = 0;
+	double depth = 0;
 	wstring txt;
 	int w = 0, h = 0;
 	dColor c_txt, c_frame, c_normal, c_chosen, hoveredColor, c_invalid;
@@ -39,4 +39,5 @@ struct BtFPn : Button {
 	void OnClick(App& app) override;
 	void Update(App& app) override;
 };
+
 

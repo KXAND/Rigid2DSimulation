@@ -13,7 +13,7 @@ void drawBasedTile(tile& dest, dVector2 tl, tile const& src);
 /// 带有深度的绘制 Tile绘制
 /// 这里 vp_dest 允许宽度为0等异常情况，但是 vp_src 不允许。如何加以限制还没想好。
 /// </summary>
-void drawTile(tile& dest, dbuf& ds, double dep, dVector2 tl, dRect vp_dest, tile const& src, dRect vp_src);
+void drawTile(tile& dest, dbuf& ds, double depth, dVector2 tl, dRect vp_dest, tile const& src, dRect vp_src);
 /// <summary>
 /// 弃用？
 /// </summary>
@@ -23,4 +23,5 @@ void drawTile(tile& dest, dbuf& ds, double dep, dVector2 tl, dRect vp_dest, tile
 /// <param name="vp_src"></param>
 /// <returns></returns>
 bool hitTile(dVector2 p, dVector2 tl, tile const& src, dRect vp_src);
+
 

@@ -5,7 +5,7 @@
 
 
 ScrollbarY::ScrollbarY() {
-	dep = 1000; w = 20;
+	depth = 1000; w = 20;
 
 	c_bar = { 0, 0, 0 };
 	c_frame = { 150, 150, 150 };
@@ -49,9 +49,10 @@ void ScrollbarY::Discard(App& app) {
 	app.own.remove(this); dragged = hovered = full = hovered_node = false;
 }
 void ScrollbarY::PreUpdate(App& app) {
-	bool ok = app.own.hoveredDepth <= dep &&
+	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.rect());
-	if (ok) { app.own.hoveredDepth = dep; app.own.hovered = this; }
+	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
+
 
 

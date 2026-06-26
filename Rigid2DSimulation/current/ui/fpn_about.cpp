@@ -1,7 +1,7 @@
 #include "fpn_about.h"
-#include "cur.h"
+#include "simulation_app.h"
 
-#define cur (*(Cur*)&app)
+#define cur (*(SimulationApp*)&app)
 
 FPnAbout::FPnAbout(App& app) : FPnLan(app, 600, 540, L"fpn_about") {
 	vector<Control*> tmp;
@@ -11,5 +11,6 @@ FPnAbout::FPnAbout(App& app) : FPnLan(app, 600, 540, L"fpn_about") {
 	c = &*cly;
 	Init(app);
 }
+
 
 

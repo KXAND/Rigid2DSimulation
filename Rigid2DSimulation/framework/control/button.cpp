@@ -6,7 +6,7 @@
 
 
 Button::Button(int w) : w(w) {
-	gap = { 10, 10 }; dep = 1000;
+	gap = { 10, 10 }; depth = 1000;
 	txt = L"°´Å¥"; h = 30;
 
 	c_txt = { 255, 255, 255 };
@@ -28,7 +28,7 @@ void Button::render(App& app) {
 	dVector2 tl_txt = tl + dVector2(w, h) / 2 - wh / 2;
 
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, vp, c, c_frame);
-	draw_str(app.scr, app.dscr, dep, txt, c_txt, app.ft, tl_txt, 0, vp);
+	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 }
 
 void Button::Update(App& app) {
@@ -42,9 +42,9 @@ void Button::Update(App& app) {
 }
 void Button::Discard(App& app) { app.own.remove(this); chosen = hovered = false; }
 void Button::PreUpdate(App& app) {
-	bool ok = app.own.hoveredDepth <= dep &&
+	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, vp);
-	if (ok) { app.own.hoveredDepth = dep; app.own.hovered = this; }
+	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
 BtLan::BtLan(int w, wstring const& id) : Button(w), id_txt(id) {}
@@ -56,5 +56,6 @@ void BtFPn::Update(App& app) {
 	enabled = !fpn->shown;
 	txt = fpn->txt; Button::Update(app);
 }
+
 
 

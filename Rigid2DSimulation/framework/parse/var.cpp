@@ -1,7 +1,7 @@
 #include "var.h"
-#include "bra.h"
+#include "bracket_group.h"
 #include "vector3.h"
-#include "proc.h"
+#include "script_statement.h"
 
 // 每次都能找到新 bug，很可能还有一些 bug。
 // 同时速度上也有很多改进空间。
@@ -21,7 +21,8 @@ vector2 tv2(Var const& v)
 	vector2 out;
 	if (v.vec.size() < 2) { return {}; }
 	out.x = v.vec[0]->num;
-	out.y = v.vec[1]->num; return out;
+	out.y = v.vec[1]->num;
+	return out;
 }
 vector3 tv3(Var const& v)
 {
@@ -29,7 +30,8 @@ vector3 tv3(Var const& v)
 	if (v.vec.size() < 3) { return {}; }
 	out.x = v.vec[0]->num;
 	out.y = v.vec[1]->num;
-	out.z = v.vec[2]->num; return out;
+	out.z = v.vec[2]->num;
+	return out;
 }
 
 ptr<Var> findvar(Scope& gl, Scope& sc, wstring nm, bool isgl)
@@ -45,7 +47,7 @@ ptr<Var> findvar(Scope& gl, Scope& sc, wstring nm, bool isgl)
 		return sc[nm];
 	}
 }
-bool default_fun(Scope& gl, Scope& sc, expr const& ex, Var& out)
+bool default_fun(Scope& gl, Scope& sc, ScriptExpr const& ex, Var& out)
 {
 	auto const& f = ex.fun;
 	// 下面用宏而不是在运算之前 Eval 是为了速度，测试发现需要这样。
@@ -86,9 +88,10 @@ bool default_fun(Scope& gl, Scope& sc, expr const& ex, Var& out)
 #undef s1
 }
 
-ptr<Var> eval_call(Scope& gl, Scope& sc, expr const& ex)
+ptr<Var> eval_call(Scope& gl, Scope& sc, ScriptExpr const& ex)
 {
-	Var tmp; Scope getLocalizedString;
+	Var tmp;
+	Scope getLocalizedString;
 	if (default_fun(gl, sc, ex, tmp)) { return msh<Var>(tmp); }
 
 	// 下面必须是值复制，这是为了避免函数自己被抹去。
@@ -99,16 +102,18 @@ ptr<Var> eval_call(Scope& gl, Scope& sc, expr const& ex)
 		for (auto const& p : ex.pars)
 		{
 			tmp.push_back(eval(gl, sc, p));
-		} return fun->fun(tmp);
+		}
+		return fun->fun(tmp);
 	}
 
 	rep(i, 0, min(fun->pars.size(), ex.pars.size()))
 	{
 		getLocalizedString[fun->pars[i]] = eval(gl, sc, ex.pars[i]);
-	} bool ret = false;
+	}
+	bool ret = false;
 	return Execute(ret, gl, getLocalizedString, fun->procs);
 }
-ptr<Var> eval_access(Scope& gl, Scope& sc, expr const& ex)
+ptr<Var> eval_access(Scope& gl, Scope& sc, ScriptExpr const& ex)
 {
 	if (!ex.getLocalizedString || !ex.ind) { return msh<Var>(); }
 	auto getLocalizedString = eval(gl, sc, *ex.getLocalizedString);
@@ -116,25 +121,33 @@ ptr<Var> eval_access(Scope& gl, Scope& sc, expr const& ex)
 
 	if (ind->typ == L"num")
 	{
-		if (getLocalizedString->typ != L"vec") { *getLocalizedString = {}; getLocalizedString->typ = L"vec"; }
+		if (getLocalizedString->typ != L"vec") {
+			*getLocalizedString = {};
+			getLocalizedString->typ = L"vec";
+		}
 		rep(i, getLocalizedString->vec.size() - 1, ind->num)
 		{
 			getLocalizedString->vec.push_back(msh<Var>());
-		} return getLocalizedString->vec[ind->num];
+		}
+		return getLocalizedString->vec[ind->num];
 	}
 
 	if (ind->typ == L"str")
 	{
-		if (getLocalizedString->typ != L"dic") { *getLocalizedString = {}; getLocalizedString->typ = L"dic"; }
+		if (getLocalizedString->typ != L"dic") {
+			*getLocalizedString = {};
+			getLocalizedString->typ = L"dic";
+		}
 		if (getLocalizedString->dic.find(ind->str) == getLocalizedString->dic.end())
 		{
 			getLocalizedString->dic[ind->str] = msh<Var>();
-		} return getLocalizedString->dic[ind->str];
+		}
+		return getLocalizedString->dic[ind->str];
 	}
 
 	return msh<Var>();
 }
-ptr<Var> eval(Scope& gl, Scope& sc, expr const& ex)
+ptr<Var> eval(Scope& gl, Scope& sc, ScriptExpr const& ex)
 {
 	if (ex.typ == L"call") { return eval_call(gl, sc, ex); }
 	else if (ex.typ == L"var")
@@ -150,7 +163,8 @@ ptr<Var> eval(Scope& gl, Scope& sc, expr const& ex)
 		for (auto const& e : ex.vec)
 		{
 			tmp.push_back(msh<Var>(*eval(gl, sc, e)));
-		} return msh<Var>(tmp);
+		}
+		return msh<Var>(tmp);
 	}
 	else if (ex.typ == L"access") { return eval_access(gl, sc, ex); }
 	return msh<Var>();
@@ -170,20 +184,23 @@ ptr<Var> Execute(bool& ret, Scope& gl, Scope& sc, Program const& ps)
 		else if (p.typ == L"if")
 		{
 			auto& ps = eval(gl, sc, p.if_con)->num ? p.if_procs : p.else_procs;
-			auto v = Execute(ret, gl, sc, ps); if (ret) { return v; }
+			auto v = Execute(ret, gl, sc, ps);
+			if (ret) { return v; }
 		}
 		else if (p.typ == L"while")
 		{
 			while (eval(gl, sc, p.lp_con)->num)
 			{
-				auto v = Execute(ret, sc, gl, p.lp); if (ret) { return v; }
+				auto v = Execute(ret, sc, gl, p.lp);
+				if (ret) { return v; }
 			}
 		}
-	} return msh<Var>();
+	}
+	return msh<Var>();
 }
 ptr<Var> Execute(Scope& gl, Program const& ps)
 {
-	bool ret = false; 
+	bool ret = false;
 	return Execute(ret, gl, gl, ps);
 }
 Program Compile(wstring const& code)

@@ -2,7 +2,7 @@
 #include "tile.h"
 #include "aabb.h"
 
-struct Cur;
+struct SimulationApp;
 /// <summary>
 /// 定义一个图形
 /// </summary>
@@ -32,4 +32,5 @@ public:
 };
 
 vector<vector2> getRectVerticesByCenter(double w, double h);
+
 

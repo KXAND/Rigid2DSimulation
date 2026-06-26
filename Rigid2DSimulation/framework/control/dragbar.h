@@ -4,7 +4,7 @@
 
 struct DragbarX : Control {
 	dVector2 gap;
-	double dep = 0;
+	double depth = 0;
 	wstring txt;
 	int bw = 0, bh = 0;
 	int nw = 0, nh = 0;
@@ -39,4 +39,5 @@ struct DbXLan : DragbarX {
 	DbXLan(wstring const& id, int w);
 	void Update(App& app) override;
 };
+
 

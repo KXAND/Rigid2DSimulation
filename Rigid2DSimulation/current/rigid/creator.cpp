@@ -1,27 +1,23 @@
 #include "creator.h"
-#include "cur.h"
-#include "bgr.h"
+#include "current/common/utils.h"
+#include "simulation_app.h"
+#include "background.h"
 #include "var.h"
 #include "body.h"
 #include "shape.h"
 #include "connection.h"
 
-#define found(s) (dic.find(s) != dic.end())
-#define getv(nm) if (found(L#nm)) { nm = dic.at(L#nm)->num; }
-
 Creator::Creator()
 {
-	dep_body = 10;
-	dep_con = -1;
+	depthBody = 10;
+	depthConnection = -1;
 	thick = 10;
 	rad = 8;
 }
 Creator::Creator(Var const& v) : Creator()
 {
-	auto dic = v.dic;
-	if (found(L"mode"))
+	if (auto md = find_config_value(v, L"mode"))
 	{
-		auto md = dic.at(L"mode");
 		if (md->typ == L"str")
 		{
 			auto s = md->str;
@@ -35,25 +31,26 @@ Creator::Creator(Var const& v) : Creator()
 		}
 		else { mode = md->num; }
 	}
-	getv(thick); getv(rad);
-	if (found(L"cfg_body")) { mkp(cfg_body)(*dic[L"cfg_body"]); }
-	if (found(L"cfg_conn")) { mkp(cfg_connection)(*dic[L"cfg_conn"]); }
+	try_read_config_number(v, L"thick", thick);
+	try_read_config_number(v, L"rad", rad);
+	if (auto value = find_config_value(v, L"cfg_body")) { mkp(cfg_body)(*value); }
+	if (auto value = find_config_value(v, L"cfg_conn")) { mkp(cfg_connection)(*value); }
 }
 
-double Creator::dep() const
+double Creator::depth() const
 {
 	switch (mode)
 	{
 		case CREATE_CONN:
 		case CREATE_NAIL:
-			return dep_con;
+			return depthConnection;
 		default:
 			break;
 	}
-	return dep_body;
+	return depthBody;
 }
 
-void Creator::updateBox(Cur& cur)
+void Creator::updateBox(SimulationApp& cur)
 {
 	if (active)
 	{
@@ -87,7 +84,7 @@ void Creator::updateBox(Cur& cur)
 		}
 	}
 }
-void Creator::updateBall(Cur& cur)
+void Creator::updateBall(SimulationApp& cur)
 {
 	if (active)
 	{
@@ -120,7 +117,7 @@ void Creator::updateBall(Cur& cur)
 		}
 	}
 }
-void Creator::updatePlate(Cur& cur)
+void Creator::updatePlate(SimulationApp& cur)
 {
 	if (active)
 	{
@@ -156,7 +153,7 @@ void Creator::updatePlate(Cur& cur)
 		}
 	}
 }
-void Creator::updateConnection(Cur& cur)
+void Creator::updateConnection(SimulationApp& cur)
 {
 	if (active)
 	{
@@ -188,7 +185,7 @@ void Creator::updateConnection(Cur& cur)
 		if (body0) { active = true; }
 	}
 }
-void Creator::updatePoint(Cur& cur)
+void Creator::updatePoint(SimulationApp& cur)
 {
 	if (hovered && cur.input.isMouseClickedDown(0))
 	{
@@ -201,7 +198,7 @@ void Creator::updatePoint(Cur& cur)
 		cur.isSceneChanged = true;
 	}
 }
-void Creator::updateNail(Cur& cur)
+void Creator::updateNail(SimulationApp& cur)
 {
 	if (body0)
 	{
@@ -221,7 +218,7 @@ void Creator::updateNail(Cur& cur)
 		body = NULL; cur.isSceneChanged = true;
 	}
 }
-void Creator::updateParticle(Cur& cur)
+void Creator::updateParticle(SimulationApp& cur)
 {
 	if (hovered && cur.input.isMouseClickedDown(0))
 	{
@@ -234,7 +231,7 @@ void Creator::updateParticle(Cur& cur)
 		body = NULL; cur.isSceneChanged = true;
 	}
 }
-void Creator::Update(Cur& cur)
+void Creator::Update(SimulationApp& cur)
 {
 	hovered = (cur.own.hovered == this);
 	body = NULL; connection = NULL;
@@ -259,19 +256,20 @@ void Creator::Update(Cur& cur)
 		connection->Render(cur);
 	}
 }
-void Creator::Discard(Cur& cur)
+void Creator::Discard(SimulationApp& cur)
 {
 	cur.own.remove(this); body0 = body1 = NULL;
 	body = NULL; connection = NULL;
 	hovered = active = false;
 }
-void Creator::PreUpdate(Cur& cur)
+void Creator::PreUpdate(SimulationApp& cur)
 {
-	if (cur.own.hoveredDepth <= dep() && isInside(cur.input.msp, cur.mBgr->viewPort()))
+	if (cur.own.hoveredDepth <= depth() && isInside(cur.input.msp, cur.background->viewPort()))
 	{
-		cur.own.hoveredDepth = dep();
+		cur.own.hoveredDepth = depth();
 		cur.own.hovered = this;
 	}
 }
+
 
 

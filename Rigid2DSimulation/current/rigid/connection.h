@@ -7,7 +7,7 @@ int constexpr CON_SPRING = 3;
 int constexpr CON_CORD = 4;
 
 struct Var;
-struct Cur;
+struct SimulationApp;
 struct Body;
 /// <summary>
 /// 定义一个两两连接关系，根据连接物理材质的不同，更新位置
@@ -31,18 +31,19 @@ struct Connection {
 	dColor colorSpringStretch, colorSpringCompress;
 
 	Connection();
-	Connection(Cur& cur, FILE* f);
-	void save(Cur const& cur, FILE* f) const;
+	Connection(SimulationApp& cur, FILE* f);
+	void save(SimulationApp const& cur, FILE* f) const;
 
 	void read_cfg(Var const& cfg);
 	void signUpToBodies();
 	void updatePosition();
-	void refresh(Cur& cur);
-	void simulateTypeRopeLink(bool equal_repos);
+	void refresh(SimulationApp& cur);
+	void simulateTypeRopeLink(bool useEqualPositionCorrection);
 	void simulateTypeCordSpring(double sdt);
-	void Simulate(double sdt, bool equal_repos);
-	void Render(Cur& cur) const;
+	void Simulate(double sdt, bool useEqualPositionCorrection);
+	void Render(SimulationApp& cur) const;
 };
 
 Body* getTheOtherBody(Body* b, Connection const& con);
+
 

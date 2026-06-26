@@ -1,7 +1,7 @@
 #pragma once
 #include "dvec.h"
 
-struct Cur;
+struct SimulationApp;
 struct Body;
 struct Connection;
 /// <summary>
@@ -24,4 +24,5 @@ void findBodiesInGroup(vector<Body*>& out, Body* b);
 /// <param name="bodies"></param>
 /// <returns></returns>
 vector<ptr<Group>> FormGroups(vector<ptr<Body>> const& bodies);
+
 

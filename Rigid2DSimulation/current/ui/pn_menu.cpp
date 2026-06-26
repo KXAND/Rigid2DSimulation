@@ -1,6 +1,6 @@
 #include "pn_menu.h"
 #include "ui.h"
-#include "cur.h"
+#include "simulation_app.h"
 #include "fpn_global.h"
 #include "fpn_body.h"
 #include "fpn_con.h"
@@ -10,7 +10,7 @@
 #include "fpn_about.h"
 #include "creator.h"
 
-#define cur (*(Cur*)&app)
+#define cur (*(SimulationApp*)&app)
 #define mkbt(nm) mkp(bt_##nm)(&*cur.ui->fpn_##nm);
 
 BtPause::BtPause() : Button(150) {}
@@ -73,5 +73,6 @@ PnMenu::PnMenu(App& app) : Panel(Panel::menu(app)) {
 	c = &*cly;
 	Init(app);
 }
+
 
 

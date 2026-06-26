@@ -4,7 +4,7 @@
 
 
 RichLabel::RichLabel(int w) : w(w) {
-	gap = { 10, 10 }; dep = 1000;
+	gap = { 10, 10 }; depth = 1000;
 	fixed_w = true;
 	c_txt = { 255, 255, 255 }; txt = L"´ó¶ÎÎÄ±¾";
 }
@@ -13,7 +13,7 @@ int RichLabel::GetH() const { return h + gap.y; }
 
 int RichLabel::w_line() const { return fixed_w ? w : 0; }
 void RichLabel::render(App& app) {
-	draw_str(app.scr, app.dscr, dep, txt, c_txt, app.ft, tl, w_line(), vp);
+	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl, w_line(), vp);
 }
 void RichLabel::Update(App& app) {
 	Sync(app);
@@ -25,5 +25,6 @@ void RichLabel::Update(App& app) {
 
 RLbLan::RLbLan(int w, wstring const& id) : id_txt(id), RichLabel(w) {}
 void RLbLan::Sync(App& app) { txt = app.getLocalizedString(id_txt); }
+
 
 

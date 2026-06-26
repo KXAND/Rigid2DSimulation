@@ -6,7 +6,7 @@ struct Control;
 struct ScrollbarY;
 struct FloatPanel {
 	dVector2 tl;
-	double dep = 0;
+	double depth = 0;
 	Control* c = NULL;
 	wstring txt;
 	int w = 0, h = 0;
@@ -71,4 +71,5 @@ struct FPnLan : FloatPanel {
 };
 
 bool less_fpn(FloatPanel* const fp0, FloatPanel* const fp1);
+
 

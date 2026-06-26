@@ -7,7 +7,7 @@ wstring dpnm_none(int id, App &app);
 
 struct Droplist : Control {
 	dVector2 gap;
-	double dep = 0;
+	double depth = 0;
 	wstring txt;
 	int w = 0, h = 0;
 
@@ -53,4 +53,5 @@ struct DpLan : Droplist {
 	DpLan(wstring const& id, int w, DpNm const& nm = dpnm_none);
 	void Update(App& app) override;
 };
+
 

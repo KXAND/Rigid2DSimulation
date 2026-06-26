@@ -4,7 +4,7 @@
 
 struct RichLabel : Control {
 	dVector2 gap;
-	double dep = 0;
+	double depth = 0;
 	int w = 0, h = 0;
 	bool fixed_w = false;
 	bool fixed_h = false;
@@ -27,4 +27,5 @@ struct RLbLan : RichLabel {
 	RLbLan(int w, wstring const& id);
 	void Sync(App& app) override;
 };
+
 
