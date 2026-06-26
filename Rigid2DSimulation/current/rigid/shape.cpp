@@ -26,7 +26,7 @@ Shape::Shape(FILE* f)
 	frdv(verticesRelative); vertices.resize(verticesRelative.size());
 }
 
-vector2 Shape::generateRandomPointInside() const
+vector2 Shape::GenerateRandomPointInside() const
 {
 	if (isCircle)
 	{
@@ -53,7 +53,7 @@ vector2 Shape::generateRandomPointInside() const
 	return {};
 }
 
-bool Shape::isInside(vector2 p) const
+bool Shape::IsInside(vector2 p) const
 {
 	if (isCircle)
 		return (p - o).lensqr() < r * r;
@@ -61,13 +61,13 @@ bool Shape::isInside(vector2 p) const
 	rep(i, 0, vertices.size())
 	{
 		int j = ((long long) i + 1) % vertices.size();
-		if (isInsideTriangle(p, o, vertices[i], vertices[j]))
+		if (IsInsideTriangle(p, o, vertices[i], vertices[j]))
 			return true;
 	}
 	return false;
 }
 
-aabb Shape::getBoundingBox() const
+aabb Shape::GetBoundingBox() const
 {
 	if (isCircle)
 		return aabb(o.x - r, o.x + r, o.y - r, o.y + r);
@@ -94,7 +94,7 @@ vector2 Shape::GenerateRandomPointInTriangle(vector2 v0, vector2 v1, vector2 v2)
 	return x0 * v0 + x1 * v1 + (1 - x0 - x1) * v2;
 }
 
-bool Shape::isInsideTriangle(vector2 v, vector2 v0, vector2 v1, vector2 v2) const
+bool Shape::IsInsideTriangle(vector2 v, vector2 v0, vector2 v1, vector2 v2) const
 {
 	// Æë´Î×ø±ê
 	vector3 u(v.x, v.y, 1);
@@ -108,7 +108,7 @@ bool Shape::isInsideTriangle(vector2 v, vector2 v0, vector2 v1, vector2 v2) cons
 		isBetween(t.z, 0.0, 1.0);
 }
 
-vector<vector2> getRectVerticesByCenter(double halfWidth, double halfHeight)
+vector<vector2> GetRectVerticesByCenter(double halfWidth, double halfHeight)
 {
 	vector<vector2> vertices;
 	vertices.push_back(vector2(+halfWidth, +halfHeight) / 2);

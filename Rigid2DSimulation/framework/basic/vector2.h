@@ -138,6 +138,6 @@ inline matrix2 operator*(matrix2 a, matrix2 b)
 	};
 }
 
-vector2 getPositionOnBezier(vector<vector2> ps, double t);// @todo：没有引用
-double getDistanceSquare(vector2 a, vector2 b, vector2 p);
+vector2 GetPositionOnBezier(vector<vector2> ps, double t);// @todo：没有引用
+double GetDistanceSquare(vector2 a, vector2 b, vector2 p);
 

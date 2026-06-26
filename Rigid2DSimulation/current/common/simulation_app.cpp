@@ -192,7 +192,7 @@ void SimulationApp::Update()
 			multiGridBodies.clear();
 			grid.clear();
 			grid.resize(gridNumX * gridNumY);
-			for (auto& b : bodies) { b->registerGrid(*this); }
+			for (auto& b : bodies) { b->RegisterGrid(*this); }
 
 			// Åö×²
 			collisions.clear();
@@ -210,12 +210,12 @@ void SimulationApp::Update()
 	// äÖÈ¾
 	for (auto& b : bodies)
 	{
-		b->updateShapesPositionAndAABB();
+		b->UpdateShapesPositionAndAABB();
 		b->Render(*this);
 	}
 	for (auto& connection : connections)
 	{
-		connection->updatePosition();
+		connection->UpdatePosition();
 		connection->Render(*this);
 	}
 
@@ -223,26 +223,26 @@ void SimulationApp::Update()
 	ui->Update(*this);
 }
 
-void SimulationApp::set_cfg(Var const& v)
+void SimulationApp::SetCfg(Var const& v)
 {
-	try_read_config_number(v, L"vol", vol);
-	try_read_config_number(v, L"energy_mul", energy_mul);
-	try_read_config_number(v, L"chargeMultiplier", chargeMultiplier);
-	try_read_config_number(v, L"eps_paralell", eps_paralell);
-	try_read_config_number(v, L"max_real_dt", max_real_dt);
-	try_read_config_number(v, L"hasElectrostatic", hasElectrostatic);
-	try_read_config_number(v, L"coulomb", coulomb);
-	try_read_config_number(v, L"stepNum", stepNum);
+	TryReadConfigNumber(v, L"vol", vol);
+	TryReadConfigNumber(v, L"energy_mul", energy_mul);
+	TryReadConfigNumber(v, L"chargeMultiplier", chargeMultiplier);
+	TryReadConfigNumber(v, L"eps_paralell", eps_paralell);
+	TryReadConfigNumber(v, L"max_real_dt", max_real_dt);
+	TryReadConfigNumber(v, L"hasElectrostatic", hasElectrostatic);
+	TryReadConfigNumber(v, L"coulomb", coulomb);
+	TryReadConfigNumber(v, L"stepNum", stepNum);
 	stepNum = max(1, stepNum);
-	try_read_config_number(v, L"gridSize", gridSize);
-	try_read_config_number(v, L"useEqualPositionCorrection", useEqualPositionCorrection);
-	try_read_config_number(v, L"t", t);
-	try_read_config_number(v, L"isTrackShown", isTrackShown);
-	if (auto value = find_config_value(v, L"left_scene")) { rectScene.topLeftPosition.x = value->num; }
-	if (auto value = find_config_value(v, L"top_scene")) { rectScene.topLeftPosition.y = value->num; }
-	if (auto value = find_config_value(v, L"w_scene")) { rectScene.w = value->num; }
-	if (auto value = find_config_value(v, L"h_scene")) { rectScene.h = value->num; }
-	if (auto value = find_config_value(v, L"gravity")) { gravity = tv2(*value); }
+	TryReadConfigNumber(v, L"gridSize", gridSize);
+	TryReadConfigNumber(v, L"useEqualPositionCorrection", useEqualPositionCorrection);
+	TryReadConfigNumber(v, L"t", t);
+	TryReadConfigNumber(v, L"isTrackShown", isTrackShown);
+	if (auto value = FindConfigValue(v, L"left_scene")) { rectScene.topLeftPosition.x = value->num; }
+	if (auto value = FindConfigValue(v, L"top_scene")) { rectScene.topLeftPosition.y = value->num; }
+	if (auto value = FindConfigValue(v, L"w_scene")) { rectScene.w = value->num; }
+	if (auto value = FindConfigValue(v, L"h_scene")) { rectScene.h = value->num; }
+	if (auto value = FindConfigValue(v, L"gravity")) { gravity = tv2(*value); }
 
 	isSceneChanged = true;
 }
@@ -378,7 +378,7 @@ void SimulationApp::init_def_fun()
 
 	auto f10 = [this](vector<ptr<Var>> const& in)
 		{
-			if (in.size() >= 1) { set_cfg(*in[0]); }
+			if (in.size() >= 1) { SetCfg(*in[0]); }
 			return msh<Var>();
 		};
 	curScope[L"set_cfg"] = msh<Var>(f10);

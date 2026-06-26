@@ -34,9 +34,9 @@ struct Connection {
 	Connection(SimulationApp& cur, FILE* f);
 	void save(SimulationApp const& cur, FILE* f) const;
 
-	void read_cfg(Var const& cfg);
-	void signUpToBodies();
-	void updatePosition();
+	void ReadCfg(Var const& cfg);
+	void SignUpToBodies();
+	void UpdatePosition();
 	void refresh(SimulationApp& cur);
 	void simulateTypeRopeLink(bool useEqualPositionCorrection);
 	void simulateTypeCordSpring(double sdt);

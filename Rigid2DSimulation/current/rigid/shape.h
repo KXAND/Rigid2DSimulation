@@ -11,7 +11,7 @@ struct Shape
 private:
 
 	vector2 GenerateRandomPointInTriangle(vector2 v0, vector2 v1, vector2 v2) const;
-	bool isInsideTriangle(vector2 v, vector2 v0, vector2 v1, vector2 v2) const;
+	bool IsInsideTriangle(vector2 v, vector2 v0, vector2 v1, vector2 v2) const;
 public:
 	bool isCircle = false;
 	double r = 0;
@@ -26,11 +26,11 @@ public:
 	Shape(FILE* f);
 	void Save(FILE* f) const;
 
-	vector2 generateRandomPointInside() const;
-	bool isInside(vector2 p) const;
-	aabb getBoundingBox() const;
+	vector2 GenerateRandomPointInside() const;
+	bool IsInside(vector2 p) const;
+	aabb GetBoundingBox() const;
 };
 
-vector<vector2> getRectVerticesByCenter(double w, double h);
+vector<vector2> GetRectVerticesByCenter(double w, double h);
 
 

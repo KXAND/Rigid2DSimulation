@@ -60,16 +60,16 @@ struct Body
 	Body(SimulationApp& cur, FILE* f);
 	void save(FILE* f) const;
 
-	vector2 generateRandomPointInside() const;
+	vector2 GenerateRandomPointInside() const;
 	bool inside(vector2 p) const;
 	void refresh(SimulationApp& cur);
-	void read_cfg(Var const& cfg);
-	void updateShapesPositionAndAABB();
+	void ReadCfg(Var const& cfg);
+	void UpdateShapesPositionAndAABB();
 	void warp(dRect rc);
-	void registerGrid(SimulationApp& cur);
+	void RegisterGrid(SimulationApp& cur);
 private:
-	double getDepth() const;
-	void updateAABB();
+	double GetDepth() const;
+	void UpdateAABB();
 
 public:
 	void Init(bool repos_o = false);

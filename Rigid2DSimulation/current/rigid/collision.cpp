@@ -181,7 +181,7 @@ void findClosestContactVertex(Shape& shape0, Shape& shape1, vector2& contactP, d
 		for (auto v : shape1.vertices)
 		{
 			//算出该顶点到 shape0 当前顶点和下一个顶点所构成的线段的距离平方
-			double distanceSquare = getDistanceSquare(shape0.vertices[i], shape0.vertices[j], v);
+			double distanceSquare = GetDistanceSquare(shape0.vertices[i], shape0.vertices[j], v);
 			if (distanceSquare < closestDistanceSqr)
 			{
 				closestDistanceSqr = distanceSquare;

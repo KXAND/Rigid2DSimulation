@@ -35,14 +35,14 @@ Connection::Connection(SimulationApp& cur, FILE* f) : Connection()
 	frd(ind0); frd(ind1);
 	body0 = &*cur.bodies[ind0]; body1 = &*cur.bodies[ind1];
 	frd(p0Relative); frd(p1Relative); frd(len); frd(hooke);
-	refresh(cur); signUpToBodies(); updatePosition();
+	refresh(cur); SignUpToBodies(); UpdatePosition();
 }
 
-void Connection::read_cfg(Var const& cfg)
+void Connection::ReadCfg(Var const& cfg)
 {
-	try_read_config_number(cfg, L"len", len);
-	try_read_config_number(cfg, L"hooke", hooke);
-	if (auto md = find_config_value(cfg, L"type"))
+	TryReadConfigNumber(cfg, L"len", len);
+	TryReadConfigNumber(cfg, L"hooke", hooke);
+	if (auto md = FindConfigValue(cfg, L"type"))
 	{
 		if (md->typ == L"str")
 		{
@@ -55,13 +55,13 @@ void Connection::read_cfg(Var const& cfg)
 		else { type = md->num; }
 	}
 }
-void Connection::signUpToBodies()
+void Connection::SignUpToBodies()
 {
 	body0->connections.push_back(this);
 	if (body0 != body1) { body1->connections.push_back(this); }
 }
 
-void Connection::updatePosition()
+void Connection::UpdatePosition()
 {
 	p0 = body0->o + body0->transform * p0Relative;
 	p1 = body1->o + body1->transform * p1Relative;
@@ -72,14 +72,14 @@ void Connection::refresh(SimulationApp& cur)
 	cur.curScope[L"conn"] = msh<Var>();
 	Execute(cur.curScope, Compile(cmd));
 	if (cur.curScope.find(L"conn") == cur.curScope.end()) { return; }
-	read_cfg(*cur.curScope[L"conn"]);
+	ReadCfg(*cur.curScope[L"conn"]);
 
-	updatePosition();
+	UpdatePosition();
 }
 
 void Connection::simulateTypeRopeLink(bool equalReponse)
 {
-	updatePosition();
+	UpdatePosition();
 	if (body0 == body1) { return; }
 	if (body0->invMass == 0 && body1->invMass == 0) { return; }
 
@@ -133,7 +133,7 @@ void Connection::simulateTypeRopeLink(bool equalReponse)
 
 void Connection::simulateTypeCordSpring(double deltaTime)
 {
-	updatePosition();
+	UpdatePosition();
 	if (body0 == body1) { return; }
 	if (body0->invMass == 0 && body1->invMass == 0) { return; }
 
