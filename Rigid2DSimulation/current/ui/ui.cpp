@@ -11,17 +11,16 @@
 #include "pn_menu.h"
 #include "pn_bottom.h"
 
-#define mkfp(x) mkp(x)(cur); fpns.push_back(&*x);
 
 void UI::sort_fpns() { sort(fpns.begin(), fpns.end(), less_fpn); }
 void UI::Init(SimulationApp& cur) {
-	mkfp(fpn_global);
-	mkfp(fpn_body);
-	mkfp(fpn_con);
-	mkfp(fpn_cmd);
-	mkfp(fpn_par);
-	mkfp(fpn_lang);
-	mkfp(fpn_about);
+	mkp(fpn_global)(cur); fpns.push_back(&*fpn_global);
+	mkp(fpn_body)(cur); fpns.push_back(&*fpn_body);
+	mkp(fpn_con)(cur); fpns.push_back(&*fpn_con);
+	mkp(fpn_cmd)(cur); fpns.push_back(&*fpn_cmd);
+	mkp(fpn_par)(cur); fpns.push_back(&*fpn_par);
+	mkp(fpn_lang)(cur); fpns.push_back(&*fpn_lang);
+	mkp(fpn_about)(cur); fpns.push_back(&*fpn_about);
 
 	// pn_menu 放在后面是因为要等 float_panel 先加载完。
 	// pn_menu 放在后面是因为要等 float_panel 先加载完。

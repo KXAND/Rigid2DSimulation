@@ -10,7 +10,6 @@
 #include "fpn_about.h"
 #include "creator.h"
 
-#define mkbt(nm) mkp(bt_##nm)(&*simulationApp.ui->fpn_##nm);
 
 BtPause::BtPause() : Button(150) {}
 void BtPause::Update(App& app) {
@@ -68,10 +67,14 @@ PnMenu::PnMenu(App& app) : Panel(Panel::menu(app)) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	vector<Control*> tmp;
 	mkp(bt_pause)(); mkp(bt_reset)(); mkp(bt_mute)();
-	mkbt(global); mkbt(body); mkbt(con);
+	mkp(bt_global)(&*simulationApp.ui->fpn_global);
+	mkp(bt_body)(&*simulationApp.ui->fpn_body);
+	mkp(bt_con)(&*simulationApp.ui->fpn_con);
 	mkp(bt_mode)(); mkp(bt_display)();
-	mkbt(cmd); mkbt(par);
-	mkbt(lang); mkbt(about);
+	mkp(bt_cmd)(&*simulationApp.ui->fpn_cmd);
+	mkp(bt_par)(&*simulationApp.ui->fpn_par);
+	mkp(bt_lang)(&*simulationApp.ui->fpn_lang);
+	mkp(bt_about)(&*simulationApp.ui->fpn_about);
 	tmp = { &*bt_pause, &*bt_reset, &*bt_mute, &*bt_global, 
 		&*bt_body, &*bt_con, &*bt_mode, &*bt_display,
 		&*bt_cmd, &*bt_par, &*bt_lang, &*bt_about };
