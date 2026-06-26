@@ -2,12 +2,11 @@
 #include "ui.h"
 #include "simulation_app.h"
 
-#define cur (*(SimulationApp*)&app)
 
 BtChi::BtChi() : Button(150) { txt = L"ÖÐÎÄ"; }
-void BtChi::OnClick(App& app) { cur.languageIdx = LAN_CHI; cur.ui->fpn_lang->hide(app); }
+void BtChi::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.languageIdx = LAN_CHI; simulationApp.ui->fpn_lang->hide(app); }
 BtEng::BtEng() : Button(150) { txt = L"English"; }
-void BtEng::OnClick(App& app) { cur.languageIdx = LAN_ENG; cur.ui->fpn_lang->hide(app); }
+void BtEng::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.languageIdx = LAN_ENG; simulationApp.ui->fpn_lang->hide(app); }
 
 FPnLang::FPnLang(App& app) : FPnLan(app, 200, 200, L"fpn_lang") {
 	vector<Control*> tmp; shown = true;

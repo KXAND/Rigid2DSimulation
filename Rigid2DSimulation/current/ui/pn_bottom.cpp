@@ -1,21 +1,22 @@
 #include "pn_bottom.h"
 #include "simulation_app.h"
 
-#define cur (*(SimulationApp*)&app)
-
 LbFPS::LbFPS() { w = 450; fixed_w = true; }
 void LbFPS::Sync(App& app) {
-	txt = cur.getLocalizedString(L"frm_tm") + tw2(cur.fps.frm_time * 1000) +
-		L", FPS: " + tw2(cur.fps.fps);
+	auto& simulationApp = static_cast<SimulationApp&>(app);
+	txt = simulationApp.getLocalizedString(L"frm_tm") + tw2(simulationApp.fps.frm_time * 1000) +
+		L", FPS: " + tw2(simulationApp.fps.fps);
 }
 
 LbTime::LbTime() { w = 200; fixed_w = true; }
 void LbTime::Sync(App& app) {
-	txt = cur.getLocalizedString(L"lb_time") + tw2(cur.t);
+	auto& simulationApp = static_cast<SimulationApp&>(app);
+	txt = simulationApp.getLocalizedString(L"lb_time") + tw2(simulationApp.t);
 }
 LbMouse::LbMouse() { w = 300; fixed_w = true; }
 void LbMouse::Sync(App& app) {
-	txt = cur.getLocalizedString(L"lb_mouse") + tw(cur.input.msp);
+	auto& simulationApp = static_cast<SimulationApp&>(app);
+	txt = simulationApp.getLocalizedString(L"lb_mouse") + tw(simulationApp.input.msp);
 }
 
 PnBottom::PnBottom(App& app) : Panel(Panel::bottom(app)) {

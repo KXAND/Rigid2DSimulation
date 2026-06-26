@@ -2,20 +2,17 @@
 #include "simulation_app.h"
 #include "scene_parameter.h"
 
-#define cur (*(SimulationApp*)&app)
-#define par (*cur.pars[id])
-
 TbParNm::TbParNm(int id) : id(id), Textbox(270) {};
-void TbParNm::Sync(App& app) { str = par.nm; }
-void TbParNm::OnDone(App& app) const { par.nm = str; }
+void TbParNm::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.pars[id]->nm; }
+void TbParNm::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.pars[id]->nm = str; }
 BtDelPar::BtDelPar(int id) : id(id), BtLan(80, L"bt_del_par") {}
-void BtDelPar::OnClick(App& app) { par.del = true; }
+void BtDelPar::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.pars[id]->del = true; }
 DbXParVal::DbXParVal(int id) : id(id), DragbarX(270) {}
-void DbXParVal::Sync(App& app) { set_nx_rel(par.val); }
-void DbXParVal::Upload(App& app) const { par.val = uval(); }
+void DbXParVal::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); set_nx_rel(simulationApp.pars[id]->val); }
+void DbXParVal::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.pars[id]->val = uval(); }
 TbParVal::TbParVal(int id) : id(id), Textbox(80) {};
-void TbParVal::Sync(App& app) { str = tw2(par.val); }
-void TbParVal::OnDone(App& app) const { par.val = wtof(str); }
+void TbParVal::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = tw2(simulationApp.pars[id]->val); }
+void TbParVal::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.pars[id]->val = wtof(str); }
 
 ClyPar::ClyPar(int id) {
 	vector<Control*> tmp;
@@ -31,15 +28,16 @@ ClyPar::ClyPar(int id) {
 	cs = { &*clx_nm, &*clx_val, &*spy };
 }
 void ClyPars::Update(App& app) {
+	auto& simulationApp = static_cast<SimulationApp&>(app);
 	cs.clear();
-	rep(i, mbs.size(), cur.pars.size()) { mbs.push_back(msh<ClyPar>(i)); }
-	rep(i, 0, cur.pars.size()) { cs.push_back(&*mbs[i]); }
-	rep(i, cur.pars.size(), mbs.size()) { mbs[i]->Discard(app); }
+	rep(i, mbs.size(), simulationApp.pars.size()) { mbs.push_back(msh<ClyPar>(i)); }
+	rep(i, 0, simulationApp.pars.size()) { cs.push_back(&*mbs[i]); }
+	rep(i, simulationApp.pars.size(), mbs.size()) { mbs[i]->Discard(app); }
 	CtrlListY::Update(app);
 }
 
 BtAddPar::BtAddPar() : BtLan(160, L"bt_add_par") {}
-void BtAddPar::OnClick(App& app) { cur.pars.push_back(msh<SceneParameter>(cur.getLocalizedString(L"unnamed_par"))); }
+void BtAddPar::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.pars.push_back(msh<SceneParameter>(simulationApp.getLocalizedString(L"unnamed_par"))); }
 
 FPnPar::FPnPar(App& app) : FPnLan(app, 400, 600, L"fpn_par") {
 	vector<Control*> tmp;

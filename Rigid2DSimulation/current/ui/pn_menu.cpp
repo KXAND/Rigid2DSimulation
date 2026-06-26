@@ -10,56 +10,62 @@
 #include "fpn_about.h"
 #include "creator.h"
 
-#define cur (*(SimulationApp*)&app)
-#define mkbt(nm) mkp(bt_##nm)(&*cur.ui->fpn_##nm);
+#define mkbt(nm) mkp(bt_##nm)(&*simulationApp.ui->fpn_##nm);
 
 BtPause::BtPause() : Button(150) {}
 void BtPause::Update(App& app) {
-	txt = cur.isPaused ? cur.getLocalizedString(L"start") : cur.getLocalizedString(L"pause");
+	auto& simulationApp = static_cast<SimulationApp&>(app);
+	txt = simulationApp.isPaused ? simulationApp.getLocalizedString(L"start") : simulationApp.getLocalizedString(L"pause");
 	Button::Update(app);
 }
-void BtPause::OnClick(App& app) { cur.isPaused = !cur.isPaused; }
+void BtPause::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.isPaused = !simulationApp.isPaused; }
 
 BtReset::BtReset() : BtLan(150, L"bt_reset") {}
-void BtReset::OnClick(App& app) { cur.Reset(); }
+void BtReset::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Reset(); }
 
 BtMute::BtMute() : Button(150) {}
 void BtMute::Update(App& app) {
-	txt = cur.isMuted ? cur.getLocalizedString(L"unmute") : cur.getLocalizedString(L"mute");
+	auto& simulationApp = static_cast<SimulationApp&>(app);
+	txt = simulationApp.isMuted ? simulationApp.getLocalizedString(L"unmute") : simulationApp.getLocalizedString(L"mute");
 	Button::Update(app);
 }
-void BtMute::OnClick(App& app) { cur.isMuted = !cur.isMuted; }
+void BtMute::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.isMuted = !simulationApp.isMuted; }
 
 BtMode::BtMode() : Button(150) {}
 void BtMode::Update(App& app) {
-	switch (cur.mode) {
-	case MODE_DRAG: txt = cur.getLocalizedString(L"mode_drag"); break;
-	case MODE_SEL: txt = cur.getLocalizedString(L"mode_sel"); break;
-	case MODE_CREATE: txt = cur.getLocalizedString(L"mode_create"); break;
-	case MODE_DEL: txt = cur.getLocalizedString(L"mode_del"); break;
+	auto& simulationApp = static_cast<SimulationApp&>(app);
+	switch (simulationApp.mode) {
+	case MODE_DRAG: txt = simulationApp.getLocalizedString(L"mode_drag"); break;
+	case MODE_SEL: txt = simulationApp.getLocalizedString(L"mode_sel"); break;
+	case MODE_CREATE: txt = simulationApp.getLocalizedString(L"mode_create"); break;
+	case MODE_DEL: txt = simulationApp.getLocalizedString(L"mode_del"); break;
 	}
 	Button::Update(app);
 }
 void BtMode::OnClick(App& app) {
-	cur.creator->Discard(cur); 
-	cur.mode = (cur.mode + 1) % 4;
+	auto& simulationApp = static_cast<SimulationApp&>(app);
+	simulationApp.creator->Discard(simulationApp); 
+	simulationApp.mode = (simulationApp.mode + 1) % 4;
 }
 
 BtDisplay::BtDisplay() : Button(150) {}
 void BtDisplay::Update(App& app) {
-	switch (cur.display) {
-	case DISPLAY_COLOR: txt = cur.getLocalizedString(L"disp_col"); break;
-	case DISPLAY_ENERGY: txt = cur.getLocalizedString(L"disp_energy"); break;
-	case DISPLAY_CHARGES: txt = cur.getLocalizedString(L"disp_charge"); break;
-	case DISPLAY_NONE: txt = cur.getLocalizedString(L"disp_none"); break;
+	auto& simulationApp = static_cast<SimulationApp&>(app);
+	switch (simulationApp.display) {
+	case DISPLAY_COLOR: txt = simulationApp.getLocalizedString(L"disp_col"); break;
+	case DISPLAY_ENERGY: txt = simulationApp.getLocalizedString(L"disp_energy"); break;
+	case DISPLAY_CHARGES: txt = simulationApp.getLocalizedString(L"disp_charge"); break;
+	case DISPLAY_NONE: txt = simulationApp.getLocalizedString(L"disp_none"); break;
 	}
 	Button::Update(app);
 }
 void BtDisplay::OnClick(App& app) {
-	cur.display = (cur.display + 1) % 4;
+	auto& simulationApp = static_cast<SimulationApp&>(app);
+	simulationApp.display = (simulationApp.display + 1) % 4;
 }
 
 PnMenu::PnMenu(App& app) : Panel(Panel::menu(app)) {
+	auto& simulationApp = static_cast<SimulationApp&>(app);
 	vector<Control*> tmp;
 	mkp(bt_pause)(); mkp(bt_reset)(); mkp(bt_mute)();
 	mkbt(global); mkbt(body); mkbt(con);
