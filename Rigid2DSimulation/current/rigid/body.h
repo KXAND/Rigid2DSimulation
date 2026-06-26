@@ -25,10 +25,10 @@ struct Body
 	vector<vector2> track;
 	vector<ptr<Shape>> shapes;
 	vector<Connection*> connections;
-	vector2 o, velocity;
+	vector2 position, velocity;
 	aabb box;
 	matrix2 transform = matrix2::I();
-	wstring cmd, tmp_cmd;
+	wstring scriptText, temporaryScriptText;
 	double radian = 0, velocityAngular = 0;
 	double invMass = 0;// 质量倒数，为0表示此物体不参与运动计算
 	double invInertia = 0;// 转动惯量倒数
@@ -42,7 +42,7 @@ struct Body
 	bool hovered = false;
 	bool dragged = false;
 	double radianDrag = 0, velocityAngularDrag = 0;
-	vector2 pDragRelative;
+	vector2 relativeDragPoint;
 	double depthShape = 0, depthPoint = 0;
 	double r_point = 0;
 

@@ -11,27 +11,27 @@ void Group::Warp(dRect rect)
 
 	isInRect = true;
 	for (auto b : bodies)
-		if (b->o.x > rect.left()) { isInRect = false; break; }
+		if (b->position.x > rect.left()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->o.x += rect.w; b->track.clear(); }
+		for (auto b : bodies) { b->position.x += rect.w; b->track.clear(); }
 
 	isInRect = true;
 	for (auto b : bodies)
-		if (b->o.x < rect.right()) { isInRect = false; break; }
+		if (b->position.x < rect.right()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->o.x -= rect.w; b->track.clear(); }
+		for (auto b : bodies) { b->position.x -= rect.w; b->track.clear(); }
 
 	isInRect = true;
 	for (auto b : bodies)
-		if (b->o.y > rect.top()) { isInRect = false; break; }
+		if (b->position.y > rect.top()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->o.y += rect.h;  b->track.clear(); }
+		for (auto b : bodies) { b->position.y += rect.h;  b->track.clear(); }
 
 	isInRect = true;
 	for (auto b : bodies)
-		if (b->o.y < rect.bottom()) { isInRect = false; break; }
+		if (b->position.y < rect.bottom()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->o.y -= rect.h; b->track.clear(); }
+		for (auto b : bodies) { b->position.y -= rect.h; b->track.clear(); }
 }
 
 void findBodiesInGroup(vector<Body*>& out, Body* body)

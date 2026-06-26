@@ -22,8 +22,8 @@ void Collision::simulate(bool equalResponse)
 	double frictionStatic = min(body0->frictionStatic, body1->frictionStatic);
 
 	// c 点处两个物体的切向量（tangent vector）和对应速度
-	vector2 tanC1 = c - body0->o;
-	vector2 tanC2 = c - body1->o;
+	vector2 tanC1 = c - body0->position;
+	vector2 tanC2 = c - body1->position;
 	tanC1 = vector2(-tanC1.y, tanC1.x);//逆时针转90度
 	tanC2 = vector2(-tanC2.y, tanC2.x);
 	vector2 velocity0 = body0->velocity + body0->velocityAngular * tanC1;
@@ -80,19 +80,19 @@ void Collision::simulate(bool equalResponse)
 
 	if (equalResponse)
 	{
-		if (body0->invMass == 0) { body1->o += n * d; }
-		else if (body1->invMass == 0) { body0->o -= n * d; }
+		if (body0->invMass == 0) { body1->position += n * d; }
+		else if (body1->invMass == 0) { body0->position -= n * d; }
 		else
 		{
-			body0->o -= n * d / 2;
-			body1->o += n * d / 2;
+			body0->position -= n * d / 2;
+			body1->position += n * d / 2;
 		}
 		return;
 	}
 	// 我是真的不知道这个有没有道理。
 	double sum = body0->invMass + body1->invMass;
-	body0->o -= n * d * body0->invMass / sum;
-	body1->o += n * d * body1->invMass / sum;
+	body0->position -= n * d * body0->invMass / sum;
+	body1->position += n * d * body1->invMass / sum;
 }
 
 void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralell)
@@ -140,9 +140,9 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 	{
 		rep(i, 0, sh1.vertices.size())
 		{
-			vector2 n = (sh1.vertices[i] - sh0.o).normalize();
+			vector2 n = (sh1.vertices[i] - sh0.position).normalize();
 			if (n.zero()) { n = vector2(0, 1); }
-			auto d = sub_collide_poly(n, sh0.o + n * sh0.r, sh1, c);
+			auto d = sub_collide_poly(n, sh0.position + n * sh0.r, sh1, c);
 			if (d < 0) { return false; }
 			if (d < out.d)
 			{
@@ -192,24 +192,24 @@ void findClosestContactVertex(Shape& shape0, Shape& shape1, vector2& contactP, d
 }
 bool collide_balls(Shape& sh0, Shape& sh1, Collision& out)
 {
-	vector2 o10 = sh1.o - sh0.o;
+	vector2 o10 = sh1.position - sh0.position;
 	double d = sh0.r + sh1.r - o10.len();
 	if (d < 0) { return false; }
 	out.d = d;
 	out.n = o10.zero() ? vector2(0, 1) : o10.normalize();
 	if (sh0.r < sh1.r)
 	{
-		out.c = sh0.o + sh0.r * out.n;
+		out.c = sh0.position + sh0.r * out.n;
 	}
 	else
 	{
-		out.c = sh1.o - sh1.r * out.n;
+		out.c = sh1.position - sh1.r * out.n;
 	} return true;
 }
 double sub_collide_ball(vector2 n, vector2 o, Shape const& sh, vector2& c)
 {
-	auto tmp = dot(sh.o - o, n) - sh.r;
-	c = sh.o - sh.r * n; return -tmp;
+	auto tmp = dot(sh.position - o, n) - sh.r;
+	c = sh.position - sh.r * n; return -tmp;
 }
 double sub_collide_poly(vector2 n, vector2 o, Shape const& sh, vector2& c)
 {

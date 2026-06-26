@@ -10,12 +10,12 @@
 #define pcon (bsel.connections[id])
 
 RTbBody::RTbBody() : RichTextbox(360, 400) {}
-void RTbBody::Sync(App& app) { str = bsel.tmp_cmd; }
-void RTbBody::Upload(App& app) const { bsel.tmp_cmd = str; }
+void RTbBody::Sync(App& app) { str = bsel.temporaryScriptText; }
+void RTbBody::Upload(App& app) const { bsel.temporaryScriptText = str; }
 
 BtBodyOK::BtBodyOK() : BtLan(70, L"bt_body_ok") {}
 void BtBodyOK::OnClick(App& app) {
-	bsel.cmd = bsel.tmp_cmd; bsel.refresh(cur);
+	bsel.scriptText = bsel.temporaryScriptText; bsel.refresh(cur);
 }
 BtBodyDel::BtBodyDel() : BtLan(70, L"bt_body_del") {}
 void BtBodyDel::OnClick(App& app) { bsel.del = true; cur.isSceneChanged = true; }
@@ -84,7 +84,7 @@ void RLbBody::Sync(App& app) {
 	if (!ptr_body_sel) { txt = cur.getLocalizedString(L"body_not_sel"); return; }
 	txt.clear();
 	
-	txt += cur.getLocalizedString(L"body_o") + toWstring(bsel.o) + L"\n";
+	txt += cur.getLocalizedString(L"body_o") + toWstring(bsel.position) + L"\n";
 	txt += cur.getLocalizedString(L"body_v") + toWstring(bsel.velocity) + L"\n";
 	txt += cur.getLocalizedString(L"body_ang") + tw2(bsel.radian) + L"\n";
 	txt += cur.getLocalizedString(L"body_v_ang") + tw2(bsel.velocityAngular) + L"\n";

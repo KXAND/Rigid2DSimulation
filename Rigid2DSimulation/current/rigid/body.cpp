@@ -28,7 +28,7 @@ Body::Body()
 Body::Body(vector2 const& _o) : Body()
 {
 	point = true;
-	o = _o;
+	position = _o;
 }
 Body::Body(ptr<Shape> sh) : Body()
 {
@@ -45,7 +45,7 @@ void Body::save(FILE* f) const
 	sz = shapes.size();
 	fwt(sz);
 	for (auto sh : shapes) { sh->Save(f); }
-	fwt(o); fwt(velocity); fwtv(cmd);
+	fwt(position); fwt(velocity); fwtv(scriptText);
 	fwt(radian); fwt(velocityAngular); fwt(density);
 	fwt(elasticity); fwt(frictionStatic); fwt(frictionDynamic);
 	fwt(dampCoeff); fwt(dampCoeffAngular);
@@ -60,7 +60,7 @@ Body::Body(SimulationApp& cur, FILE* f) : Body()
 	{
 		shapes.push_back(msh<Shape>(f));
 	}
-	frd(o); frd(velocity); frdv(cmd); tmp_cmd = cmd;
+	frd(position); frd(velocity); frdv(scriptText); temporaryScriptText = scriptText;
 	frd(radian); frd(velocityAngular); frd(density);
 	frd(elasticity); frd(frictionStatic); frd(frictionDynamic);
 	frd(dampCoeff); frd(dampCoeffAngular);
@@ -75,7 +75,7 @@ double Body::GetDepth() const
 }
 bool Body::inside(vector2 p) const
 {
-	if (point) { return (p - o).lensqr() < r_point * r_point; }
+	if (point) { return (p - position).lensqr() < r_point * r_point; }
 
 	for (auto sh : shapes)
 	{
@@ -87,12 +87,12 @@ bool Body::inside(vector2 p) const
 void Body::refresh(SimulationApp& cur)
 {
 	cur.curScope[L"body"] = msh<Var>();
-	Execute(cur.curScope, Compile(cmd));
+	Execute(cur.curScope, Compile(scriptText));
 	if (cur.curScope.find(L"body") == cur.curScope.end()) { return; }
 	auto const& body_cfg = *cur.curScope[L"body"];
 	ReadCfg(body_cfg);
 
-	// 这些单独放是因为它们无法只能通过 cmd 获得，无法保存。
+	// 这些单独放是因为它们无法只能通过 scriptText 获得，无法保存。
 	TryReadConfigNumber(body_cfg, L"preset_o", preset_o);
 	TryReadConfigNumber(body_cfg, L"preset_ang", preset_ang);
 	TryReadConfigNumber(body_cfg, L"preset_v_ang", preset_v_ang);
@@ -104,7 +104,7 @@ void Body::refresh(SimulationApp& cur)
 
 void Body::ReadCfg(Var const& cfg)
 {
-	if (auto value = FindConfigValue(cfg, L"o")) { o = tv2(*value); }
+	if (auto value = FindConfigValue(cfg, L"o")) { position = tv2(*value); }
 	if (auto value = FindConfigValue(cfg, L"v")) { velocity = tv2(*value); }
 	if (auto value = FindConfigValue(cfg, L"col")) { innerColor = (dColor)tv3(*value); }
 	TryReadConfigNumber(cfg, L"radian", radian);
@@ -140,11 +140,11 @@ void Body::UpdateShapesPositionAndAABB()
 	transform = matrix2::rotate(radian);
 	for (auto& shape : shapes)
 	{
-		shape->o = o + transform * shape->oRelative;
+		shape->position = position + transform * shape->relativePosition;
 		shape->radian = radian;
 		rep(i, 0, shape->vertices.size())
 		{
-			shape->vertices[i] = o + transform * shape->verticesRelative[i];
+			shape->vertices[i] = position + transform * shape->verticesRelative[i];
 		}
 	}
 	UpdateAABB();
@@ -165,10 +165,10 @@ void Body::warp(dRect rc)
 {
 	if (invMass == 0 || dragged) { return; }
 
-	if (o.x < rc.left()) { o.x += rc.w; }
-	else if (o.x > rc.right()) { o.x -= rc.w; }
-	if (o.y < rc.top()) { o.y += rc.h; }
-	else if (o.y > rc.bottom()) { o.y -= rc.h; }
+	if (position.x < rc.left()) { position.x += rc.w; }
+	else if (position.x > rc.right()) { position.x -= rc.w; }
+	if (position.y < rc.top()) { position.y += rc.h; }
+	else if (position.y > rc.bottom()) { position.y -= rc.h; }
 }
 
 void Body::RegisterGrid(SimulationApp& cur)
@@ -206,7 +206,7 @@ void Body::Init(bool repos_o)
 		if (shapes->isCircle)
 		{
 			shapes->area = PI * shapes->r * shapes->r;
-			sub_center = shapes->area * shapes->oRelative;
+			sub_center = shapes->area * shapes->relativePosition;
 			inertia += shapes->area * (shapes->r * shapes->r) / 2;
 		}
 		else
@@ -227,17 +227,17 @@ void Body::Init(bool repos_o)
 
 		area += shapes->area;
 		center += sub_center;
-		shapes->oRelative = sub_center / shapes->area;
+		shapes->relativePosition = sub_center / shapes->area;
 	}
 
 	center /= area;
 	charge = chargeDensity * area;
 	invMass = fixed ? 0 : 1 / (density * area);
 	invInertia = fixed ? 0 : 1 / (density * inertia);
-	if (repos_o) { o = center; }
+	if (repos_o) { position = center; }
 	for (auto sh : shapes)
 	{
-		sh->oRelative -= center;
+		sh->relativePosition -= center;
 		for (auto& v : sh->verticesRelative) { v -= center; }
 	}
 	UpdateShapesPositionAndAABB();
@@ -279,28 +279,28 @@ void Body::Render(SimulationApp& cur) const
 
 	if (point)
 	{
-		drawEllipse(cur.scr, cur.dscr, GetDepth(), o, r_point, r_point, cur.background->viewPort(), color);
-		drawEllipseBorder(cur.scr, cur.dscr, GetDepth(), o, r_point, r_point, cur.background->viewPort(), borderColor, 20);
+		drawEllipse(cur.scr, cur.dscr, GetDepth(), position, r_point, r_point, cur.background->viewPort(), color);
+		drawEllipseBorder(cur.scr, cur.dscr, GetDepth(), position, r_point, r_point, cur.background->viewPort(), borderColor, 20);
 	}
 	for (auto& shape : shapes)
 	{
 		if (shape->isCircle)
 		{
 			drawEllipse(cur.scr, cur.dscr, GetDepth(),
-				shape->o, shape->r, shape->r, cur.background->viewPort(), color);
+				shape->position, shape->r, shape->r, cur.background->viewPort(), color);
 			drawEllipseBorder(cur.scr, cur.dscr, GetDepth(),
-				shape->o, shape->r, shape->r, cur.background->viewPort(), borderColor, 30);
+				shape->position, shape->r, shape->r, cur.background->viewPort(), borderColor, 30);
 
 			// 显示一条半径以便于我们判断圆的旋转角度
-			auto peakPoint = vector2(cos(shape->radian), sin(shape->radian)) * shape->r + shape->o;
-			drawLineSegment(cur.scr, cur.dscr, shape->o, peakPoint, GetDepth(), cur.background->viewPort(), borderColor);
+			auto peakPoint = vector2(cos(shape->radian), sin(shape->radian)) * shape->r + shape->position;
+			drawLineSegment(cur.scr, cur.dscr, shape->position, peakPoint, GetDepth(), cur.background->viewPort(), borderColor);
 			continue;
 		}
 
 		rep(i, 0, shape->vertices.size())
 		{
 			int j = (i + 1) % shape->vertices.size();
-			drawTriangle(cur.scr, cur.dscr, cur.background->viewPort(), shape->o, shape->vertices[i], shape->vertices[j], GetDepth(), color);
+			drawTriangle(cur.scr, cur.dscr, cur.background->viewPort(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
 		}
 		rep(i, 0, shape->vertices.size())
 		{
@@ -312,7 +312,7 @@ void Body::Render(SimulationApp& cur) const
 	if (dragged)
 	{
 		vector2 p1 = vector2(cur.input.msp);
-		vector2 p0 = o + transform * pDragRelative;
+		vector2 p0 = position + transform * relativeDragPoint;
 		drawLineSegment(cur.scr, cur.dscr, p0, p1, GetDepth(), cur.background->viewPort(), dColor(0, 255, 255));
 	}
 
@@ -335,7 +335,7 @@ void Body::Step(SimulationApp& cur, double stepDt)
 		velocity += cur.gravity * stepDt;
 		velocityAngular -= dampCoeffAngular * velocityAngular * stepDt;
 		if (preset_v_ang) { followPresetVelocityAngular(cur); }
-		o += velocity * stepDt;
+		position += velocity * stepDt;
 		radian += velocityAngular * stepDt;
 	}
 	else
@@ -369,7 +369,7 @@ void Body::followPresetO(SimulationApp& cur, double stepDt)
 	auto velocityNew = (positionNew - positionOld) / stepDt;
 
 	// 其实我觉得应当选用时间较小的值。
-	o = positionNew;
+	position = positionNew;
 	velocity = velocityNew;
 }
 
@@ -418,11 +418,11 @@ void Body::handleDragPoint(SimulationApp& cur)
 {
 	// 下列命名指定o,p,m三点为body中心、被拖拽点及鼠标现在点
 	vector2 mousePos = vector2(cur.input.msp);
-	vector2 pPos = o + transform * pDragRelative;
+	vector2 pPos = position + transform * relativeDragPoint;
 	vector2 mouseVelocity = vector2(cur.input.msp - cur.input.msp_old) / cur.real_dt;
 	vector2 pmDir = (mousePos - pPos).normalize();
 
-	vector2 opDir = pPos - o;
+	vector2 opDir = pPos - position;
 	opDir = vector2(-opDir.y, opDir.x);
 	vector2 pVelocity = velocity + velocityAngular * opDir;
 	double rd0 = dot(opDir, pmDir);
@@ -432,7 +432,7 @@ void Body::handleDragPoint(SimulationApp& cur)
 
 	velocity += impulse * invMass;
 	velocityAngular += dot(impulse, opDir) * invInertia;
-	o += mousePos - pPos;
+	position += mousePos - pPos;
 }
 
 /// <summary>
@@ -442,20 +442,20 @@ void Body::handleDragPoint(SimulationApp& cur)
 void Body::handleDragWhole(SimulationApp& cur)
 {
 	vector2 mousePos = vector2(cur.input.msp);
-	vector2 dragPointPos = o + transform * pDragRelative;
+	vector2 dragPointPos = position + transform * relativeDragPoint;
 	vector2 newVelocity = vector2(cur.input.msp - cur.input.msp_old) / cur.real_dt;
 
 	velocity = newVelocity;
 	radian = radianDrag;
 	velocityAngular = velocityAngularDrag;
-	o += mousePos - dragPointPos; // 中心平行位移
+	position += mousePos - dragPointPos; // 中心平行位移
 }
 
 void Body::handleDragForce(SimulationApp& cur, double deltaTime)
 {
 	// 运动路径方向
 	vector2 p1 = vector2(cur.input.msp);
-	vector2 p0 = o + transform * pDragRelative;
+	vector2 p0 = position + transform * relativeDragPoint;
 	vector2 d = (p1 - p0).normalize();
 
 	// 力
@@ -463,7 +463,7 @@ void Body::handleDragForce(SimulationApp& cur, double deltaTime)
 	vector2 impulse = k * (p1 - p0).len() * deltaTime * d;
 
 	// 刚体半径
-	vector2 r0 = p0 - o;
+	vector2 r0 = p0 - position;
 	r0 = vector2(-r0.y, r0.x);
 
 	velocity += impulse * invMass;
@@ -501,7 +501,7 @@ void Body::Update(SimulationApp& cur)
 		if (dragged)
 		{
 			// p移到m，那么mo = 变换*原距离 = 变换*原相对位置=po，故有。
-			pDragRelative = transform.inverse() * ((vector2) cur.input.msp - o);
+			relativeDragPoint = transform.inverse() * ((vector2) cur.input.msp - position);
 			updateDragAngle(cur);
 		}
 	}
@@ -509,7 +509,7 @@ void Body::Update(SimulationApp& cur)
 	if (this == cur.bodySelecting && cur.isTrackShown && !cur.isPaused)
 	{
 		// 绘制运动轨迹
-		track.push_back(o);
+		track.push_back(position);
 	}
 	else if (this != cur.bodySelecting || !cur.isTrackShown)
 	{
@@ -525,12 +525,12 @@ void Body::Update(SimulationApp& cur)
 		if (cur.input.isMouseClickedDown(0) && !cur.creator->active)
 		{
 			cur.creator->body0 = this;
-			cur.creator->p0Relative = transform.inverse() * ((vector2) cur.input.msp - o);
+			cur.creator->p0Relative = transform.inverse() * ((vector2) cur.input.msp - position);
 		}
 		else if (!cur.input.msd[0] && cur.input.msd_old[0] && cur.creator->active)
 		{
 			cur.creator->body1 = this;
-			cur.creator->p1Relative = transform.inverse() * ((vector2) cur.input.msp - o);
+			cur.creator->p1Relative = transform.inverse() * ((vector2) cur.input.msp - position);
 		}
 	}
 }
@@ -543,8 +543,8 @@ void Body::PreUpdate(SimulationApp& cur)
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulomb)
 {
-	double dsqr = (b1.o - b0.o).lensqr();
-	vector2 d = (b1.o - b0.o).normalize();
+	double dsqr = (b1.position - b0.position).lensqr();
+	vector2 d = (b1.position - b0.position).normalize();
 	vector2 je = -b0.charge * b1.charge * d / dsqr * sdt * coulomb;
 	b0.velocity += je * b0.invMass;
 	b1.velocity -= je * b1.invMass;

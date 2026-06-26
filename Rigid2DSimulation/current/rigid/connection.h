@@ -15,7 +15,7 @@ struct Body;
 struct Connection {
 	bool del = false;
 	int type = 0;
-	wstring cmd, tmp_cmd;
+	wstring scriptText, temporaryScriptText;
 	Body* body0 = NULL;
 	Body* body1 = NULL;
 	vector2 p0Relative, p1Relative;

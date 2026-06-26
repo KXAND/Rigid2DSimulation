@@ -7,12 +7,12 @@
 #define csel (*pcsel)
 
 RTbCon::RTbCon() : RichTextbox(360, 400) {}
-void RTbCon::Sync(App& app) { str = csel.tmp_cmd; }
-void RTbCon::Upload(App& app) const { csel.tmp_cmd = str; }
+void RTbCon::Sync(App& app) { str = csel.temporaryScriptText; }
+void RTbCon::Upload(App& app) const { csel.temporaryScriptText = str; }
 
 BtConOK::BtConOK() : BtLan(70, L"bt_con_ok") {}
 void BtConOK::OnClick(App& app) {
-	csel.cmd = csel.tmp_cmd; csel.refresh(cur);
+	csel.scriptText = csel.temporaryScriptText; csel.refresh(cur);
 }
 BtConDel::BtConDel() : BtLan(70, L"bt_con_del") {}
 void BtConDel::OnClick(App& app) { csel.del = true; cur.isSceneChanged = true; }

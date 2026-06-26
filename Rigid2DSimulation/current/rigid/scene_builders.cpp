@@ -67,7 +67,7 @@ void CreateConnetion(SimulationApp& cur, Var const& cfg)
 		connection->p0Relative = tv2(*value);
 		if (absolute)
 		{
-			connection->p0Relative -= connection->body0->o;
+			connection->p0Relative -= connection->body0->position;
 			connection->p0Relative = connection->body0->transform.inverse() * connection->p0Relative;
 		}
 	}
@@ -76,7 +76,7 @@ void CreateConnetion(SimulationApp& cur, Var const& cfg)
 		connection->p1Relative = tv2(*value);
 		if (absolute)
 		{
-			connection->p1Relative -= connection->body1->o;
+			connection->p1Relative -= connection->body1->position;
 			connection->p1Relative = connection->body1->transform.inverse() * connection->p1Relative;
 		}
 	}
@@ -96,28 +96,28 @@ void Boundary(SimulationApp& cur, Var const& thk, Var const& cfg)
 	ptr<Body> body;
 	dColor color = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	body = msh<Body>(msh<Shape>(GetRectVerticesByCenter(thk.num, bh)));
-	body->o = vector2(bx0, (by0 + by1) / 2);
+	body->position = vector2(bx0, (by0 + by1) / 2);
 	body->fixed = true;
 	body->innerColor = color;
 	body->ReadCfg(cfg);
 	body->Init();
 	cur.bodies.push_back(body);
 	body = msh<Body>(msh<Shape>(GetRectVerticesByCenter(thk.num, bh)));
-	body->o = vector2(bx1, (by0 + by1) / 2);
+	body->position = vector2(bx1, (by0 + by1) / 2);
 	body->fixed = true;
 	body->innerColor = color;
 	body->ReadCfg(cfg);
 	body->Init();
 	cur.bodies.push_back(body);
 	body = msh<Body>(msh<Shape>(GetRectVerticesByCenter(bw, thk.num)));
-	body->o = vector2((bx0 + bx1) / 2, by0);
+	body->position = vector2((bx0 + bx1) / 2, by0);
 	body->fixed = true;
 	body->innerColor = color;
 	body->ReadCfg(cfg);
 	body->Init();
 	cur.bodies.push_back(body);
 	body = msh<Body>(msh<Shape>(GetRectVerticesByCenter(bw, thk.num)));
-	body->o = vector2((bx0 + bx1) / 2, by1);
+	body->position = vector2((bx0 + bx1) / 2, by1);
 	body->fixed = true;
 	body->innerColor = color;
 	body->ReadCfg(cfg);
@@ -144,7 +144,7 @@ void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var cons
 	wheel->ReadCfg(cfg);
 	wheel->Init();
 	cur.bodies.push_back(wheel);
-	auto root = msh<Body>(wheel->o);
+	auto root = msh<Body>(wheel->position);
 	root->innerColor = wheel->innerColor;
 	root->Init();
 	cur.bodies.push_back(root);
@@ -170,7 +170,7 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	dColor col = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	mkp(b0)(msh<Shape>(rad));
 	b0->innerColor = col;
-	b0->o = p0;
+	b0->position = p0;
 	b0->ReadCfg(cfg_body);
 	b0->Init();
 	cur.bodies.push_back(b0);
@@ -178,7 +178,7 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	{
 		mkp(b1)(msh<Shape>(rad));
 		b1->innerColor = col;
-		b1->o = (p0 * (n - i) + p1 * i) / n;
+		b1->position = (p0 * (n - i) + p1 * i) / n;
 		b1->ReadCfg(cfg_body);
 		b1->Init();
 		cur.bodies.push_back(b1);
@@ -209,7 +209,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 	dColor col = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	mkp(b0)(msh<Shape>(ball_rad));
 	b0->innerColor = col;
-	b0->o = o + vector2(rad.num, 0);
+	b0->position = o + vector2(rad.num, 0);
 	b0->ReadCfg(cfg_body);
 	b0->Init();
 	cur.bodies.push_back(b0);
@@ -219,7 +219,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 		double phi = 2 * PI * i / n;
 		mkp(b1)(msh<Shape>(ball_rad));
 		b1->innerColor = col;
-		b1->o = o + vector2(cos(phi), sin(phi)) * rad.num;
+		b1->position = o + vector2(cos(phi), sin(phi)) * rad.num;
 		b1->ReadCfg(cfg_body);
 		b1->Init();
 		cur.bodies.push_back(b1);

@@ -17,8 +17,8 @@ public:
 	double r = 0;
 	double radian = 0;
 	double area = 0;
-	vector2 oRelative;
-	vector2 o;
+	vector2 relativePosition;
+	vector2 position;
 	vector<vector2> verticesRelative, vertices;
 
 	Shape(double _r, vector2 _o_rel = {});

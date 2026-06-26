@@ -19,7 +19,7 @@ Connection::Connection()
 void Connection::save(SimulationApp const& cur, FILE* f) const
 {
 	int sz = 0;
-	fwt(type); fwtv(cmd);
+	fwt(type); fwtv(scriptText);
 	auto pred0 = [this](ptr<Body> b) { return &*b == body0; };
 	int ind0 = find_if(cur.bodies.begin(), cur.bodies.end(), pred0) - cur.bodies.begin();
 	auto pred1 = [this](ptr<Body> b) { return &*b == body1; };
@@ -30,7 +30,7 @@ void Connection::save(SimulationApp const& cur, FILE* f) const
 Connection::Connection(SimulationApp& cur, FILE* f) : Connection()
 {
 	int sz = 0;
-	frd(type); frdv(cmd); tmp_cmd = cmd;
+	frd(type); frdv(scriptText); temporaryScriptText = scriptText;
 	int ind0 = 0, ind1 = 0;
 	frd(ind0); frd(ind1);
 	body0 = &*cur.bodies[ind0]; body1 = &*cur.bodies[ind1];
@@ -63,14 +63,14 @@ void Connection::SignUpToBodies()
 
 void Connection::UpdatePosition()
 {
-	p0 = body0->o + body0->transform * p0Relative;
-	p1 = body1->o + body1->transform * p1Relative;
+	p0 = body0->position + body0->transform * p0Relative;
+	p1 = body1->position + body1->transform * p1Relative;
 }
 
 void Connection::refresh(SimulationApp& cur)
 {
 	cur.curScope[L"conn"] = msh<Var>();
-	Execute(cur.curScope, Compile(cmd));
+	Execute(cur.curScope, Compile(scriptText));
 	if (cur.curScope.find(L"conn") == cur.curScope.end()) { return; }
 	ReadCfg(*cur.curScope[L"conn"]);
 
@@ -83,8 +83,8 @@ void Connection::simulateTypeRopeLink(bool equalReponse)
 	if (body0 == body1) { return; }
 	if (body0->invMass == 0 && body1->invMass == 0) { return; }
 
-	vector2 r0 = p0 - body0->o;
-	vector2 r1 = p1 - body1->o;
+	vector2 r0 = p0 - body0->position;
+	vector2 r1 = p1 - body1->position;
 	//逆时针旋转90度
 	r0 = vector2(-r0.y, r0.x);
 	r1 = vector2(-r1.y, r1.x);
@@ -114,21 +114,21 @@ void Connection::simulateTypeRopeLink(bool equalReponse)
 	{
 		if (body0->invMass == 0)
 		{
-			body1->o += (currLenth - len) * d;
+			body1->position += (currLenth - len) * d;
 		}
 		else if (body1->invMass == 0)
 		{
-			body0->o -= (currLenth - len) * d;
+			body0->position -= (currLenth - len) * d;
 		}
 		else
 		{
-			body0->o += (currLenth - len) * d / 2;
-			body1->o -= (currLenth - len) * d / 2;
+			body0->position += (currLenth - len) * d / 2;
+			body1->position -= (currLenth - len) * d / 2;
 		}
 		return;
 	}
-	body0->o += d * (currLenth - len) * body0->invMass / (body0->invMass + body1->invMass);
-	body1->o -= d * (currLenth - len) * body1->invMass / (body0->invMass + body1->invMass);
+	body0->position += d * (currLenth - len) * body0->invMass / (body0->invMass + body1->invMass);
+	body1->position -= d * (currLenth - len) * body1->invMass / (body0->invMass + body1->invMass);
 }
 
 void Connection::simulateTypeCordSpring(double deltaTime)
@@ -137,8 +137,8 @@ void Connection::simulateTypeCordSpring(double deltaTime)
 	if (body0 == body1) { return; }
 	if (body0->invMass == 0 && body1->invMass == 0) { return; }
 
-	vector2 r0 = p0 - body0->o;
-	vector2 r1 = p1 - body1->o;
+	vector2 r0 = p0 - body0->position;
+	vector2 r1 = p1 - body1->position;
 	//逆时针旋转90度
 	r0 = vector2(-r0.y, r0.x);
 	r1 = vector2(-r1.y, r1.x);

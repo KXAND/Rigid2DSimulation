@@ -38,7 +38,7 @@ void SimulationApp::Save(wstring const& nm) const
 {
 	FILE* f = wfopen(nm, L"wb");
 	if (!f) { return; }
-	int sz = 0; fwtv(cmd); save_par(f);
+	int sz = 0; fwtv(scriptText); save_par(f);
 
 	// 可能会保存一些即将被删除的元素，但是也无所谓。
 	sz = bodies.size(); fwt(sz);
@@ -52,8 +52,8 @@ void SimulationApp::Load(wstring const& nm)
 {
 	FILE* f = wfopen(nm, L"rb");
 	if (!f) { return; } Reset();
-	int sz = 0; frdv(cmd);
-	tmp_cmd = cmd; load_par(f);
+	int sz = 0; frdv(scriptText);
+	temporaryScriptText = scriptText; load_par(f);
 
 	frd(sz);
 	rep(i, 0, sz) { bodies.push_back(msh<Body>(*this, f)); }
@@ -61,7 +61,7 @@ void SimulationApp::Load(wstring const& nm)
 	rep(i, 0, sz) { connections.push_back(msh<Connection>(*this, f)); }
 	isSceneChanged = true;
 
-	Execute(curScope, Compile(cmd)); fclose(f);
+	Execute(curScope, Compile(scriptText)); fclose(f);
 }
 void SimulationApp::Reset()
 {

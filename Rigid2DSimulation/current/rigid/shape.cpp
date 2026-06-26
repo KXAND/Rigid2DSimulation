@@ -4,7 +4,7 @@ Shape::Shape(double _r, vector2 _o_rel)
 {
 	isCircle = true;
 	r = _r;
-	oRelative = _o_rel;
+	relativePosition = _o_rel;
 }
 
 Shape::Shape(vector<vector2> const& _verticesRelative)
@@ -16,13 +16,13 @@ Shape::Shape(vector<vector2> const& _verticesRelative)
 void Shape::Save(FILE* f) const
 {
 	int sz = 0;
-	fwt(isCircle); fwt(r); fwt(radian); fwt(oRelative);
+	fwt(isCircle); fwt(r); fwt(radian); fwt(relativePosition);
 	fwtv(verticesRelative);
 }
 Shape::Shape(FILE* f)
 {
 	int sz = 0;
-	frd(isCircle); frd(r); frd(radian); frd(oRelative);
+	frd(isCircle); frd(r); frd(radian); frd(relativePosition);
 	frdv(verticesRelative); vertices.resize(verticesRelative.size());
 }
 
@@ -43,11 +43,11 @@ vector2 Shape::GenerateRandomPointInside() const
 		auto q = verticesRelative[j];
 
 		// 利用二维空矩阵行列式结果等于两个向量（op，oq）构成的平行四边形的面积得
-		randomArea -= matrix2(p - oRelative, q - oRelative).det() / 2;
+		randomArea -= matrix2(p - relativePosition, q - relativePosition).det() / 2;
 
 		// 在第一个令面积为负的区域中随机
 		if (randomArea < 0 || i == vertices.size() - 1)
-			return GenerateRandomPointInTriangle(oRelative, p, q);
+			return GenerateRandomPointInTriangle(relativePosition, p, q);
 
 	}
 	return {};
@@ -56,12 +56,12 @@ vector2 Shape::GenerateRandomPointInside() const
 bool Shape::IsInside(vector2 p) const
 {
 	if (isCircle)
-		return (p - o).lensqr() < r * r;
+		return (p - position).lensqr() < r * r;
 
 	rep(i, 0, vertices.size())
 	{
 		int j = ((long long) i + 1) % vertices.size();
-		if (IsInsideTriangle(p, o, vertices[i], vertices[j]))
+		if (IsInsideTriangle(p, position, vertices[i], vertices[j]))
 			return true;
 	}
 	return false;
@@ -70,7 +70,7 @@ bool Shape::IsInside(vector2 p) const
 aabb Shape::GetBoundingBox() const
 {
 	if (isCircle)
-		return aabb(o.x - r, o.x + r, o.y - r, o.y + r);
+		return aabb(position.x - r, position.x + r, position.y - r, position.y + r);
 
 	aabb box;
 	for (auto v : vertices)

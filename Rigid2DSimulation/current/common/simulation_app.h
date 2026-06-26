@@ -29,7 +29,7 @@ struct SimulationApp : App
 	ptr<Background> background;
 
 	Scope curScope;
-	wstring dbstr, cmd, tmp_cmd;
+	wstring dbstr, scriptText, temporaryScriptText;
 	vector<ptr<SceneParameter>> pars;
 
 	ptr<clip> cl0, cl1;
