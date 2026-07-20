@@ -30,14 +30,14 @@ ClyPar::ClyPar(int id) {
 void ClyPars::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	cs.clear();
-	for (int i = (mbs.size()), iEnd = int(simulationApp.parameters.size()); i < iEnd; ++i) { mbs.push_back(msh<ClyPar>(i)); }
+	for (int i = (mbs.size()), iEnd = int(simulationApp.parameters.size()); i < iEnd; ++i) { mbs.push_back(std::make_shared<ClyPar>(i)); }
 	for (int i = (0), iEnd = int(simulationApp.parameters.size()); i < iEnd; ++i) { cs.push_back(&*mbs[i]); }
 	for (int i = (simulationApp.parameters.size()), iEnd = int(mbs.size()); i < iEnd; ++i) { mbs[i]->Discard(app); }
 	CtrlListY::Update(app);
 }
 
 BtAddPar::BtAddPar() : BtLan(160, L"bt_add_par") {}
-void BtAddPar::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters.push_back(msh<SceneParameter>(simulationApp.getLocalizedString(L"unnamed_par"))); }
+void BtAddPar::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters.push_back(std::make_shared<SceneParameter>(simulationApp.getLocalizedString(L"unnamed_par"))); }
 
 FPnPar::FPnPar(App& app) : FPnLan(app, 400, 600, L"fpn_par") {
 	vector<Control*> tmp;

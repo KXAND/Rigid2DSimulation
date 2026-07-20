@@ -15,9 +15,9 @@ struct BtCompile : BtLan {
 };
 
 struct FPnCmd : FPnLan {
-	ptr<RTbCmd> rtb;
-	ptr<BtCompile> bt_compile;
-	ptr<CtrlListY> cly;
+	std::shared_ptr<RTbCmd> rtb;
+	std::shared_ptr<BtCompile> bt_compile;
+	std::shared_ptr<CtrlListY> cly;
 	FPnCmd(App& app);
 };
 

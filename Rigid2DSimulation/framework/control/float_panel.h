@@ -15,7 +15,7 @@ struct FloatPanel {
 	dRect vp_show_rel;
 
 	bool use_sb = false;
-	ptr<ScrollbarY> sb;
+	std::shared_ptr<ScrollbarY> sb;
 
 	int h_bar = 0;
 	int s_close = 0;

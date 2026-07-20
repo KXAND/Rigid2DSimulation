@@ -95,7 +95,7 @@ void Collision::Simulate(bool equalResponse)
 	body1->position += n * d * body1->invMass / sum;
 }
 
-void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double parallelEpsilon)
+void Collide(Body& b0, Body& b1, vector<std::shared_ptr<Collision>>& out, double parallelEpsilon)
 {
 	// 不可能发生碰撞的情况
 	if (b0.invMass == 0 && b1.invMass == 0) { return; }
@@ -127,7 +127,7 @@ void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double parallelEps
 				FindClosestContactVertex(*shape1, *shape0, collision.c, distanceSquareClosest);
 			}
 
-			out.push_back(msh<Collision>(collision));
+			out.push_back(std::make_shared<Collision>(collision));
 		}
 }
 

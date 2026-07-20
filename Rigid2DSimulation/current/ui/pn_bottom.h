@@ -18,10 +18,10 @@ struct LbMouse : Label {
 };
 
 struct PnBottom : Panel {
-	ptr<LbFPS> lb_fps;
-	ptr<LbTime> lb_time;
-	ptr<LbMouse> lb_mouse;
-	ptr<CtrlListX> clx;
+	std::shared_ptr<LbFPS> lb_fps;
+	std::shared_ptr<LbTime> lb_time;
+	std::shared_ptr<LbMouse> lb_mouse;
+	std::shared_ptr<CtrlListX> clx;
 	PnBottom(App& app);
 };
 

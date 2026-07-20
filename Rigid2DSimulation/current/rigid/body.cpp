@@ -30,11 +30,11 @@ Body::Body(vector2 const& _o) : Body()
 	point = true;
 	position = _o;
 }
-Body::Body(ptr<Shape> sh) : Body()
+Body::Body(std::shared_ptr<Shape> sh) : Body()
 {
 	shapes = { sh };
 }
-Body::Body(vector<ptr<Shape>> const& _shs) : Body()
+Body::Body(vector<std::shared_ptr<Shape>> const& _shs) : Body()
 {
 	shapes = _shs;
 }
@@ -58,7 +58,7 @@ Body::Body(SimulationApp& cur, FILE* f) : Body()
 	frd(sz);
 	for (int i = (0), iEnd = int(sz); i < iEnd; ++i)
 	{
-		shapes.push_back(msh<Shape>(f));
+		shapes.push_back(std::make_shared<Shape>(f));
 	}
 	frd(position); frd(velocity); frdv(scriptText); temporaryScriptText = scriptText;
 	frd(radian); frd(velocityAngular); frd(density);
@@ -86,7 +86,7 @@ bool Body::IsInside(vector2 p) const
 
 void Body::RefreshFromScript(SimulationApp& cur)
 {
-	cur.currentScope[L"body"] = msh<Var>();
+	cur.currentScope[L"body"] = std::make_shared<Var>();
 	Execute(cur.currentScope, Compile(scriptText));
 	if (cur.currentScope.find(L"body") == cur.currentScope.end()) { return; }
 	auto const& body_cfg = *cur.currentScope[L"body"];
@@ -362,9 +362,9 @@ void Body::FollowPresetPosition(SimulationApp& cur, double stepDt)
 	if (!positionProgram) { return; }
 	Scope scope;
 	bool ret = false;
-	scope[L"t"] = msh<Var>(cur.t);
+	scope[L"t"] = std::make_shared<Var>(cur.t);
 	auto positionOld = ToVector2(Execute(ret, cur.currentScope, scope, *positionProgram)->vec);
-	scope.clear(); scope[L"t"] = msh<Var>(cur.t + stepDt); ret = false;
+	scope.clear(); scope[L"t"] = std::make_shared<Var>(cur.t + stepDt); ret = false;
 	auto positionNew = ToVector2(Execute(ret, cur.currentScope, scope, *positionProgram)->vec);
 	auto velocityNew = (positionNew - positionOld) / stepDt;
 
@@ -379,10 +379,10 @@ void Body::FollowPresetAngle(SimulationApp& cur, double stepDt)
 
 	Scope scope;
 	bool ret = false;
-	scope[L"t"] = msh<Var>(cur.t);
+	scope[L"t"] = std::make_shared<Var>(cur.t);
 	auto radianOld = Execute(ret, cur.currentScope, scope, *angleProgram)->num;
 	scope.clear();
-	scope[L"t"] = msh<Var>(cur.t + stepDt);
+	scope[L"t"] = std::make_shared<Var>(cur.t + stepDt);
 	ret = false;
 	auto radianNew = Execute(ret, cur.currentScope, scope, *angleProgram)->num;
 	auto velocityAngularNew = (radianNew - radianOld) / stepDt;
@@ -397,7 +397,7 @@ void Body::FollowPresetAngularVelocity(SimulationApp& cur)
 
 	Scope sc;
 	bool ret = false;
-	sc[L"t"] = msh<Var>(cur.t);
+	sc[L"t"] = std::make_shared<Var>(cur.t);
 	auto velocityAngularNew = Execute(ret, cur.currentScope, sc, *angularVelocityProgram)->num;
 
 	velocityAngular = velocityAngularNew;

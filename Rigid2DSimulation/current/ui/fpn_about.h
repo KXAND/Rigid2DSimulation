@@ -4,8 +4,8 @@
 #include "float_panel.h"
 
 struct FPnAbout : FPnLan {
-	ptr<RLbLan> rtb_about;
-	ptr<CtrlListY> cly;
+	std::shared_ptr<RLbLan> rtb_about;
+	std::shared_ptr<CtrlListY> cly;
 	FPnAbout(App& app);
 };
 

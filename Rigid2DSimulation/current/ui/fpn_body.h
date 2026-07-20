@@ -35,12 +35,12 @@ struct CbBodyCon : CbLan {
 	void Upload(App& app) const override;
 };
 struct ClXBodyCon : CtrlListX {
-	ptr<LbBodyCon> lb;
-	ptr<CbBodyCon> cb;
+	std::shared_ptr<LbBodyCon> lb;
+	std::shared_ptr<CbBodyCon> cb;
 	ClXBodyCon(int id);
 };
 struct ClYBodyCons : CtrlListY {
-	vector<ptr<ClXBodyCon>> mbs;
+	vector<std::shared_ptr<ClXBodyCon>> mbs;
 	void Update(App& app) override;
 };
 
@@ -52,21 +52,21 @@ struct RLbBody : RichLabel {
 // 其实 Panel 的 set_c 方法也没啥价值了吧。
 struct ClyBody : CtrlListY {
 	Body* bo = NULL;
-	ptr<ClYBodyCons> cly_cons;
-	ptr<RTbBody> rtb;
-	ptr<BtBodyOK> bt_ok;
-	ptr<BtBodyDel> bt_del;
-	ptr<CtrlListX> clx_bt;
-	ptr<SeparatorY> spy;
+	std::shared_ptr<ClYBodyCons> cly_cons;
+	std::shared_ptr<RTbBody> rtb;
+	std::shared_ptr<BtBodyOK> bt_ok;
+	std::shared_ptr<BtBodyDel> bt_del;
+	std::shared_ptr<CtrlListX> clx_bt;
+	std::shared_ptr<SeparatorY> spy;
 	ClyBody();
 	void Update(App& app) override;
 	void Discard(App& app) override;
 };
 
 struct FPnBody : FPnLan {
-	ptr<ClyBody> cly_body;
-	ptr<RLbBody> rlb_body;
-	ptr<CtrlListY> cly;
+	std::shared_ptr<ClyBody> cly_body;
+	std::shared_ptr<RLbBody> rlb_body;
+	std::shared_ptr<CtrlListY> cly;
 	FPnBody(App& app);
 };
 

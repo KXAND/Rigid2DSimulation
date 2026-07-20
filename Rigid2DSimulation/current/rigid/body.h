@@ -17,13 +17,13 @@ struct Body
 	bool isMarkedForDeletion = false;
 	bool point = false;
 	bool fixed = false;
-	ptr<Program> positionProgram, angleProgram, angularVelocityProgram;
+	std::shared_ptr<Program> positionProgram, angleProgram, angularVelocityProgram;
 	double inertia = 0;
 	bool hasPositionPreset = false;
 	bool hasAnglePreset = false;
 	bool hasAngularVelocityPreset = false;
 	vector<vector2> track;
-	vector<ptr<Shape>> shapes;
+	vector<std::shared_ptr<Shape>> shapes;
 	vector<Connection*> connections;
 	vector2 position, velocity;
 	aabb box;
@@ -55,8 +55,8 @@ struct Body
 
 	Body();
 	Body(vector2 const& _o);
-	Body(ptr<Shape> sh);
-	Body(vector<ptr<Shape>> const& _shs);
+	Body(std::shared_ptr<Shape> sh);
+	Body(vector<std::shared_ptr<Shape>> const& _shs);
 	Body(SimulationApp& cur, FILE* f);
 	void Save(FILE* f) const;
 

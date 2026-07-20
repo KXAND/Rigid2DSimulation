@@ -25,14 +25,14 @@ struct clip;
 struct SceneParameter;
 struct SimulationApp : App
 {
-	ptr<UI> ui;
-	ptr<Background> background;
+	std::shared_ptr<UI> ui;
+	std::shared_ptr<Background> background;
 
 	Scope currentScope;
 	wstring debugString, scriptText, temporaryScriptText;
-	vector<ptr<SceneParameter>> parameters;
+	vector<std::shared_ptr<SceneParameter>> parameters;
 
-	ptr<clip> musicClip0, musicClip1;
+	std::shared_ptr<clip> musicClip0, musicClip1;
 	clip* currentMusicClip = NULL;
 	double vol = 0;
 
@@ -51,13 +51,13 @@ struct SimulationApp : App
 	double realDeltaTime = 0, t = 0;
 	int stepNum = 0;
 	dRect rectScene;
-	ptr<Creator> creator;
+	std::shared_ptr<Creator> creator;
 	Body* bodySelecting = NULL;
 	Connection* connectionSelecting = NULL;
-	vector<ptr<Body>> bodies;
-	vector<ptr<Group>> groups;
-	vector<ptr<Collision>> collisions;
-	vector<ptr<Connection>> connections;
+	vector<std::shared_ptr<Body>> bodies;
+	vector<std::shared_ptr<Group>> groups;
+	vector<std::shared_ptr<Collision>> collisions;
+	vector<std::shared_ptr<Connection>> connections;
 
 	double parallelEpsilon = 0;
 	bool useEqualPositionCorrection = false;

@@ -9,7 +9,7 @@
 Var::Var(double num) : num(num) { typ = L"num"; }
 Var::Var(wstring const& str) : str(str) { typ = L"str"; }
 Var::Var(decltype(fun) const& user) : fun(user) { typ = L"user"; }
-Var::Var(vector<ptr<Var>> const& vec) : vec(vec) { typ = L"vec"; }
+Var::Var(vector<std::shared_ptr<Var>> const& vec) : vec(vec) { typ = L"vec"; }
 Var::Var(Program const& ps, vector<wstring>const& pars) :
 	procs(ps), pars(pars)
 {
@@ -34,16 +34,16 @@ vector3 ToVector3(Var const& v)
 	return out;
 }
 
-ptr<Var> FindVariable(Scope& gl, Scope& sc, wstring nm, bool isgl)
+std::shared_ptr<Var> FindVariable(Scope& gl, Scope& sc, wstring nm, bool isgl)
 {
 	if (isgl)
 	{
-		if (gl.find(nm) == gl.end()) { gl[nm] = msh<Var>(); }
+		if (gl.find(nm) == gl.end()) { gl[nm] = std::make_shared<Var>(); }
 		return gl[nm];
 	}
 	else
 	{
-		if (sc.find(nm) == sc.end()) { sc[nm] = msh<Var>(); }
+		if (sc.find(nm) == sc.end()) { sc[nm] = std::make_shared<Var>(); }
 		return sc[nm];
 	}
 }
@@ -80,17 +80,17 @@ bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpr const& ex, Var&
 	return false;
 }
 
-ptr<Var> EvaluateCall(Scope& gl, Scope& sc, ScriptExpr const& ex)
+std::shared_ptr<Var> EvaluateCall(Scope& gl, Scope& sc, ScriptExpr const& ex)
 {
 	Var tmp;
 	Scope getLocalizedString;
-	if (TryEvaluateDefaultFunction(gl, sc, ex, tmp)) { return msh<Var>(tmp); }
+	if (TryEvaluateDefaultFunction(gl, sc, ex, tmp)) { return std::make_shared<Var>(tmp); }
 
 	// 下面必须是值复制，这是为了避免函数自己被抹去。
 	auto fun = FindVariable(gl, sc, ex.fun, ex.global);
 	if (fun->typ == L"user" && fun->fun)
 	{
-		vector<ptr<Var>> tmp;
+		vector<std::shared_ptr<Var>> tmp;
 		for (auto const& p : ex.pars)
 		{
 			tmp.push_back(Evaluate(gl, sc, p));
@@ -105,9 +105,9 @@ ptr<Var> EvaluateCall(Scope& gl, Scope& sc, ScriptExpr const& ex)
 	bool ret = false;
 	return Execute(ret, gl, getLocalizedString, fun->procs);
 }
-ptr<Var> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex)
+std::shared_ptr<Var> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex)
 {
-	if (!ex.getLocalizedString || !ex.ind) { return msh<Var>(); }
+	if (!ex.getLocalizedString || !ex.ind) { return std::make_shared<Var>(); }
 	auto getLocalizedString = Evaluate(gl, sc, *ex.getLocalizedString);
 	auto ind = Evaluate(gl, sc, *ex.ind);
 
@@ -119,7 +119,7 @@ ptr<Var> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex)
 		}
 		for (int i = (getLocalizedString->vec.size() - 1), iEnd = int(ind->num); i < iEnd; ++i)
 		{
-			getLocalizedString->vec.push_back(msh<Var>());
+			getLocalizedString->vec.push_back(std::make_shared<Var>());
 		}
 		return getLocalizedString->vec[ind->num];
 	}
@@ -132,37 +132,37 @@ ptr<Var> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex)
 		}
 		if (getLocalizedString->dic.find(ind->str) == getLocalizedString->dic.end())
 		{
-			getLocalizedString->dic[ind->str] = msh<Var>();
+			getLocalizedString->dic[ind->str] = std::make_shared<Var>();
 		}
 		return getLocalizedString->dic[ind->str];
 	}
 
-	return msh<Var>();
+	return std::make_shared<Var>();
 }
-ptr<Var> Evaluate(Scope& gl, Scope& sc, ScriptExpr const& ex)
+std::shared_ptr<Var> Evaluate(Scope& gl, Scope& sc, ScriptExpr const& ex)
 {
 	if (ex.typ == L"call") { return EvaluateCall(gl, sc, ex); }
 	else if (ex.typ == L"var")
 	{
-		if (ex.var == L"PI") { return msh<Var>(PI); }
+		if (ex.var == L"PI") { return std::make_shared<Var>(PI); }
 		return FindVariable(gl, sc, ex.var, ex.global);
 	}
-	else if (ex.typ == L"num") { return msh<Var>(ex.num); }
-	else if (ex.typ == L"str") { return msh<Var>(ex.str); }
+	else if (ex.typ == L"num") { return std::make_shared<Var>(ex.num); }
+	else if (ex.typ == L"str") { return std::make_shared<Var>(ex.str); }
 	else if (ex.typ == L"vec")
 	{
-		vector<ptr<Var>> tmp;
+		vector<std::shared_ptr<Var>> tmp;
 		for (auto const& e : ex.vec)
 		{
-			tmp.push_back(msh<Var>(*Evaluate(gl, sc, e)));
+			tmp.push_back(std::make_shared<Var>(*Evaluate(gl, sc, e)));
 		}
-		return msh<Var>(tmp);
+		return std::make_shared<Var>(tmp);
 	}
 	else if (ex.typ == L"access") { return EvaluateAccess(gl, sc, ex); }
-	return msh<Var>();
+	return std::make_shared<Var>();
 }
 
-ptr<Var> Execute(bool& ret, Scope& gl, Scope& sc, Program const& ps)
+std::shared_ptr<Var> Execute(bool& ret, Scope& gl, Scope& sc, Program const& ps)
 {
 	for (auto const& p : ps)
 	{
@@ -188,9 +188,9 @@ ptr<Var> Execute(bool& ret, Scope& gl, Scope& sc, Program const& ps)
 			}
 		}
 	}
-	return msh<Var>();
+	return std::make_shared<Var>();
 }
-ptr<Var> Execute(Scope& gl, Program const& ps)
+std::shared_ptr<Var> Execute(Scope& gl, Program const& ps)
 {
 	bool ret = false;
 	return Execute(ret, gl, gl, ps);

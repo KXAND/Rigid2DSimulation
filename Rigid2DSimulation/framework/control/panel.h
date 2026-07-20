@@ -16,7 +16,7 @@ struct Panel {
 
 	bool use_sb = false;
 	// 我也不清楚为啥要用指针。有点惯性的感觉了。
-	ptr<ScrollbarY> sb;
+	std::shared_ptr<ScrollbarY> sb;
 
 	int h_show = 0;
 	bool full = false;

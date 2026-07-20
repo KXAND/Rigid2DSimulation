@@ -24,7 +24,7 @@ struct app_wv {
 	int n_play = 0;
 	vector<double> wvin;
 	// 实践发现下面用指针是必要的, 否则涉及到复制会有错误，可能跟 winapi 有关。
-	deque<ptr<wvblk>> wvblks;
+	deque<std::shared_ptr<wvblk>> wvblks;
 
 	app_wv();
 	int len_block_n() const;

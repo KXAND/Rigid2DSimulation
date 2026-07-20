@@ -29,19 +29,19 @@ struct BtDisplay : Button {
 };
 
 struct PnMenu : Panel {
-	ptr<BtPause> bt_pause;
-	ptr<BtReset> bt_reset;
-	ptr<BtMute> bt_mute;
-	ptr<BtFPn> bt_global;
-	ptr<BtFPn> bt_body;
-	ptr<BtFPn> bt_con;
-	ptr<BtMode> bt_mode;
-	ptr<BtDisplay> bt_display;
-	ptr<BtFPn> bt_cmd;
-	ptr<BtFPn> bt_par;
-	ptr<BtFPn> bt_lang;
-	ptr<BtFPn> bt_about;
-	ptr<CtrlListY> cly;
+	std::shared_ptr<BtPause> bt_pause;
+	std::shared_ptr<BtReset> bt_reset;
+	std::shared_ptr<BtMute> bt_mute;
+	std::shared_ptr<BtFPn> bt_global;
+	std::shared_ptr<BtFPn> bt_body;
+	std::shared_ptr<BtFPn> bt_con;
+	std::shared_ptr<BtMode> bt_mode;
+	std::shared_ptr<BtDisplay> bt_display;
+	std::shared_ptr<BtFPn> bt_cmd;
+	std::shared_ptr<BtFPn> bt_par;
+	std::shared_ptr<BtFPn> bt_lang;
+	std::shared_ptr<BtFPn> bt_about;
+	std::shared_ptr<CtrlListY> cly;
 	PnMenu(App& app);
 };
 

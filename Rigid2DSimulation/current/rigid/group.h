@@ -23,6 +23,6 @@ void findBodiesInGroup(vector<Body*>& out, Body* b);
 /// </summary>
 /// <param name="bodies"></param>
 /// <returns></returns>
-vector<ptr<Group>> FormGroups(vector<ptr<Body>> const& bodies);
+vector<std::shared_ptr<Group>> FormGroups(vector<std::shared_ptr<Body>> const& bodies);
 
 

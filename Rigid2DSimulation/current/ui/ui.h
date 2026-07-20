@@ -14,15 +14,15 @@ struct PnMenu;
 struct PnBottom;
 struct UI {
 	vector<FloatPanel*> fpns;
-	ptr<FPnGlobal> fpn_global;
-	ptr<FPnBody> fpn_body;
-	ptr<FPnCon> fpn_con;
-	ptr<FPnCmd> fpn_cmd;
-	ptr<FPnPar> fpn_par;
-	ptr<FPnLang> fpn_lang;
-	ptr<FPnAbout> fpn_about;
-	ptr<PnMenu> pn_menu;
-	ptr<PnBottom> pn_bottom;
+	std::shared_ptr<FPnGlobal> fpn_global;
+	std::shared_ptr<FPnBody> fpn_body;
+	std::shared_ptr<FPnCon> fpn_con;
+	std::shared_ptr<FPnCmd> fpn_cmd;
+	std::shared_ptr<FPnPar> fpn_par;
+	std::shared_ptr<FPnLang> fpn_lang;
+	std::shared_ptr<FPnAbout> fpn_about;
+	std::shared_ptr<PnMenu> pn_menu;
+	std::shared_ptr<PnBottom> pn_bottom;
 
 	UI(SimulationApp& cur) {};
 	void SortFloatPanels();

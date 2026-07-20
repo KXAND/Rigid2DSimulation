@@ -20,15 +20,15 @@ struct RLbGlobal : RichLabel {
 };
 
 struct FPnGlobal : FPnLan {
-	ptr<Textbox> tb_save;
-	ptr<BtSave> bt_save;
-	ptr<CtrlListX> clx_save;
-	ptr<Textbox> tb_load;
-	ptr<BtLoad> bt_load;
-	ptr<CtrlListX> clx_load;
-	ptr<SeparatorY> spy;
-	ptr<RLbGlobal> rlb_global;
-	ptr<CtrlListY> cly;
+	std::shared_ptr<Textbox> tb_save;
+	std::shared_ptr<BtSave> bt_save;
+	std::shared_ptr<CtrlListX> clx_save;
+	std::shared_ptr<Textbox> tb_load;
+	std::shared_ptr<BtLoad> bt_load;
+	std::shared_ptr<CtrlListX> clx_load;
+	std::shared_ptr<SeparatorY> spy;
+	std::shared_ptr<RLbGlobal> rlb_global;
+	std::shared_ptr<CtrlListY> cly;
 	FPnGlobal(App& app);
 };
 

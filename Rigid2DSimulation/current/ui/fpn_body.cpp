@@ -46,7 +46,7 @@ void ClYBodyCons::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto& selectedBody = *simulationApp.bodySelecting;
 	for (int i = (mbs.size()), iEnd = int(selectedBody.connections.size()); i < iEnd; ++i) {
-		mbs.push_back(msh<ClXBodyCon>(i));
+		mbs.push_back(std::make_shared<ClXBodyCon>(i));
 	}
 	cs.clear();
 	for (int i = (0), iEnd = int(selectedBody.connections.size()); i < iEnd; ++i) {

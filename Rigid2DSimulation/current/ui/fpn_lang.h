@@ -13,9 +13,9 @@ struct BtEng : Button {
 };
 
 struct FPnLang : FPnLan {
-	ptr<BtChi> bt_chi;
-	ptr<BtEng> bt_eng;
-	ptr<CtrlListY> cly;
+	std::shared_ptr<BtChi> bt_chi;
+	std::shared_ptr<BtEng> bt_eng;
+	std::shared_ptr<CtrlListY> cly;
 	FPnLang(App& app);
 };
 

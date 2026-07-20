@@ -20,9 +20,9 @@ void Connection::Save(SimulationApp const& cur, FILE* f) const
 {
 	int sz = 0;
 	fwt(type); fwtv(scriptText);
-	auto pred0 = [this](ptr<Body> b) { return &*b == body0; };
+	auto pred0 = [this](std::shared_ptr<Body> b) { return &*b == body0; };
 	int ind0 = find_if(cur.bodies.begin(), cur.bodies.end(), pred0) - cur.bodies.begin();
-	auto pred1 = [this](ptr<Body> b) { return &*b == body1; };
+	auto pred1 = [this](std::shared_ptr<Body> b) { return &*b == body1; };
 	int ind1 = find_if(cur.bodies.begin(), cur.bodies.end(), pred1) - cur.bodies.begin();
 	fwt(ind0); fwt(ind1);
 	fwt(p0Relative); fwt(p1Relative); fwt(len); fwt(hooke);
@@ -69,7 +69,7 @@ void Connection::UpdatePosition()
 
 void Connection::RefreshFromScript(SimulationApp& cur)
 {
-	cur.currentScope[L"conn"] = msh<Var>();
+	cur.currentScope[L"conn"] = std::make_shared<Var>();
 	Execute(cur.currentScope, Compile(scriptText));
 	if (cur.currentScope.find(L"conn") == cur.currentScope.end()) { return; }
 	ReadCfg(*cur.currentScope[L"conn"]);

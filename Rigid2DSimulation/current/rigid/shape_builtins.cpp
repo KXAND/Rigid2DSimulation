@@ -13,86 +13,86 @@ shared_ptr<Var> Ball(Var const& r)
 }
 shared_ptr<Var> Box(Var const& w, Var const& h)
 {
-	vector<ptr<Var>> vs;
-	vector<ptr<Var>> v;
-	v.push_back(msh<Var>(0));
-	vector<ptr<Var>> tmp;
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(+w.num / 2), msh<Var>(+h.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(-w.num / 2), msh<Var>(+h.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(-w.num / 2), msh<Var>(-h.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(+w.num / 2), msh<Var>(-h.num / 2) }));
-	v.push_back(msh<Var>(tmp));
-	vs.push_back(msh<Var>(v));
-	return msh<Var>(vs);
+	vector<std::shared_ptr<Var>> vs;
+	vector<std::shared_ptr<Var>> v;
+	v.push_back(std::make_shared<Var>(0));
+	vector<std::shared_ptr<Var>> tmp;
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(+w.num / 2), std::make_shared<Var>(+h.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(-w.num / 2), std::make_shared<Var>(+h.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(-w.num / 2), std::make_shared<Var>(-h.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(+w.num / 2), std::make_shared<Var>(-h.num / 2) }));
+	v.push_back(std::make_shared<Var>(tmp));
+	vs.push_back(std::make_shared<Var>(v));
+	return std::make_shared<Var>(vs);
 }
-ptr<Var> RegularPoly(Var const& n, Var const& r)
+std::shared_ptr<Var> RegularPoly(Var const& n, Var const& r)
 {
-	vector<ptr<Var>> vs;
-	vector<ptr<Var>> v;
-	v.push_back(msh<Var>(0));
-	vector<ptr<Var>> tmp;
+	vector<std::shared_ptr<Var>> vs;
+	vector<std::shared_ptr<Var>> v;
+	v.push_back(std::make_shared<Var>(0));
+	vector<std::shared_ptr<Var>> tmp;
 	auto m = max(3, (int)n.num);
 	for (int i = (0), iEnd = int(m); i < iEnd; ++i)
 	{
 		double phi = 2 * PI * i / m;
-		tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(r.num * cos(phi)), msh<Var>(r.num * sin(phi)) }));
+		tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(r.num * cos(phi)), std::make_shared<Var>(r.num * sin(phi)) }));
 	}
-	v.push_back(msh<Var>(tmp));
-	vs.push_back(msh<Var>(v));
-	return msh<Var>(vs);
+	v.push_back(std::make_shared<Var>(tmp));
+	vs.push_back(std::make_shared<Var>(v));
+	return std::make_shared<Var>(vs);
 }
-ptr<Var> Parallelogram(Var const& w, Var const& h, Var const& s)
+std::shared_ptr<Var> Parallelogram(Var const& w, Var const& h, Var const& s)
 {
-	vector<ptr<Var>> vs;
-	vector<ptr<Var>> v;
-	v.push_back(msh<Var>(0));
-	vector<ptr<Var>> tmp;
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(+w.num / 2 + s.num), msh<Var>(+h.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(-w.num / 2 + s.num), msh<Var>(+h.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(-w.num / 2 - s.num), msh<Var>(-h.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(+w.num / 2 - s.num), msh<Var>(-h.num / 2) }));
-	v.push_back(msh<Var>(tmp));
-	vs.push_back(msh<Var>(v));
-	return msh<Var>(vs);
+	vector<std::shared_ptr<Var>> vs;
+	vector<std::shared_ptr<Var>> v;
+	v.push_back(std::make_shared<Var>(0));
+	vector<std::shared_ptr<Var>> tmp;
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(+w.num / 2 + s.num), std::make_shared<Var>(+h.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(-w.num / 2 + s.num), std::make_shared<Var>(+h.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(-w.num / 2 - s.num), std::make_shared<Var>(-h.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(+w.num / 2 - s.num), std::make_shared<Var>(-h.num / 2) }));
+	v.push_back(std::make_shared<Var>(tmp));
+	vs.push_back(std::make_shared<Var>(v));
+	return std::make_shared<Var>(vs);
 }
-ptr<Var> Trapezoid(Var const& t, Var const& b, Var const& h)
+std::shared_ptr<Var> Trapezoid(Var const& t, Var const& b, Var const& h)
 {
-	vector<ptr<Var>> vs;
-	vector<ptr<Var>> v;
-	v.push_back(msh<Var>(0));
-	vector<ptr<Var>> tmp;
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(+t.num / 2), msh<Var>(+h.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(-t.num / 2), msh<Var>(+h.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(-b.num / 2), msh<Var>(-h.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(+b.num / 2), msh<Var>(-h.num / 2) }));
-	v.push_back(msh<Var>(tmp));
-	vs.push_back(msh<Var>(v));
-	return msh<Var>(vs);
+	vector<std::shared_ptr<Var>> vs;
+	vector<std::shared_ptr<Var>> v;
+	v.push_back(std::make_shared<Var>(0));
+	vector<std::shared_ptr<Var>> tmp;
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(+t.num / 2), std::make_shared<Var>(+h.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(-t.num / 2), std::make_shared<Var>(+h.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(-b.num / 2), std::make_shared<Var>(-h.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(+b.num / 2), std::make_shared<Var>(-h.num / 2) }));
+	v.push_back(std::make_shared<Var>(tmp));
+	vs.push_back(std::make_shared<Var>(v));
+	return std::make_shared<Var>(vs);
 }
-ptr<Var> Cross(Var const& s, Var const& thk)
+std::shared_ptr<Var> Cross(Var const& s, Var const& thk)
 {
-	vector<ptr<Var>> vs;
-	vector<ptr<Var>> v;
-	v.push_back(msh<Var>(0));
-	vector<ptr<Var>> tmp;
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(+s.num / 2), msh<Var>(+thk.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(-s.num / 2), msh<Var>(+thk.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(-s.num / 2), msh<Var>(-thk.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(+s.num / 2), msh<Var>(-thk.num / 2) }));
-	v.push_back(msh<Var>(tmp));
-	vs.push_back(msh<Var>(v));
+	vector<std::shared_ptr<Var>> vs;
+	vector<std::shared_ptr<Var>> v;
+	v.push_back(std::make_shared<Var>(0));
+	vector<std::shared_ptr<Var>> tmp;
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(+s.num / 2), std::make_shared<Var>(+thk.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(-s.num / 2), std::make_shared<Var>(+thk.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(-s.num / 2), std::make_shared<Var>(-thk.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(+s.num / 2), std::make_shared<Var>(-thk.num / 2) }));
+	v.push_back(std::make_shared<Var>(tmp));
+	vs.push_back(std::make_shared<Var>(v));
 	v.clear();
-	v.push_back(msh<Var>(0));
+	v.push_back(std::make_shared<Var>(0));
 	tmp.clear();
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(+thk.num / 2), msh<Var>(+s.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(-thk.num / 2), msh<Var>(+s.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(-thk.num / 2), msh<Var>(-s.num / 2) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(+thk.num / 2), msh<Var>(-s.num / 2) }));
-	v.push_back(msh<Var>(tmp));
-	vs.push_back(msh<Var>(v));
-	return msh<Var>(vs);
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(+thk.num / 2), std::make_shared<Var>(+s.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(-thk.num / 2), std::make_shared<Var>(+s.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(-thk.num / 2), std::make_shared<Var>(-s.num / 2) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(+thk.num / 2), std::make_shared<Var>(-s.num / 2) }));
+	v.push_back(std::make_shared<Var>(tmp));
+	vs.push_back(std::make_shared<Var>(v));
+	return std::make_shared<Var>(vs);
 }
-ptr<Var> FramedBox(Var const& w, Var const& h, Var const& thk)
+std::shared_ptr<Var> FramedBox(Var const& w, Var const& h, Var const& thk)
 {
 	vector2 a0(+w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
 	vector2 a1(-w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
@@ -110,42 +110,42 @@ ptr<Var> FramedBox(Var const& w, Var const& h, Var const& thk)
 	vector2 d1(-w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
 	vector2 d2(-w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
 	vector2 d3(-w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
-	vector<ptr<Var>> vs;
-	vector<ptr<Var>> v;
-	v.push_back(msh<Var>(0));
-	vector<ptr<Var>> tmp;
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(a0.x), msh<Var>(a0.y) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(a1.x), msh<Var>(a1.y) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(a2.x), msh<Var>(a2.y) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(a3.x), msh<Var>(a3.y) }));
-	v.push_back(msh<Var>(tmp));
-	vs.push_back(msh<Var>(v));
+	vector<std::shared_ptr<Var>> vs;
+	vector<std::shared_ptr<Var>> v;
+	v.push_back(std::make_shared<Var>(0));
+	vector<std::shared_ptr<Var>> tmp;
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(a0.x), std::make_shared<Var>(a0.y) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(a1.x), std::make_shared<Var>(a1.y) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(a2.x), std::make_shared<Var>(a2.y) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(a3.x), std::make_shared<Var>(a3.y) }));
+	v.push_back(std::make_shared<Var>(tmp));
+	vs.push_back(std::make_shared<Var>(v));
 	v.clear();
-	v.push_back(msh<Var>(0));
+	v.push_back(std::make_shared<Var>(0));
 	tmp.clear();
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(b0.x), msh<Var>(b0.y) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(b1.x), msh<Var>(b1.y) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(b2.x), msh<Var>(b2.y) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(b3.x), msh<Var>(b3.y) }));
-	v.push_back(msh<Var>(tmp));
-	vs.push_back(msh<Var>(v));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(b0.x), std::make_shared<Var>(b0.y) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(b1.x), std::make_shared<Var>(b1.y) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(b2.x), std::make_shared<Var>(b2.y) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(b3.x), std::make_shared<Var>(b3.y) }));
+	v.push_back(std::make_shared<Var>(tmp));
+	vs.push_back(std::make_shared<Var>(v));
 	v.clear();
-	v.push_back(msh<Var>(0));
+	v.push_back(std::make_shared<Var>(0));
 	tmp.clear();
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(c3.x), msh<Var>(c3.y) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(c2.x), msh<Var>(c2.y) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(c1.x), msh<Var>(c1.y) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(c0.x), msh<Var>(c0.y) }));
-	v.push_back(msh<Var>(tmp));
-	vs.push_back(msh<Var>(v));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(c3.x), std::make_shared<Var>(c3.y) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(c2.x), std::make_shared<Var>(c2.y) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(c1.x), std::make_shared<Var>(c1.y) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(c0.x), std::make_shared<Var>(c0.y) }));
+	v.push_back(std::make_shared<Var>(tmp));
+	vs.push_back(std::make_shared<Var>(v));
 	v.clear();
-	v.push_back(msh<Var>(0));
+	v.push_back(std::make_shared<Var>(0));
 	tmp.clear();
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(d3.x), msh<Var>(d3.y) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(d2.x), msh<Var>(d2.y) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(d1.x), msh<Var>(d1.y) }));
-	tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(d0.x), msh<Var>(d0.y) }));
-	v.push_back(msh<Var>(tmp));
-	vs.push_back(msh<Var>(v));
-	return msh<Var>(vs);
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(d3.x), std::make_shared<Var>(d3.y) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(d2.x), std::make_shared<Var>(d2.y) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(d1.x), std::make_shared<Var>(d1.y) }));
+	tmp.push_back(std::make_shared<Var>(vector<std::shared_ptr<Var>>{ std::make_shared<Var>(d0.x), std::make_shared<Var>(d0.y) }));
+	v.push_back(std::make_shared<Var>(tmp));
+	vs.push_back(std::make_shared<Var>(v));
+	return std::make_shared<Var>(vs);
 }

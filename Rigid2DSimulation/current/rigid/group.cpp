@@ -47,9 +47,9 @@ void findBodiesInGroup(vector<Body*>& out, Body* body)
 		}
 	}
 }
-vector<ptr<Group>> FormGroups(vector<ptr<Body>> const& bodies)
+vector<std::shared_ptr<Group>> FormGroups(vector<std::shared_ptr<Body>> const& bodies)
 {
-	vector<ptr<Group>> out;
+	vector<std::shared_ptr<Group>> out;
 	vector<Body*> connectedBodies;
 	for (auto& b : bodies) { b->visited = false; }
 	for (auto& b : bodies)
@@ -58,7 +58,7 @@ vector<ptr<Group>> FormGroups(vector<ptr<Body>> const& bodies)
 		{
 			connectedBodies.clear();
 			findBodiesInGroup(connectedBodies, &*b);
-			out.push_back(msh<Group>(connectedBodies));
+			out.push_back(std::make_shared<Group>(connectedBodies));
 		}
 	}
 	return out;

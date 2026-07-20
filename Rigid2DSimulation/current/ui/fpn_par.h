@@ -31,17 +31,17 @@ struct TbParVal : Textbox {
 };
 
 struct ClyPar : CtrlListY {
-	ptr<TbParNm> tb_nm;
-	ptr<BtDelPar> bt_del;
-	ptr<CtrlListX> clx_nm;
-	ptr<DbXParVal> dbx_val;
-	ptr<TbParVal> tb_val;
-	ptr<CtrlListX> clx_val;
-	ptr<SeparatorY> spy;
+	std::shared_ptr<TbParNm> tb_nm;
+	std::shared_ptr<BtDelPar> bt_del;
+	std::shared_ptr<CtrlListX> clx_nm;
+	std::shared_ptr<DbXParVal> dbx_val;
+	std::shared_ptr<TbParVal> tb_val;
+	std::shared_ptr<CtrlListX> clx_val;
+	std::shared_ptr<SeparatorY> spy;
 	ClyPar(int id);
 };
 struct ClyPars : CtrlListY {
-	vector<ptr<ClyPar>> mbs;
+	vector<std::shared_ptr<ClyPar>> mbs;
 	void Update(App& app) override;
 };
 struct BtAddPar : BtLan {
@@ -50,9 +50,9 @@ struct BtAddPar : BtLan {
 };
 
 struct FPnPar : FPnLan {
-	ptr<ClyPars> cly_pars;
-	ptr<BtAddPar> bt_add_par;
-	ptr<CtrlListY> cly;
+	std::shared_ptr<ClyPars> cly_pars;
+	std::shared_ptr<BtAddPar> bt_add_par;
+	std::shared_ptr<CtrlListY> cly;
 	FPnPar(App& app);
 };
 

@@ -59,7 +59,7 @@ void Creator::UpdateBox(SimulationApp& cur)
 		double min_wh = 10;
 		if (x1 - x0 >= min_wh && y1 - y0 >= min_wh)
 		{
-			mkp(body)(msh<Shape>(GetRectVerticesByCenter(x1 - x0, y1 - y0)));
+			mkp(body)(std::make_shared<Shape>(GetRectVerticesByCenter(x1 - x0, y1 - y0)));
 			body->position = vector2(x0 + x1, y0 + y1) / 2;
 			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
@@ -92,7 +92,7 @@ void Creator::UpdateBall(SimulationApp& cur)
 		double min_r = 7.5;
 		if (r > min_r)
 		{
-			mkp(body)(msh<Shape>(r));
+			mkp(body)(std::make_shared<Shape>(r));
 			body->position = vector2(creationStartPoint);
 			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
@@ -127,7 +127,7 @@ void Creator::UpdatePlate(SimulationApp& cur)
 		double len = sqrt(v.lensqr());
 		if (len > min_len)
 		{
-			mkp(body)(msh<Shape>(GetRectVerticesByCenter(len + thk, thk)));
+			mkp(body)(std::make_shared<Shape>(GetRectVerticesByCenter(len + thk, thk)));
 			body->position = vector2(creationStartPoint + cur.input.msp) / 2;
 			body->radian = atan2(v.y, v.x);
 			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
@@ -222,7 +222,7 @@ void Creator::UpdateParticle(SimulationApp& cur)
 {
 	if (hovered && cur.input.isMouseClickedDown(0))
 	{
-		mkp(body)(msh<Shape>(rad));
+		mkp(body)(std::make_shared<Shape>(rad));
 		body->position = (vector2) cur.input.msp;
 		body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 		if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }

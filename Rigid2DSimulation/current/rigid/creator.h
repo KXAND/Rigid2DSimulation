@@ -23,11 +23,11 @@ struct Creator
 	dVector2 creationStartPoint;
 	Body* body0 = NULL;
 	Body* body1 = NULL;
-	ptr<Var> bodyConfiguration, connectionConfiguration;
+	std::shared_ptr<Var> bodyConfiguration, connectionConfiguration;
 	vector2 p0Relative, p1Relative;
 
-	ptr<Body> body;
-	ptr<Connection> connection;
+	std::shared_ptr<Body> body;
+	std::shared_ptr<Connection> connection;
 	bool active = false;
 	bool hovered = false;
 

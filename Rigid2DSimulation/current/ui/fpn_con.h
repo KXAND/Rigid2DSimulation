@@ -23,11 +23,11 @@ struct BtConDel : BtLan {
 
 struct ClyCon : CtrlListY {
 	Connection* con = NULL;
-	ptr<RTbCon> rtb;
-	ptr<BtConOK> bt_ok;
-	ptr<BtConDel> bt_del;
-	ptr<CtrlListX> clx_bt;
-	ptr<SeparatorY> spy;
+	std::shared_ptr<RTbCon> rtb;
+	std::shared_ptr<BtConOK> bt_ok;
+	std::shared_ptr<BtConDel> bt_del;
+	std::shared_ptr<CtrlListX> clx_bt;
+	std::shared_ptr<SeparatorY> spy;
 	ClyCon();
 	void Update(App& app) override;
 	void Discard(App& app) override;
@@ -38,9 +38,9 @@ struct RLbCon : RichLabel {
 };
 
 struct FPnCon : FPnLan {
-	ptr<ClyCon> cly_con;
-	ptr<RLbCon> rlb_con;
-	ptr<CtrlListY> cly;
+	std::shared_ptr<ClyCon> cly_con;
+	std::shared_ptr<RLbCon> rlb_con;
+	std::shared_ptr<CtrlListY> cly;
 	FPnCon(App& app);
 };
 

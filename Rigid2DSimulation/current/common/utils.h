@@ -1,10 +1,10 @@
 #pragma once
 #include "var.h"
 
-inline ptr<Var> FindConfigValue(Var const& cfg, wchar_t const* key)
+inline std::shared_ptr<Var> FindConfigValue(Var const& cfg, wchar_t const* key)
 {
 	auto it = cfg.dic.find(key);
-	return it == cfg.dic.end() ? ptr<Var>() : it->second;
+	return it == cfg.dic.end() ? std::shared_ptr<Var>() : it->second;
 }
 
 template<class T>

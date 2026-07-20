@@ -10,12 +10,12 @@ void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 {
 	bool point = false;
 	TryReadConfigNumber(cfg, L"point", point);
-	ptr<Body> bo;
-	vector<ptr<Shape>> shs;
+	std::shared_ptr<Body> bo;
+	vector<std::shared_ptr<Shape>> shs;
 	for (auto v : shs_cfg.vec)
 	{
 		if (v->vec.empty()) { continue; }
-		ptr<Shape> sh;
+		std::shared_ptr<Shape> sh;
 		if (v->vec[0]->num)
 		{
 			if (v->vec.size() < 2) { continue; }
@@ -54,7 +54,7 @@ void CreateConnection(SimulationApp& cur, Var const& cfg)
 	TryReadConfigNumber(cfg, L"idx1", idx1);
 	idx0 = clamp(idx0, 0, (int)bodies.size());
 	idx1 = clamp(idx1, 0, (int)bodies.size());
-	ptr<Connection> connection;
+	std::shared_ptr<Connection> connection;
 	mkp(connection)();
 	connection->body0 = &*bodies[idx0];
 	connection->body1 = &*bodies[idx1];
@@ -93,30 +93,30 @@ void Boundary(SimulationApp& cur, Var const& thk, Var const& cfg)
 	double bw = cur.background->width, bh = cur.background->height;
 	double bx0 = cur.background->topLeft.x, bx1 = bx0 + bw;
 	double by0 = cur.background->topLeft.y, by1 = by0 + bh;
-	ptr<Body> body;
+	std::shared_ptr<Body> body;
 	dColor color = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-	body = msh<Body>(msh<Shape>(GetRectVerticesByCenter(thk.num, bh)));
+	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thk.num, bh)));
 	body->position = vector2(bx0, (by0 + by1) / 2);
 	body->fixed = true;
 	body->innerColor = color;
 	body->ReadCfg(cfg);
 	body->Init();
 	cur.bodies.push_back(body);
-	body = msh<Body>(msh<Shape>(GetRectVerticesByCenter(thk.num, bh)));
+	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thk.num, bh)));
 	body->position = vector2(bx1, (by0 + by1) / 2);
 	body->fixed = true;
 	body->innerColor = color;
 	body->ReadCfg(cfg);
 	body->Init();
 	cur.bodies.push_back(body);
-	body = msh<Body>(msh<Shape>(GetRectVerticesByCenter(bw, thk.num)));
+	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(bw, thk.num)));
 	body->position = vector2((bx0 + bx1) / 2, by0);
 	body->fixed = true;
 	body->innerColor = color;
 	body->ReadCfg(cfg);
 	body->Init();
 	cur.bodies.push_back(body);
-	body = msh<Body>(msh<Shape>(GetRectVerticesByCenter(bw, thk.num)));
+	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(bw, thk.num)));
 	body->position = vector2((bx0 + bx1) / 2, by1);
 	body->fixed = true;
 	body->innerColor = color;
@@ -127,8 +127,8 @@ void Boundary(SimulationApp& cur, Var const& thk, Var const& cfg)
 }
 void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var const& cfg)
 {
-	vector<ptr<Shape>> shs;
-	shs.push_back(msh<Shape>(r.num));
+	vector<std::shared_ptr<Shape>> shs;
+	shs.push_back(std::make_shared<Shape>(r.num));
 	for (int i = (0), iEnd = int(n.num); i < iEnd; ++i)
 	{
 		double phi0 = 2 * PI * i / (int)n.num;
@@ -137,18 +137,18 @@ void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var cons
 		vector2 v = vector2(cos(phi), sin(phi)) * (r.num + h.num);
 		vector2 v0 = vector2(cos(phi0), sin(phi0)) * r.num;
 		vector2 v1 = vector2(cos(phi1), sin(phi1)) * r.num;
-		shs.push_back(msh<Shape>(vector<vector2>{ v0, v, v1 }));
+		shs.push_back(std::make_shared<Shape>(vector<vector2>{ v0, v, v1 }));
 	}
-	auto wheel = msh<Body>(shs);
+	auto wheel = std::make_shared<Body>(shs);
 	wheel->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	wheel->ReadCfg(cfg);
 	wheel->Init();
 	cur.bodies.push_back(wheel);
-	auto root = msh<Body>(wheel->position);
+	auto root = std::make_shared<Body>(wheel->position);
 	root->innerColor = wheel->innerColor;
 	root->Init();
 	cur.bodies.push_back(root);
-	auto connection = msh<Connection>();
+	auto connection = std::make_shared<Connection>();
 	connection->type = CON_LINK;
 	connection->body0 = &*root;
 	connection->body1 = &*wheel;
@@ -162,13 +162,13 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 {
 	vector2 p0 = ToVector2(_p0), p1 = ToVector2(_p1);
 	int n = _n.num;
-	ptr<Body> b0, b1;
-	ptr<Connection> connection;
+	std::shared_ptr<Body> b0, b1;
+	std::shared_ptr<Connection> connection;
 	double len = (p1 - p0).len() / n;
 	double rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * rad);
 	dColor col = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-	mkp(b0)(msh<Shape>(rad));
+	mkp(b0)(std::make_shared<Shape>(rad));
 	b0->innerColor = col;
 	b0->position = p0;
 	b0->ReadCfg(bodyConfiguration);
@@ -176,7 +176,7 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	cur.bodies.push_back(b0);
 	for (int i = (1), iEnd = int(n + 1); i < iEnd; ++i)
 	{
-		mkp(b1)(msh<Shape>(rad));
+		mkp(b1)(std::make_shared<Shape>(rad));
 		b1->innerColor = col;
 		b1->position = (p0 * (n - i) + p1 * i) / n;
 		b1->ReadCfg(bodyConfiguration);
@@ -199,15 +199,15 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 	Var const& _n, Var const& ratio, Var const& bodyConfiguration, Var const& cfg_conn)
 {
-	ptr<Body> beg, b0, b1;
+	std::shared_ptr<Body> beg, b0, b1;
 	int n = _n.num;
 	vector2 o = ToVector2(_o);
-	ptr<Connection> connection;
+	std::shared_ptr<Connection> connection;
 	double len = 2 * PI * rad.num / n;
 	double ball_rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * ball_rad);
 	dColor col = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-	mkp(b0)(msh<Shape>(ball_rad));
+	mkp(b0)(std::make_shared<Shape>(ball_rad));
 	b0->innerColor = col;
 	b0->position = o + vector2(rad.num, 0);
 	b0->ReadCfg(bodyConfiguration);
@@ -217,7 +217,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 	for (int i = (1), iEnd = int(n); i < iEnd; ++i)
 	{
 		double phi = 2 * PI * i / n;
-		mkp(b1)(msh<Shape>(ball_rad));
+		mkp(b1)(std::make_shared<Shape>(ball_rad));
 		b1->innerColor = col;
 		b1->position = o + vector2(cos(phi), sin(phi)) * rad.num;
 		b1->ReadCfg(bodyConfiguration);
