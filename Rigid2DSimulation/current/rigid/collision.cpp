@@ -138,7 +138,7 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 	vector2 c;
 	if (sh0.isCircle)
 	{
-		rep(i, 0, sh1.vertices.size())
+		for (int i = (0), iEnd = int(sh1.vertices.size()); i < iEnd; ++i)
 		{
 			vector2 n = (sh1.vertices[i] - sh0.position).normalize();
 			if (n.zero()) { n = vector2(0, 1); }
@@ -155,7 +155,7 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 		return true;
 	}
 
-	rep(i, 0, sh0.vertices.size())
+	for (int i = (0), iEnd = int(sh0.vertices.size()); i < iEnd; ++i)
 	{
 		int j = (i + 1) % sh0.vertices.size();
 		vector2 n = sh0.vertices[j] - sh0.vertices[i];
@@ -175,7 +175,7 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 }
 void FindClosestContactVertex(Shape& shape0, Shape& shape1, vector2& contactP, double& closestDistanceSqr)
 {
-	rep(i, 0, shape0.vertices.size())
+	for (int i = (0), iEnd = int(shape0.vertices.size()); i < iEnd; ++i)
 	{
 		int j = (i + 1) % shape0.vertices.size();
 		for (auto v : shape1.vertices)

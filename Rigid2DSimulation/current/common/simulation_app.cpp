@@ -56,9 +56,9 @@ void SimulationApp::Load(wstring const& name)
 	temporaryScriptText = scriptText; LoadParameters(f);
 
 	frd(sz);
-	rep(i, 0, sz) { bodies.push_back(msh<Body>(*this, f)); }
+	for (int i = (0), iEnd = int(sz); i < iEnd; ++i) { bodies.push_back(msh<Body>(*this, f)); }
 	frd(sz);
-	rep(i, 0, sz) { connections.push_back(msh<Connection>(*this, f)); }
+	for (int i = (0), iEnd = int(sz); i < iEnd; ++i) { connections.push_back(msh<Connection>(*this, f)); }
 	isSceneChanged = true;
 
 	Execute(currentScope, Compile(scriptText)); fclose(f);
@@ -171,7 +171,7 @@ void SimulationApp::Update()
 		// 标准时长
 		double sdt = realDeltaTime / stepNum;
 
-		rep(i, 0, stepNum)
+		for (int i = (0), iEnd = int(stepNum); i < iEnd; ++i)
 		{
 			currentScope[L"t"] = msh<Var>(t);
 			for (const auto& b : bodies) { b->Step(*this, sdt); }
@@ -181,8 +181,8 @@ void SimulationApp::Update()
 			//计算静电
 			if (hasElectrostatic)
 			{
-				rep(i, 0, bodies.size() - 1)
-					rep(j, i + 1, bodies.size())
+				for (int i = (0), iEnd = int(bodies.size() - 1); i < iEnd; ++i)
+					for (int j = (i + 1), jEnd = int(bodies.size()); j < jEnd; ++j)
 				{
 					Electrostatic(*bodies[i], *bodies[j], sdt, coulomb);
 				}
@@ -249,16 +249,16 @@ void SimulationApp::SetCfg(Var const& v)
 
 void SimulationApp::DetectCollisions()
 {
-	rep(i, 0, gridNumX)
-		rep(j, 0, gridNumY)
+	for (int i = (0), iEnd = int(gridNumX); i < iEnd; ++i)
+		for (int j = (0), jEnd = int(gridNumY); j < jEnd; ++j)
 	{
 		auto& bodies = grid[j * gridNumX + i];
-		rep(k, 0, bodies.size())
+		for (int k = (0), kEnd = int(bodies.size()); k < kEnd; ++k)
 		{
 			auto& bo = *bodies[k];
 
 			// 检查同grid和跨grid的情况，输出到collisions中
-			rep(m, k + 1, bodies.size()) { Collide(bo, *bodies[m], collisions, parallelEpsilon); }
+			for (int m = (k + 1), mEnd = int(bodies.size()); m < mEnd; ++m) { Collide(bo, *bodies[m], collisions, parallelEpsilon); }
 			for (auto pb1 : multiGridBodies) { Collide(bo, *pb1, collisions, parallelEpsilon); }
 
 			// 检查右邻
@@ -288,8 +288,8 @@ void SimulationApp::DetectCollisions()
 	}
 
 	// 检查多gird和多gird本身的碰撞
-	rep(i, 0, multiGridBodies.size() - 1)
-		rep(j, i + 1, multiGridBodies.size())
+	for (int i = (0), iEnd = int(multiGridBodies.size() - 1); i < iEnd; ++i)
+		for (int j = (i + 1), jEnd = int(multiGridBodies.size()); j < jEnd; ++j)
 	{
 		Collide(*multiGridBodies[i], *multiGridBodies[j], collisions, parallelEpsilon);
 	}
@@ -303,7 +303,7 @@ void SimulationApp::SaveParameters(FILE* f) const
 void SimulationApp::LoadParameters(FILE* f)
 {
 	int sz = 0; frd(sz);
-	rep(i, 0, sz) { parameters.push_back(msh<SceneParameter>(f)); }
+	for (int i = (0), iEnd = int(sz); i < iEnd; ++i) { parameters.push_back(msh<SceneParameter>(f)); }
 }
 void SimulationApp::InitializeDefaultFunctions()
 {

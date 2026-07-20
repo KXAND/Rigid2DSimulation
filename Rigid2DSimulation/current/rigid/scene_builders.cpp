@@ -129,7 +129,7 @@ void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var cons
 {
 	vector<ptr<Shape>> shs;
 	shs.push_back(msh<Shape>(r.num));
-	rep(i, 0, n.num)
+	for (int i = (0), iEnd = int(n.num); i < iEnd; ++i)
 	{
 		double phi0 = 2 * PI * i / (int)n.num;
 		double phi1 = 2 * PI * (i + 1) / (int)n.num;
@@ -174,7 +174,7 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	b0->ReadCfg(bodyConfiguration);
 	b0->Init();
 	cur.bodies.push_back(b0);
-	rep(i, 1, n + 1)
+	for (int i = (1), iEnd = int(n + 1); i < iEnd; ++i)
 	{
 		mkp(b1)(msh<Shape>(rad));
 		b1->innerColor = col;
@@ -214,7 +214,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 	b0->Init();
 	cur.bodies.push_back(b0);
 	beg = b0;
-	rep(i, 1, n)
+	for (int i = (1), iEnd = int(n); i < iEnd; ++i)
 	{
 		double phi = 2 * PI * i / n;
 		mkp(b1)(msh<Shape>(ball_rad));

@@ -36,7 +36,7 @@ vector2 Shape::GenerateRandomPointInside() const
 	}
 
 	double randomArea = GenerateRandomFloat(area);
-	rep(i, 0, vertices.size())
+	for (int i = (0), iEnd = int(vertices.size()); i < iEnd; ++i)
 	{
 		int j = ((long long) i + 1) % vertices.size();
 		auto p = verticesRelative[i];
@@ -58,7 +58,7 @@ bool Shape::IsInside(vector2 p) const
 	if (isCircle)
 		return (p - position).lensqr() < r * r;
 
-	rep(i, 0, vertices.size())
+	for (int i = (0), iEnd = int(vertices.size()); i < iEnd; ++i)
 	{
 		int j = ((long long) i + 1) % vertices.size();
 		if (IsInsideTriangle(p, position, vertices[i], vertices[j]))

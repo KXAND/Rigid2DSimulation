@@ -45,14 +45,14 @@ ClXBodyCon::ClXBodyCon(int id) {
 void ClYBodyCons::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto& selectedBody = *simulationApp.bodySelecting;
-	rep(i, mbs.size(), selectedBody.connections.size()) {
+	for (int i = (mbs.size()), iEnd = int(selectedBody.connections.size()); i < iEnd; ++i) {
 		mbs.push_back(msh<ClXBodyCon>(i));
 	}
 	cs.clear();
-	rep(i, 0, selectedBody.connections.size()) {
+	for (int i = (0), iEnd = int(selectedBody.connections.size()); i < iEnd; ++i) {
 		cs.push_back(&*mbs[i]);
 	}
-	rep(i, selectedBody.connections.size(), mbs.size()) {
+	for (int i = (selectedBody.connections.size()), iEnd = int(mbs.size()); i < iEnd; ++i) {
 		mbs[i]->Discard(app);
 	}
 	CtrlListY::Update(app);

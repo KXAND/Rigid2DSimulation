@@ -30,9 +30,9 @@ ClyPar::ClyPar(int id) {
 void ClyPars::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	cs.clear();
-	rep(i, mbs.size(), simulationApp.parameters.size()) { mbs.push_back(msh<ClyPar>(i)); }
-	rep(i, 0, simulationApp.parameters.size()) { cs.push_back(&*mbs[i]); }
-	rep(i, simulationApp.parameters.size(), mbs.size()) { mbs[i]->Discard(app); }
+	for (int i = (mbs.size()), iEnd = int(simulationApp.parameters.size()); i < iEnd; ++i) { mbs.push_back(msh<ClyPar>(i)); }
+	for (int i = (0), iEnd = int(simulationApp.parameters.size()); i < iEnd; ++i) { cs.push_back(&*mbs[i]); }
+	for (int i = (simulationApp.parameters.size()), iEnd = int(mbs.size()); i < iEnd; ++i) { mbs[i]->Discard(app); }
 	CtrlListY::Update(app);
 }
 

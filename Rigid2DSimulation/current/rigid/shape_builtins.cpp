@@ -32,7 +32,7 @@ ptr<Var> RegularPoly(Var const& n, Var const& r)
 	v.push_back(msh<Var>(0));
 	vector<ptr<Var>> tmp;
 	auto m = max(3, (int)n.num);
-	rep(i, 0, m)
+	for (int i = (0), iEnd = int(m); i < iEnd; ++i)
 	{
 		double phi = 2 * PI * i / m;
 		tmp.push_back(msh<Var>(vector<ptr<Var>>{ msh<Var>(r.num * cos(phi)), msh<Var>(r.num * sin(phi)) }));

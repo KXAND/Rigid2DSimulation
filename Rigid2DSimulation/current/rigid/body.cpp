@@ -56,7 +56,7 @@ Body::Body(SimulationApp& cur, FILE* f) : Body()
 	int sz = 0;
 	frd(point); frd(fixed);
 	frd(sz);
-	rep(i, 0, sz)
+	for (int i = (0), iEnd = int(sz); i < iEnd; ++i)
 	{
 		shapes.push_back(msh<Shape>(f));
 	}
@@ -142,7 +142,7 @@ void Body::UpdateShapesPositionAndAABB()
 	{
 		shape->position = position + transform * shape->relativePosition;
 		shape->radian = radian;
-		rep(i, 0, shape->vertices.size())
+		for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
 		{
 			shape->vertices[i] = position + transform * shape->verticesRelative[i];
 		}
@@ -211,7 +211,7 @@ void Body::Init(bool repos_o)
 		}
 		else
 		{
-			rep(i, 0, shapes->verticesRelative.size())
+			for (int i = (0), iEnd = int(shapes->verticesRelative.size()); i < iEnd; ++i)
 			{
 				int j = (i + 1) % shapes->verticesRelative.size();
 				auto p = shapes->verticesRelative[i], q = shapes->verticesRelative[j];
@@ -297,12 +297,12 @@ void Body::Render(SimulationApp& cur) const
 			continue;
 		}
 
-		rep(i, 0, shape->vertices.size())
+		for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
 		{
 			int j = (i + 1) % shape->vertices.size();
 			drawTriangle(cur.scr, cur.dscr, cur.background->ViewPort(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
 		}
-		rep(i, 0, shape->vertices.size())
+		for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
 		{
 			int j = (i + 1) % shape->vertices.size();
 			drawLineSegment(cur.scr, cur.dscr, shape->vertices[i], shape->vertices[j], GetDepth(), cur.background->ViewPort(), borderColor);

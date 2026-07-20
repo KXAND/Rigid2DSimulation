@@ -9,8 +9,6 @@ double constexpr EU = 2.7182818284;
 #define msh make_shared
 #define mkp(nm) nm = msh<std::remove_reference_t<decltype(*nm)>>
 
-#define rep(x, a, b) for (int x = (a), _n = int(b); x < _n; ++x)
-
 #define frd(x) fread(&(x), sizeof(x), 1, f);
 #define fwt(x) fwrite(&(x), sizeof(x), 1, f);
 #define frds(x, n) fread(x, sizeof(*(x)), n, f);
