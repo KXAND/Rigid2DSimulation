@@ -14,19 +14,19 @@
 
 void UI::SortFloatPanels() { sort(fpns.begin(), fpns.end(), less_fpn); }
 void UI::Init(SimulationApp& cur) {
-	mkp(fpn_global)(cur); fpns.push_back(&*fpn_global);
-	mkp(fpn_body)(cur); fpns.push_back(&*fpn_body);
-	mkp(fpn_con)(cur); fpns.push_back(&*fpn_con);
-	mkp(fpn_cmd)(cur); fpns.push_back(&*fpn_cmd);
-	mkp(fpn_par)(cur); fpns.push_back(&*fpn_par);
-	mkp(fpn_lang)(cur); fpns.push_back(&*fpn_lang);
-	mkp(fpn_about)(cur); fpns.push_back(&*fpn_about);
+	fpn_global = std::make_shared<FPnGlobal>(cur); fpns.push_back(&*fpn_global);
+	fpn_body = std::make_shared<FPnBody>(cur); fpns.push_back(&*fpn_body);
+	fpn_con = std::make_shared<FPnCon>(cur); fpns.push_back(&*fpn_con);
+	fpn_cmd = std::make_shared<FPnCmd>(cur); fpns.push_back(&*fpn_cmd);
+	fpn_par = std::make_shared<FPnPar>(cur); fpns.push_back(&*fpn_par);
+	fpn_lang = std::make_shared<FPnLang>(cur); fpns.push_back(&*fpn_lang);
+	fpn_about = std::make_shared<FPnAbout>(cur); fpns.push_back(&*fpn_about);
 
 	// pn_menu 放在后面是因为要等 float_panel 先加载完。
 	// pn_menu 放在后面是因为要等 float_panel 先加载完。
 	// 这主要是 BtFPn 的原因。
-	mkp(pn_menu)(cur);
-	mkp(pn_bottom)(cur);
+	pn_menu = std::make_shared<PnMenu>(cur);
+	pn_bottom = std::make_shared<PnBottom>(cur);
 }
 void UI::Update(SimulationApp& cur) {
 	pn_menu->Update(cur);

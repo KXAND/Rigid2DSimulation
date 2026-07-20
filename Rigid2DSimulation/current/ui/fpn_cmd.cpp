@@ -15,10 +15,10 @@ void BtCompile::OnClick(App& app) {
 
 FPnCmd::FPnCmd(App& app) : FPnLan(app, 600, 600, L"fpn_cmd") {
 	vector<Control*> tmp;
-	mkp(rtb)();
-	mkp(bt_compile)();
+	rtb = std::make_shared<RTbCmd>();
+	bt_compile = std::make_shared<BtCompile>();
 	tmp = { &*rtb, &*bt_compile };
-	mkp(cly)(tmp);
+	cly = std::make_shared<CtrlListY>(tmp);
 	c = &*cly;
 	Init(app);
 }

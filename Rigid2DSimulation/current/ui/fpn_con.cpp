@@ -18,12 +18,12 @@ void BtConDel::OnClick(App& app) { auto& simulationApp = static_cast<SimulationA
 
 ClyCon::ClyCon() {
 	vector<Control*> tmp;
-	mkp(rtb)(); 
-	mkp(bt_ok)(); mkp(bt_del)();
+	rtb = std::make_shared<RTbCon>();
+	bt_ok = std::make_shared<BtConOK>(); bt_del = std::make_shared<BtConDel>();
 	tmp = { &*bt_ok, &*bt_del };
-	mkp(clx_bt)(tmp);
+	clx_bt = std::make_shared<CtrlListX>(tmp);
 	tmp = {};
-	mkp(spy)(400);
+	spy = std::make_shared<SeparatorY>(400);
 }
 void ClyCon::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
@@ -62,9 +62,9 @@ void RLbCon::Sync(App& app) {
 
 FPnCon::FPnCon(App& app) : FPnLan(app, 400, 600, L"fpn_con") {
 	vector<Control*> tmp;
-	mkp(cly_con)(); mkp(rlb_con)();
+	cly_con = std::make_shared<ClyCon>(); rlb_con = std::make_shared<RLbCon>();
 	tmp = { &*cly_con, &*rlb_con };
-	mkp(cly)(tmp);
+	cly = std::make_shared<CtrlListY>(tmp);
 	c = &*cly;
 	Init(app);
 }

@@ -16,15 +16,15 @@ void TbParVal::OnDone(App& app) const { auto& simulationApp = static_cast<Simula
 
 ClyPar::ClyPar(int id) {
 	vector<Control*> tmp;
-	mkp(tb_nm)(id); mkp(bt_del)(id);
+	tb_nm = std::make_shared<TbParNm>(id); bt_del = std::make_shared<BtDelPar>(id);
 	tmp = { &*tb_nm, &*bt_del };
-	mkp(clx_nm)(tmp);
+	clx_nm = std::make_shared<CtrlListX>(tmp);
 	tmp = {};
-	mkp(dbx_val)(id); mkp(tb_val)(id);
+	dbx_val = std::make_shared<DbXParVal>(id); tb_val = std::make_shared<TbParVal>(id);
 	tmp = { &*dbx_val, &*tb_val };
-	mkp(clx_val)(tmp);
+	clx_val = std::make_shared<CtrlListX>(tmp);
 	tmp = {};
-	mkp(spy)(400);
+	spy = std::make_shared<SeparatorY>(400);
 	cs = { &*clx_nm, &*clx_val, &*spy };
 }
 void ClyPars::Update(App& app) {
@@ -41,10 +41,10 @@ void BtAddPar::OnClick(App& app) { auto& simulationApp = static_cast<SimulationA
 
 FPnPar::FPnPar(App& app) : FPnLan(app, 400, 600, L"fpn_par") {
 	vector<Control*> tmp;
-	mkp(cly_pars)();
-	mkp(bt_add_par)();
+	cly_pars = std::make_shared<ClyPars>();
+	bt_add_par = std::make_shared<BtAddPar>();
 	tmp = { &*cly_pars, &*bt_add_par };
-	mkp(cly)(tmp);
+	cly = std::make_shared<CtrlListY>(tmp);
 	c = &*cly;
 	Init(app);
 }

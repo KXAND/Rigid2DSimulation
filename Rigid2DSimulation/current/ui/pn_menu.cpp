@@ -66,19 +66,19 @@ void BtDisplay::OnClick(App& app) {
 PnMenu::PnMenu(App& app) : Panel(Panel::menu(app)) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	vector<Control*> tmp;
-	mkp(bt_pause)(); mkp(bt_reset)(); mkp(bt_mute)();
-	mkp(bt_global)(&*simulationApp.ui->fpn_global);
-	mkp(bt_body)(&*simulationApp.ui->fpn_body);
-	mkp(bt_con)(&*simulationApp.ui->fpn_con);
-	mkp(bt_mode)(); mkp(bt_display)();
-	mkp(bt_cmd)(&*simulationApp.ui->fpn_cmd);
-	mkp(bt_par)(&*simulationApp.ui->fpn_par);
-	mkp(bt_lang)(&*simulationApp.ui->fpn_lang);
-	mkp(bt_about)(&*simulationApp.ui->fpn_about);
+	bt_pause = std::make_shared<BtPause>(); bt_reset = std::make_shared<BtReset>(); bt_mute = std::make_shared<BtMute>();
+	bt_global = std::make_shared<BtFPn>(&*simulationApp.ui->fpn_global);
+	bt_body = std::make_shared<BtFPn>(&*simulationApp.ui->fpn_body);
+	bt_con = std::make_shared<BtFPn>(&*simulationApp.ui->fpn_con);
+	bt_mode = std::make_shared<BtMode>(); bt_display = std::make_shared<BtDisplay>();
+	bt_cmd = std::make_shared<BtFPn>(&*simulationApp.ui->fpn_cmd);
+	bt_par = std::make_shared<BtFPn>(&*simulationApp.ui->fpn_par);
+	bt_lang = std::make_shared<BtFPn>(&*simulationApp.ui->fpn_lang);
+	bt_about = std::make_shared<BtFPn>(&*simulationApp.ui->fpn_about);
 	tmp = { &*bt_pause, &*bt_reset, &*bt_mute, &*bt_global, 
 		&*bt_body, &*bt_con, &*bt_mode, &*bt_display,
 		&*bt_cmd, &*bt_par, &*bt_lang, &*bt_about };
-	mkp(cly)(tmp);
+	cly = std::make_shared<CtrlListY>(tmp);
 	c = &*cly;
 	Init(app);
 }

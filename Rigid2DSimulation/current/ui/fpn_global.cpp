@@ -38,17 +38,17 @@ void RLbGlobal::Sync(App& app) {
 
 FPnGlobal::FPnGlobal(App& app) : FPnLan(app, 400, 600, L"fpn_global") {
 	vector<Control*> tmp;
-	mkp(tb_save)(270); mkp(bt_save)();
+	tb_save = std::make_shared<Textbox>(270); bt_save = std::make_shared<BtSave>();
 	tmp = { &*tb_save, &*bt_save };
-	mkp(clx_save)(tmp);
+	clx_save = std::make_shared<CtrlListX>(tmp);
 	tmp = {};
-	mkp(tb_load)(270); mkp(bt_load)();
+	tb_load = std::make_shared<Textbox>(270); bt_load = std::make_shared<BtLoad>();
 	tmp = { &*tb_load, &*bt_load };
-	mkp(clx_load)(tmp);
+	clx_load = std::make_shared<CtrlListX>(tmp);
 	tmp = {};
-	mkp(spy)(400); mkp(rlb_global)();
+	spy = std::make_shared<SeparatorY>(400); rlb_global = std::make_shared<RLbGlobal>();
 	tmp = { &*clx_save, &*clx_load, &*spy, &*rlb_global };
-	mkp(cly)(tmp);
+	cly = std::make_shared<CtrlListY>(tmp);
 	c = &*cly;
 	Init(app);
 }

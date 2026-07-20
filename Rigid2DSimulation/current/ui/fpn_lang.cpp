@@ -10,10 +10,10 @@ void BtEng::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&
 
 FPnLang::FPnLang(App& app) : FPnLan(app, 200, 200, L"fpn_lang") {
 	vector<Control*> tmp; shown = true;
-	mkp(bt_chi)();
-	mkp(bt_eng)();
+	bt_chi = std::make_shared<BtChi>();
+	bt_eng = std::make_shared<BtEng>();
 	tmp = { &*bt_chi, &*bt_eng };
-	mkp(cly)(tmp);
+	cly = std::make_shared<CtrlListY>(tmp);
 	c = &*cly;
 	Init(app);
 }

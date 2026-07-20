@@ -21,9 +21,9 @@ void LbMouse::Sync(App& app) {
 
 PnBottom::PnBottom(App& app) : Panel(Panel::bottom(app)) {
 	vector<Control*> tmp;
-	mkp(lb_fps)(); mkp(lb_time)(); mkp(lb_mouse)();
+	lb_fps = std::make_shared<LbFPS>(); lb_time = std::make_shared<LbTime>(); lb_mouse = std::make_shared<LbMouse>();
 	tmp = { &*lb_fps, &*lb_time, &*lb_mouse };
-	mkp(clx)(tmp);
+	clx = std::make_shared<CtrlListX>(tmp);
 	c = &*clx;
 	Init(app);
 }

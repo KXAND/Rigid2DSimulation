@@ -39,7 +39,7 @@ void CbBodyCon::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp
 void CbBodyCon::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting = checked ? simulationApp.bodySelecting->connections[id] : NULL; }
 
 ClXBodyCon::ClXBodyCon(int id) {
-	mkp(cb)(id); mkp(lb)(id);
+	cb = std::make_shared<CbBodyCon>(id); lb = std::make_shared<LbBodyCon>(id);
 	cs = { &*lb, &*cb };
 }
 void ClYBodyCons::Update(App& app) {
@@ -60,12 +60,12 @@ void ClYBodyCons::Update(App& app) {
 
 ClyBody::ClyBody() {
 	vector<Control*> tmp;
-	mkp(rtb)(); 
-	mkp(bt_ok)(); mkp(bt_del)();
+	rtb = std::make_shared<RTbBody>();
+	bt_ok = std::make_shared<BtBodyOK>(); bt_del = std::make_shared<BtBodyDel>();
 	tmp = { &*bt_ok, &*bt_del };
-	mkp(clx_bt)(tmp);
+	clx_bt = std::make_shared<CtrlListX>(tmp);
 	tmp = {};
-	mkp(cly_cons)(); mkp(spy)(400);
+	cly_cons = std::make_shared<ClYBodyCons>(); spy = std::make_shared<SeparatorY>(400);
 }
 void ClyBody::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
@@ -89,7 +89,7 @@ void RLbBody::Sync(App& app) {
 	if (!selectedBody) { txt = simulationApp.getLocalizedString(L"body_not_sel"); return; }
 	auto& body = *selectedBody;
 	txt.clear();
-	
+
 	txt += simulationApp.getLocalizedString(L"body_o") + toWstring(body.position) + L"\n";
 	txt += simulationApp.getLocalizedString(L"body_v") + toWstring(body.velocity) + L"\n";
 	txt += simulationApp.getLocalizedString(L"body_ang") + tw2(body.radian) + L"\n";
@@ -106,9 +106,9 @@ void RLbBody::Sync(App& app) {
 
 FPnBody :: FPnBody(App& app) : FPnLan(app, 400, 600, L"fpn_body") {
 	vector<Control*> tmp;
-	mkp(cly_body)(); mkp(rlb_body)();
+	cly_body = std::make_shared<ClyBody>(); rlb_body = std::make_shared<RLbBody>();
 	tmp = { &*cly_body, &*rlb_body };
-	mkp(cly)(tmp);
+	cly = std::make_shared<CtrlListY>(tmp);
 	c = &*cly;
 	Init(app);
 }
