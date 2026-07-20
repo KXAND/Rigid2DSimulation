@@ -20,14 +20,14 @@ SimulationApp::SimulationApp()
 	App::Init();
 	print_console(L"字体加载完成.", true);
 	print_console(L"正在加载控件...");
-	mkp(ui)(*this); ui->Init(*this);
-	mkp(background)(*this); Reset();
+	ui = std::make_shared<UI>(*this); ui->Init(*this);
+	background = std::make_shared<Background>(*this); Reset();
 	print_console(L"控件加载完成.", true);
 	print_console(L"正在加载音乐...");
 	bool ok = false;
-	mkp(musicClip0)(L"sound/bgm0.clip", &ok);
+	musicClip0 = std::make_shared<clip>(L"sound/bgm0.clip", &ok);
 	if (!ok) { musicClip0 = NULL; }
-	mkp(musicClip1)(L"sound/bgm1.clip", &ok);
+	musicClip1 = std::make_shared<clip>(L"sound/bgm1.clip", &ok);
 	if (!ok) { musicClip1 = NULL; }
 	print_console(L"音乐加载完成.", true);
 	vol = 1;
@@ -99,7 +99,7 @@ void SimulationApp::Reset()
 	useEqualPositionCorrection = false;
 	velocityAngularDrag = 2;
 
-	mkp(creator)();
+	creator = std::make_shared<Creator>();
 }
 void SimulationApp::Update()
 {
@@ -309,7 +309,7 @@ void SimulationApp::InitializeDefaultFunctions()
 {
 	auto f0 = [this](vector<std::shared_ptr<Var>> const& in)
 		{
-			if (in.size() >= 1) { mkp(creator)(*in[0]); }
+			if (in.size() >= 1) { creator = std::make_shared<Creator>(*in[0]); }
 			return std::make_shared<Var>();
 		};
 	currentScope[L"set_creator"] = std::make_shared<Var>(f0);

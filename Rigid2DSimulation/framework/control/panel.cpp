@@ -63,7 +63,7 @@ void Panel::init_c(App& app) {
 	}
 }
 void Panel::init_sb() {
-	mkp(sb)();
+	sb = std::make_shared<ScrollbarY>();
 	sb->c = c;
 	sb->h = h;
 	sb->tl = tl + dVector2(w - sb->w, 0);

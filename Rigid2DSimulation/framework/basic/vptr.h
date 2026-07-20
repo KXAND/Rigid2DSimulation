@@ -5,13 +5,13 @@
 template<class T> struct vptr {
 	std::shared_ptr<T> p;
 	vptr() = default;
-	vptr(T const& t) { mkp(p)(t); }
+	vptr(T const& t) { p = std::make_shared<T>(t); }
 	vptr(vptr const& v) {
-		if (v) { mkp(p)(*v); } else { p.reset(); }
+		if (v) { p = std::make_shared<T>(*v); } else { p.reset(); }
 	}
 	operator bool() const { return (bool)p; }
 	void operator=(vptr const& v) {
-		if (v) { mkp(p)(*v); } else { p.reset(); }
+		if (v) { p = std::make_shared<T>(*v); } else { p.reset(); }
 	}
 
 	std::shared_ptr<T>& operator->() { return p; }
