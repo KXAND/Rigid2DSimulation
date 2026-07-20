@@ -31,10 +31,10 @@ Creator::Creator(Var const& v) : Creator()
 		}
 		else { mode = md->num; }
 	}
-	TryReadConfigNumber(v, L"thick", thick);
-	TryReadConfigNumber(v, L"rad", rad);
-	if (auto value = FindConfigValue(v, L"cfg_body")) { bodyConfiguration = std::make_shared<Var>(*value); }
-	if (auto value = FindConfigValue(v, L"cfg_conn")) { connectionConfiguration = std::make_shared<Var>(*value); }
+	TryReadConfigNumber(v, L"thickness", thick);
+	TryReadConfigNumber(v, L"radius", rad);
+	if (auto value = FindConfigValue(v, L"bodyConfiguration")) { bodyConfiguration = std::make_shared<Var>(*value); }
+	if (auto value = FindConfigValue(v, L"connectionConfiguration")) { connectionConfiguration = std::make_shared<Var>(*value); }
 }
 
 double Creator::Depth() const

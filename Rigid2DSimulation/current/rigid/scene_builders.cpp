@@ -50,8 +50,8 @@ void CreateConnection(SimulationApp& cur, Var const& cfg)
 	auto& bodies = cur.bodies;
 	int idx0 = GenerateRandomInt(bodies.size());
 	int idx1 = GenerateRandomInt(bodies.size());
-	TryReadConfigNumber(cfg, L"idx0", idx0);
-	TryReadConfigNumber(cfg, L"idx1", idx1);
+	TryReadConfigNumber(cfg, L"index0", idx0);
+	TryReadConfigNumber(cfg, L"index1", idx1);
 	idx0 = clamp(idx0, 0, (int)bodies.size());
 	idx1 = clamp(idx1, 0, (int)bodies.size());
 	std::shared_ptr<Connection> connection;
@@ -62,7 +62,7 @@ void CreateConnection(SimulationApp& cur, Var const& cfg)
 	connection->p1Relative = connection->body1->GenerateRandomPointInside();
 	bool absolute = false;
 	TryReadConfigNumber(cfg, L"absolute", absolute);
-	if (auto value = FindConfigValue(cfg, L"p0"))
+	if (auto value = FindConfigValue(cfg, L"point0"))
 	{
 		connection->p0Relative = ToVector2(*value);
 		if (absolute)
@@ -71,7 +71,7 @@ void CreateConnection(SimulationApp& cur, Var const& cfg)
 			connection->p0Relative = connection->body0->transform.inverse() * connection->p0Relative;
 		}
 	}
-	if (auto value = FindConfigValue(cfg, L"p1"))
+	if (auto value = FindConfigValue(cfg, L"point1"))
 	{
 		connection->p1Relative = ToVector2(*value);
 		if (absolute)
