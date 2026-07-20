@@ -12,16 +12,16 @@ void BtLoad::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp
 void RLbGlobal::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	txt = L"";
-	txt += simulationApp.getLocalizedString(L"vol") + tw2(simulationApp.vol) + L"\n";
-	txt += simulationApp.getLocalizedString(L"n_step") + tw(simulationApp.stepNum) + L"\n";
-	txt += simulationApp.getLocalizedString(L"s_grid") + tw2(simulationApp.gridSize) + L"\n";
-	txt += simulationApp.getLocalizedString(L"max_real_dt") + tw2(simulationApp.maxRealDeltaTime) + L"\n";
-	txt += simulationApp.getLocalizedString(L"tl_scene") + tw(simulationApp.rectScene.topLeftPosition) + L"\n";
-	txt += simulationApp.getLocalizedString(L"w_scene") + tw(simulationApp.rectScene.w) + L"\n";
-	txt += simulationApp.getLocalizedString(L"h_scene") + tw(simulationApp.rectScene.h) + L"\n";
-	txt += simulationApp.getLocalizedString(L"gravity") + toWstring(simulationApp.gravity) + L"\n";
-	txt += simulationApp.getLocalizedString(L"electrostatic") + tw(simulationApp.hasElectrostatic) + L"\n";
-	txt += simulationApp.getLocalizedString(L"coulomb") + tw2(simulationApp.coulomb) + L"\n";
+	txt += simulationApp.getLocalizedString(L"vol") + FormatFixed2(simulationApp.vol) + L"\n";
+	txt += simulationApp.getLocalizedString(L"n_step") + std::to_wstring(simulationApp.stepNum) + L"\n";
+	txt += simulationApp.getLocalizedString(L"s_grid") + FormatFixed2(simulationApp.gridSize) + L"\n";
+	txt += simulationApp.getLocalizedString(L"max_real_dt") + FormatFixed2(simulationApp.maxRealDeltaTime) + L"\n";
+	txt += simulationApp.getLocalizedString(L"tl_scene") + ToWString(simulationApp.rectScene.topLeftPosition) + L"\n";
+	txt += simulationApp.getLocalizedString(L"w_scene") + std::to_wstring(simulationApp.rectScene.w) + L"\n";
+	txt += simulationApp.getLocalizedString(L"h_scene") + std::to_wstring(simulationApp.rectScene.h) + L"\n";
+	txt += simulationApp.getLocalizedString(L"gravity") + ToWString(simulationApp.gravity) + L"\n";
+	txt += simulationApp.getLocalizedString(L"electrostatic") + std::to_wstring(simulationApp.hasElectrostatic) + L"\n";
+	txt += simulationApp.getLocalizedString(L"coulomb") + FormatFixed2(simulationApp.coulomb) + L"\n";
 
 	wstring s;
 	switch (simulationApp.creator->mode) {

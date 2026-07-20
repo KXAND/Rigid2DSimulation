@@ -30,7 +30,7 @@ inline bool operator==(dVector2 a, dVector2 b) {
 	return memcmp(&a, &b, sizeof(dVector2)) == 0;
 }
 inline bool operator!=(dVector2 a, dVector2 b) { return !(a == b); }
-wstring tw(dVector2 v);
+wstring ToWString(dVector2 v);
 
 struct dRect {
 	dVector2 topLeftPosition;

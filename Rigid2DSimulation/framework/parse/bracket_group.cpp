@@ -1,11 +1,11 @@
 #include "bracket_group.h"
 
-wstring tw(BracketGroup const& b) {
+wstring ToWString(BracketGroup const& b) {
 	wstring tmp;
-	if (b.typ == 0) { tmp += tw(b.tk); }
+	if (b.typ == 0) { tmp += ToWString(b.tk); }
 	else {
-		tmp += tw(b.typ) + L" {";
-		for (auto const& bb : b.bras) { tmp += tw(bb) + L", "; }
+		tmp += std::to_wstring(b.typ) + L" {";
+		for (auto const& bb : b.bras) { tmp += ToWString(bb) + L", "; }
 		tmp += L"}";
 	}
 	return tmp;

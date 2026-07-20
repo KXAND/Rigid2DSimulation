@@ -55,7 +55,7 @@ inline double dot(const vector2& a, const vector2& b) { return a.x * b.x + a.y *
 //À≥–ÚŒ Ã‚
 inline vector2 operator*(const double& scale, const vector2& vector) { return vector2(vector.x * scale, vector.y * scale); }
 
-wstring toWstring(vector2 v);
+wstring ToWString(vector2 v);
 
 struct rect
 {

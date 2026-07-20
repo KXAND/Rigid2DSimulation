@@ -14,7 +14,7 @@ struct token {
 	static token mkstr(wstring const& str);
 	static token mkvar(wstring const& var, bool gl);
 };
-wstring tw(token const& tk);
+wstring ToWString(token const& tk);
 
 token ParseNumberToken(wstring const& in, int& id);
 token ParseStringToken(wstring const& in, int& id);

@@ -25,7 +25,7 @@ struct ScriptExpr {
 	static ScriptExpr mkstr(wstring const& str);
 	static ScriptExpr mkvar(wstring const& var, bool gl);
 };
-wstring tw(ScriptExpr const& ex);
+wstring ToWString(ScriptExpr const& ex);
 
 struct pre_expr {
 	bool istk = false;

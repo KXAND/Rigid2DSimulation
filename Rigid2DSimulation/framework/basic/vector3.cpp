@@ -6,8 +6,8 @@ vector3::vector3(wstring const& s) {
 	y = fetch_num(i, s);
 	z = fetch_num(i, s);
 }
-wstring tw2(vector3 v) {
-	return L"(" + tw2(v.x) + L"," + tw2(v.y) + L"," + tw2(v.z) + L")";
+wstring FormatFixed2(vector3 v) {
+	return L"(" + FormatFixed2(v.x) + L"," + FormatFixed2(v.y) + L"," + FormatFixed2(v.z) + L")";
 }
 
 cam::cam(dRect vp) : vp(vp) {

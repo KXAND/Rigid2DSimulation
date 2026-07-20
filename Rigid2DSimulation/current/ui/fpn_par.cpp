@@ -11,7 +11,7 @@ DbXParVal::DbXParVal(int id) : id(id), DragbarX(270) {}
 void DbXParVal::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); set_nx_rel(simulationApp.parameters[id]->value); }
 void DbXParVal::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = uval(); }
 TbParVal::TbParVal(int id) : id(id), Textbox(80) {};
-void TbParVal::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = tw2(simulationApp.parameters[id]->value); }
+void TbParVal::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = FormatFixed2(simulationApp.parameters[id]->value); }
 void TbParVal::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = wtof(str); }
 
 ClyPar::ClyPar(int id) {

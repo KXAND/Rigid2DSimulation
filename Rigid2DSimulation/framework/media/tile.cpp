@@ -16,9 +16,9 @@ dColor::dColor(wstring const& s)
 	g = fetch_num(i, s);
 	b = fetch_num(i, s);
 }
-wstring tw(dColor c)
+wstring ToWString(dColor c)
 {
-	return L"(" + tw(c.r) + L"," + tw(c.g) + L"," + tw(c.b) + L")";
+	return L"(" + std::to_wstring(c.r) + L"," + std::to_wstring(c.g) + L"," + std::to_wstring(c.b) + L")";
 }
 void cover(dColor& bc, BYTE& ba, dColor fc, BYTE fa)
 {

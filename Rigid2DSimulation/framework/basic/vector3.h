@@ -57,7 +57,7 @@ inline bool operator==(vector3 a, vector3 b) {
 	return memcmp(&a, &b, sizeof(vector3)) == 0;
 }
 inline bool operator!=(vector3 a, vector3 b) { return !(a == b); }
-wstring tw2(vector3 v);
+wstring FormatFixed2(vector3 v);
 
 struct matrix3;
 matrix3 operator+(matrix3 a, matrix3 const& b);

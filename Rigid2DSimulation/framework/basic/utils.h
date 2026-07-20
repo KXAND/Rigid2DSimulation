@@ -4,7 +4,6 @@
 double constexpr PI = 3.1415926535;
 double constexpr EU = 2.7182818284;
 
-#define tw to_wstring
 
 
 // 注意 insd 是开区间，clmp 闭区间。
@@ -24,8 +23,8 @@ double GenerateRandomFloat(double a, double b);
 double GenerateRandomFloat(double b);
 double GenerateNormalRandomFloat(double mean, double stddev);
 
-wstring tw2(double d);
-wstring tw(string const& s);
+wstring FormatFixed2(double d);
+wstring ToWString(string const& s);
 string to_string(wstring const& s);
 double atof(string const& s);
 double wtof(wstring const& s);

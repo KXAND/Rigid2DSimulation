@@ -31,7 +31,7 @@ void LbBodyCon::Sync(App& app) {
 	case CON_SPRING: type = simulationApp.getLocalizedString(L"conn_spring"); break;
 	case CON_CORD: type = simulationApp.getLocalizedString(L"conn_cord"); break;
 	}
-	txt = simulationApp.getLocalizedString(L"conn") + tw(id) + L": " + type;
+	txt = simulationApp.getLocalizedString(L"conn") + std::to_wstring(id) + L": " + type;
 }
 
 CbBodyCon::CbBodyCon(int id) : id(id), CbLan(L"cb_body_con") {}
@@ -90,18 +90,18 @@ void RLbBody::Sync(App& app) {
 	auto& body = *selectedBody;
 	txt.clear();
 
-	txt += simulationApp.getLocalizedString(L"body_o") + toWstring(body.position) + L"\n";
-	txt += simulationApp.getLocalizedString(L"body_v") + toWstring(body.velocity) + L"\n";
-	txt += simulationApp.getLocalizedString(L"body_ang") + tw2(body.radian) + L"\n";
-	txt += simulationApp.getLocalizedString(L"body_v_ang") + tw2(body.velocityAngular) + L"\n";
-	txt += simulationApp.getLocalizedString(L"body_fixed") + tw(body.fixed) + L"\n";
-	txt += simulationApp.getLocalizedString(L"body_density") + tw2(body.density) + L"\n";
-	txt += simulationApp.getLocalizedString(L"body_charge_density") + tw2(body.chargeDensity) + L"\n";
-	txt += simulationApp.getLocalizedString(L"body_e") + tw2(body.elasticity) + L"\n";
-	txt += simulationApp.getLocalizedString(L"body_mu_s") + tw2(body.frictionStatic) + L"\n";
-	txt += simulationApp.getLocalizedString(L"body_mu_d") + tw2(body.frictionDynamic) + L"\n";
-	txt += simulationApp.getLocalizedString(L"body_damp_v") + tw2(body.dampCoeff) + L"\n";
-	txt += simulationApp.getLocalizedString(L"body_damp_v_ang") + tw2(body.dampCoeffAngular) + L"\n";
+	txt += simulationApp.getLocalizedString(L"body_o") + ToWString(body.position) + L"\n";
+	txt += simulationApp.getLocalizedString(L"body_v") + ToWString(body.velocity) + L"\n";
+	txt += simulationApp.getLocalizedString(L"body_ang") + FormatFixed2(body.radian) + L"\n";
+	txt += simulationApp.getLocalizedString(L"body_v_ang") + FormatFixed2(body.velocityAngular) + L"\n";
+	txt += simulationApp.getLocalizedString(L"body_fixed") + std::to_wstring(body.fixed) + L"\n";
+	txt += simulationApp.getLocalizedString(L"body_density") + FormatFixed2(body.density) + L"\n";
+	txt += simulationApp.getLocalizedString(L"body_charge_density") + FormatFixed2(body.chargeDensity) + L"\n";
+	txt += simulationApp.getLocalizedString(L"body_e") + FormatFixed2(body.elasticity) + L"\n";
+	txt += simulationApp.getLocalizedString(L"body_mu_s") + FormatFixed2(body.frictionStatic) + L"\n";
+	txt += simulationApp.getLocalizedString(L"body_mu_d") + FormatFixed2(body.frictionDynamic) + L"\n";
+	txt += simulationApp.getLocalizedString(L"body_damp_v") + FormatFixed2(body.dampCoeff) + L"\n";
+	txt += simulationApp.getLocalizedString(L"body_damp_v_ang") + FormatFixed2(body.dampCoeffAngular) + L"\n";
 }
 
 FPnBody :: FPnBody(App& app) : FPnLan(app, 400, 600, L"fpn_body") {

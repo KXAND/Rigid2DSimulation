@@ -6,9 +6,9 @@ vector2::vector2(wstring const& s)
 	x = fetch_num(i, s);
 	y = fetch_num(i, s);
 }
-wstring toWstring(vector2 v)
+wstring ToWString(vector2 v)
 {
-	return L"(" + tw2(v.x) + L"," + tw2(v.y) + L")";
+	return L"(" + FormatFixed2(v.x) + L"," + FormatFixed2(v.y) + L")";
 }
 
 bool isInside(vector2 v, rect r)

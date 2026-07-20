@@ -56,8 +56,8 @@ void RLbCon::Sync(App& app) {
 	case CON_CORD: type = simulationApp.getLocalizedString(L"conn_cord"); break;
 	}
 	txt += simulationApp.getLocalizedString(L"conn_type") + type + L"\n";
-	txt += simulationApp.getLocalizedString(L"conn_len") + tw2(connection.len) + L"\n";
-	txt += simulationApp.getLocalizedString(L"conn_hooke") + tw2(connection.hooke) + L"\n";
+	txt += simulationApp.getLocalizedString(L"conn_len") + FormatFixed2(connection.len) + L"\n";
+	txt += simulationApp.getLocalizedString(L"conn_hooke") + FormatFixed2(connection.hooke) + L"\n";
 }
 
 FPnCon::FPnCon(App& app) : FPnLan(app, 400, 600, L"fpn_con") {

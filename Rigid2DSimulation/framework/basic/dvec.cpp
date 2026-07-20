@@ -5,8 +5,8 @@ dVector2::dVector2(wstring const& s) {
 	x = fetch_num(i, s);
 	y = fetch_num(i, s);
 }
-wstring tw(dVector2 v) {
-	return L"(" + tw(v.x) + L"," + tw(v.y) + L")";
+wstring ToWString(dVector2 v) {
+	return L"(" + std::to_wstring(v.x) + L"," + std::to_wstring(v.y) + L")";
 }
 
 bool isInside(dVector2 v, dRect r) {

@@ -75,7 +75,7 @@ bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpr const& ex, Var&
 	if (f == L"pow") { out = Var(pow(numArg(0), numArg(1))); return true; }
 	if (f == L"rand") { out = Var(GenerateRandomFloat(numArg(0), numArg(1))); return true; }
 	if (f == L"rand_int") { out = Var(GenerateRandomInt(numArg(0), numArg(1))); return true; }
-	if (f == L"str") { out = Var(tw2(numArg(0))); return true; }
+	if (f == L"str") { out = Var(FormatFixed2(numArg(0))); return true; }
 	if (f == L".") { out = Var(strArg(0) + strArg(1)); return true; }
 	return false;
 }

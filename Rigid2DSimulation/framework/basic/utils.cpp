@@ -37,13 +37,13 @@ double GenerateNormalRandomFloat(double mean, double stddev)
 }
 
 // 用 sprintf_s 可以保证安全，但不知道 1024 的空间是否足够。
-wstring tw2(double d)
+wstring FormatFixed2(double d)
 {
 	static wchar_t tmp[1024];
 	swprintf_s(tmp, L"%.2lf", d); return tmp;
 }
 // 下面的规范应该参考 MSDN。
-wstring tw(string const& s)
+wstring ToWString(string const& s)
 {
 	vector<wchar_t> tmp(s.size() + 1);
 	swprintf_s(tmp.data(), tmp.size(), L"%S", s.c_str());

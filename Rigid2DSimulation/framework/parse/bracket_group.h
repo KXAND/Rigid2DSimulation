@@ -7,6 +7,6 @@ struct BracketGroup {
 	token tk;
 	vector<BracketGroup> bras;
 };
-wstring tw(BracketGroup const& b);
+wstring ToWString(BracketGroup const& b);
 vector<BracketGroup> AnalyzeBrackets(vector<token> const& in);
 

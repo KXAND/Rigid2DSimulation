@@ -10,10 +10,10 @@ token token::mkvar(wstring const& var, bool gl) {
 	token tk(L"var");
 	tk.var = var; tk.global = gl; return tk;
 }
-wstring tw(token const& tk) {
+wstring ToWString(token const& tk) {
 	wstring tmp = L"[" + tk.typ;
 	if (tk.typ == L"var") { tmp += (tk.global ? L":&" : L":") + tk.var; }
-	if (tk.typ == L"num") { tmp += L":" + tw2(tk.num); }
+	if (tk.typ == L"num") { tmp += L":" + FormatFixed2(tk.num); }
 	if (tk.typ == L"str") { tmp += L":" + tk.str; }
 	tmp += L"]"; return tmp;
 }

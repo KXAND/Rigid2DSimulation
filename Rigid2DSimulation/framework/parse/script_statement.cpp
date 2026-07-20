@@ -2,31 +2,31 @@
 #include "bracket_group.h"
 
 ScriptStatement::ScriptStatement(wstring const& typ) : typ(typ) {}
-wstring tw(ScriptStatement const& p) {
+wstring ToWString(ScriptStatement const& p) {
 	wstring tmp = p.typ;
 	if (p.typ == L"define") {
 		tmp += L":" + p.def_fun + L",(";
 		for (auto& s : p.def_pars) { tmp += s + L","; }
 		tmp += L"),{";
-		for (auto& pp : p.procs) { tmp += L"\n" + tw(pp) + L","; }
+		for (auto& pp : p.procs) { tmp += L"\n" + ToWString(pp) + L","; }
 		tmp += L"}";
 	}
 	else if (p.typ == L"if") {
-		tmp += L":" + tw(p.if_con) + L",{";
-		for (auto& pp : p.if_procs) { tmp += L"\n" + tw(pp) + L","; }
+		tmp += L":" + ToWString(p.if_con) + L",{";
+		for (auto& pp : p.if_procs) { tmp += L"\n" + ToWString(pp) + L","; }
 		tmp += L"}{";
-		for (auto& pp : p.else_procs) { tmp += L"\n" + tw(pp) + L","; }
+		for (auto& pp : p.else_procs) { tmp += L"\n" + ToWString(pp) + L","; }
 		tmp += L"}";
 	}
 	else if (p.typ == L"while") {
-		tmp += L":" + tw(p.lp_con) + L",{";
-		for (auto& pp : p.lp) { tmp += L"\n" + tw(pp) + L","; }
+		tmp += L":" + ToWString(p.lp_con) + L",{";
+		for (auto& pp : p.lp) { tmp += L"\n" + ToWString(pp) + L","; }
 		tmp += L"}";
 	}
-	else if (p.typ == L"return") { tmp += L":" + tw(p.ret); }
-	else if (p.typ == L"single") { tmp += L":" + tw(p.single); }
+	else if (p.typ == L"return") { tmp += L":" + ToWString(p.ret); }
+	else if (p.typ == L"single") { tmp += L":" + ToWString(p.single); }
 	else if (p.typ == L"assign") {
-		tmp += L":" + tw(p.left) + L"," + tw(p.right);
+		tmp += L":" + ToWString(p.left) + L"," + ToWString(p.right);
 	}
 	return tmp;
 }

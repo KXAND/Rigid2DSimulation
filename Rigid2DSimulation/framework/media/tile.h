@@ -32,7 +32,7 @@ inline bool operator==(dColor a, dColor b)
 	return memcmp(&a, &b, sizeof(dColor)) == 0;
 }
 inline bool operator!=(dColor a, dColor b) { return !(a == b); }
-wstring tw(dColor c);
+wstring ToWString(dColor c);
 void cover(dColor& bc, BYTE& ba, dColor fc, BYTE fa);
 
 struct tile

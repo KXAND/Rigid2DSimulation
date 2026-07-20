@@ -19,22 +19,22 @@ ScriptExpr ScriptExpr::mkvar(wstring const& var, bool gl) {
 	return ex;
 }
 
-wstring tw(ScriptExpr const& ex) {
+wstring ToWString(ScriptExpr const& ex) {
 	wstring tmp = L"[" + ex.typ;
 	if (ex.typ == L"var") { tmp += (ex.global ? L":&" : L":") + ex.var; }
-	else if (ex.typ == L"num") { tmp += L":" + tw2(ex.num); }
+	else if (ex.typ == L"num") { tmp += L":" + FormatFixed2(ex.num); }
 	else if (ex.typ == L"str") { tmp += L":" + ex.str; }
 	else if (ex.typ == L"access") {
 		if (!ex.getLocalizedString || !ex.ind) { return {}; }
-		tmp += L":" + tw(*ex.getLocalizedString) + L"," + tw(*ex.ind);
+		tmp += L":" + ToWString(*ex.getLocalizedString) + L"," + ToWString(*ex.ind);
 	}
 	else if (ex.typ == L"vec") {
 		tmp += L":";
-		for (auto const& v : ex.vec) { tmp += tw(v) + L","; }
+		for (auto const& v : ex.vec) { tmp += ToWString(v) + L","; }
 	}
 	else if (ex.typ == L"call") {
 		tmp += L":" + ex.fun + L",";
-		for (auto const& par : ex.pars) { tmp += tw(par) + L","; }
+		for (auto const& par : ex.pars) { tmp += ToWString(par) + L","; }
 	}
 	tmp += L"]";
 	return tmp;
