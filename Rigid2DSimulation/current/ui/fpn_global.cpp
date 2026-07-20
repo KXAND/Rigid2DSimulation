@@ -15,7 +15,7 @@ void RLbGlobal::Sync(App& app) {
 	txt += simulationApp.getLocalizedString(L"vol") + tw2(simulationApp.vol) + L"\n";
 	txt += simulationApp.getLocalizedString(L"n_step") + tw(simulationApp.stepNum) + L"\n";
 	txt += simulationApp.getLocalizedString(L"s_grid") + tw2(simulationApp.gridSize) + L"\n";
-	txt += simulationApp.getLocalizedString(L"max_real_dt") + tw2(simulationApp.max_real_dt) + L"\n";
+	txt += simulationApp.getLocalizedString(L"max_real_dt") + tw2(simulationApp.maxRealDeltaTime) + L"\n";
 	txt += simulationApp.getLocalizedString(L"tl_scene") + tw(simulationApp.rectScene.topLeftPosition) + L"\n";
 	txt += simulationApp.getLocalizedString(L"w_scene") + tw(simulationApp.rectScene.w) + L"\n";
 	txt += simulationApp.getLocalizedString(L"h_scene") + tw(simulationApp.rectScene.h) + L"\n";

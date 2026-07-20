@@ -15,7 +15,7 @@ struct Collision
 	void simulate(bool useEqualPositionCorrection);
 };
 
-void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralell);
+void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double parallelEpsilon);
 // 假设 b0, b1 已经被填入了。
 /***need be move to private↓***/
 bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse);

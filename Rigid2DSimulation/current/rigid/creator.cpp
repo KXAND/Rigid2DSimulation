@@ -33,8 +33,8 @@ Creator::Creator(Var const& v) : Creator()
 	}
 	TryReadConfigNumber(v, L"thick", thick);
 	TryReadConfigNumber(v, L"rad", rad);
-	if (auto value = FindConfigValue(v, L"cfg_body")) { mkp(cfg_body)(*value); }
-	if (auto value = FindConfigValue(v, L"cfg_conn")) { mkp(cfg_connection)(*value); }
+	if (auto value = FindConfigValue(v, L"cfg_body")) { mkp(bodyConfiguration)(*value); }
+	if (auto value = FindConfigValue(v, L"cfg_conn")) { mkp(connectionConfiguration)(*value); }
 }
 
 double Creator::depth() const
@@ -54,7 +54,7 @@ void Creator::UpdateBox(SimulationApp& cur)
 {
 	if (active)
 	{
-		double x0 = p_rec.x, y0 = p_rec.y;
+		double x0 = creationStartPoint.x, y0 = creationStartPoint.y;
 		double x1 = cur.input.msp.x, y1 = cur.input.msp.y;
 		double min_wh = 10;
 		if (x1 - x0 >= min_wh && y1 - y0 >= min_wh)
@@ -62,7 +62,7 @@ void Creator::UpdateBox(SimulationApp& cur)
 			mkp(body)(msh<Shape>(GetRectVerticesByCenter(x1 - x0, y1 - y0)));
 			body->position = vector2(x0 + x1, y0 + y1) / 2;
 			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-			if (cfg_body) { body->ReadCfg(*cfg_body); }
+			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 			body->Init();
 		}
 
@@ -80,7 +80,7 @@ void Creator::UpdateBox(SimulationApp& cur)
 	{
 		if (hovered && cur.input.isMouseClickedDown(0))
 		{
-			active = true; p_rec = cur.input.msp;
+			active = true; creationStartPoint = cur.input.msp;
 		}
 	}
 }
@@ -88,14 +88,14 @@ void Creator::UpdateBall(SimulationApp& cur)
 {
 	if (active)
 	{
-		double r = sqrt((p_rec - cur.input.msp).lensqr());
+		double r = sqrt((creationStartPoint - cur.input.msp).lensqr());
 		double min_r = 7.5;
 		if (r > min_r)
 		{
 			mkp(body)(msh<Shape>(r));
-			body->position = vector2(p_rec);
+			body->position = vector2(creationStartPoint);
 			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-			if (cfg_body) { body->ReadCfg(*cfg_body); }
+			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 			body->Init();
 		}
 
@@ -113,7 +113,7 @@ void Creator::UpdateBall(SimulationApp& cur)
 	{
 		if (hovered && cur.input.isMouseClickedDown(0))
 		{
-			active = true; p_rec = cur.input.msp;
+			active = true; creationStartPoint = cur.input.msp;
 		}
 	}
 }
@@ -123,15 +123,15 @@ void Creator::UpdatePlate(SimulationApp& cur)
 	{
 		double thk = thick;
 		double min_len = 5;
-		dVector2 v = p_rec - cur.input.msp;
+		dVector2 v = creationStartPoint - cur.input.msp;
 		double len = sqrt(v.lensqr());
 		if (len > min_len)
 		{
 			mkp(body)(msh<Shape>(GetRectVerticesByCenter(len + thk, thk)));
-			body->position = vector2(p_rec + cur.input.msp) / 2;
+			body->position = vector2(creationStartPoint + cur.input.msp) / 2;
 			body->radian = atan2(v.y, v.x);
 			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-			if (cfg_body) { body->ReadCfg(*cfg_body); }
+			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 			body->Init();
 		}
 
@@ -149,7 +149,7 @@ void Creator::UpdatePlate(SimulationApp& cur)
 	{
 		if (hovered && cur.input.isMouseClickedDown(0))
 		{
-			active = true; p_rec = cur.input.msp;
+			active = true; creationStartPoint = cur.input.msp;
 		}
 	}
 }
@@ -158,7 +158,7 @@ void Creator::UpdateConnection(SimulationApp& cur)
 	if (active)
 	{
 		mkp(connection)();
-		if (cfg_connection) { connection->ReadCfg(*cfg_connection); }
+		if (connectionConfiguration) { connection->ReadCfg(*connectionConfiguration); }
 		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
 		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
 		if (!cur.input.msd[0])
@@ -191,7 +191,7 @@ void Creator::UpdatePoint(SimulationApp& cur)
 	{
 		mkp(body)((vector2) cur.input.msp);
 		body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-		if (cfg_body) { body->ReadCfg(*cfg_body); }
+		if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 		body->Init();
 		cur.bodies.push_back(body);
 		body = NULL; 
@@ -225,7 +225,7 @@ void Creator::UpdateParticle(SimulationApp& cur)
 		mkp(body)(msh<Shape>(rad));
 		body->position = (vector2) cur.input.msp;
 		body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-		if (cfg_body) { body->ReadCfg(*cfg_body); }
+		if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 		body->Init();
 		cur.bodies.push_back(body);
 		body = NULL; cur.isSceneChanged = true;

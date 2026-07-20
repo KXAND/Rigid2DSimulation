@@ -14,7 +14,7 @@ void BtConOK::OnClick(App& app) {
 	selectedConnection.RefreshFromScript(simulationApp);
 }
 BtConDel::BtConDel() : BtLan(70, L"bt_con_del") {}
-void BtConDel::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->del = true; simulationApp.isSceneChanged = true; }
+void BtConDel::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->isMarkedForDeletion = true; simulationApp.isSceneChanged = true; }
 
 ClyCon::ClyCon() {
 	vector<Control*> tmp;

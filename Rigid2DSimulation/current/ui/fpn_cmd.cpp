@@ -10,7 +10,7 @@ BtCompile::BtCompile() : BtLan(200, L"compile") {}
 void BtCompile::OnClick(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	simulationApp.scriptText = simulationApp.temporaryScriptText;
-	Execute(simulationApp.curScope, Compile(simulationApp.scriptText));
+	Execute(simulationApp.currentScope, Compile(simulationApp.scriptText));
 }
 
 FPnCmd::FPnCmd(App& app) : FPnLan(app, 600, 600, L"fpn_cmd") {

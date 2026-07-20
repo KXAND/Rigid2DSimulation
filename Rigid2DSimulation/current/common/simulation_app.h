@@ -28,17 +28,17 @@ struct SimulationApp : App
 	ptr<UI> ui;
 	ptr<Background> background;
 
-	Scope curScope;
-	wstring dbstr, scriptText, temporaryScriptText;
-	vector<ptr<SceneParameter>> pars;
+	Scope currentScope;
+	wstring debugString, scriptText, temporaryScriptText;
+	vector<ptr<SceneParameter>> parameters;
 
-	ptr<clip> cl0, cl1;
-	clip* mClipPtr = NULL;
+	ptr<clip> musicClip0, musicClip1;
+	clip* currentMusicClip = NULL;
 	double vol = 0;
 
 	int mode = 0;
 	int display = 0;
-	double energy_mul = 0;
+	double energyMultiplier = 0;
 	double chargeMultiplier = 0;
 	bool isTrackShown = false;
 	bool isMuted = false;
@@ -47,8 +47,8 @@ struct SimulationApp : App
 	vector2 gravity;
 	double coulomb = 0;
 	bool hasElectrostatic = false;
-	double max_real_dt = 0;
-	double real_dt = 0, t = 0;
+	double maxRealDeltaTime = 0;
+	double realDeltaTime = 0, t = 0;
 	int stepNum = 0;
 	dRect rectScene;
 	ptr<Creator> creator;
@@ -59,7 +59,7 @@ struct SimulationApp : App
 	vector<ptr<Collision>> collisions;
 	vector<ptr<Connection>> connections;
 
-	double eps_paralell = 0;
+	double parallelEpsilon = 0;
 	bool useEqualPositionCorrection = false;
 	double velocityAngularDrag = 0;
 
@@ -69,8 +69,8 @@ struct SimulationApp : App
 	vector<vector<Body*>> grid;
 
 	SimulationApp();
-	void Save(wstring const& nm) const;
-	void Load(wstring const& nm);
+	void Save(wstring const& name) const;
+	void Load(wstring const& name);
 	void Reset();
 	void Update() override;
 

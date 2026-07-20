@@ -15,7 +15,7 @@ void BtBodyOK::OnClick(App& app) {
 	selectedBody.RefreshFromScript(simulationApp);
 }
 BtBodyDel::BtBodyDel() : BtLan(70, L"bt_body_del") {}
-void BtBodyDel::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->del = true; simulationApp.isSceneChanged = true; }
+void BtBodyDel::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->isMarkedForDeletion = true; simulationApp.isSceneChanged = true; }
 
 
 LbBodyCon::LbBodyCon(int id) : id(id), Label() {

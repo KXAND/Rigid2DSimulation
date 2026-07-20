@@ -13,7 +13,7 @@ struct Body;
 /// 定义一个两两连接关系，根据连接物理材质的不同，更新位置
 /// </summary>
 struct Connection {
-	bool del = false;
+	bool isMarkedForDeletion = false;
 	int type = 0;
 	wstring scriptText, temporaryScriptText;
 	Body* body0 = NULL;

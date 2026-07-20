@@ -20,10 +20,10 @@ struct Creator
 	double depthConnection = 0;
 	double thick = 0;
 	double rad = 0;
-	dVector2 p_rec;
+	dVector2 creationStartPoint;
 	Body* body0 = NULL;
 	Body* body1 = NULL;
-	ptr<Var> cfg_body, cfg_connection;
+	ptr<Var> bodyConfiguration, connectionConfiguration;
 	vector2 p0Relative, p1Relative;
 
 	ptr<Body> body;

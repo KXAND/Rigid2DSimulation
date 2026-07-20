@@ -25,18 +25,18 @@ SimulationApp::SimulationApp()
 	print_console(L"控件加载完成.", true);
 	print_console(L"正在加载音乐...");
 	bool ok = false;
-	mkp(cl0)(L"sound/bgm0.clip", &ok);
-	if (!ok) { cl0 = NULL; }
-	mkp(cl1)(L"sound/bgm1.clip", &ok);
-	if (!ok) { cl1 = NULL; }
+	mkp(musicClip0)(L"sound/bgm0.clip", &ok);
+	if (!ok) { musicClip0 = NULL; }
+	mkp(musicClip1)(L"sound/bgm1.clip", &ok);
+	if (!ok) { musicClip1 = NULL; }
 	print_console(L"音乐加载完成.", true);
 	vol = 1;
-	mClipPtr = GenerateRandomFloat(1) < 0.5 ? &*cl0 : &*cl1;
+	currentMusicClip = GenerateRandomFloat(1) < 0.5 ? &*musicClip0 : &*musicClip1;
 }
 
-void SimulationApp::Save(wstring const& nm) const
+void SimulationApp::Save(wstring const& name) const
 {
-	FILE* f = wfopen(nm, L"wb");
+	FILE* f = wfopen(name, L"wb");
 	if (!f) { return; }
 	int sz = 0; fwtv(scriptText); SaveParameters(f);
 
@@ -48,9 +48,9 @@ void SimulationApp::Save(wstring const& nm) const
 
 	fclose(f);
 }
-void SimulationApp::Load(wstring const& nm)
+void SimulationApp::Load(wstring const& name)
 {
-	FILE* f = wfopen(nm, L"rb");
+	FILE* f = wfopen(name, L"rb");
 	if (!f) { return; } Reset();
 	int sz = 0; frdv(scriptText);
 	temporaryScriptText = scriptText; LoadParameters(f);
@@ -61,41 +61,41 @@ void SimulationApp::Load(wstring const& nm)
 	rep(i, 0, sz) { connections.push_back(msh<Connection>(*this, f)); }
 	isSceneChanged = true;
 
-	Execute(curScope, Compile(scriptText)); fclose(f);
+	Execute(currentScope, Compile(scriptText)); fclose(f);
 }
 void SimulationApp::Reset()
 {
-	curScope.clear(); InitializeDefaultFunctions(); pars.clear();
+	currentScope.clear(); InitializeDefaultFunctions(); parameters.clear();
 
 	bodies.clear();
 	groups.clear();
 	collisions.clear();
 	connections.clear();
-	dbstr.clear();
+	debugString.clear();
 
-	curScope[L"left_bgr"] = msh<Var>(background->topLeft.x);
-	curScope[L"top_bgr"] = msh<Var>(background->topLeft.y);
-	curScope[L"w_bgr"] = msh<Var>(background->width);
-	curScope[L"h_bgr"] = msh<Var>(background->height);
+	currentScope[L"left_bgr"] = msh<Var>(background->topLeft.x);
+	currentScope[L"top_bgr"] = msh<Var>(background->topLeft.y);
+	currentScope[L"w_bgr"] = msh<Var>(background->width);
+	currentScope[L"h_bgr"] = msh<Var>(background->height);
 
 	bodySelecting = NULL;
 	connectionSelecting = NULL;
 	isSceneChanged = false;
 	gravity = vector2();
-	max_real_dt = 0.05;
+	maxRealDeltaTime = 0.05;
 	t = 0; stepNum = 60;
 	rectScene.topLeftPosition = background->topLeft;
 	rectScene.w = background->width;
 	rectScene.h = background->height;
 	gridSize = 50;
-	energy_mul = 4e-6;
+	energyMultiplier = 4e-6;
 	chargeMultiplier = 1;
 	isTrackShown = false;
 
 	hasElectrostatic = false;
 	coulomb = 1e5;
 
-	eps_paralell = 1e-3;
+	parallelEpsilon = 1e-3;
 	useEqualPositionCorrection = false;
 	velocityAngularDrag = 2;
 
@@ -110,21 +110,21 @@ void SimulationApp::Update()
 	ui->PreUpdate(*this);
 	UpdateBasicState();
 
-	if (curScope.find(L"update") != curScope.end())
+	if (currentScope.find(L"update") != currentScope.end())
 	{
-		auto tmp = *curScope[L"update"];
-		Execute(curScope, tmp.procs);
+		auto tmp = *currentScope[L"update"];
+		Execute(currentScope, tmp.procs);
 	}
 	
 	// 音乐
-	if (cl0 && cl1)
+	if (musicClip0 && musicClip1)
 	{
-		if (mClipPtr->csp >= mClipPtr->n())
+		if (currentMusicClip->csp >= currentMusicClip->n())
 		{
-			mClipPtr->csp = 0;
-			mClipPtr = (mClipPtr == &*cl0) ? &*cl1 : &*cl0;
+			currentMusicClip->csp = 0;
+			currentMusicClip = (currentMusicClip == &*musicClip0) ? &*musicClip1 : &*musicClip0;
 		}
-		if (!isMuted) { mClipPtr->play(wv.wvin); }
+		if (!isMuted) { currentMusicClip->play(wv.wvin); }
 	}
 
 	// 检查暂停
@@ -134,11 +134,11 @@ void SimulationApp::Update()
 	}
 
 	// 删除被标记为删除的图形和其上的连接
-	for (auto b : bodies) if (b->del)
-		for (auto c : b->connections) { c->del = true; }
-	if (bodySelecting && bodySelecting->del) { bodySelecting = NULL; }
-	if (connectionSelecting && connectionSelecting->del) { connectionSelecting = NULL; }
-	for (auto& c : connections) if (c->del)
+	for (auto b : bodies) if (b->isMarkedForDeletion)
+		for (auto c : b->connections) { c->isMarkedForDeletion = true; }
+	if (bodySelecting && bodySelecting->isMarkedForDeletion) { bodySelecting = NULL; }
+	if (connectionSelecting && connectionSelecting->isMarkedForDeletion) { connectionSelecting = NULL; }
+	for (auto& c : connections) if (c->isMarkedForDeletion)
 	{
 		//将该连接从其两端的物体的连接列表中移除。
 		auto& cons0 = c->body0->connections;
@@ -148,32 +148,32 @@ void SimulationApp::Update()
 	}
 	connections.erase(
 		remove_if(connections.begin(), connections.end(),
-			[](ptr<Connection> c) { return c->del; }),
+			[](ptr<Connection> c) { return c->isMarkedForDeletion; }),
 		connections.end());
 	bodies.erase(
 		remove_if(bodies.begin(), bodies.end(),
-			[](ptr<Body> b) { return b->del; }),
+			[](ptr<Body> b) { return b->isMarkedForDeletion; }),
 		bodies.end());
 	
 	// 更新运行信息
 	(*background).Update(*this);
 	(*background).Render(*this);
-	real_dt = min(max_real_dt, fps.dt());
-	curScope[L"cur.fps.dt()"] = msh<Var>(real_dt);
+	realDeltaTime = min(maxRealDeltaTime, fps.dt());
+	currentScope[L"cur.fps.dt()"] = msh<Var>(realDeltaTime);
 	gridNumX = ceil(rectScene.w / gridSize);
 	gridNumY = ceil(rectScene.h / gridSize);
 	if (isSceneChanged) { isSceneChanged = false; groups = FormGroups(bodies); }
 	for (const auto& b : bodies) { b->Update(*this); }
 
 	// 物理模拟
-	if (!isPaused && real_dt != 0)
+	if (!isPaused && realDeltaTime != 0)
 	{
 		// 标准时长
-		double sdt = real_dt / stepNum;
+		double sdt = realDeltaTime / stepNum;
 
 		rep(i, 0, stepNum)
 		{
-			curScope[L"t"] = msh<Var>(t);
+			currentScope[L"t"] = msh<Var>(t);
 			for (const auto& b : bodies) { b->Step(*this, sdt); }
 			// for (auto b : bodies) { b->warp(rectScene); }
 			for (auto& g : groups) { g->Warp(rectScene); }
@@ -226,10 +226,10 @@ void SimulationApp::Update()
 void SimulationApp::SetCfg(Var const& v)
 {
 	TryReadConfigNumber(v, L"vol", vol);
-	TryReadConfigNumber(v, L"energy_mul", energy_mul);
+	TryReadConfigNumber(v, L"energy_mul", energyMultiplier);
 	TryReadConfigNumber(v, L"chargeMultiplier", chargeMultiplier);
-	TryReadConfigNumber(v, L"eps_paralell", eps_paralell);
-	TryReadConfigNumber(v, L"max_real_dt", max_real_dt);
+	TryReadConfigNumber(v, L"eps_paralell", parallelEpsilon);
+	TryReadConfigNumber(v, L"max_real_dt", maxRealDeltaTime);
 	TryReadConfigNumber(v, L"hasElectrostatic", hasElectrostatic);
 	TryReadConfigNumber(v, L"coulomb", coulomb);
 	TryReadConfigNumber(v, L"stepNum", stepNum);
@@ -258,14 +258,14 @@ void SimulationApp::DetectCollisions()
 			auto& bo = *bodies[k];
 
 			// 检查同grid和跨grid的情况，输出到collisions中
-			rep(m, k + 1, bodies.size()) { Collide(bo, *bodies[m], collisions, eps_paralell); }
-			for (auto pb1 : multiGridBodies) { Collide(bo, *pb1, collisions, eps_paralell); }
+			rep(m, k + 1, bodies.size()) { Collide(bo, *bodies[m], collisions, parallelEpsilon); }
+			for (auto pb1 : multiGridBodies) { Collide(bo, *pb1, collisions, parallelEpsilon); }
 
 			// 检查右邻
 			if (i + 1 < gridNumX)
 			{
 				int a = i + 1, b = j;
-				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, eps_paralell); }
+				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, parallelEpsilon); }
 			}
 			if (j + 1 >= gridNumY) { continue; }// 检查下邻，没有下邻就无法进行下列操作了
 
@@ -273,17 +273,17 @@ void SimulationApp::DetectCollisions()
 			if (i - 1 >= 0)
 			{
 				int a = i - 1, b = j + 1;
-				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, eps_paralell); }
+				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, parallelEpsilon); }
 			}
 			// 检查右下
 			if (i + 1 < gridNumX)
 			{
 				int a = i + 1, b = j + 1;
-				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, eps_paralell); }
+				for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, parallelEpsilon); }
 			}
 			// 检查正下
 			int a = i, b = j + 1;
-			for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, eps_paralell); }
+			for (auto pb1 : grid[b * gridNumX + a]) { Collide(bo, *pb1, collisions, parallelEpsilon); }
 		}
 	}
 
@@ -291,19 +291,19 @@ void SimulationApp::DetectCollisions()
 	rep(i, 0, multiGridBodies.size() - 1)
 		rep(j, i + 1, multiGridBodies.size())
 	{
-		Collide(*multiGridBodies[i], *multiGridBodies[j], collisions, eps_paralell);
+		Collide(*multiGridBodies[i], *multiGridBodies[j], collisions, parallelEpsilon);
 	}
 }
 
 void SimulationApp::SaveParameters(FILE* f) const
 {
-	int sz = pars.size(); fwt(sz);
-	for (auto p : pars) { p->Save(f); }
+	int sz = parameters.size(); fwt(sz);
+	for (auto p : parameters) { p->Save(f); }
 }
 void SimulationApp::LoadParameters(FILE* f)
 {
 	int sz = 0; frd(sz);
-	rep(i, 0, sz) { pars.push_back(msh<SceneParameter>(f)); }
+	rep(i, 0, sz) { parameters.push_back(msh<SceneParameter>(f)); }
 }
 void SimulationApp::InitializeDefaultFunctions()
 {
@@ -312,97 +312,97 @@ void SimulationApp::InitializeDefaultFunctions()
 			if (in.size() >= 1) { mkp(creator)(*in[0]); }
 			return msh<Var>();
 		};
-	curScope[L"set_creator"] = msh<Var>(f0);
+	currentScope[L"set_creator"] = msh<Var>(f0);
 
 	auto f1 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 2) { CreateBody(*this, *in[0], *in[1]); }
 			return msh<Var>();
 		};
-	curScope[L"create_body"] = msh<Var>(f1);
+	currentScope[L"create_body"] = msh<Var>(f1);
 
 	auto f2 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 2) { return Box(*in[0], *in[1]); }
 			return msh<Var>();
 		};
-	curScope[L"box"] = msh<Var>(f2);
+	currentScope[L"box"] = msh<Var>(f2);
 
 	auto f3 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 1) { return Ball(*in[0]); }
 			return msh<Var>();
 		};
-	curScope[L"ball"] = msh<Var>(f3);
+	currentScope[L"ball"] = msh<Var>(f3);
 
 	auto f4 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 2) { return Parallelogram(*in[0], *in[1], *in[2]); }
 			return msh<Var>();
 		};
-	curScope[L"parallelogram"] = msh<Var>(f4);
+	currentScope[L"parallelogram"] = msh<Var>(f4);
 
 	auto f5 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 3) { return Trapezoid(*in[0], *in[1], *in[2]); }
 			return msh<Var>();
 		};
-	curScope[L"trapezoid"] = msh<Var>(f5);
+	currentScope[L"trapezoid"] = msh<Var>(f5);
 
 	auto f6 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 2) { return RegularPoly(*in[0], *in[1]); }
 			return msh<Var>();
 		};
-	curScope[L"regular_poly"] = msh<Var>(f6);
+	currentScope[L"regular_poly"] = msh<Var>(f6);
 
 	auto f7 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 2) { return Cross(*in[0], *in[1]); }
 			return msh<Var>();
 		};
-	curScope[L"cross"] = msh<Var>(f7);
+	currentScope[L"cross"] = msh<Var>(f7);
 
 	auto f8 = [this](vector<ptr<Var>> const& in)
 		{
 			return msh<Var>(bodies.size());
 		};
-	curScope[L"n_bodies"] = msh<Var>(f8);
+	currentScope[L"n_bodies"] = msh<Var>(f8);
 
 	auto f9 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 1) { CreateConnection(*this, *in[0]); }
 			return msh<Var>();
 		};
-	curScope[L"create_conn"] = msh<Var>(f9);
+	currentScope[L"create_conn"] = msh<Var>(f9);
 
 	auto f10 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 1) { SetCfg(*in[0]); }
 			return msh<Var>();
 		};
-	curScope[L"set_cfg"] = msh<Var>(f10);
+	currentScope[L"set_cfg"] = msh<Var>(f10);
 
 	auto f11 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 2) { Boundary(*this, *in[0], *in[1]); }
 			return msh<Var>();
 		};
-	curScope[L"boundary"] = msh<Var>(f11);
+	currentScope[L"boundary"] = msh<Var>(f11);
 
 	auto f12 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 3) { return FramedBox(*in[0], *in[1], *in[2]); }
 			return msh<Var>();
 		};
-	curScope[L"framed_box"] = msh<Var>(f12);
+	currentScope[L"framed_box"] = msh<Var>(f12);
 
 	auto f13 = [this](vector<ptr<Var>> const& in)
 		{
 			if (in.size() >= 4) { Gear(*this, *in[0], *in[1], *in[2], *in[3]); }
 			return msh<Var>();
 		};
-	curScope[L"gear"] = msh<Var>(f13);
+	currentScope[L"gear"] = msh<Var>(f13);
 
 	auto f14 = [this](vector<ptr<Var>> const& in)
 		{
@@ -412,7 +412,7 @@ void SimulationApp::InitializeDefaultFunctions()
 			}
 			return msh<Var>();
 		};
-	curScope[L"strand"] = msh<Var>(f14);
+	currentScope[L"strand"] = msh<Var>(f14);
 
 	auto f15 = [this](vector<ptr<Var>> const& in)
 		{
@@ -422,22 +422,22 @@ void SimulationApp::InitializeDefaultFunctions()
 			}
 			return msh<Var>();
 		};
-	curScope[L"necklace"] = msh<Var>(f15);
+	currentScope[L"necklace"] = msh<Var>(f15);
 }
 void SimulationApp::UpdateBasicState()
 {
 	title = getLocalizedString(L"title");
-	if (curScope.find(L"cur.dbstr") != curScope.end()) { dbstr = curScope[L"cur.dbstr"]->str; }
-	if (curScope.find(L"update") != curScope.end()) { auto f = curScope[L"update"];  Execute(curScope, f->procs); }
+	if (currentScope.find(L"cur.debugString") != currentScope.end()) { debugString = currentScope[L"cur.debugString"]->str; }
+	if (currentScope.find(L"update") != currentScope.end()) { auto f = currentScope[L"update"];  Execute(currentScope, f->procs); }
 
 	// 删除标记为删除的键
-	pars.erase(
-		remove_if(pars.begin(), pars.end(),
-			[](ptr<SceneParameter> p) { return p->del; }),
-		pars.end());
+	parameters.erase(
+		remove_if(parameters.begin(), parameters.end(),
+			[](ptr<SceneParameter> p) { return p->isMarkedForDeletion; }),
+		parameters.end());
 
 	//更新对应键的值
-	for (auto& p : pars) { curScope[p->nm] = msh<Var>(p->val); }
+	for (auto& p : parameters) { currentScope[p->name] = msh<Var>(p->value); }
 }
 
 

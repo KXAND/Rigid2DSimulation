@@ -158,7 +158,7 @@ void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var cons
 	cur.isSceneChanged = true;
 }
 void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
-	Var const& _n, Var const& ratio, Var const& cfg_body, Var const& cfg_conn)
+	Var const& _n, Var const& ratio, Var const& bodyConfiguration, Var const& cfg_conn)
 {
 	vector2 p0 = tv2(_p0), p1 = tv2(_p1);
 	int n = _n.num;
@@ -171,7 +171,7 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	mkp(b0)(msh<Shape>(rad));
 	b0->innerColor = col;
 	b0->position = p0;
-	b0->ReadCfg(cfg_body);
+	b0->ReadCfg(bodyConfiguration);
 	b0->Init();
 	cur.bodies.push_back(b0);
 	rep(i, 1, n + 1)
@@ -179,7 +179,7 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 		mkp(b1)(msh<Shape>(rad));
 		b1->innerColor = col;
 		b1->position = (p0 * (n - i) + p1 * i) / n;
-		b1->ReadCfg(cfg_body);
+		b1->ReadCfg(bodyConfiguration);
 		b1->Init();
 		cur.bodies.push_back(b1);
 		mkp(connection)();
@@ -197,7 +197,7 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	cur.isSceneChanged = true;
 }
 void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
-	Var const& _n, Var const& ratio, Var const& cfg_body, Var const& cfg_conn)
+	Var const& _n, Var const& ratio, Var const& bodyConfiguration, Var const& cfg_conn)
 {
 	ptr<Body> beg, b0, b1;
 	int n = _n.num;
@@ -210,7 +210,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 	mkp(b0)(msh<Shape>(ball_rad));
 	b0->innerColor = col;
 	b0->position = o + vector2(rad.num, 0);
-	b0->ReadCfg(cfg_body);
+	b0->ReadCfg(bodyConfiguration);
 	b0->Init();
 	cur.bodies.push_back(b0);
 	beg = b0;
@@ -220,7 +220,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 		mkp(b1)(msh<Shape>(ball_rad));
 		b1->innerColor = col;
 		b1->position = o + vector2(cos(phi), sin(phi)) * rad.num;
-		b1->ReadCfg(cfg_body);
+		b1->ReadCfg(bodyConfiguration);
 		b1->Init();
 		cur.bodies.push_back(b1);
 		mkp(connection)();

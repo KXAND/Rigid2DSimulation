@@ -69,10 +69,10 @@ void Connection::UpdatePosition()
 
 void Connection::RefreshFromScript(SimulationApp& cur)
 {
-	cur.curScope[L"conn"] = msh<Var>();
-	Execute(cur.curScope, Compile(scriptText));
-	if (cur.curScope.find(L"conn") == cur.curScope.end()) { return; }
-	ReadCfg(*cur.curScope[L"conn"]);
+	cur.currentScope[L"conn"] = msh<Var>();
+	Execute(cur.currentScope, Compile(scriptText));
+	if (cur.currentScope.find(L"conn") == cur.currentScope.end()) { return; }
+	ReadCfg(*cur.currentScope[L"conn"]);
 
 	UpdatePosition();
 }

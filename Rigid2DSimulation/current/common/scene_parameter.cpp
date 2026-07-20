@@ -1,13 +1,13 @@
 #include "scene_parameter.h"
 
-SceneParameter::SceneParameter(wstring const& nm) : nm(nm) {}
+SceneParameter::SceneParameter(wstring const& name) : name(name) {}
 void SceneParameter::Save(FILE* f) {
 	int sz = 0;
-	fwtv(nm); fwt(val);
+	fwtv(name); fwt(value);
 }
 SceneParameter::SceneParameter(FILE* f) {
 	int sz = 0;
-	frdv(nm); frd(val);
+	frdv(name); frd(value);
 }
 
 

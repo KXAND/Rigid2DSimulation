@@ -18,7 +18,7 @@ Body::Body()
 	elasticity = 0.7; frictionStatic = 0.5; frictionDynamic = 0.3;
 
 	depthShape = 0; depthPoint = 1;
-	r_point = 8;
+	pointRadius = 8;
 	borderColor = { 255, 255, 255 };
 	hoveredColor = { 0, 0, 255 };
 	draggedColor = { 255, 0, 0 };
@@ -75,7 +75,7 @@ double Body::GetDepth() const
 }
 bool Body::IsInside(vector2 p) const
 {
-	if (point) { return (p - position).lensqr() < r_point * r_point; }
+	if (point) { return (p - position).lensqr() < pointRadius * pointRadius; }
 
 	for (auto sh : shapes)
 	{
@@ -86,16 +86,16 @@ bool Body::IsInside(vector2 p) const
 
 void Body::RefreshFromScript(SimulationApp& cur)
 {
-	cur.curScope[L"body"] = msh<Var>();
-	Execute(cur.curScope, Compile(scriptText));
-	if (cur.curScope.find(L"body") == cur.curScope.end()) { return; }
-	auto const& body_cfg = *cur.curScope[L"body"];
+	cur.currentScope[L"body"] = msh<Var>();
+	Execute(cur.currentScope, Compile(scriptText));
+	if (cur.currentScope.find(L"body") == cur.currentScope.end()) { return; }
+	auto const& body_cfg = *cur.currentScope[L"body"];
 	ReadCfg(body_cfg);
 
 	// 这些单独放是因为它们无法只能通过 scriptText 获得，无法保存。
-	TryReadConfigNumber(body_cfg, L"preset_o", preset_o);
-	TryReadConfigNumber(body_cfg, L"preset_ang", preset_ang);
-	TryReadConfigNumber(body_cfg, L"preset_v_ang", preset_v_ang);
+	TryReadConfigNumber(body_cfg, L"preset_o", hasPositionPreset);
+	TryReadConfigNumber(body_cfg, L"preset_ang", hasAnglePreset);
+	TryReadConfigNumber(body_cfg, L"preset_v_ang", hasAngularVelocityPreset);
 	if (auto value = FindConfigValue(body_cfg, L"o_prog")) { mkp(positionProgram)(value->procs); }
 	if (auto value = FindConfigValue(body_cfg, L"ang_prog")) { mkp(angleProgram)(value->procs); }
 	if (auto value = FindConfigValue(body_cfg, L"v_ang_prog")) { mkp(angularVelocityProgram)(value->procs); }
@@ -244,7 +244,7 @@ void Body::Init(bool repos_o)
 }
 void Body::Render(SimulationApp& cur) const
 {
-	bool selected_con = cur.connectionSelecting &&
+	bool isSelectedConnection = cur.connectionSelecting &&
 		(cur.connectionSelecting->body0 == this || cur.connectionSelecting->body1 == this);
 	dColor normalColor;
 	switch (cur.display)
@@ -256,7 +256,7 @@ void Body::Render(SimulationApp& cur) const
 		case DISPLAY_ENERGY:
 		{
 			double energy = velocity.lensqr() + velocityAngular * velocityAngular * inertia / area;
-			normalColor = (dColor) vector3(energy * cur.energy_mul, 0, 0);
+			normalColor = (dColor) vector3(energy * cur.energyMultiplier, 0, 0);
 			break;
 		}
 		case DISPLAY_CHARGES:
@@ -274,13 +274,13 @@ void Body::Render(SimulationApp& cur) const
 		dragged ? draggedColor :
 		(cur.bodySelecting == this) ? selectedColor :
 		hovered ? hoveredColor :
-		selected_con ? selectedConColor :
+		isSelectedConnection ? selectedConColor :
 		normalColor;
 
 	if (point)
 	{
-		drawEllipse(cur.scr, cur.dscr, GetDepth(), position, r_point, r_point, cur.background->ViewPort(), color);
-		drawEllipseBorder(cur.scr, cur.dscr, GetDepth(), position, r_point, r_point, cur.background->ViewPort(), borderColor, 20);
+		drawEllipse(cur.scr, cur.dscr, GetDepth(), position, pointRadius, pointRadius, cur.background->ViewPort(), color);
+		drawEllipseBorder(cur.scr, cur.dscr, GetDepth(), position, pointRadius, pointRadius, cur.background->ViewPort(), borderColor, 20);
 	}
 	for (auto& shape : shapes)
 	{
@@ -334,7 +334,7 @@ void Body::Step(SimulationApp& cur, double stepDt)
 		velocity -= dampCoeff * velocity * stepDt;
 		velocity += cur.gravity * stepDt;
 		velocityAngular -= dampCoeffAngular * velocityAngular * stepDt;
-		if (preset_v_ang) { FollowPresetAngularVelocity(cur); }
+		if (hasAngularVelocityPreset) { FollowPresetAngularVelocity(cur); }
 		position += velocity * stepDt;
 		radian += velocityAngular * stepDt;
 	}
@@ -342,8 +342,8 @@ void Body::Step(SimulationApp& cur, double stepDt)
 	{
 		velocity = {};
 		velocityAngular = 0;
-		if (preset_o) { FollowPresetPosition(cur, stepDt); }
-		if (preset_ang) { FollowPresetAngle(cur, stepDt); }
+		if (hasPositionPreset) { FollowPresetPosition(cur, stepDt); }
+		if (hasAnglePreset) { FollowPresetAngle(cur, stepDt); }
 	}
 
 	if (dragged)
@@ -363,9 +363,9 @@ void Body::FollowPresetPosition(SimulationApp& cur, double stepDt)
 	Scope scope;
 	bool ret = false;
 	scope[L"t"] = msh<Var>(cur.t);
-	auto positionOld = tv2(Execute(ret, cur.curScope, scope, *positionProgram)->vec);
+	auto positionOld = tv2(Execute(ret, cur.currentScope, scope, *positionProgram)->vec);
 	scope.clear(); scope[L"t"] = msh<Var>(cur.t + stepDt); ret = false;
-	auto positionNew = tv2(Execute(ret, cur.curScope, scope, *positionProgram)->vec);
+	auto positionNew = tv2(Execute(ret, cur.currentScope, scope, *positionProgram)->vec);
 	auto velocityNew = (positionNew - positionOld) / stepDt;
 
 	// 其实我觉得应当选用时间较小的值。
@@ -380,11 +380,11 @@ void Body::FollowPresetAngle(SimulationApp& cur, double stepDt)
 	Scope scope;
 	bool ret = false;
 	scope[L"t"] = msh<Var>(cur.t);
-	auto radianOld = Execute(ret, cur.curScope, scope, *angleProgram)->num;
+	auto radianOld = Execute(ret, cur.currentScope, scope, *angleProgram)->num;
 	scope.clear();
 	scope[L"t"] = msh<Var>(cur.t + stepDt);
 	ret = false;
-	auto radianNew = Execute(ret, cur.curScope, scope, *angleProgram)->num;
+	auto radianNew = Execute(ret, cur.currentScope, scope, *angleProgram)->num;
 	auto velocityAngularNew = (radianNew - radianOld) / stepDt;
 
 	radian = radianNew;
@@ -398,7 +398,7 @@ void Body::FollowPresetAngularVelocity(SimulationApp& cur)
 	Scope sc;
 	bool ret = false;
 	sc[L"t"] = msh<Var>(cur.t);
-	auto velocityAngularNew = Execute(ret, cur.curScope, sc, *angularVelocityProgram)->num;
+	auto velocityAngularNew = Execute(ret, cur.currentScope, sc, *angularVelocityProgram)->num;
 
 	velocityAngular = velocityAngularNew;
 }
@@ -411,7 +411,7 @@ void Body::UpdateDragAngle(SimulationApp& cur)
 		if (cur.input.kbd[L'Q']) { velocityAngularDrag = -cur.velocityAngularDrag; }
 		if (cur.input.kbd[L'E']) { velocityAngularDrag = +cur.velocityAngularDrag; }
 	}
-	radianDrag = radian + velocityAngularDrag * cur.real_dt;
+	radianDrag = radian + velocityAngularDrag * cur.realDeltaTime;
 }
 
 void Body::HandleDragPoint(SimulationApp& cur)
@@ -419,7 +419,7 @@ void Body::HandleDragPoint(SimulationApp& cur)
 	// 下列命名指定o,p,m三点为body中心、被拖拽点及鼠标现在点
 	vector2 mousePos = vector2(cur.input.msp);
 	vector2 pPos = position + transform * relativeDragPoint;
-	vector2 mouseVelocity = vector2(cur.input.msp - cur.input.msp_old) / cur.real_dt;
+	vector2 mouseVelocity = vector2(cur.input.msp - cur.input.msp_old) / cur.realDeltaTime;
 	vector2 pmDir = (mousePos - pPos).normalize();
 
 	vector2 opDir = pPos - position;
@@ -443,7 +443,7 @@ void Body::HandleDragWhole(SimulationApp& cur)
 {
 	vector2 mousePos = vector2(cur.input.msp);
 	vector2 dragPointPos = position + transform * relativeDragPoint;
-	vector2 newVelocity = vector2(cur.input.msp - cur.input.msp_old) / cur.real_dt;
+	vector2 newVelocity = vector2(cur.input.msp - cur.input.msp_old) / cur.realDeltaTime;
 
 	velocity = newVelocity;
 	radian = radianDrag;
@@ -473,7 +473,7 @@ void Body::Update(SimulationApp& cur)
 {
 	hovered = (cur.own.hovered == this);
 
-	if (cur.mode == MODE_DEL && hovered && cur.input.isMouseClickedDown(0)) { del = true; }
+	if (cur.mode == MODE_DEL && hovered && cur.input.isMouseClickedDown(0)) { isMarkedForDeletion = true; }
 	if (cur.mode == MODE_SEL && hovered && cur.input.isMouseClickedDown(0)) { cur.bodySelecting = this; }
 	if (dragged)
 	{

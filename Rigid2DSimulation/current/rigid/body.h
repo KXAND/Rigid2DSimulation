@@ -14,14 +14,14 @@ struct Connection;
 /// </summary>
 struct Body
 {
-	bool del = false;
+	bool isMarkedForDeletion = false;
 	bool point = false;
 	bool fixed = false;
 	ptr<Program> positionProgram, angleProgram, angularVelocityProgram;
 	double inertia = 0;
-	bool preset_o = false;
-	bool preset_ang = false;
-	bool preset_v_ang = false;
+	bool hasPositionPreset = false;
+	bool hasAnglePreset = false;
+	bool hasAngularVelocityPreset = false;
 	vector<vector2> track;
 	vector<ptr<Shape>> shapes;
 	vector<Connection*> connections;
@@ -44,7 +44,7 @@ struct Body
 	double radianDrag = 0, velocityAngularDrag = 0;
 	vector2 relativeDragPoint;
 	double depthShape = 0, depthPoint = 0;
-	double r_point = 0;
+	double pointRadius = 0;
 
 	dColor innerColor;
 	dColor borderColor;

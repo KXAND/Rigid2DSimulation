@@ -3,16 +3,16 @@
 #include "scene_parameter.h"
 
 TbParNm::TbParNm(int id) : id(id), Textbox(270) {};
-void TbParNm::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.pars[id]->nm; }
-void TbParNm::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.pars[id]->nm = str; }
+void TbParNm::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.parameters[id]->name; }
+void TbParNm::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->name = str; }
 BtDelPar::BtDelPar(int id) : id(id), BtLan(80, L"bt_del_par") {}
-void BtDelPar::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.pars[id]->del = true; }
+void BtDelPar::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->isMarkedForDeletion = true; }
 DbXParVal::DbXParVal(int id) : id(id), DragbarX(270) {}
-void DbXParVal::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); set_nx_rel(simulationApp.pars[id]->val); }
-void DbXParVal::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.pars[id]->val = uval(); }
+void DbXParVal::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); set_nx_rel(simulationApp.parameters[id]->value); }
+void DbXParVal::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = uval(); }
 TbParVal::TbParVal(int id) : id(id), Textbox(80) {};
-void TbParVal::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = tw2(simulationApp.pars[id]->val); }
-void TbParVal::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.pars[id]->val = wtof(str); }
+void TbParVal::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = tw2(simulationApp.parameters[id]->value); }
+void TbParVal::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = wtof(str); }
 
 ClyPar::ClyPar(int id) {
 	vector<Control*> tmp;
@@ -30,14 +30,14 @@ ClyPar::ClyPar(int id) {
 void ClyPars::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	cs.clear();
-	rep(i, mbs.size(), simulationApp.pars.size()) { mbs.push_back(msh<ClyPar>(i)); }
-	rep(i, 0, simulationApp.pars.size()) { cs.push_back(&*mbs[i]); }
-	rep(i, simulationApp.pars.size(), mbs.size()) { mbs[i]->Discard(app); }
+	rep(i, mbs.size(), simulationApp.parameters.size()) { mbs.push_back(msh<ClyPar>(i)); }
+	rep(i, 0, simulationApp.parameters.size()) { cs.push_back(&*mbs[i]); }
+	rep(i, simulationApp.parameters.size(), mbs.size()) { mbs[i]->Discard(app); }
 	CtrlListY::Update(app);
 }
 
 BtAddPar::BtAddPar() : BtLan(160, L"bt_add_par") {}
-void BtAddPar::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.pars.push_back(msh<SceneParameter>(simulationApp.getLocalizedString(L"unnamed_par"))); }
+void BtAddPar::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters.push_back(msh<SceneParameter>(simulationApp.getLocalizedString(L"unnamed_par"))); }
 
 FPnPar::FPnPar(App& app) : FPnLan(app, 400, 600, L"fpn_par") {
 	vector<Control*> tmp;

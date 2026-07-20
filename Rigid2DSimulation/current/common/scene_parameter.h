@@ -2,11 +2,11 @@
 #include "framework/basic/utils.h"
 
 struct SceneParameter {
-	wstring nm;
-	double val = 0;
-	bool del = false;
+	wstring name;
+	double value = 0;
+	bool isMarkedForDeletion = false;
 
-	SceneParameter(wstring const& nm = {});
+	SceneParameter(wstring const& name = {});
 	void Save(FILE* f);
 	SceneParameter(FILE* f);
 };
