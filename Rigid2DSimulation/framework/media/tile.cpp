@@ -51,25 +51,25 @@ tile::tile(int w, int h, tile const& src, dRect vp_src) : tile(w, h)
 }
 void tile::save(wstring const& fileName) const
 {
-	FILE* f = wfopen(fileName, L"wb");
-	if (!f) { return; }
-	fwrite(&(width), sizeof(width), 1, f);
-	fwrite(&(height), sizeof(height), 1, f);
-	fwrite(&colors[0], sizeof(*(&colors[0])), area(), f);
-	fwrite(&as[0], sizeof(*(&as[0])), area(), f);
-	fclose(f);
+	FILE* file = wfopen(fileName, L"wb");
+	if (!file) { return; }
+	fwrite(&(width), sizeof(width), 1, file);
+	fwrite(&(height), sizeof(height), 1, file);
+	fwrite(&colors[0], sizeof(*(&colors[0])), area(), file);
+	fwrite(&as[0], sizeof(*(&as[0])), area(), file);
+	fclose(file);
 }
 tile::tile(wstring const& fileName, bool* ok)
 {
-	FILE* f = wfopen(fileName, L"rb");
-	if (ok) { *ok = f; }
-	if (!f) { return; }
-	fread(&(width), sizeof(width), 1, f);
-	fread(&(height), sizeof(height), 1, f);
+	FILE* file = wfopen(fileName, L"rb");
+	if (ok) { *ok = file; }
+	if (!file) { return; }
+	fread(&(width), sizeof(width), 1, file);
+	fread(&(height), sizeof(height), 1, file);
 	colors.resize(width * height); as.resize(width * height);
-	fread(&colors[0], sizeof(*(&colors[0])), area(), f);
-	fread(&as[0], sizeof(*(&as[0])), area(), f);
-	fclose(f);
+	fread(&colors[0], sizeof(*(&colors[0])), area(), file);
+	fread(&as[0], sizeof(*(&as[0])), area(), file);
+	fclose(file);
 }
 
 int tile::area() const { return width * height; }

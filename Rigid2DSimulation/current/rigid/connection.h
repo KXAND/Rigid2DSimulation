@@ -31,8 +31,8 @@ struct Connection {
 	dColor colorSpringStretch, colorSpringCompress;
 
 	Connection();
-	Connection(SimulationApp& cur, FILE* f);
-	void Save(SimulationApp const& cur, FILE* f) const;
+	Connection(SimulationApp& cur, FILE* file);
+	void Save(SimulationApp const& cur, FILE* file) const;
 
 	void ReadCfg(Var const& cfg);
 	void SignUpToBodies();

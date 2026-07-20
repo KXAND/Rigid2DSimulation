@@ -36,41 +36,41 @@ SimulationApp::SimulationApp()
 
 void SimulationApp::Save(wstring const& name) const
 {
-	FILE* f = wfopen(name, L"wb");
-	if (!f) { return; }
-	int sz = 0;
-	sz = (scriptText).size();
-	fwrite(&(sz), sizeof(sz), 1, f);
-	fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), sz, f);
-	SaveParameters(f);
+	FILE* file = wfopen(name, L"wb");
+	if (!file) { return; }
+	int size = 0;
+	size = (scriptText).size();
+	fwrite(&(size), sizeof(size), 1, file);
+	fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
+	SaveParameters(file);
 
 	// 可能会保存一些即将被删除的元素，但是也无所谓。
-	sz = bodies.size();
-	fwrite(&(sz), sizeof(sz), 1, f);
-	for (auto b : bodies) { b->Save(f); }
-	sz = connections.size();
-	fwrite(&(sz), sizeof(sz), 1, f);
-	for (auto c : connections) { c->Save(*this, f); }
+	size = bodies.size();
+	fwrite(&(size), sizeof(size), 1, file);
+	for (auto b : bodies) { b->Save(file); }
+	size = connections.size();
+	fwrite(&(size), sizeof(size), 1, file);
+	for (auto c : connections) { c->Save(*this, file); }
 
-	fclose(f);
+	fclose(file);
 }
 void SimulationApp::Load(wstring const& name)
 {
-	FILE* f = wfopen(name, L"rb");
-	if (!f) { return; } Reset();
-	int sz = 0;
-	fread(&(sz), sizeof(sz), 1, f);
-	(scriptText).resize(sz);
-	fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), sz, f);
-	temporaryScriptText = scriptText; LoadParameters(f);
+	FILE* file = wfopen(name, L"rb");
+	if (!file) { return; } Reset();
+	int size = 0;
+	fread(&(size), sizeof(size), 1, file);
+	(scriptText).resize(size);
+	fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
+	temporaryScriptText = scriptText; LoadParameters(file);
 
-	fread(&(sz), sizeof(sz), 1, f);
-	for (int i = (0), iEnd = int(sz); i < iEnd; ++i) { bodies.push_back(std::make_shared<Body>(*this, f)); }
-	fread(&(sz), sizeof(sz), 1, f);
-	for (int i = (0), iEnd = int(sz); i < iEnd; ++i) { connections.push_back(std::make_shared<Connection>(*this, f)); }
+	fread(&(size), sizeof(size), 1, file);
+	for (int i = (0), iEnd = int(size); i < iEnd; ++i) { bodies.push_back(std::make_shared<Body>(*this, file)); }
+	fread(&(size), sizeof(size), 1, file);
+	for (int i = (0), iEnd = int(size); i < iEnd; ++i) { connections.push_back(std::make_shared<Connection>(*this, file)); }
 	isSceneChanged = true;
 
-	Execute(currentScope, Compile(scriptText)); fclose(f);
+	Execute(currentScope, Compile(scriptText)); fclose(file);
 }
 void SimulationApp::Reset()
 {
@@ -304,17 +304,17 @@ void SimulationApp::DetectCollisions()
 	}
 }
 
-void SimulationApp::SaveParameters(FILE* f) const
+void SimulationApp::SaveParameters(FILE* file) const
 {
-	int sz = parameters.size();
-	fwrite(&(sz), sizeof(sz), 1, f);
-	for (auto p : parameters) { p->Save(f); }
+	int size = parameters.size();
+	fwrite(&(size), sizeof(size), 1, file);
+	for (auto p : parameters) { p->Save(file); }
 }
-void SimulationApp::LoadParameters(FILE* f)
+void SimulationApp::LoadParameters(FILE* file)
 {
-	int sz = 0;
-	fread(&(sz), sizeof(sz), 1, f);
-	for (int i = (0), iEnd = int(sz); i < iEnd; ++i) { parameters.push_back(std::make_shared<SceneParameter>(f)); }
+	int size = 0;
+	fread(&(size), sizeof(size), 1, file);
+	for (int i = (0), iEnd = int(size); i < iEnd; ++i) { parameters.push_back(std::make_shared<SceneParameter>(file)); }
 }
 void SimulationApp::InitializeDefaultFunctions()
 {
@@ -439,7 +439,7 @@ void SimulationApp::UpdateBasicState()
 {
 	title = getLocalizedString(L"title");
 	if (currentScope.find(L"cur.debugString") != currentScope.end()) { debugString = currentScope[L"cur.debugString"]->str; }
-	if (currentScope.find(L"update") != currentScope.end()) { auto f = currentScope[L"update"];  Execute(currentScope, f->procs); }
+	if (currentScope.find(L"update") != currentScope.end()) { auto file = currentScope[L"update"];  Execute(currentScope, file->procs); }
 
 	// 删除标记为删除的键
 	parameters.erase(

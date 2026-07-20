@@ -38,56 +38,56 @@ Body::Body(vector<std::shared_ptr<Shape>> const& _shs) : Body()
 {
 	shapes = _shs;
 }
-void Body::Save(FILE* f) const
+void Body::Save(FILE* file) const
 {
-	int sz = 0;
-	fwrite(&(point), sizeof(point), 1, f);
-	fwrite(&(fixed), sizeof(fixed), 1, f);
-	sz = shapes.size();
-	fwrite(&(sz), sizeof(sz), 1, f);
-	for (auto sh : shapes) { sh->Save(f); }
-	fwrite(&(position), sizeof(position), 1, f);
-	fwrite(&(velocity), sizeof(velocity), 1, f);
-	sz = (scriptText).size();
-	fwrite(&(sz), sizeof(sz), 1, f);
-	fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), sz, f);
-	fwrite(&(radian), sizeof(radian), 1, f);
-	fwrite(&(velocityAngular), sizeof(velocityAngular), 1, f);
-	fwrite(&(density), sizeof(density), 1, f);
-	fwrite(&(elasticity), sizeof(elasticity), 1, f);
-	fwrite(&(frictionStatic), sizeof(frictionStatic), 1, f);
-	fwrite(&(frictionDynamic), sizeof(frictionDynamic), 1, f);
-	fwrite(&(dampCoeff), sizeof(dampCoeff), 1, f);
-	fwrite(&(dampCoeffAngular), sizeof(dampCoeffAngular), 1, f);
-	fwrite(&(chargeDensity), sizeof(chargeDensity), 1, f);
-	fwrite(&(innerColor), sizeof(innerColor), 1, f);
+	int size = 0;
+	fwrite(&(point), sizeof(point), 1, file);
+	fwrite(&(fixed), sizeof(fixed), 1, file);
+	size = shapes.size();
+	fwrite(&(size), sizeof(size), 1, file);
+	for (auto sh : shapes) { sh->Save(file); }
+	fwrite(&(position), sizeof(position), 1, file);
+	fwrite(&(velocity), sizeof(velocity), 1, file);
+	size = (scriptText).size();
+	fwrite(&(size), sizeof(size), 1, file);
+	fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
+	fwrite(&(radian), sizeof(radian), 1, file);
+	fwrite(&(velocityAngular), sizeof(velocityAngular), 1, file);
+	fwrite(&(density), sizeof(density), 1, file);
+	fwrite(&(elasticity), sizeof(elasticity), 1, file);
+	fwrite(&(frictionStatic), sizeof(frictionStatic), 1, file);
+	fwrite(&(frictionDynamic), sizeof(frictionDynamic), 1, file);
+	fwrite(&(dampCoeff), sizeof(dampCoeff), 1, file);
+	fwrite(&(dampCoeffAngular), sizeof(dampCoeffAngular), 1, file);
+	fwrite(&(chargeDensity), sizeof(chargeDensity), 1, file);
+	fwrite(&(innerColor), sizeof(innerColor), 1, file);
 }
-Body::Body(SimulationApp& cur, FILE* f) : Body()
+Body::Body(SimulationApp& cur, FILE* file) : Body()
 {
-	int sz = 0;
-	fread(&(point), sizeof(point), 1, f);
-	fread(&(fixed), sizeof(fixed), 1, f);
-	fread(&(sz), sizeof(sz), 1, f);
-	for (int i = (0), iEnd = int(sz); i < iEnd; ++i)
+	int size = 0;
+	fread(&(point), sizeof(point), 1, file);
+	fread(&(fixed), sizeof(fixed), 1, file);
+	fread(&(size), sizeof(size), 1, file);
+	for (int i = (0), iEnd = int(size); i < iEnd; ++i)
 	{
-		shapes.push_back(std::make_shared<Shape>(f));
+		shapes.push_back(std::make_shared<Shape>(file));
 	}
-	fread(&(position), sizeof(position), 1, f);
-	fread(&(velocity), sizeof(velocity), 1, f);
-	fread(&(sz), sizeof(sz), 1, f);
-	(scriptText).resize(sz);
-	fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), sz, f);
+	fread(&(position), sizeof(position), 1, file);
+	fread(&(velocity), sizeof(velocity), 1, file);
+	fread(&(size), sizeof(size), 1, file);
+	(scriptText).resize(size);
+	fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
 	temporaryScriptText = scriptText;
-	fread(&(radian), sizeof(radian), 1, f);
-	fread(&(velocityAngular), sizeof(velocityAngular), 1, f);
-	fread(&(density), sizeof(density), 1, f);
-	fread(&(elasticity), sizeof(elasticity), 1, f);
-	fread(&(frictionStatic), sizeof(frictionStatic), 1, f);
-	fread(&(frictionDynamic), sizeof(frictionDynamic), 1, f);
-	fread(&(dampCoeff), sizeof(dampCoeff), 1, f);
-	fread(&(dampCoeffAngular), sizeof(dampCoeffAngular), 1, f);
-	fread(&(chargeDensity), sizeof(chargeDensity), 1, f);
-	fread(&(innerColor), sizeof(innerColor), 1, f);
+	fread(&(radian), sizeof(radian), 1, file);
+	fread(&(velocityAngular), sizeof(velocityAngular), 1, file);
+	fread(&(density), sizeof(density), 1, file);
+	fread(&(elasticity), sizeof(elasticity), 1, file);
+	fread(&(frictionStatic), sizeof(frictionStatic), 1, file);
+	fread(&(frictionDynamic), sizeof(frictionDynamic), 1, file);
+	fread(&(dampCoeff), sizeof(dampCoeff), 1, file);
+	fread(&(dampCoeffAngular), sizeof(dampCoeffAngular), 1, file);
+	fread(&(chargeDensity), sizeof(chargeDensity), 1, file);
+	fread(&(innerColor), sizeof(innerColor), 1, file);
 
 	RefreshFromScript(cur);
 }

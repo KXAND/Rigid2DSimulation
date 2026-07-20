@@ -57,8 +57,8 @@ struct Body
 	Body(vector2 const& _o);
 	Body(std::shared_ptr<Shape> sh);
 	Body(vector<std::shared_ptr<Shape>> const& _shs);
-	Body(SimulationApp& cur, FILE* f);
-	void Save(FILE* f) const;
+	Body(SimulationApp& cur, FILE* file);
+	void Save(FILE* file) const;
 
 	vector2 GenerateRandomPointInside() const;
 	bool IsInside(vector2 p) const;

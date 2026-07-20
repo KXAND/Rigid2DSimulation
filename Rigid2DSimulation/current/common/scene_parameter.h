@@ -7,8 +7,8 @@ struct SceneParameter {
 	bool isMarkedForDeletion = false;
 
 	SceneParameter(wstring const& name = {});
-	void Save(FILE* f);
-	SceneParameter(FILE* f);
+	void Save(FILE* file);
+	SceneParameter(FILE* file);
 };
 
 

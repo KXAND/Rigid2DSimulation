@@ -13,27 +13,27 @@ Shape::Shape(vector<vector2> const& _verticesRelative)
 	vertices.resize(verticesRelative.size());
 }
 
-void Shape::Save(FILE* f) const
+void Shape::Save(FILE* file) const
 {
-	int sz = 0;
-	fwrite(&(isCircle), sizeof(isCircle), 1, f);
-	fwrite(&(r), sizeof(r), 1, f);
-	fwrite(&(radian), sizeof(radian), 1, f);
-	fwrite(&(relativePosition), sizeof(relativePosition), 1, f);
-	sz = (verticesRelative).size();
-	fwrite(&(sz), sizeof(sz), 1, f);
-	fwrite(&*(verticesRelative).begin(), sizeof(*(&*(verticesRelative).begin())), sz, f);
+	int size = 0;
+	fwrite(&(isCircle), sizeof(isCircle), 1, file);
+	fwrite(&(r), sizeof(r), 1, file);
+	fwrite(&(radian), sizeof(radian), 1, file);
+	fwrite(&(relativePosition), sizeof(relativePosition), 1, file);
+	size = (verticesRelative).size();
+	fwrite(&(size), sizeof(size), 1, file);
+	fwrite(&*(verticesRelative).begin(), sizeof(*(&*(verticesRelative).begin())), size, file);
 }
-Shape::Shape(FILE* f)
+Shape::Shape(FILE* file)
 {
-	int sz = 0;
-	fread(&(isCircle), sizeof(isCircle), 1, f);
-	fread(&(r), sizeof(r), 1, f);
-	fread(&(radian), sizeof(radian), 1, f);
-	fread(&(relativePosition), sizeof(relativePosition), 1, f);
-	fread(&(sz), sizeof(sz), 1, f);
-	(verticesRelative).resize(sz);
-	fread(&*(verticesRelative).begin(), sizeof(*(&*(verticesRelative).begin())), sz, f);
+	int size = 0;
+	fread(&(isCircle), sizeof(isCircle), 1, file);
+	fread(&(r), sizeof(r), 1, file);
+	fread(&(radian), sizeof(radian), 1, file);
+	fread(&(relativePosition), sizeof(relativePosition), 1, file);
+	fread(&(size), sizeof(size), 1, file);
+	(verticesRelative).resize(size);
+	fread(&*(verticesRelative).begin(), sizeof(*(&*(verticesRelative).begin())), size, file);
 	vertices.resize(verticesRelative.size());
 }
 

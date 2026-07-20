@@ -77,8 +77,8 @@ struct SimulationApp : App
 	void SetCfg(Var const& v);
 	void DetectCollisions();
 
-	void SaveParameters(FILE* f) const;
-	void LoadParameters(FILE* f);
+	void SaveParameters(FILE* file) const;
+	void LoadParameters(FILE* file);
 	void InitializeDefaultFunctions();
 	void UpdateBasicState();
 };

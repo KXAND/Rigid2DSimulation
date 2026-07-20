@@ -23,8 +23,8 @@ public:
 
 	Shape(double _r, vector2 _o_rel = {});
 	Shape(vector<vector2> const& _verticesRelative);
-	Shape(FILE* f);
-	void Save(FILE* f) const;
+	Shape(FILE* file);
+	void Save(FILE* file) const;
 
 	vector2 GenerateRandomPointInside() const;
 	bool IsInside(vector2 p) const;

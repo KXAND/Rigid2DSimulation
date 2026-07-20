@@ -16,40 +16,40 @@ Connection::Connection()
 	colorCord = dColor::CYAN;
 	colorCordTight = dColor::MAGENTA;
 }
-void Connection::Save(SimulationApp const& cur, FILE* f) const
+void Connection::Save(SimulationApp const& cur, FILE* file) const
 {
-	int sz = 0;
-	fwrite(&(type), sizeof(type), 1, f);
-	sz = (scriptText).size();
-	fwrite(&(sz), sizeof(sz), 1, f);
-	fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), sz, f);
+	int size = 0;
+	fwrite(&(type), sizeof(type), 1, file);
+	size = (scriptText).size();
+	fwrite(&(size), sizeof(size), 1, file);
+	fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
 	auto pred0 = [this](std::shared_ptr<Body> b) { return &*b == body0; };
 	int ind0 = find_if(cur.bodies.begin(), cur.bodies.end(), pred0) - cur.bodies.begin();
 	auto pred1 = [this](std::shared_ptr<Body> b) { return &*b == body1; };
 	int ind1 = find_if(cur.bodies.begin(), cur.bodies.end(), pred1) - cur.bodies.begin();
-	fwrite(&(ind0), sizeof(ind0), 1, f);
-	fwrite(&(ind1), sizeof(ind1), 1, f);
-	fwrite(&(p0Relative), sizeof(p0Relative), 1, f);
-	fwrite(&(p1Relative), sizeof(p1Relative), 1, f);
-	fwrite(&(len), sizeof(len), 1, f);
-	fwrite(&(hooke), sizeof(hooke), 1, f);
+	fwrite(&(ind0), sizeof(ind0), 1, file);
+	fwrite(&(ind1), sizeof(ind1), 1, file);
+	fwrite(&(p0Relative), sizeof(p0Relative), 1, file);
+	fwrite(&(p1Relative), sizeof(p1Relative), 1, file);
+	fwrite(&(len), sizeof(len), 1, file);
+	fwrite(&(hooke), sizeof(hooke), 1, file);
 }
-Connection::Connection(SimulationApp& cur, FILE* f) : Connection()
+Connection::Connection(SimulationApp& cur, FILE* file) : Connection()
 {
-	int sz = 0;
-	fread(&(type), sizeof(type), 1, f);
-	fread(&(sz), sizeof(sz), 1, f);
-	(scriptText).resize(sz);
-	fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), sz, f);
+	int size = 0;
+	fread(&(type), sizeof(type), 1, file);
+	fread(&(size), sizeof(size), 1, file);
+	(scriptText).resize(size);
+	fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
 	temporaryScriptText = scriptText;
 	int ind0 = 0, ind1 = 0;
-	fread(&(ind0), sizeof(ind0), 1, f);
-	fread(&(ind1), sizeof(ind1), 1, f);
+	fread(&(ind0), sizeof(ind0), 1, file);
+	fread(&(ind1), sizeof(ind1), 1, file);
 	body0 = &*cur.bodies[ind0]; body1 = &*cur.bodies[ind1];
-	fread(&(p0Relative), sizeof(p0Relative), 1, f);
-	fread(&(p1Relative), sizeof(p1Relative), 1, f);
-	fread(&(len), sizeof(len), 1, f);
-	fread(&(hooke), sizeof(hooke), 1, f);
+	fread(&(p0Relative), sizeof(p0Relative), 1, file);
+	fread(&(p1Relative), sizeof(p1Relative), 1, file);
+	fread(&(len), sizeof(len), 1, file);
+	fread(&(hooke), sizeof(hooke), 1, file);
 	RefreshFromScript(cur); SignUpToBodies(); UpdatePosition();
 }
 

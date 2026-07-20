@@ -14,29 +14,29 @@ cam::cam(dRect vp) : vp(vp) {
 	r = 1000; scl = 500;
 	max_d = 1e6; min_d = 1; calc();
 }
-void cam::save(FILE* f) {
-	fwrite(&(vp), sizeof(vp), 1, f);
-	fwrite(&(p), sizeof(p), 1, f);
-	fwrite(&(look), sizeof(look), 1, f);
-	fwrite(&(scl), sizeof(scl), 1, f);
-	fwrite(&(r), sizeof(r), 1, f);
-	fwrite(&(min_d), sizeof(min_d), 1, f);
-	fwrite(&(max_d), sizeof(max_d), 1, f);
-	fwrite(&(theta), sizeof(theta), 1, f);
-	fwrite(&(phi), sizeof(phi), 1, f);
-	fwrite(&(psi), sizeof(psi), 1, f);
+void cam::save(FILE* file) {
+	fwrite(&(vp), sizeof(vp), 1, file);
+	fwrite(&(p), sizeof(p), 1, file);
+	fwrite(&(look), sizeof(look), 1, file);
+	fwrite(&(scl), sizeof(scl), 1, file);
+	fwrite(&(r), sizeof(r), 1, file);
+	fwrite(&(min_d), sizeof(min_d), 1, file);
+	fwrite(&(max_d), sizeof(max_d), 1, file);
+	fwrite(&(theta), sizeof(theta), 1, file);
+	fwrite(&(phi), sizeof(phi), 1, file);
+	fwrite(&(psi), sizeof(psi), 1, file);
 }
-cam::cam(FILE* f) {
-	fread(&(vp), sizeof(vp), 1, f);
-	fread(&(p), sizeof(p), 1, f);
-	fread(&(look), sizeof(look), 1, f);
-	fread(&(scl), sizeof(scl), 1, f);
-	fread(&(r), sizeof(r), 1, f);
-	fread(&(min_d), sizeof(min_d), 1, f);
-	fread(&(max_d), sizeof(max_d), 1, f);
-	fread(&(theta), sizeof(theta), 1, f);
-	fread(&(phi), sizeof(phi), 1, f);
-	fread(&(psi), sizeof(psi), 1, f);
+cam::cam(FILE* file) {
+	fread(&(vp), sizeof(vp), 1, file);
+	fread(&(p), sizeof(p), 1, file);
+	fread(&(look), sizeof(look), 1, file);
+	fread(&(scl), sizeof(scl), 1, file);
+	fread(&(r), sizeof(r), 1, file);
+	fread(&(min_d), sizeof(min_d), 1, file);
+	fread(&(max_d), sizeof(max_d), 1, file);
+	fread(&(theta), sizeof(theta), 1, file);
+	fread(&(phi), sizeof(phi), 1, file);
+	fread(&(psi), sizeof(psi), 1, file);
 	calc();
 }
 

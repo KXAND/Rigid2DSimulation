@@ -214,8 +214,8 @@ struct cam {
 	matrix3 mt;
 
 	explicit cam(dRect vp = {});
-	void save(FILE* f);
-	explicit cam(FILE* f);
+	void save(FILE* file);
+	explicit cam(FILE* file);
 
 	void calc();
 	void calcFirstPerson();
