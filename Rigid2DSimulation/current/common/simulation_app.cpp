@@ -82,10 +82,10 @@ void SimulationApp::Reset()
 	connections.clear();
 	debugString.clear();
 
-	currentScope[L"left_bgr"] = std::make_shared<Var>(background->topLeft.x);
-	currentScope[L"top_bgr"] = std::make_shared<Var>(background->topLeft.y);
-	currentScope[L"w_bgr"] = std::make_shared<Var>(background->width);
-	currentScope[L"h_bgr"] = std::make_shared<Var>(background->height);
+	currentScope[L"backgroundLeft"] = std::make_shared<Var>(background->topLeft.x);
+	currentScope[L"backgroundTop"] = std::make_shared<Var>(background->topLeft.y);
+	currentScope[L"backgroundWidth"] = std::make_shared<Var>(background->width);
+	currentScope[L"backgroundHeight"] = std::make_shared<Var>(background->height);
 
 	bodySelecting = NULL;
 	connectionSelecting = NULL;
@@ -182,7 +182,7 @@ void SimulationApp::Update()
 
 		for (int i = (0), iEnd = int(stepNum); i < iEnd; ++i)
 		{
-			currentScope[L"t"] = std::make_shared<Var>(t);
+			currentScope[L"time"] = std::make_shared<Var>(t);
 			for (const auto& b : bodies) { b->Step(*this, sdt); }
 			// for (auto b : bodies) { b->warp(rectScene); }
 			for (auto& g : groups) { g->Warp(rectScene); }
@@ -245,7 +245,7 @@ void SimulationApp::SetCfg(Var const& v)
 	stepNum = max(1, stepNum);
 	TryReadConfigNumber(v, L"gridSize", gridSize);
 	TryReadConfigNumber(v, L"useEqualPositionCorrection", useEqualPositionCorrection);
-	TryReadConfigNumber(v, L"t", t);
+	TryReadConfigNumber(v, L"time", t);
 	TryReadConfigNumber(v, L"isTrackShown", isTrackShown);
 	if (auto value = FindConfigValue(v, L"left_scene")) { rectScene.topLeftPosition.x = value->num; }
 	if (auto value = FindConfigValue(v, L"top_scene")) { rectScene.topLeftPosition.y = value->num; }

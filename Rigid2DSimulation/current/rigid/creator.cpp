@@ -24,7 +24,7 @@ Creator::Creator(Var const& v) : Creator()
 			if (s == L"box") { mode = CREATE_BOX; }
 			else if (s == L"ball") { mode = CREATE_BALL; }
 			else if (s == L"plate") { mode = CREATE_PLATE; }
-			else if (s == L"conn") { mode = CREATE_CONN; }
+			else if (s == L"connection") { mode = CREATE_CONN; }
 			else if (s == L"point") { mode = CREATE_POINT; }
 			else if (s == L"nail") { mode = CREATE_NAIL; }
 			else if (s == L"particle") { mode = CREATE_PARTICLE; }

@@ -84,10 +84,10 @@ void Connection::UpdatePosition()
 
 void Connection::RefreshFromScript(SimulationApp& cur)
 {
-	cur.currentScope[L"conn"] = std::make_shared<Var>();
+	cur.currentScope[L"connection"] = std::make_shared<Var>();
 	Execute(cur.currentScope, Compile(scriptText));
-	if (cur.currentScope.find(L"conn") == cur.currentScope.end()) { return; }
-	ReadCfg(*cur.currentScope[L"conn"]);
+	if (cur.currentScope.find(L"connection") == cur.currentScope.end()) { return; }
+	ReadCfg(*cur.currentScope[L"connection"]);
 
 	UpdatePosition();
 }
