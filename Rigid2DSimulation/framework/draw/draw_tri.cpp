@@ -1,5 +1,64 @@
 #include "draw_tri.h"
 
+namespace
+{
+enum class BoundarySide
+{
+    Minimum,
+    Maximum
+};
+
+bool IsOutsideBoundary(dVector2 const& point, long long boundary,
+    BoundarySide boundarySide)
+{
+    return boundarySide == BoundarySide::Minimum
+        ? point.y < boundary
+        : point.y > boundary;
+}
+
+bool ClipTriangleAtHorizontalBoundary(tile& targetTile, dbuf& zBuffer,
+    dRect const& viewPort, dVector2 const& firstPoint,
+    dVector2 const& middlePoint, dVector2 const& lastPoint, double depth,
+    dColor color, long long boundary, BoundarySide boundarySide)
+{
+    if (IsOutsideBoundary(lastPoint, boundary, boundarySide))
+    {
+        return true;
+    }
+
+    if (!IsOutsideBoundary(firstPoint, boundary, boundarySide))
+    {
+        return false;
+    }
+
+    dVector2 firstLastIntersection = lastPoint;
+    firstLastIntersection.y = boundary;
+    firstLastIntersection.x += (firstPoint.x - lastPoint.x)
+        * (boundary - lastPoint.y) / (firstPoint.y - lastPoint.y);
+
+    if (IsOutsideBoundary(middlePoint, boundary, boundarySide))
+    {
+        dVector2 middleLastIntersection = lastPoint;
+        middleLastIntersection.y = boundary;
+        middleLastIntersection.x += (middlePoint.x - lastPoint.x)
+            * (boundary - lastPoint.y) / (middlePoint.y - lastPoint.y);
+        drawTriangle(targetTile, zBuffer, viewPort, firstLastIntersection,
+            middleLastIntersection, lastPoint, depth, color);
+        return true;
+    }
+
+    dVector2 firstMiddleIntersection = middlePoint;
+    firstMiddleIntersection.y = boundary;
+    firstMiddleIntersection.x += (firstPoint.x - middlePoint.x)
+        * (boundary - middlePoint.y) / (firstPoint.y - middlePoint.y);
+    drawTriangle(targetTile, zBuffer, viewPort, firstLastIntersection,
+        middlePoint, lastPoint, depth, color);
+    drawTriangle(targetTile, zBuffer, viewPort, firstLastIntersection,
+        middlePoint, firstMiddleIntersection, depth, color);
+    return true;
+}
+}
+
 void subDrawTriangle(tile& dest, dbuf& zBuffer,
 	dVector2 pa, dVector2 pb, dVector2 pc, double depth, dColor color, bool same_y)
 {
@@ -25,34 +84,6 @@ void drawTriangle(tile& targetTile, dbuf& zBuffer, dRect const& viewPort,
 	// 如果可以让这里写得好看有条理，容易修改且不容易出 bug 就好了。
 	// @todo:考虑笔记中的 SH 算法
 
-#define EdgeCut(a, c, x, y, sgn, borderLine)\
-if (p##c.y sgn borderLine) { return; }/*最小值超出边界*/\
-if (p##a.y sgn borderLine)/*最大值超出边界，切割*/ \
-{\
-	/*ac边被切割*/\
-	dVector2 pac = p##c;\
-	pac.y = borderLine;\
-	pac.x += (p##a.x - p##c.x) * (borderLine - p##c.y) / (p##a.y - p##c.y);\
-	if (pb.y sgn borderLine)\
-	{\
-		/*bc边也被切割，得到一个由c、pac、pbc组成的三角形*/					\
-		dVector2 p1 = p##c;\
-		p1.y = borderLine;\
-		p1.x += (pb.x - p##c.x) * (borderLine - p##c.y) / (p##b.y - p##c.y);\
-		drawTriangle(targetTile, zBuffer, viewPort, pac, p1, p##c, depth, color);\
-		return;/*在递归的下一级会对其他部分进行切割，所以到此结束，下同*/\
-	}\
-	else {\
-		/*bc边不被切割，得到一个由c、pac、pab、b组成的四边形*/\
-		dVector2 p1 = pb;\
-		p1.y = borderLine;\
-		p1.x += (p##a.x - pb.x) * (borderLine - pb.y) / (p##a.y - pb.y);\
-		drawTriangle(targetTile, zBuffer, viewPort, pac, pb, p##c, depth, color);\
-		drawTriangle(targetTile, zBuffer, viewPort, pac, pb, p1, depth, color);\
-		return;\
-	}\
-}
-
 	// 保证x轴上左到右是　cba　的顺序
 	// 这里有点低效，重复比较了，但是总的影响不大。
 	if (pa.x < pb.x) swap(pa, pb);
@@ -63,16 +94,34 @@ if (p##a.y sgn borderLine)/*最大值超出边界，切割*/ \
 	int dx = pa.x - pc.x;
 
 	// 用屏幕边切割图形
-	EdgeCut(a, c, y, x, > , (long long) viewPort.right() - 1);
-	EdgeCut(c, a, y, x, < , (long long) viewPort.left());
+	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, pa, pb,
+		pc, depth, color, (long long)viewPort.right() - 1,
+		BoundarySide::Maximum))
+	{
+		return;
+	}
+	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, pc, pb,
+		pa, depth, color, (long long)viewPort.left(), BoundarySide::Minimum))
+	{
+		return;
+	}
 
 	if (pa.y < pb.y) { swap(pa, pb); }
 	if (pa.y < pc.y) { swap(pa, pc); }
 	if (pb.y < pc.y) { swap(pb, pc); }
 	if (pa.y == pc.y) { return; }
 	int dy = pa.y - pc.y;
-	EdgeCut(a, c, x, y, > , (long long) viewPort.bottom() - 1);
-	EdgeCut(c, a, x, y, < , (long long) viewPort.top());
+	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, pa, pb,
+		pc, depth, color, (long long)viewPort.bottom() - 1,
+		BoundarySide::Maximum))
+	{
+		return;
+	}
+	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, pc, pb,
+		pa, depth, color, (long long)viewPort.top(), BoundarySide::Minimum))
+	{
+		return;
+	}
 
 	// 这里是出于数值稳定性的考虑交换一下方向，否则如果三角形很扁的话会奇怪。
 	bool y_big = dy > dx;
