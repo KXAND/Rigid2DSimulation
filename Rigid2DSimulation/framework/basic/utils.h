@@ -5,7 +5,6 @@ double constexpr PI = 3.1415926535;
 double constexpr EU = 2.7182818284;
 
 #define tw to_wstring
-#define mkp(nm) nm = std::make_shared<std::remove_reference_t<decltype(*nm)>>
 
 #define frd(x) fread(&(x), sizeof(x), 1, f);
 #define fwt(x) fwrite(&(x), sizeof(x), 1, f);
