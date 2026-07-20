@@ -7,7 +7,7 @@
 // 同时速度上也有很多改进空间。
 
 Var::Var(double num) : num(num) { typ = L"num"; }
-Var::Var(wstring const& str) : str(str) { typ = L"str"; }
+Var::Var(wstring const& str) : str(str) { typ = L"ToString"; }
 Var::Var(decltype(fun) const& user) : fun(user) { typ = L"user"; }
 Var::Var(vector<std::shared_ptr<Var>> const& vec) : vec(vec) { typ = L"vec"; }
 Var::Var(Program const& ps, vector<wstring>const& pars) :
@@ -57,9 +57,9 @@ bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpr const& ex, Var&
 	if (f == L"!") { out = Var(!numArg(0)); return true; }
 	if (f == L"++") { out = Var(numArg(0)); return true; }
 	if (f == L"--") { out = Var(-numArg(0)); return true; }
-	if (f == L"sin") { out = Var(sin(numArg(0)));  return true; }
-	if (f == L"cos") { out = Var(cos(numArg(0)));  return true; }
-	if (f == L"abs") { out = Var(abs(numArg(0)));  return true; }
+	if (f == L"Sin") { out = Var(sin(numArg(0)));  return true; }
+	if (f == L"Cos") { out = Var(cos(numArg(0)));  return true; }
+	if (f == L"Abs") { out = Var(abs(numArg(0)));  return true; }
 	if (f == L"+") { out = Var(numArg(0) + numArg(1)); return true; }
 	if (f == L"-") { out = Var(numArg(0) - numArg(1)); return true; }
 	if (f == L"*") { out = Var(numArg(0) * numArg(1)); return true; }
@@ -72,10 +72,10 @@ bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpr const& ex, Var&
 	if (f == L"!=") { out = Var(numArg(0) != numArg(1)); return true; }
 	if (f == L"&&") { out = Var(numArg(0) && numArg(1)); return true; }
 	if (f == L"||") { out = Var(numArg(0) || numArg(1)); return true; }
-	if (f == L"pow") { out = Var(pow(numArg(0), numArg(1))); return true; }
-	if (f == L"rand") { out = Var(GenerateRandomFloat(numArg(0), numArg(1))); return true; }
-	if (f == L"rand_int") { out = Var(GenerateRandomInt(numArg(0), numArg(1))); return true; }
-	if (f == L"str") { out = Var(FormatFixed2(numArg(0))); return true; }
+	if (f == L"Pow") { out = Var(pow(numArg(0), numArg(1))); return true; }
+	if (f == L"Random") { out = Var(GenerateRandomFloat(numArg(0), numArg(1))); return true; }
+	if (f == L"RandomInt") { out = Var(GenerateRandomInt(numArg(0), numArg(1))); return true; }
+	if (f == L"ToString") { out = Var(FormatFixed2(numArg(0))); return true; }
 	if (f == L".") { out = Var(strArg(0) + strArg(1)); return true; }
 	return false;
 }
@@ -124,7 +124,7 @@ std::shared_ptr<Var> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex)
 		return getLocalizedString->vec[ind->num];
 	}
 
-	if (ind->typ == L"str")
+	if (ind->typ == L"ToString")
 	{
 		if (getLocalizedString->typ != L"dic") {
 			*getLocalizedString = {};
@@ -144,11 +144,11 @@ std::shared_ptr<Var> Evaluate(Scope& gl, Scope& sc, ScriptExpr const& ex)
 	if (ex.typ == L"call") { return EvaluateCall(gl, sc, ex); }
 	else if (ex.typ == L"var")
 	{
-		if (ex.var == L"PI") { return std::make_shared<Var>(PI); }
+		if (ex.var == L"kPi") { return std::make_shared<Var>(PI); }
 		return FindVariable(gl, sc, ex.var, ex.global);
 	}
 	else if (ex.typ == L"num") { return std::make_shared<Var>(ex.num); }
-	else if (ex.typ == L"str") { return std::make_shared<Var>(ex.str); }
+	else if (ex.typ == L"ToString") { return std::make_shared<Var>(ex.str); }
 	else if (ex.typ == L"vec")
 	{
 		vector<std::shared_ptr<Var>> tmp;
