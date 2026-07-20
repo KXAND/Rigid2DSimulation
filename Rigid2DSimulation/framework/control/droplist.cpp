@@ -55,7 +55,7 @@ void Droplist::render_items(App& app) {
 			drawRectangleWithBorder(app.scr, app.dscr, depth,
 				tl_hovered, w, h_item, vp, hoveredColor, c_frame);
 		}
-		rep(i, 0, n_item) {
+		for (int i = (0), iEnd = int(n_item); i < iEnd; ++i) {
 			dVector2 tl_txt_item = tl_box() +
 				dVector2(0, h + h_item * i) +
 				dVector2(x_txt_margin, (h_item - app.ft.h) / 2);

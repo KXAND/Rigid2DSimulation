@@ -98,7 +98,7 @@ ptr<Var> EvaluateCall(Scope& gl, Scope& sc, ScriptExpr const& ex)
 		return fun->fun(tmp);
 	}
 
-	rep(i, 0, min(fun->pars.size(), ex.pars.size()))
+	for (int i = (0), iEnd = int(min(fun->pars.size(), ex.pars.size())); i < iEnd; ++i)
 	{
 		getLocalizedString[fun->pars[i]] = Evaluate(gl, sc, ex.pars[i]);
 	}
@@ -117,7 +117,7 @@ ptr<Var> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex)
 			*getLocalizedString = {};
 			getLocalizedString->typ = L"vec";
 		}
-		rep(i, getLocalizedString->vec.size() - 1, ind->num)
+		for (int i = (getLocalizedString->vec.size() - 1), iEnd = int(ind->num); i < iEnd; ++i)
 		{
 			getLocalizedString->vec.push_back(msh<Var>());
 		}

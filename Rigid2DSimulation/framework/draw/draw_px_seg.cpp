@@ -82,7 +82,7 @@ void drawLineSegment(tile& targetTile, dbuf& zBuffer,
 	int id = y * targetTile.width + x;
 	if (zBuffer[id] <= d) { zBuffer[id] = d; targetTile.colors[id] = color; }
 
-	rep(i, 0, dx) {
+	for (int i = (0), iEnd = int(dx); i < iEnd; ++i) {
 		e -= 2 * dy;
 		if (changed) { y += sy; }
 		else { x += sx; }

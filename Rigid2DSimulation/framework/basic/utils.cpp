@@ -87,7 +87,7 @@ void print_console(wstring const& s, bool newline, int width)
 	wprintf(s.c_str());
 
 	GetConsoleScreenBufferInfo(hdl, &info);
-	rep(i, info.dwCursorPosition.X, width) { printf(" "); }
+	for (int i = (info.dwCursorPosition.X), iEnd = int(width); i < iEnd; ++i) { printf(" "); }
 	if (newline) { printf("\n"); }
 }
 

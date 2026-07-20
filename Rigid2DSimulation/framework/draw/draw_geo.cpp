@@ -10,7 +10,7 @@ void drawRectangleRaw(tile& targetTile, dVector2 topLeft, int w, int h, dRect vi
 	if (a >= b || c >= d) { return; }
 
 	vector<dColor> tmp(b - a, color);
-	rep(j, c, d)
+	for (int j = (c), jEnd = int(d); j < jEnd; ++j)
 	{
 		int position = j * targetTile.width + a;
 		memcpy(targetTile.colors.data() + position, tmp.data(), (b - a) * sizeof(color));
@@ -26,7 +26,7 @@ void drawRectangle(tile& targetTile, dbuf& zBuffer, double depth,
 	int d = min(viewPort.bottom(), topLeft.y + height);
 	if (a >= b || c >= d) { return; }
 
-	rep(i, a, b) rep(j, c, d)
+	for (int i = (a), iEnd = int(b); i < iEnd; ++i) for (int j = (c), jEnd = int(d); j < jEnd; ++j)
 	{
 		int position = j * targetTile.width + i;// j 行 i 列
 		if (zBuffer[position] <= depth)
@@ -49,7 +49,7 @@ void drawRectangleWithTransform(tile& targetTile, dbuf& zBuffer, double depth,
 	int d = min(viewPort.bottom(), int(center.y + transformHalfWidthHeight.y) + 1);
 	if (a >= b || c >= d) { return; }
 
-	rep(i, a, b) rep(j, c, d)
+	for (int i = (a), iEnd = int(b); i < iEnd; ++i) for (int j = (c), jEnd = int(d); j < jEnd; ++j)
 	{
 		dVector2 dPoint(i, j);
 		// 下面式子的正确性从逆变换比较容易看，要注意四则运算的优先级。
@@ -77,7 +77,7 @@ void drawEllipse(tile& targetTile, dbuf& zBuffer, double depth,
 	double inv_aax = 1 / (a * a);
 	double inv_aay = 1 / (b * b);
 
-	rep(i, left, right) rep(j, top, bottom)
+	for (int i = (left), iEnd = int(right); i < iEnd; ++i) for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
 	{
 
 		// 应用椭圆的标准方程判断是否在椭圆内

@@ -34,7 +34,7 @@ bool app_wv::init() {
 
 	auto ret = waveOutOpen(&hwo, WAVE_MAPPER, &wofm, NULL, 0, CALLBACK_NULL);
 	if (ret != MMSYSERR_NOERROR) { return false; }
-	rep(i, 0, n_blocks) {
+	for (int i = (0), iEnd = int(n_blocks); i < iEnd; ++i) {
 		wvblks.push_back(msh<wvblk>(len_block_n()));
 	} return true;
 }

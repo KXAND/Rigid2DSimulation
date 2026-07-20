@@ -55,7 +55,7 @@ bool IsBinaryOperator(token const& tk) {
 }
 
 bool ParseNegation(vector<pre_expr> const& in, ScriptExpr& out) {
-	rep(i, 0, in.size()) {
+	for (int i = (0), iEnd = int(in.size()); i < iEnd; ++i) {
 		auto const& pre = in[i];
 		if (!pre.istk) { continue; }
 		auto const& s = pre.tk.typ;
@@ -69,7 +69,7 @@ bool ParseNegation(vector<pre_expr> const& in, ScriptExpr& out) {
 
 			auto tmp = vector<pre_expr>(in.begin(), in.begin() + i);
 			tmp.push_back(ScriptExpr(s + s, { in[i + 1].ex }));
-			rep(j, i + 2, in.size()) { tmp.push_back(in[j]); }
+			for (int j = (i + 2), jEnd = int(in.size()); j < jEnd; ++j) { tmp.push_back(in[j]); }
 			out = ParsePreExpression(tmp);
 			return true;
 		}
@@ -77,7 +77,7 @@ bool ParseNegation(vector<pre_expr> const& in, ScriptExpr& out) {
 	return false;
 }
 bool ParseBinary(vector<pre_expr> const& in, ScriptExpr& out, vector<wstring> const& mark) {
-	rep(i, 0, in.size()) {
+	for (int i = (0), iEnd = int(in.size()); i < iEnd; ++i) {
 		auto const& pre = in[i];
 		if (!pre.istk) { continue; }
 		auto const& s = pre.tk.typ;
@@ -93,7 +93,7 @@ bool ParseBinary(vector<pre_expr> const& in, ScriptExpr& out, vector<wstring> co
 
 			auto tmp = vector<pre_expr>(in.begin(), in.begin() + i - 1);
 			tmp.push_back(ScriptExpr(s, { in[i - 1].ex, in[i + 1].ex }));
-			rep(j, i + 2, in.size()) { tmp.push_back(in[j]); }
+			for (int j = (i + 2), jEnd = int(in.size()); j < jEnd; ++j) { tmp.push_back(in[j]); }
 			out = ParsePreExpression(tmp);
 			return true;
 		}

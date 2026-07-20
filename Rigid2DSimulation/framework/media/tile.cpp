@@ -39,7 +39,7 @@ tile::tile(int w, int h, dColor color, BYTE a) :
 }
 tile::tile(int w, int h, tile const& src, dRect vp_src) : tile(w, h)
 {
-	rep(i, 0, w) rep(j, 0, h)
+	for (int i = (0), iEnd = int(w); i < iEnd; ++i) for (int j = (0), jEnd = int(h); j < jEnd; ++j)
 	{
 		dVector2 d_pnt(i, j);
 		dVector2 s_pnt = d_pnt * dVector2(vp_src.w, vp_src.h) / dVector2(w, h);
@@ -70,7 +70,7 @@ int tile::area() const { return width * height; }
 dRect tile::rect() const { return { width, height }; }
 void tile::fill(dColor color, BYTE a)
 {
-	rep(i, 0, area()) { colors[i] = color; }
+	for (int i = (0), iEnd = int(area()); i < iEnd; ++i) { colors[i] = color; }
 	memset(as.data(), a, area());
 }
 

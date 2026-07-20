@@ -29,7 +29,7 @@ vector2 GetPositionOnBezier(vector<vector2> controlPoints, double t)
 	if (controlPoints.size() == 2) { return controlPoints[0] * (1 - t) + controlPoints[1] * t; }
 
 	vector<vector2> ps0, ps1;
-	rep(i, 0, controlPoints.size())
+	for (int i = (0), iEnd = int(controlPoints.size()); i < iEnd; ++i)
 	{
 		if (i != 0) { ps1.push_back(controlPoints[i]); }
 		if (i != controlPoints.size() - 1) { ps0.push_back(controlPoints[i]); }

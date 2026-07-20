@@ -9,10 +9,10 @@ void draw_char(tile& dest, dbuf& ds, double depth,
 	int d = min(vp_dest.bottom(), tl.y + src.height);
 	if (a >= b || c >= d) { return; }
 
-	rep(j, c, d) {
+	for (int j = (c), jEnd = int(d); j < jEnd; ++j) {
 		int dp = j * dest.width + a;
 		int sp = (j - tl.y) * src.width + a - tl.x;
-		rep(i, a, b) {
+		for (int i = (a), iEnd = int(b); i < iEnd; ++i) {
 			if (ds[dp] <= depth && src.as[sp] != 0) {
 				ds[dp] = depth; dest.colors[dp] = col;
 			} dp++; sp++;
@@ -62,7 +62,7 @@ int str_index_at_pos(wstring const& s, font const& ft, dVector2 p, int w) {
 	int x_cur = 0, y_cur = 0;
 	if (0 > p.y) { return 0; }
 
-	rep(ind, 0, s.size()) {
+	for (int ind = (0), indEnd = int(s.size()); ind < indEnd; ++ind) {
 		wchar_t c = s[ind];
 		if (c == L'\n') {
 			y_cur += ft.h; x_cur = 0;

@@ -11,7 +11,7 @@ void drawBasedTile(tile& dest, dVector2 tl, tile const& src)
 	int b = min(viewportDest.bottom(), tl.y + viewportSrc.h);
 	if (l >= r || t >= b) { return; } // 坐标系为左上为原点，所以正常情况是 l<r, t<b
 
-	rep(j, t, b)
+	for (int j = (t), jEnd = int(b); j < jEnd; ++j)
 	{
 		int destP = j * dest.width + l;
 		int srcP = (j - tl.y + viewportSrc.top()) * src.width +
@@ -30,12 +30,12 @@ void drawTile(tile& dest, dbuf& zBuffer, double depth, dVector2 tl,
 	int b = min(vp_dest.bottom(), tl.y + viewportSrc.h);
 	if (l >= r || t >= b) { return; }
 
-	rep(j, t, b)
+	for (int j = (t), jEnd = int(b); j < jEnd; ++j)
 	{
 		int destPxl = j * dest.width + l;
 		int srcPxl = (j - tl.y + viewportSrc.top()) * src.width +
 			(l - tl.x + viewportSrc.left());
-		rep(i, l, r)
+		for (int i = (l), iEnd = int(r); i < iEnd; ++i)
 		{
 			if (zBuffer[destPxl] <= depth && src.as[srcPxl] != 0)
 			{
