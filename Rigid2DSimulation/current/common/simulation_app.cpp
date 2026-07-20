@@ -234,23 +234,23 @@ void SimulationApp::Update()
 
 void SimulationApp::SetCfg(Var const& v)
 {
-	TryReadConfigNumber(v, L"vol", vol);
-	TryReadConfigNumber(v, L"energy_mul", energyMultiplier);
+	TryReadConfigNumber(v, L"volume", vol);
+	TryReadConfigNumber(v, L"energyMultiplier", energyMultiplier);
 	TryReadConfigNumber(v, L"chargeMultiplier", chargeMultiplier);
-	TryReadConfigNumber(v, L"eps_paralell", parallelEpsilon);
-	TryReadConfigNumber(v, L"max_real_dt", maxRealDeltaTime);
+	TryReadConfigNumber(v, L"parallelEpsilon", parallelEpsilon);
+	TryReadConfigNumber(v, L"maxRealDeltaTime", maxRealDeltaTime);
 	TryReadConfigNumber(v, L"hasElectrostatic", hasElectrostatic);
 	TryReadConfigNumber(v, L"coulomb", coulomb);
-	TryReadConfigNumber(v, L"stepNum", stepNum);
+	TryReadConfigNumber(v, L"stepCount", stepNum);
 	stepNum = max(1, stepNum);
 	TryReadConfigNumber(v, L"gridSize", gridSize);
 	TryReadConfigNumber(v, L"useEqualPositionCorrection", useEqualPositionCorrection);
 	TryReadConfigNumber(v, L"time", t);
 	TryReadConfigNumber(v, L"isTrackShown", isTrackShown);
-	if (auto value = FindConfigValue(v, L"left_scene")) { rectScene.topLeftPosition.x = value->num; }
-	if (auto value = FindConfigValue(v, L"top_scene")) { rectScene.topLeftPosition.y = value->num; }
-	if (auto value = FindConfigValue(v, L"w_scene")) { rectScene.w = value->num; }
-	if (auto value = FindConfigValue(v, L"h_scene")) { rectScene.h = value->num; }
+	if (auto value = FindConfigValue(v, L"sceneLeft")) { rectScene.topLeftPosition.x = value->num; }
+	if (auto value = FindConfigValue(v, L"sceneTop")) { rectScene.topLeftPosition.y = value->num; }
+	if (auto value = FindConfigValue(v, L"sceneWidth")) { rectScene.w = value->num; }
+	if (auto value = FindConfigValue(v, L"sceneHeight")) { rectScene.h = value->num; }
 	if (auto value = FindConfigValue(v, L"gravity")) { gravity = ToVector2(*value); }
 
 	isSceneChanged = true;
