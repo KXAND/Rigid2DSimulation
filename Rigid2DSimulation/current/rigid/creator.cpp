@@ -33,8 +33,8 @@ Creator::Creator(Var const& v) : Creator()
 	}
 	TryReadConfigNumber(v, L"thick", thick);
 	TryReadConfigNumber(v, L"rad", rad);
-	if (auto value = FindConfigValue(v, L"cfg_body")) { mkp(bodyConfiguration)(*value); }
-	if (auto value = FindConfigValue(v, L"cfg_conn")) { mkp(connectionConfiguration)(*value); }
+	if (auto value = FindConfigValue(v, L"cfg_body")) { bodyConfiguration = std::make_shared<Var>(*value); }
+	if (auto value = FindConfigValue(v, L"cfg_conn")) { connectionConfiguration = std::make_shared<Var>(*value); }
 }
 
 double Creator::Depth() const
@@ -59,7 +59,7 @@ void Creator::UpdateBox(SimulationApp& cur)
 		double min_wh = 10;
 		if (x1 - x0 >= min_wh && y1 - y0 >= min_wh)
 		{
-			mkp(body)(std::make_shared<Shape>(GetRectVerticesByCenter(x1 - x0, y1 - y0)));
+			body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(x1 - x0, y1 - y0)));
 			body->position = vector2(x0 + x1, y0 + y1) / 2;
 			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
@@ -92,7 +92,7 @@ void Creator::UpdateBall(SimulationApp& cur)
 		double min_r = 7.5;
 		if (r > min_r)
 		{
-			mkp(body)(std::make_shared<Shape>(r));
+			body = std::make_shared<Body>(std::make_shared<Shape>(r));
 			body->position = vector2(creationStartPoint);
 			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
@@ -127,7 +127,7 @@ void Creator::UpdatePlate(SimulationApp& cur)
 		double len = sqrt(v.lensqr());
 		if (len > min_len)
 		{
-			mkp(body)(std::make_shared<Shape>(GetRectVerticesByCenter(len + thk, thk)));
+			body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(len + thk, thk)));
 			body->position = vector2(creationStartPoint + cur.input.msp) / 2;
 			body->radian = atan2(v.y, v.x);
 			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
@@ -157,7 +157,7 @@ void Creator::UpdateConnection(SimulationApp& cur)
 {
 	if (active)
 	{
-		mkp(connection)();
+		connection = std::make_shared<Connection>();
 		if (connectionConfiguration) { connection->ReadCfg(*connectionConfiguration); }
 		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
 		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
@@ -189,7 +189,7 @@ void Creator::UpdatePoint(SimulationApp& cur)
 {
 	if (hovered && cur.input.isMouseClickedDown(0))
 	{
-		mkp(body)((vector2) cur.input.msp);
+		body = std::make_shared<Body>((vector2) cur.input.msp);
 		body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 		if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 		body->Init();
@@ -202,10 +202,10 @@ void Creator::UpdateNail(SimulationApp& cur)
 {
 	if (body0)
 	{
-		mkp(body)(body0->position + body0->transform * p0Relative);
+		body = std::make_shared<Body>(body0->position + body0->transform * p0Relative);
 		body->Init();
 		cur.bodies.push_back(body);
-		mkp(connection)();
+		connection = std::make_shared<Connection>();
 		connection->type = CON_LINK;
 		connection->body0 = body0;
 		connection->body1 = &*body;
@@ -222,7 +222,7 @@ void Creator::UpdateParticle(SimulationApp& cur)
 {
 	if (hovered && cur.input.isMouseClickedDown(0))
 	{
-		mkp(body)(std::make_shared<Shape>(rad));
+		body = std::make_shared<Body>(std::make_shared<Shape>(rad));
 		body->position = (vector2) cur.input.msp;
 		body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 		if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }

@@ -96,9 +96,9 @@ void Body::RefreshFromScript(SimulationApp& cur)
 	TryReadConfigNumber(body_cfg, L"preset_o", hasPositionPreset);
 	TryReadConfigNumber(body_cfg, L"preset_ang", hasAnglePreset);
 	TryReadConfigNumber(body_cfg, L"preset_v_ang", hasAngularVelocityPreset);
-	if (auto value = FindConfigValue(body_cfg, L"o_prog")) { mkp(positionProgram)(value->procs); }
-	if (auto value = FindConfigValue(body_cfg, L"ang_prog")) { mkp(angleProgram)(value->procs); }
-	if (auto value = FindConfigValue(body_cfg, L"v_ang_prog")) { mkp(angularVelocityProgram)(value->procs); }
+	if (auto value = FindConfigValue(body_cfg, L"o_prog")) { positionProgram = std::make_shared<Program>(value->procs); }
+	if (auto value = FindConfigValue(body_cfg, L"ang_prog")) { angleProgram = std::make_shared<Program>(value->procs); }
+	if (auto value = FindConfigValue(body_cfg, L"v_ang_prog")) { angularVelocityProgram = std::make_shared<Program>(value->procs); }
 	Init();
 }
 

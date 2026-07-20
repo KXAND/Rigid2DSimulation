@@ -21,7 +21,7 @@ void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 			if (v->vec.size() < 2) { continue; }
 			vector2 o_rel;
 			if (v->vec.size() >= 3) { o_rel = ToVector2(*v->vec[2]); }
-			mkp(sh)(v->vec[1]->num, o_rel);
+			sh = std::make_shared<Shape>(v->vec[1]->num, o_rel);
 		}
 		else
 		{
@@ -31,12 +31,12 @@ void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 			{
 				vs.push_back(ToVector2(*w));
 			}
-			mkp(sh)(vs);
+			sh = std::make_shared<Shape>(vs);
 		}
 		shs.push_back(sh);
 	}
-	if (point) { mkp(bo)(vector2()); }
-	else { mkp(bo)(shs); }
+	if (point) { bo = std::make_shared<Body>(vector2()); }
+	else { bo = std::make_shared<Body>(shs); }
 	bo->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	bo->ReadCfg(cfg);
 	bool repos_o = false;
@@ -55,7 +55,7 @@ void CreateConnection(SimulationApp& cur, Var const& cfg)
 	idx0 = clamp(idx0, 0, (int)bodies.size());
 	idx1 = clamp(idx1, 0, (int)bodies.size());
 	std::shared_ptr<Connection> connection;
-	mkp(connection)();
+	connection = std::make_shared<Connection>();
 	connection->body0 = &*bodies[idx0];
 	connection->body1 = &*bodies[idx1];
 	connection->p0Relative = connection->body0->GenerateRandomPointInside();
@@ -168,7 +168,7 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	double rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * rad);
 	dColor col = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-	mkp(b0)(std::make_shared<Shape>(rad));
+	b0 = std::make_shared<Body>(std::make_shared<Shape>(rad));
 	b0->innerColor = col;
 	b0->position = p0;
 	b0->ReadCfg(bodyConfiguration);
@@ -176,13 +176,13 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	cur.bodies.push_back(b0);
 	for (int i = (1), iEnd = int(n + 1); i < iEnd; ++i)
 	{
-		mkp(b1)(std::make_shared<Shape>(rad));
+		b1 = std::make_shared<Body>(std::make_shared<Shape>(rad));
 		b1->innerColor = col;
 		b1->position = (p0 * (n - i) + p1 * i) / n;
 		b1->ReadCfg(bodyConfiguration);
 		b1->Init();
 		cur.bodies.push_back(b1);
-		mkp(connection)();
+		connection = std::make_shared<Connection>();
 		connection->body0 = &*b0;
 		connection->body1 = &*b1;
 		connection->len = gap;
@@ -207,7 +207,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 	double ball_rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * ball_rad);
 	dColor col = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-	mkp(b0)(std::make_shared<Shape>(ball_rad));
+	b0 = std::make_shared<Body>(std::make_shared<Shape>(ball_rad));
 	b0->innerColor = col;
 	b0->position = o + vector2(rad.num, 0);
 	b0->ReadCfg(bodyConfiguration);
@@ -217,13 +217,13 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 	for (int i = (1), iEnd = int(n); i < iEnd; ++i)
 	{
 		double phi = 2 * PI * i / n;
-		mkp(b1)(std::make_shared<Shape>(ball_rad));
+		b1 = std::make_shared<Body>(std::make_shared<Shape>(ball_rad));
 		b1->innerColor = col;
 		b1->position = o + vector2(cos(phi), sin(phi)) * rad.num;
 		b1->ReadCfg(bodyConfiguration);
 		b1->Init();
 		cur.bodies.push_back(b1);
-		mkp(connection)();
+		connection = std::make_shared<Connection>();
 		connection->body0 = &*b0;
 		connection->body1 = &*b1;
 		connection->len = gap;
@@ -238,7 +238,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 	}
 	double phi = 2 * PI * n / n;
 	b1 = beg;
-	mkp(connection)();
+	connection = std::make_shared<Connection>();
 	connection->body0 = &*b0;
 	connection->body1 = &*b1;
 	connection->len = gap;
