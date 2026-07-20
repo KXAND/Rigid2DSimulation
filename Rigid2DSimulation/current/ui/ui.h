@@ -25,7 +25,7 @@ struct UI {
 	ptr<PnBottom> pn_bottom;
 
 	UI(SimulationApp& cur) {};
-	void sort_fpns();
+	void SortFloatPanels();
 
 	// 这里用 init 的原因是控件会用 cur->ui 来访问 ui, 但这个时候 ui 尚未初始化。
 	// 这也是为什么主程序不需要 Init。这应该是一个普遍的问题。

@@ -10,7 +10,7 @@ void Collision::Render(SimulationApp& cur) const
 {
 	drawEllipse(cur.scr, cur.dscr, 100, c, 5, 5, cur.background->ViewPort(), dColor::YELLOW);
 }
-void Collision::simulate(bool equalResponse)
+void Collision::Simulate(bool equalResponse)
 {
 	/*命名约定：
 		?????c
@@ -110,7 +110,7 @@ void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double parallelEps
 			if (shape0->isCircle && shape1->isCircle)
 			{
 				// 都是球
-				if (!collide_balls(*shape0, *shape1, collision)) { continue; }
+				if (!CollideBalls(*shape0, *shape1, collision)) { continue; }
 			}
 			else
 			{
@@ -123,8 +123,8 @@ void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double parallelEps
 			if (!shape0->isCircle && !shape1->isCircle && collision.diff < parallelEpsilon)
 			{
 				double distanceSquareClosest = DBL_MAX;
-				findClosestContactVertex(*shape0, *shape1, collision.c, distanceSquareClosest);
-				findClosestContactVertex(*shape1, *shape0, collision.c, distanceSquareClosest);
+				FindClosestContactVertex(*shape0, *shape1, collision.c, distanceSquareClosest);
+				FindClosestContactVertex(*shape1, *shape0, collision.c, distanceSquareClosest);
 			}
 
 			out.push_back(msh<Collision>(collision));
@@ -142,7 +142,7 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 		{
 			vector2 n = (sh1.vertices[i] - sh0.position).normalize();
 			if (n.zero()) { n = vector2(0, 1); }
-			auto d = sub_collide_poly(n, sh0.position + n * sh0.r, sh1, c);
+			auto d = CalculatePolygonCollisionDepth(n, sh0.position + n * sh0.r, sh1, c);
 			if (d < 0) { return false; }
 			if (d < out.d)
 			{
@@ -161,8 +161,8 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 		vector2 n = sh0.vertices[j] - sh0.vertices[i];
 		n = vector2(n.y, -n.x).normalize();
 		auto d = sh1.isCircle ?
-			sub_collide_ball(n, sh0.vertices[i], sh1, c) :
-			sub_collide_poly(n, sh0.vertices[i], sh1, c);
+			CalculateBallCollisionDepth(n, sh0.vertices[i], sh1, c) :
+			CalculatePolygonCollisionDepth(n, sh0.vertices[i], sh1, c);
 		if (d < 0) { return false; }
 		if (d < out.d)
 		{
@@ -173,7 +173,7 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 		}
 	} return true;
 }
-void findClosestContactVertex(Shape& shape0, Shape& shape1, vector2& contactP, double& closestDistanceSqr)
+void FindClosestContactVertex(Shape& shape0, Shape& shape1, vector2& contactP, double& closestDistanceSqr)
 {
 	rep(i, 0, shape0.vertices.size())
 	{
@@ -190,7 +190,7 @@ void findClosestContactVertex(Shape& shape0, Shape& shape1, vector2& contactP, d
 		}
 	}
 }
-bool collide_balls(Shape& sh0, Shape& sh1, Collision& out)
+bool CollideBalls(Shape& sh0, Shape& sh1, Collision& out)
 {
 	vector2 o10 = sh1.position - sh0.position;
 	double d = sh0.r + sh1.r - o10.len();
@@ -206,12 +206,12 @@ bool collide_balls(Shape& sh0, Shape& sh1, Collision& out)
 		out.c = sh1.position - sh1.r * out.n;
 	} return true;
 }
-double sub_collide_ball(vector2 n, vector2 o, Shape const& sh, vector2& c)
+double CalculateBallCollisionDepth(vector2 n, vector2 o, Shape const& sh, vector2& c)
 {
 	auto tmp = dot(sh.position - o, n) - sh.r;
 	c = sh.position - sh.r * n; return -tmp;
 }
-double sub_collide_poly(vector2 n, vector2 o, Shape const& sh, vector2& c)
+double CalculatePolygonCollisionDepth(vector2 n, vector2 o, Shape const& sh, vector2& c)
 {
 	double out = DBL_MAX;
 	for (auto v : sh.vertices)

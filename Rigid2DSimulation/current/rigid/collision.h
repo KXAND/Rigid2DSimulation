@@ -12,16 +12,16 @@ struct Collision
 	double diff = DBL_MAX;
 	vector2 n, c;
 	void Render(SimulationApp& cur) const;
-	void simulate(bool useEqualPositionCorrection);
+	void Simulate(bool useEqualPositionCorrection);
 };
 
 void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double parallelEpsilon);
 // 假设 b0, b1 已经被填入了。
 /***need be move to private↓***/
 bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse);
-void findClosestContactVertex(Shape& sh0, Shape& sh1, vector2& c, double& dsqr_close);
-bool collide_balls(Shape& sh0, Shape& sh1, Collision& out);
-double sub_collide_ball(vector2 n, vector2 o, Shape const& sh, vector2& c);
-double sub_collide_poly(vector2 n, vector2 o, Shape const& sh, vector2& c);
+void FindClosestContactVertex(Shape& sh0, Shape& sh1, vector2& c, double& dsqr_close);
+bool CollideBalls(Shape& sh0, Shape& sh1, Collision& out);
+double CalculateBallCollisionDepth(vector2 n, vector2 o, Shape const& sh, vector2& c);
+double CalculatePolygonCollisionDepth(vector2 n, vector2 o, Shape const& sh, vector2& c);
 
 

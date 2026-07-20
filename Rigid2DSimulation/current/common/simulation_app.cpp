@@ -197,7 +197,7 @@ void SimulationApp::Update()
 			// Åö×²
 			collisions.clear();
 			DetectCollisions();
-			for (auto& collision : collisions) { collision->simulate(useEqualPositionCorrection); }
+			for (auto& collision : collisions) { collision->Simulate(useEqualPositionCorrection); }
 			// for (auto collision : collisions) { collision->Render(*this); }
 
 			// Á¬½Ó

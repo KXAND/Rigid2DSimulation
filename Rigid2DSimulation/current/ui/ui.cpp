@@ -12,7 +12,7 @@
 #include "pn_bottom.h"
 
 
-void UI::sort_fpns() { sort(fpns.begin(), fpns.end(), less_fpn); }
+void UI::SortFloatPanels() { sort(fpns.begin(), fpns.end(), less_fpn); }
 void UI::Init(SimulationApp& cur) {
 	mkp(fpn_global)(cur); fpns.push_back(&*fpn_global);
 	mkp(fpn_body)(cur); fpns.push_back(&*fpn_body);
@@ -36,7 +36,7 @@ void UI::Update(SimulationApp& cur) {
 void UI::PreUpdate(SimulationApp& cur) {
 	pn_menu->PreUpdate(cur);
 	pn_bottom->PreUpdate(cur);
-	sort_fpns();
+	SortFloatPanels();
 	for (auto fp : fpns) { fp->PreUpdate(cur); }
 }
 

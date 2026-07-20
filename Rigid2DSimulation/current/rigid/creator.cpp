@@ -9,8 +9,8 @@
 
 Creator::Creator()
 {
-	depthBody = 10;
-	depthConnection = -1;
+	DepthBody = 10;
+	DepthConnection = -1;
 	thick = 10;
 	rad = 8;
 }
@@ -37,17 +37,17 @@ Creator::Creator(Var const& v) : Creator()
 	if (auto value = FindConfigValue(v, L"cfg_conn")) { mkp(connectionConfiguration)(*value); }
 }
 
-double Creator::depth() const
+double Creator::Depth() const
 {
 	switch (mode)
 	{
 		case CREATE_CONN:
 		case CREATE_NAIL:
-			return depthConnection;
+			return DepthConnection;
 		default:
 			break;
 	}
-	return depthBody;
+	return DepthBody;
 }
 
 void Creator::UpdateBox(SimulationApp& cur)
@@ -264,9 +264,9 @@ void Creator::Discard(SimulationApp& cur)
 }
 void Creator::PreUpdate(SimulationApp& cur)
 {
-	if (cur.own.hoveredDepth <= depth() && isInside(cur.input.msp, cur.background->ViewPort()))
+	if (cur.own.hoveredDepth <= Depth() && isInside(cur.input.msp, cur.background->ViewPort()))
 	{
-		cur.own.hoveredDepth = depth();
+		cur.own.hoveredDepth = Depth();
 		cur.own.hovered = this;
 	}
 }

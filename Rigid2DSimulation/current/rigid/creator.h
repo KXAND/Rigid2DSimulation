@@ -16,8 +16,8 @@ struct Connection;
 struct Creator
 {
 	int mode = 0;
-	double depthBody = 0;
-	double depthConnection = 0;
+	double DepthBody = 0;
+	double DepthConnection = 0;
 	double thick = 0;
 	double rad = 0;
 	dVector2 creationStartPoint;
@@ -33,7 +33,7 @@ struct Creator
 
 	Creator();
 	Creator(Var const& v);
-	double depth() const;
+	double Depth() const;
 	void Update(SimulationApp& cur);
 	void Discard(SimulationApp& cur);
 	void PreUpdate(SimulationApp& cur);
