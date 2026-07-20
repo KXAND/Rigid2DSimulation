@@ -11,7 +11,7 @@ wstring tw(BracketGroup const& b) {
 	return tmp;
 }
 
-vector<BracketGroup> bra_analysis(vector<token> const& in) {
+vector<BracketGroup> AnalyzeBrackets(vector<token> const& in) {
 	vector<BracketGroup> out;
 	int bra1 = 0, bra2 = 0, bra3 = 0;
 	BracketGroup b;
@@ -44,7 +44,7 @@ vector<BracketGroup> bra_analysis(vector<token> const& in) {
 		zero = bra1 == 0 && bra2 == 0 && bra3 == 0;
 		if (zero) {
 			if (b.typ) {
-				b.bras = bra_analysis(tmp);
+				b.bras = AnalyzeBrackets(tmp);
 				tmp.clear();
 			}
 			else {

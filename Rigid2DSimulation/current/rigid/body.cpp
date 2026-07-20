@@ -104,9 +104,9 @@ void Body::RefreshFromScript(SimulationApp& cur)
 
 void Body::ReadCfg(Var const& cfg)
 {
-	if (auto value = FindConfigValue(cfg, L"o")) { position = tv2(*value); }
-	if (auto value = FindConfigValue(cfg, L"v")) { velocity = tv2(*value); }
-	if (auto value = FindConfigValue(cfg, L"col")) { innerColor = (dColor)tv3(*value); }
+	if (auto value = FindConfigValue(cfg, L"o")) { position = ToVector2(*value); }
+	if (auto value = FindConfigValue(cfg, L"v")) { velocity = ToVector2(*value); }
+	if (auto value = FindConfigValue(cfg, L"col")) { innerColor = (dColor)ToVector3(*value); }
 	TryReadConfigNumber(cfg, L"radian", radian);
 	TryReadConfigNumber(cfg, L"velocityAngular", velocityAngular);
 	TryReadConfigNumber(cfg, L"elasticity", elasticity);
@@ -363,9 +363,9 @@ void Body::FollowPresetPosition(SimulationApp& cur, double stepDt)
 	Scope scope;
 	bool ret = false;
 	scope[L"t"] = msh<Var>(cur.t);
-	auto positionOld = tv2(Execute(ret, cur.currentScope, scope, *positionProgram)->vec);
+	auto positionOld = ToVector2(Execute(ret, cur.currentScope, scope, *positionProgram)->vec);
 	scope.clear(); scope[L"t"] = msh<Var>(cur.t + stepDt); ret = false;
-	auto positionNew = tv2(Execute(ret, cur.currentScope, scope, *positionProgram)->vec);
+	auto positionNew = ToVector2(Execute(ret, cur.currentScope, scope, *positionProgram)->vec);
 	auto velocityNew = (positionNew - positionOld) / stepDt;
 
 	// 其实我觉得应当选用时间较小的值。

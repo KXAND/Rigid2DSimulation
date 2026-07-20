@@ -16,7 +16,7 @@ Var::Var(Program const& ps, vector<wstring>const& pars) :
 	typ = L"fun";
 }
 
-vector2 tv2(Var const& v)
+vector2 ToVector2(Var const& v)
 {
 	vector2 out;
 	if (v.vec.size() < 2) { return {}; }
@@ -24,7 +24,7 @@ vector2 tv2(Var const& v)
 	out.y = v.vec[1]->num;
 	return out;
 }
-vector3 tv3(Var const& v)
+vector3 ToVector3(Var const& v)
 {
 	vector3 out;
 	if (v.vec.size() < 3) { return {}; }
@@ -34,7 +34,7 @@ vector3 tv3(Var const& v)
 	return out;
 }
 
-ptr<Var> findvar(Scope& gl, Scope& sc, wstring nm, bool isgl)
+ptr<Var> FindVariable(Scope& gl, Scope& sc, wstring nm, bool isgl)
 {
 	if (isgl)
 	{
@@ -47,12 +47,12 @@ ptr<Var> findvar(Scope& gl, Scope& sc, wstring nm, bool isgl)
 		return sc[nm];
 	}
 }
-bool default_fun(Scope& gl, Scope& sc, ScriptExpr const& ex, Var& out)
+bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpr const& ex, Var& out)
 {
 	auto const& f = ex.fun;
-	// 保持按需 eval，避免在确定运算符前提前计算所有参数。
-	auto numArg = [&](int index) { return eval(gl, sc, ex.pars[index])->num; };
-	auto strArg = [&](int index) -> wstring const& { return eval(gl, sc, ex.pars[index])->str; };
+	// 保持按需 Evaluate，避免在确定运算符前提前计算所有参数。
+	auto numArg = [&](int index) { return Evaluate(gl, sc, ex.pars[index])->num; };
+	auto strArg = [&](int index) -> wstring const& { return Evaluate(gl, sc, ex.pars[index])->str; };
 
 	if (f == L"!") { out = Var(!numArg(0)); return true; }
 	if (f == L"++") { out = Var(numArg(0)); return true; }
@@ -80,36 +80,36 @@ bool default_fun(Scope& gl, Scope& sc, ScriptExpr const& ex, Var& out)
 	return false;
 }
 
-ptr<Var> eval_call(Scope& gl, Scope& sc, ScriptExpr const& ex)
+ptr<Var> EvaluateCall(Scope& gl, Scope& sc, ScriptExpr const& ex)
 {
 	Var tmp;
 	Scope getLocalizedString;
-	if (default_fun(gl, sc, ex, tmp)) { return msh<Var>(tmp); }
+	if (TryEvaluateDefaultFunction(gl, sc, ex, tmp)) { return msh<Var>(tmp); }
 
 	// 下面必须是值复制，这是为了避免函数自己被抹去。
-	auto fun = findvar(gl, sc, ex.fun, ex.global);
+	auto fun = FindVariable(gl, sc, ex.fun, ex.global);
 	if (fun->typ == L"user" && fun->fun)
 	{
 		vector<ptr<Var>> tmp;
 		for (auto const& p : ex.pars)
 		{
-			tmp.push_back(eval(gl, sc, p));
+			tmp.push_back(Evaluate(gl, sc, p));
 		}
 		return fun->fun(tmp);
 	}
 
 	rep(i, 0, min(fun->pars.size(), ex.pars.size()))
 	{
-		getLocalizedString[fun->pars[i]] = eval(gl, sc, ex.pars[i]);
+		getLocalizedString[fun->pars[i]] = Evaluate(gl, sc, ex.pars[i]);
 	}
 	bool ret = false;
 	return Execute(ret, gl, getLocalizedString, fun->procs);
 }
-ptr<Var> eval_access(Scope& gl, Scope& sc, ScriptExpr const& ex)
+ptr<Var> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex)
 {
 	if (!ex.getLocalizedString || !ex.ind) { return msh<Var>(); }
-	auto getLocalizedString = eval(gl, sc, *ex.getLocalizedString);
-	auto ind = eval(gl, sc, *ex.ind);
+	auto getLocalizedString = Evaluate(gl, sc, *ex.getLocalizedString);
+	auto ind = Evaluate(gl, sc, *ex.ind);
 
 	if (ind->typ == L"num")
 	{
@@ -139,13 +139,13 @@ ptr<Var> eval_access(Scope& gl, Scope& sc, ScriptExpr const& ex)
 
 	return msh<Var>();
 }
-ptr<Var> eval(Scope& gl, Scope& sc, ScriptExpr const& ex)
+ptr<Var> Evaluate(Scope& gl, Scope& sc, ScriptExpr const& ex)
 {
-	if (ex.typ == L"call") { return eval_call(gl, sc, ex); }
+	if (ex.typ == L"call") { return EvaluateCall(gl, sc, ex); }
 	else if (ex.typ == L"var")
 	{
 		if (ex.var == L"PI") { return msh<Var>(PI); }
-		return findvar(gl, sc, ex.var, ex.global);
+		return FindVariable(gl, sc, ex.var, ex.global);
 	}
 	else if (ex.typ == L"num") { return msh<Var>(ex.num); }
 	else if (ex.typ == L"str") { return msh<Var>(ex.str); }
@@ -154,11 +154,11 @@ ptr<Var> eval(Scope& gl, Scope& sc, ScriptExpr const& ex)
 		vector<ptr<Var>> tmp;
 		for (auto const& e : ex.vec)
 		{
-			tmp.push_back(msh<Var>(*eval(gl, sc, e)));
+			tmp.push_back(msh<Var>(*Evaluate(gl, sc, e)));
 		}
 		return msh<Var>(tmp);
 	}
-	else if (ex.typ == L"access") { return eval_access(gl, sc, ex); }
+	else if (ex.typ == L"access") { return EvaluateAccess(gl, sc, ex); }
 	return msh<Var>();
 }
 
@@ -166,22 +166,22 @@ ptr<Var> Execute(bool& ret, Scope& gl, Scope& sc, Program const& ps)
 {
 	for (auto const& p : ps)
 	{
-		if (p.typ == L"single") { eval(gl, sc, p.single); }
-		else if (p.typ == L"return") { ret = true; return eval(gl, sc, p.ret); }
+		if (p.typ == L"single") { Evaluate(gl, sc, p.single); }
+		else if (p.typ == L"return") { ret = true; return Evaluate(gl, sc, p.ret); }
 		else if (p.typ == L"define")
 		{
-			*findvar(gl, sc, p.def_fun, false) = Var(p.procs, p.def_pars);
+			*FindVariable(gl, sc, p.def_fun, false) = Var(p.procs, p.def_pars);
 		}
-		else if (p.typ == L"assign") { *eval(gl, sc, p.left) = *eval(gl, sc, p.right); }
+		else if (p.typ == L"assign") { *Evaluate(gl, sc, p.left) = *Evaluate(gl, sc, p.right); }
 		else if (p.typ == L"if")
 		{
-			auto& ps = eval(gl, sc, p.if_con)->num ? p.if_procs : p.else_procs;
+			auto& ps = Evaluate(gl, sc, p.if_con)->num ? p.if_procs : p.else_procs;
 			auto v = Execute(ret, gl, sc, ps);
 			if (ret) { return v; }
 		}
 		else if (p.typ == L"while")
 		{
-			while (eval(gl, sc, p.lp_con)->num)
+			while (Evaluate(gl, sc, p.lp_con)->num)
 			{
 				auto v = Execute(ret, sc, gl, p.lp);
 				if (ret) { return v; }
@@ -197,6 +197,6 @@ ptr<Var> Execute(Scope& gl, Program const& ps)
 }
 Program Compile(wstring const& code)
 {
-	return parsing_procs(bra_analysis(tokenize(code)));
+	return ParseStatements(AnalyzeBrackets(Tokenize(code)));
 }
 

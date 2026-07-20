@@ -8,5 +8,5 @@ struct BracketGroup {
 	vector<BracketGroup> bras;
 };
 wstring tw(BracketGroup const& b);
-vector<BracketGroup> bra_analysis(vector<token> const& in);
+vector<BracketGroup> AnalyzeBrackets(vector<token> const& in);
 

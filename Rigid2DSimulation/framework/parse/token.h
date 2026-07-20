@@ -16,13 +16,13 @@ struct token {
 };
 wstring tw(token const& tk);
 
-token get_tk_num(wstring const& in, int& id);
-token get_tk_str(wstring const& in, int& id);
-token get_tk_mark(wstring const& in, int& id);
-token get_tk_gl_var(wstring const& in, int& id);
-token get_tk_var_res(wstring const& in, int& id);
-token get_token(wstring const& in, int& id);
+token ParseNumberToken(wstring const& in, int& id);
+token ParseStringToken(wstring const& in, int& id);
+token ParseMarkToken(wstring const& in, int& id);
+token ParseGlobalVariableToken(wstring const& in, int& id);
+token ParseVariableOrReservedToken(wstring const& in, int& id);
+token ParseToken(wstring const& in, int& id);
 
-vector<token> deal_sgn(vector<token> const& in);
-vector<token> tokenize(wstring const& in);
+vector<token> NormalizeSigns(vector<token> const& in);
+vector<token> Tokenize(wstring const& in);
 

@@ -43,18 +43,18 @@ wstring tw(ScriptExpr const& ex) {
 pre_expr::pre_expr(ScriptExpr const& ex) : ex(ex) {}
 pre_expr::pre_expr(token const& tk) : tk(tk) { istk = true; }
 
-bool is_uni_operator(token const& tk) {
+bool IsUnaryOperator(token const& tk) {
 	// 由于 +，- 的特殊性，它们都被当成二元运算符处理。
 	if (tk.typ.empty()) { return false; }
 	auto const& s = tk.typ;
 	return s == L"!";
 }
-bool is_bin_operator(token const& tk) {
+bool IsBinaryOperator(token const& tk) {
 	if (tk.typ.empty()) { return false; }
-	return !iswalnum(tk.typ[0]) && !is_uni_operator(tk);
+	return !iswalnum(tk.typ[0]) && !IsUnaryOperator(tk);
 }
 
-bool parsing_neg(vector<pre_expr> const& in, ScriptExpr& out) {
+bool ParseNegation(vector<pre_expr> const& in, ScriptExpr& out) {
 	rep(i, 0, in.size()) {
 		auto const& pre = in[i];
 		if (!pre.istk) { continue; }
@@ -70,13 +70,13 @@ bool parsing_neg(vector<pre_expr> const& in, ScriptExpr& out) {
 			auto tmp = vector<pre_expr>(in.begin(), in.begin() + i);
 			tmp.push_back(ScriptExpr(s + s, { in[i + 1].ex }));
 			rep(j, i + 2, in.size()) { tmp.push_back(in[j]); }
-			out = parsing_pre_expr(tmp);
+			out = ParsePreExpression(tmp);
 			return true;
 		}
 	}
 	return false;
 }
-bool parsing_bin(vector<pre_expr> const& in, ScriptExpr& out, vector<wstring> const& mark) {
+bool ParseBinary(vector<pre_expr> const& in, ScriptExpr& out, vector<wstring> const& mark) {
 	rep(i, 0, in.size()) {
 		auto const& pre = in[i];
 		if (!pre.istk) { continue; }
@@ -94,13 +94,13 @@ bool parsing_bin(vector<pre_expr> const& in, ScriptExpr& out, vector<wstring> co
 			auto tmp = vector<pre_expr>(in.begin(), in.begin() + i - 1);
 			tmp.push_back(ScriptExpr(s, { in[i - 1].ex, in[i + 1].ex }));
 			rep(j, i + 2, in.size()) { tmp.push_back(in[j]); }
-			out = parsing_pre_expr(tmp);
+			out = ParsePreExpression(tmp);
 			return true;
 		}
 	}
 	return false;
 }
-ScriptExpr parsing_pre_expr(vector<pre_expr> const& in) {
+ScriptExpr ParsePreExpression(vector<pre_expr> const& in) {
 	if (in.empty()) { return ScriptExpr(L"error"); }
 	if (in.size() == 1) {
 		if (in[0].istk) { return ScriptExpr(L"error"); }
@@ -108,17 +108,17 @@ ScriptExpr parsing_pre_expr(vector<pre_expr> const& in) {
 	}
 
 	ScriptExpr out;
-	if (parsing_neg(in, out)) { return out; }
-	if (parsing_bin(in, out, { L"*", L"/" })) { return out; }
-	if (parsing_bin(in, out, { L"+", L"-" })) { return out; }
-	if (parsing_bin(in, out,
+	if (ParseNegation(in, out)) { return out; }
+	if (ParseBinary(in, out, { L"*", L"/" })) { return out; }
+	if (ParseBinary(in, out, { L"+", L"-" })) { return out; }
+	if (ParseBinary(in, out,
 		{ L"==", L"!=", L"<=", L">=", L"<", L">" })) { return out; }
-	if (parsing_bin(in, out, { L"&&", L"||" })) { return out; }
-	if (parsing_bin(in, out, { L"." })) { return out; }
+	if (ParseBinary(in, out, { L"&&", L"||" })) { return out; }
+	if (ParseBinary(in, out, { L"." })) { return out; }
 	return ScriptExpr(L"error");
 }
 
-ScriptExpr parsing_call(vector<BracketGroup> const& in) {
+ScriptExpr ParseCall(vector<BracketGroup> const& in) {
 	ScriptExpr ex(L"call");
 	ex.fun = in[0].tk.var;
 	ex.global = in[0].tk.global;
@@ -126,23 +126,23 @@ ScriptExpr parsing_call(vector<BracketGroup> const& in) {
 	vector<BracketGroup> tmp;
 	for (auto const& b : in[1].bras) {
 		if (b.tk.typ == L",") {
-			ex.pars.push_back(parsing_expr(tmp));
+			ex.pars.push_back(ParseExpression(tmp));
 			tmp.clear();
 		}
 		else {
 			tmp.push_back(b);
 		}
 	}
-	if (!tmp.empty()) { ex.pars.push_back(parsing_expr(tmp)); }
+	if (!tmp.empty()) { ex.pars.push_back(ParseExpression(tmp)); }
 	return ex;
 }
-ScriptExpr parsing_bins(vector<BracketGroup> const& in) {
+ScriptExpr ParseBinaryExpressions(vector<BracketGroup> const& in) {
 	vector<BracketGroup> tmp;
 	vector<pre_expr> pres;
 	for (auto const& b : in) {
-		if (is_bin_operator(b.tk)) {
+		if (IsBinaryOperator(b.tk)) {
 			if (!tmp.empty()) {
-				pres.push_back(parsing_expr(tmp));
+				pres.push_back(ParseExpression(tmp));
 				tmp.clear();
 			}
 			pres.push_back(b.tk);
@@ -151,32 +151,32 @@ ScriptExpr parsing_bins(vector<BracketGroup> const& in) {
 			tmp.push_back(b);
 		}
 	}
-	if (!tmp.empty()) { pres.push_back(parsing_expr(tmp)); }
-	return parsing_pre_expr(pres);
+	if (!tmp.empty()) { pres.push_back(ParseExpression(tmp)); }
+	return ParsePreExpression(pres);
 }
-ScriptExpr parsing_vec(vector<BracketGroup> const& in) {
+ScriptExpr ParseVector(vector<BracketGroup> const& in) {
 	ScriptExpr ex(L"vec");
 	vector<BracketGroup> tmp;
 	for (auto const& b : in[0].bras) {
 		if (b.tk.typ == L",") {
-			ex.vec.push_back(parsing_expr(tmp));
+			ex.vec.push_back(ParseExpression(tmp));
 			tmp.clear();
 		}
 		else {
 			tmp.push_back(b);
 		}
 	}
-	if (!tmp.empty()) { ex.vec.push_back(parsing_expr(tmp)); }
+	if (!tmp.empty()) { ex.vec.push_back(ParseExpression(tmp)); }
 	return ex;
 }
-ScriptExpr parsing_access(vector<BracketGroup> const& in) {
+ScriptExpr ParseAccess(vector<BracketGroup> const& in) {
 	ScriptExpr ex(L"access");
-	ex.getLocalizedString = parsing_expr(vector<BracketGroup>(in.begin(), in.end() - 1));
-	ex.ind = parsing_expr(in.back().bras);
+	ex.getLocalizedString = ParseExpression(vector<BracketGroup>(in.begin(), in.end() - 1));
+	ex.ind = ParseExpression(in.back().bras);
 	return ex;
 }
 
-ScriptExpr parsing_expr(vector<BracketGroup> const& in) {
+ScriptExpr ParseExpression(vector<BracketGroup> const& in) {
 	if (in.empty()) { return ScriptExpr(L"error"); }
 	auto const& b = in[0];
 	if (in.size() == 1) {
@@ -187,23 +187,23 @@ ScriptExpr parsing_expr(vector<BracketGroup> const& in) {
 			else if (b.tk.typ == L"null") { return ScriptExpr(L"null"); }
 			else { return ScriptExpr(L"error"); }
 		}
-		else if (b.typ == 1) { return parsing_expr(b.bras); }
-		else if (b.typ == 3) { return parsing_vec(in); }
+		else if (b.typ == 1) { return ParseExpression(b.bras); }
+		else if (b.typ == 3) { return ParseVector(in); }
 		else { return ScriptExpr(L"error"); }
 	}
 
 	bool call = in.size() == 2 &&
 		in[0].tk.typ == L"var" && in[1].typ == 1;
-	if (call) { return parsing_call(in); }
+	if (call) { return ParseCall(in); }
 
-	bool uni = in.size() == 2 && is_uni_operator(b.tk);
-	if (uni) { return ScriptExpr(b.tk.typ, { parsing_expr({ in[1] }) }); }
+	bool uni = in.size() == 2 && IsUnaryOperator(b.tk);
+	if (uni) { return ScriptExpr(b.tk.typ, { ParseExpression({ in[1] }) }); }
 
 	for (auto const& br : in) {
-		if (is_bin_operator(br.tk)) { return parsing_bins(in); }
+		if (IsBinaryOperator(br.tk)) { return ParseBinaryExpressions(in); }
 	}
 
-	if (in.back().typ == 3) { return parsing_access(in); }
+	if (in.back().typ == 3) { return ParseAccess(in); }
 	return ScriptExpr(L"error");
 }
 

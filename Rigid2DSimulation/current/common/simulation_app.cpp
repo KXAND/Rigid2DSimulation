@@ -242,7 +242,7 @@ void SimulationApp::SetCfg(Var const& v)
 	if (auto value = FindConfigValue(v, L"top_scene")) { rectScene.topLeftPosition.y = value->num; }
 	if (auto value = FindConfigValue(v, L"w_scene")) { rectScene.w = value->num; }
 	if (auto value = FindConfigValue(v, L"h_scene")) { rectScene.h = value->num; }
-	if (auto value = FindConfigValue(v, L"gravity")) { gravity = tv2(*value); }
+	if (auto value = FindConfigValue(v, L"gravity")) { gravity = ToVector2(*value); }
 
 	isSceneChanged = true;
 }

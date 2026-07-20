@@ -37,16 +37,16 @@ struct pre_expr {
 	pre_expr(token const& tk);
 };
 
-bool is_uni_operator(token const& tk);
-bool is_bin_operator(token const& tk);
+bool IsUnaryOperator(token const& tk);
+bool IsBinaryOperator(token const& tk);
 
-bool parsing_neg(vector<pre_expr> const& in, ScriptExpr& out);
-bool parsing_bin(vector<pre_expr> const& in, ScriptExpr& out, vector<wstring> const& mark);
-ScriptExpr parsing_pre_expr(vector<pre_expr> const& in);
+bool ParseNegation(vector<pre_expr> const& in, ScriptExpr& out);
+bool ParseBinary(vector<pre_expr> const& in, ScriptExpr& out, vector<wstring> const& mark);
+ScriptExpr ParsePreExpression(vector<pre_expr> const& in);
 
-ScriptExpr parsing_call(vector<BracketGroup> const& in);
-ScriptExpr parsing_bins(vector<BracketGroup> const& in);
-ScriptExpr parsing_vec(vector<BracketGroup> const& in);
-ScriptExpr parsing_access(vector<BracketGroup> const& in);
-ScriptExpr parsing_expr(vector<BracketGroup> const& in);
+ScriptExpr ParseCall(vector<BracketGroup> const& in);
+ScriptExpr ParseBinaryExpressions(vector<BracketGroup> const& in);
+ScriptExpr ParseVector(vector<BracketGroup> const& in);
+ScriptExpr ParseAccess(vector<BracketGroup> const& in);
+ScriptExpr ParseExpression(vector<BracketGroup> const& in);
 

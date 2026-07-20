@@ -18,7 +18,7 @@ wstring tw(token const& tk) {
 	tmp += L"]"; return tmp;
 }
 
-token get_tk_num(wstring const& in, int& id) {
+token ParseNumberToken(wstring const& in, int& id) {
 	wstring tmp = { in[id] }; bool ok = true;
 	bool dot = false;
 	while (ok && ++id != in.size()) {
@@ -34,7 +34,7 @@ token get_tk_num(wstring const& in, int& id) {
 	if (isalpha(c) || c == L'_') { return token(L"error"); }
 	return token(wtof(tmp));
 }
-token get_tk_str(wstring const& in, int& id) {
+token ParseStringToken(wstring const& in, int& id) {
 	wstring tmp; bool ok = true;
 	bool escape = false;
 	while (ok && ++id != in.size()) {
@@ -48,7 +48,7 @@ token get_tk_str(wstring const& in, int& id) {
 	} ++id;
 	return token::mkstr(tmp);
 }
-token get_tk_mark(wstring const& in, int& id) {
+token ParseMarkToken(wstring const& in, int& id) {
 	vector<wstring> two = {
 		L"||", L"&&", L"==", L"!=", L"<=", L">=", L"//"
 	};
@@ -61,7 +61,7 @@ token get_tk_mark(wstring const& in, int& id) {
 	if (in[id] == c) { ++id; return token(wstring({ c })); }
 	return token(L"error");
 }
-token get_tk_gl_var(wstring const& in, int& id) {
+token ParseGlobalVariableToken(wstring const& in, int& id) {
 	wstring tmp; bool ok = true;
 	// 下面这行判断的顺序很重要，ok 不能移到右边。
 	while (ok && ++id != in.size()) {
@@ -70,7 +70,7 @@ token get_tk_gl_var(wstring const& in, int& id) {
 		if (ok) { tmp += c; }
 	} return token::mkvar(tmp, true);
 }
-token get_tk_var_res(wstring const& in, int& id) {
+token ParseVariableOrReservedToken(wstring const& in, int& id) {
 	wstring tmp = { in[id] }; bool ok = true;
 	// 下面这行判断的顺序很重要，ok 不能移到右边。
 	while (ok && ++id != in.size()) {
@@ -84,16 +84,16 @@ token get_tk_var_res(wstring const& in, int& id) {
 	if (reserved) { return token(tmp); }
 	return token::mkvar(tmp, false);
 }
-token get_token(wstring const& in, int& id) {
+token ParseToken(wstring const& in, int& id) {
 	auto c = in[id];
-	if (c == L'&') { return get_tk_gl_var(in, id); }
-	if (iswalpha(c) || c == L'_') { return get_tk_var_res(in, id); }
-	if (iswdigit(c)) { return get_tk_num(in, id); }
-	if (c == L'\"') { return get_tk_str(in, id); }
-	return get_tk_mark(in, id);
+	if (c == L'&') { return ParseGlobalVariableToken(in, id); }
+	if (iswalpha(c) || c == L'_') { return ParseVariableOrReservedToken(in, id); }
+	if (iswdigit(c)) { return ParseNumberToken(in, id); }
+	if (c == L'\"') { return ParseStringToken(in, id); }
+	return ParseMarkToken(in, id);
 }
 
-vector<token> deal_sgn(vector<token> const& in) {
+vector<token> NormalizeSigns(vector<token> const& in) {
 	vector<token> out;
 	bool add = false; int sgn = 1;
 
@@ -110,11 +110,11 @@ vector<token> deal_sgn(vector<token> const& in) {
 	if (add) { out.push_back(token(sgn == 1 ? L"+" : L"-")); }
 	return out;
 }
-vector<token> tokenize(wstring const& in) {
+vector<token> Tokenize(wstring const& in) {
 	int id = 0; vector<token> tmp;
 	while (id != in.size()) {
 		// 你之前在 tk 前面加了 const &，千万不要在这样了。
-		auto tk = get_token(in, id);
+		auto tk = ParseToken(in, id);
 		bool blank =
 			tk.typ == L" " || tk.typ == L"\n";
 		if (tk.typ == L"//") {
@@ -122,6 +122,6 @@ vector<token> tokenize(wstring const& in) {
 		}
 		else if (tk.typ == L"error") { return {}; }
 		else if (!blank) { tmp.push_back(tk); }
-	} return deal_sgn(tmp);
+	} return NormalizeSigns(tmp);
 }
 

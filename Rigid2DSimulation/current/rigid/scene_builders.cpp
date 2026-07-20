@@ -20,7 +20,7 @@ void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 		{
 			if (v->vec.size() < 2) { continue; }
 			vector2 o_rel;
-			if (v->vec.size() >= 3) { o_rel = tv2(*v->vec[2]); }
+			if (v->vec.size() >= 3) { o_rel = ToVector2(*v->vec[2]); }
 			mkp(sh)(v->vec[1]->num, o_rel);
 		}
 		else
@@ -29,7 +29,7 @@ void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 			vector<vector2> vs;
 			for (auto w : v->vec[1]->vec)
 			{
-				vs.push_back(tv2(*w));
+				vs.push_back(ToVector2(*w));
 			}
 			mkp(sh)(vs);
 		}
@@ -64,7 +64,7 @@ void CreateConnection(SimulationApp& cur, Var const& cfg)
 	TryReadConfigNumber(cfg, L"absolute", absolute);
 	if (auto value = FindConfigValue(cfg, L"p0"))
 	{
-		connection->p0Relative = tv2(*value);
+		connection->p0Relative = ToVector2(*value);
 		if (absolute)
 		{
 			connection->p0Relative -= connection->body0->position;
@@ -73,7 +73,7 @@ void CreateConnection(SimulationApp& cur, Var const& cfg)
 	}
 	if (auto value = FindConfigValue(cfg, L"p1"))
 	{
-		connection->p1Relative = tv2(*value);
+		connection->p1Relative = ToVector2(*value);
 		if (absolute)
 		{
 			connection->p1Relative -= connection->body1->position;
@@ -160,7 +160,7 @@ void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var cons
 void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	Var const& _n, Var const& ratio, Var const& bodyConfiguration, Var const& cfg_conn)
 {
-	vector2 p0 = tv2(_p0), p1 = tv2(_p1);
+	vector2 p0 = ToVector2(_p0), p1 = ToVector2(_p1);
 	int n = _n.num;
 	ptr<Body> b0, b1;
 	ptr<Connection> connection;
@@ -201,7 +201,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 {
 	ptr<Body> beg, b0, b1;
 	int n = _n.num;
-	vector2 o = tv2(_o);
+	vector2 o = ToVector2(_o);
 	ptr<Connection> connection;
 	double len = 2 * PI * rad.num / n;
 	double ball_rad = 0.5 * ratio.num * len;

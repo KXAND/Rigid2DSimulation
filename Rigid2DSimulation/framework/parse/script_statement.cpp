@@ -31,7 +31,7 @@ wstring tw(ScriptStatement const& p) {
 	return tmp;
 }
 
-ScriptStatement parsing_def(vector<BracketGroup> const& in) {
+ScriptStatement ParseDefinition(vector<BracketGroup> const& in) {
 	if (in.size() < 4) { return ScriptStatement(L"error"); }
 	// 不想让这里的函数和参数也牵扯到 global 里面去，感觉完全不必要。
 	if (in[1].tk.typ != L"var" || in[1].tk.global) { return ScriptStatement(L"error"); }
@@ -47,60 +47,60 @@ ScriptStatement parsing_def(vector<BracketGroup> const& in) {
 		else if (b.tk.typ != L",") { return ScriptStatement(L"error"); }
 		comma = !comma;
 	}
-	p.procs = parsing_procs(in[3].bras);
+	p.procs = ParseStatements(in[3].bras);
 	return p;
 }
-ScriptStatement parsing_ret(vector<BracketGroup> const& in) {
+ScriptStatement ParseReturn(vector<BracketGroup> const& in) {
 	ScriptStatement p(L"return");
 	auto tmp = vector<BracketGroup>(in.begin() + 1, in.end());
-	p.ret = tmp.empty() ? ScriptExpr(L"null") : parsing_expr(tmp);
+	p.ret = tmp.empty() ? ScriptExpr(L"null") : ParseExpression(tmp);
 	return p;
 }
-ScriptStatement parsing_assign(vector<BracketGroup> const& in) {
+ScriptStatement ParseAssignment(vector<BracketGroup> const& in) {
 	ScriptStatement p(L"assign");
 	auto it = in.begin();
 	for (; it != in.end() && it->tk.typ != L"="; ++it);
-	p.left = parsing_expr(vector<BracketGroup>(in.begin(), it));
-	p.right = parsing_expr(vector<BracketGroup>(it + 1, in.end()));
+	p.left = ParseExpression(vector<BracketGroup>(in.begin(), it));
+	p.right = ParseExpression(vector<BracketGroup>(it + 1, in.end()));
 	return p;
 }
-ScriptStatement parsing_if(vector<BracketGroup> const& in) {
+ScriptStatement ParseIf(vector<BracketGroup> const& in) {
 	if (in.size() < 3) { return ScriptStatement(L"error"); }
 	if (in[1].typ != 1 || in[2].typ != 2) { return ScriptStatement(L"error"); }
 
 	ScriptStatement p(L"if");
-	p.if_con = parsing_expr(in[1].bras);
-	p.if_procs = parsing_procs(in[2].bras);
+	p.if_con = ParseExpression(in[1].bras);
+	p.if_procs = ParseStatements(in[2].bras);
 	if (in.size() != 3) {
 		if (in.size() != 5) { return ScriptStatement(L"error"); }
 		if (in[3].tk.typ != L"else" || in[4].typ != 2) { return ScriptStatement(L"error"); }
-		p.else_procs = parsing_procs(in[4].bras);
+		p.else_procs = ParseStatements(in[4].bras);
 	}
 	return p;
 }
-ScriptStatement parsing_while(vector<BracketGroup> const& in) {
+ScriptStatement ParseWhile(vector<BracketGroup> const& in) {
 	if (in.size() != 3) { return ScriptStatement(L"error"); }
 	if (in[1].typ != 1 || in[2].typ != 2) { return ScriptStatement(L"error"); }
 	ScriptStatement p(L"while");
-	p.lp_con = parsing_expr(in[1].bras);
-	p.lp = parsing_procs(in[2].bras);
+	p.lp_con = ParseExpression(in[1].bras);
+	p.lp = ParseStatements(in[2].bras);
 	return p;
 }
 
-ScriptStatement parsing_proc(vector<BracketGroup> const& in) {
+ScriptStatement ParseStatement(vector<BracketGroup> const& in) {
 	if (in.empty()) { return ScriptStatement(L"error"); }
-	if (in[0].tk.typ == L"def") { return parsing_def(in); }
-	if (in[0].tk.typ == L"return") { return parsing_ret(in); }
-	if (in[0].tk.typ == L"if") { return parsing_if(in); }
-	if (in[0].tk.typ == L"while") { return parsing_while(in); }
+	if (in[0].tk.typ == L"def") { return ParseDefinition(in); }
+	if (in[0].tk.typ == L"return") { return ParseReturn(in); }
+	if (in[0].tk.typ == L"if") { return ParseIf(in); }
+	if (in[0].tk.typ == L"while") { return ParseWhile(in); }
 	for (auto const& b : in) {
-		if (b.tk.typ == L"=") { return parsing_assign(in); }
+		if (b.tk.typ == L"=") { return ParseAssignment(in); }
 	}
 	ScriptStatement p(L"single");
-	p.single = parsing_expr(in);
+	p.single = ParseExpression(in);
 	return p;
 }
-vector<ScriptStatement> parsing_procs(vector<BracketGroup> const& in) {
+vector<ScriptStatement> ParseStatements(vector<BracketGroup> const& in) {
 	vector<BracketGroup> cur;
 	vector<ScriptStatement> out;
 	bool curly = false;
@@ -108,7 +108,7 @@ vector<ScriptStatement> parsing_procs(vector<BracketGroup> const& in) {
 	for (auto const& b : in) {
 		if (b.tk.typ == L";") {
 			if (!cur.empty()) {
-				auto p = parsing_proc(cur);
+				auto p = ParseStatement(cur);
 				if (p.typ == L"error") { return {}; }
 				out.push_back(p);
 				cur.clear();
@@ -116,7 +116,7 @@ vector<ScriptStatement> parsing_procs(vector<BracketGroup> const& in) {
 		}
 		else {
 			if (b.tk.typ != L"else" && curly) {
-				auto p = parsing_proc(cur);
+				auto p = ParseStatement(cur);
 				if (p.typ == L"error") { return {}; }
 				out.push_back(p);
 				cur.clear();
@@ -127,7 +127,7 @@ vector<ScriptStatement> parsing_procs(vector<BracketGroup> const& in) {
 	}
 
 	if (curly) {
-		auto p = parsing_proc(cur);
+		auto p = ParseStatement(cur);
 		if (p.typ == L"error") { return {}; }
 		out.push_back(p);
 	}
