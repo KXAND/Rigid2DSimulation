@@ -38,13 +38,13 @@ void SimulationApp::Save(wstring const& nm) const
 {
 	FILE* f = wfopen(nm, L"wb");
 	if (!f) { return; }
-	int sz = 0; fwtv(scriptText); save_par(f);
+	int sz = 0; fwtv(scriptText); SaveParameters(f);
 
 	// 可能会保存一些即将被删除的元素，但是也无所谓。
 	sz = bodies.size(); fwt(sz);
-	for (auto b : bodies) { b->save(f); }
+	for (auto b : bodies) { b->Save(f); }
 	sz = connections.size(); fwt(sz);
-	for (auto c : connections) { c->save(*this, f); }
+	for (auto c : connections) { c->Save(*this, f); }
 
 	fclose(f);
 }
@@ -53,7 +53,7 @@ void SimulationApp::Load(wstring const& nm)
 	FILE* f = wfopen(nm, L"rb");
 	if (!f) { return; } Reset();
 	int sz = 0; frdv(scriptText);
-	temporaryScriptText = scriptText; load_par(f);
+	temporaryScriptText = scriptText; LoadParameters(f);
 
 	frd(sz);
 	rep(i, 0, sz) { bodies.push_back(msh<Body>(*this, f)); }
@@ -65,7 +65,7 @@ void SimulationApp::Load(wstring const& nm)
 }
 void SimulationApp::Reset()
 {
-	curScope.clear(); init_def_fun(); pars.clear();
+	curScope.clear(); InitializeDefaultFunctions(); pars.clear();
 
 	bodies.clear();
 	groups.clear();
@@ -108,7 +108,7 @@ void SimulationApp::Update()
 	if (mode == MODE_CREATE) { creator->PreUpdate(*this); }
 	for (auto& b : bodies) { b->PreUpdate(*this); }
 	ui->PreUpdate(*this);
-	basicUpdate();
+	UpdateBasicState();
 
 	if (curScope.find(L"update") != curScope.end())
 	{
@@ -295,17 +295,17 @@ void SimulationApp::DetectCollisions()
 	}
 }
 
-void SimulationApp::save_par(FILE* f) const
+void SimulationApp::SaveParameters(FILE* f) const
 {
 	int sz = pars.size(); fwt(sz);
-	for (auto p : pars) { p->save(f); }
+	for (auto p : pars) { p->Save(f); }
 }
-void SimulationApp::load_par(FILE* f)
+void SimulationApp::LoadParameters(FILE* f)
 {
 	int sz = 0; frd(sz);
 	rep(i, 0, sz) { pars.push_back(msh<SceneParameter>(f)); }
 }
-void SimulationApp::init_def_fun()
+void SimulationApp::InitializeDefaultFunctions()
 {
 	auto f0 = [this](vector<ptr<Var>> const& in)
 		{
@@ -371,7 +371,7 @@ void SimulationApp::init_def_fun()
 
 	auto f9 = [this](vector<ptr<Var>> const& in)
 		{
-			if (in.size() >= 1) { CreateConnetion(*this, *in[0]); }
+			if (in.size() >= 1) { CreateConnection(*this, *in[0]); }
 			return msh<Var>();
 		};
 	curScope[L"create_conn"] = msh<Var>(f9);
@@ -424,7 +424,7 @@ void SimulationApp::init_def_fun()
 		};
 	curScope[L"necklace"] = msh<Var>(f15);
 }
-void SimulationApp::basicUpdate()
+void SimulationApp::UpdateBasicState()
 {
 	title = getLocalizedString(L"title");
 	if (curScope.find(L"cur.dbstr") != curScope.end()) { dbstr = curScope[L"cur.dbstr"]->str; }

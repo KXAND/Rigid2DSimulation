@@ -50,7 +50,7 @@ double Creator::depth() const
 	return depthBody;
 }
 
-void Creator::updateBox(SimulationApp& cur)
+void Creator::UpdateBox(SimulationApp& cur)
 {
 	if (active)
 	{
@@ -84,7 +84,7 @@ void Creator::updateBox(SimulationApp& cur)
 		}
 	}
 }
-void Creator::updateBall(SimulationApp& cur)
+void Creator::UpdateBall(SimulationApp& cur)
 {
 	if (active)
 	{
@@ -117,7 +117,7 @@ void Creator::updateBall(SimulationApp& cur)
 		}
 	}
 }
-void Creator::updatePlate(SimulationApp& cur)
+void Creator::UpdatePlate(SimulationApp& cur)
 {
 	if (active)
 	{
@@ -153,7 +153,7 @@ void Creator::updatePlate(SimulationApp& cur)
 		}
 	}
 }
-void Creator::updateConnection(SimulationApp& cur)
+void Creator::UpdateConnection(SimulationApp& cur)
 {
 	if (active)
 	{
@@ -185,7 +185,7 @@ void Creator::updateConnection(SimulationApp& cur)
 		if (body0) { active = true; }
 	}
 }
-void Creator::updatePoint(SimulationApp& cur)
+void Creator::UpdatePoint(SimulationApp& cur)
 {
 	if (hovered && cur.input.isMouseClickedDown(0))
 	{
@@ -198,7 +198,7 @@ void Creator::updatePoint(SimulationApp& cur)
 		cur.isSceneChanged = true;
 	}
 }
-void Creator::updateNail(SimulationApp& cur)
+void Creator::UpdateNail(SimulationApp& cur)
 {
 	if (body0)
 	{
@@ -218,7 +218,7 @@ void Creator::updateNail(SimulationApp& cur)
 		body = NULL; cur.isSceneChanged = true;
 	}
 }
-void Creator::updateParticle(SimulationApp& cur)
+void Creator::UpdateParticle(SimulationApp& cur)
 {
 	if (hovered && cur.input.isMouseClickedDown(0))
 	{
@@ -238,13 +238,13 @@ void Creator::Update(SimulationApp& cur)
 
 	switch (mode)
 	{
-		case CREATE_BOX: updateBox(cur); break;
-		case CREATE_BALL: updateBall(cur); break;
-		case CREATE_PLATE: updatePlate(cur); break;
-		case CREATE_CONN: updateConnection(cur); break;
-		case CREATE_POINT: updatePoint(cur); break;
-		case CREATE_NAIL: updateNail(cur); break;
-		case CREATE_PARTICLE: updateParticle(cur); break;
+		case CREATE_BOX: UpdateBox(cur); break;
+		case CREATE_BALL: UpdateBall(cur); break;
+		case CREATE_PLATE: UpdatePlate(cur); break;
+		case CREATE_CONN: UpdateConnection(cur); break;
+		case CREATE_POINT: UpdatePoint(cur); break;
+		case CREATE_NAIL: UpdateNail(cur); break;
+		case CREATE_PARTICLE: UpdateParticle(cur); break;
 	}
 
 
@@ -264,7 +264,7 @@ void Creator::Discard(SimulationApp& cur)
 }
 void Creator::PreUpdate(SimulationApp& cur)
 {
-	if (cur.own.hoveredDepth <= depth() && isInside(cur.input.msp, cur.background->viewPort()))
+	if (cur.own.hoveredDepth <= depth() && isInside(cur.input.msp, cur.background->ViewPort()))
 	{
 		cur.own.hoveredDepth = depth();
 		cur.own.hovered = this;

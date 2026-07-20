@@ -15,7 +15,7 @@ void Background::Render(SimulationApp& cur)
 {
 	drawBasedTile((cur.scr), topLeft,  backgroundTile);
 	draw_str((cur.scr), (cur.dscr), 999, (cur.dbstr),
-		dColor(110), (cur.ft), topLeft + dVector2(10, 10), width - 20, cur.background->viewPort());
+		dColor(110), (cur.ft), topLeft + dVector2(10, 10), width - 20, cur.background->ViewPort());
 }
 
 void Background::Update(SimulationApp& cur)
@@ -31,10 +31,10 @@ void Background::Update(SimulationApp& cur)
 }
 void Background::PreUpdate(SimulationApp& cur)
 {
-	bool haveDeeperValue = ((cur.own).hoveredDepth) <= depth && isInside(cur.input.msp, viewPort());
+	bool haveDeeperValue = ((cur.own).hoveredDepth) <= depth && isInside(cur.input.msp, ViewPort());
 	if (haveDeeperValue) { ((cur.own).hoveredDepth) = depth; ((cur.own).hovered) = this; }
 
-	haveDeeperValue = (cur.own.wheeledDepth) <= depth && isInside(cur.input.msp, viewPort());
+	haveDeeperValue = (cur.own.wheeledDepth) <= depth && isInside(cur.input.msp, ViewPort());
 	if (haveDeeperValue) { (cur.own.wheeledDepth) = depth; (cur.own.wheeled) = this; }
 }
 

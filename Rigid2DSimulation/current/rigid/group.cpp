@@ -40,7 +40,7 @@ void findBodiesInGroup(vector<Body*>& out, Body* body)
 	out.push_back(body);
 	for (auto connnection : body->connections)
 	{
-		auto tmp = getTheOtherBody(body, *connnection);
+		auto tmp = GetOtherBody(body, *connnection);
 		if (tmp && !tmp->visited)
 		{
 			findBodiesInGroup(out, tmp);

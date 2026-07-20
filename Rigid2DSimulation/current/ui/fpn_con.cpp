@@ -11,7 +11,7 @@ void BtConOK::OnClick(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto& selectedConnection = *simulationApp.connectionSelecting;
 	selectedConnection.scriptText = selectedConnection.temporaryScriptText;
-	selectedConnection.refresh(simulationApp);
+	selectedConnection.RefreshFromScript(simulationApp);
 }
 BtConDel::BtConDel() : BtLan(70, L"bt_con_del") {}
 void BtConDel::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->del = true; simulationApp.isSceneChanged = true; }

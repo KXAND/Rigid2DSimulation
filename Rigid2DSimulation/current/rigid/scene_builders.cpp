@@ -45,7 +45,7 @@ void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 	cur.bodies.push_back(bo);
 	cur.isSceneChanged = true;
 }
-void CreateConnetion(SimulationApp& cur, Var const& cfg)
+void CreateConnection(SimulationApp& cur, Var const& cfg)
 {
 	auto& bodies = cur.bodies;
 	int idx0 = GenerateRandomInt(bodies.size());

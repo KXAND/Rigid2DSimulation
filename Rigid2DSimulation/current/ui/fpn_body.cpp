@@ -12,7 +12,7 @@ void BtBodyOK::OnClick(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto& selectedBody = *simulationApp.bodySelecting;
 	selectedBody.scriptText = selectedBody.temporaryScriptText;
-	selectedBody.refresh(simulationApp);
+	selectedBody.RefreshFromScript(simulationApp);
 }
 BtBodyDel::BtBodyDel() : BtLan(70, L"bt_body_del") {}
 void BtBodyDel::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->del = true; simulationApp.isSceneChanged = true; }

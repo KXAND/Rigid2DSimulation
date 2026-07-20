@@ -39,25 +39,25 @@ struct Creator
 	void PreUpdate(SimulationApp& cur);
 
 private:
-	void updateBox(SimulationApp& cur);
-	void updateBall(SimulationApp& cur);
-	void updatePlate(SimulationApp& cur);
-	void updateConnection(SimulationApp& cur);
+	void UpdateBox(SimulationApp& cur);
+	void UpdateBall(SimulationApp& cur);
+	void UpdatePlate(SimulationApp& cur);
+	void UpdateConnection(SimulationApp& cur);
 	/// <summary>
 	/// 在一个空地方点击，开始创建一个新物体
 	/// </summary>
 	/// <param name="cur"></param>
-	void updatePoint(SimulationApp& cur);
+	void UpdatePoint(SimulationApp& cur);
 	/// <summary>
 	/// 将body0固定钉在原地
 	/// </summary>
 	/// <param name="cur"></param>
-	void updateNail(SimulationApp& cur);
+	void UpdateNail(SimulationApp& cur);
 	/// <summary>
 	/// 在鼠标位置创建一个半径为 radius 的圆/粒子
 	/// </summary>
 	/// <param name="cur"></param>
-	void updateParticle(SimulationApp& cur);
+	void UpdateParticle(SimulationApp& cur);
 };
 
 

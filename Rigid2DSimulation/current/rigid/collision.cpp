@@ -8,7 +8,7 @@
 //	疑似废弃
 void Collision::Render(SimulationApp& cur) const
 {
-	drawEllipse(cur.scr, cur.dscr, 100, c, 5, 5, cur.background->viewPort(), dColor::YELLOW);
+	drawEllipse(cur.scr, cur.dscr, 100, c, 5, 5, cur.background->ViewPort(), dColor::YELLOW);
 }
 void Collision::simulate(bool equalResponse)
 {
@@ -99,7 +99,7 @@ void Collide(Body& b0, Body& b1, vector<ptr<Collision>>& out, double eps_paralel
 {
 	// 不可能发生碰撞的情况
 	if (b0.invMass == 0 && b1.invMass == 0) { return; }
-	if (!isOverlap(b0.box, b1.box)) { return; }
+	if (!IsOverlap(b0.box, b1.box)) { return; }
 
 	for (auto& shape0 : b0.shapes)
 		for (auto& shape1 : b1.shapes)

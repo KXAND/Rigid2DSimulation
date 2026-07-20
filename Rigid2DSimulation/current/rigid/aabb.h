@@ -13,7 +13,7 @@ struct aabb {
 		x0(x0), x1(x1), y0(y0), y1(y1) {}
 	aabb(aabb const& b0, aabb const& b1);
 
-	void expand(vector2 v);
+	void Expand(vector2 v);
 };
-bool isOverlap(aabb const& b0, aabb const& b1);
+bool IsOverlap(aabb const& b0, aabb const& b1);
 

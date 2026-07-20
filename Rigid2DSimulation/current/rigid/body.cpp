@@ -38,7 +38,7 @@ Body::Body(vector<ptr<Shape>> const& _shs) : Body()
 {
 	shapes = _shs;
 }
-void Body::save(FILE* f) const
+void Body::Save(FILE* f) const
 {
 	int sz = 0;
 	fwt(point); fwt(fixed);
@@ -66,14 +66,14 @@ Body::Body(SimulationApp& cur, FILE* f) : Body()
 	frd(dampCoeff); frd(dampCoeffAngular);
 	frd(chargeDensity); frd(innerColor);
 
-	refresh(cur);
+	RefreshFromScript(cur);
 }
 
 double Body::GetDepth() const
 {
 	return point ? depthPoint : depthShape;
 }
-bool Body::inside(vector2 p) const
+bool Body::IsInside(vector2 p) const
 {
 	if (point) { return (p - position).lensqr() < r_point * r_point; }
 
@@ -84,7 +84,7 @@ bool Body::inside(vector2 p) const
 	return false;
 }
 
-void Body::refresh(SimulationApp& cur)
+void Body::RefreshFromScript(SimulationApp& cur)
 {
 	cur.curScope[L"body"] = msh<Var>();
 	Execute(cur.curScope, Compile(scriptText));
@@ -161,7 +161,7 @@ void Body::UpdateAABB()
 }
 
 // 这个方法已经过时了。
-void Body::warp(dRect rc)
+void Body::Warp(dRect rc)
 {
 	if (invMass == 0 || dragged) { return; }
 
@@ -279,33 +279,33 @@ void Body::Render(SimulationApp& cur) const
 
 	if (point)
 	{
-		drawEllipse(cur.scr, cur.dscr, GetDepth(), position, r_point, r_point, cur.background->viewPort(), color);
-		drawEllipseBorder(cur.scr, cur.dscr, GetDepth(), position, r_point, r_point, cur.background->viewPort(), borderColor, 20);
+		drawEllipse(cur.scr, cur.dscr, GetDepth(), position, r_point, r_point, cur.background->ViewPort(), color);
+		drawEllipseBorder(cur.scr, cur.dscr, GetDepth(), position, r_point, r_point, cur.background->ViewPort(), borderColor, 20);
 	}
 	for (auto& shape : shapes)
 	{
 		if (shape->isCircle)
 		{
 			drawEllipse(cur.scr, cur.dscr, GetDepth(),
-				shape->position, shape->r, shape->r, cur.background->viewPort(), color);
+				shape->position, shape->r, shape->r, cur.background->ViewPort(), color);
 			drawEllipseBorder(cur.scr, cur.dscr, GetDepth(),
-				shape->position, shape->r, shape->r, cur.background->viewPort(), borderColor, 30);
+				shape->position, shape->r, shape->r, cur.background->ViewPort(), borderColor, 30);
 
 			// 显示一条半径以便于我们判断圆的旋转角度
 			auto peakPoint = vector2(cos(shape->radian), sin(shape->radian)) * shape->r + shape->position;
-			drawLineSegment(cur.scr, cur.dscr, shape->position, peakPoint, GetDepth(), cur.background->viewPort(), borderColor);
+			drawLineSegment(cur.scr, cur.dscr, shape->position, peakPoint, GetDepth(), cur.background->ViewPort(), borderColor);
 			continue;
 		}
 
 		rep(i, 0, shape->vertices.size())
 		{
 			int j = (i + 1) % shape->vertices.size();
-			drawTriangle(cur.scr, cur.dscr, cur.background->viewPort(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
+			drawTriangle(cur.scr, cur.dscr, cur.background->ViewPort(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
 		}
 		rep(i, 0, shape->vertices.size())
 		{
 			int j = (i + 1) % shape->vertices.size();
-			drawLineSegment(cur.scr, cur.dscr, shape->vertices[i], shape->vertices[j], GetDepth(), cur.background->viewPort(), borderColor);
+			drawLineSegment(cur.scr, cur.dscr, shape->vertices[i], shape->vertices[j], GetDepth(), cur.background->ViewPort(), borderColor);
 		}
 	}
 
@@ -313,7 +313,7 @@ void Body::Render(SimulationApp& cur) const
 	{
 		vector2 p1 = vector2(cur.input.msp);
 		vector2 p0 = position + transform * relativeDragPoint;
-		drawLineSegment(cur.scr, cur.dscr, p0, p1, GetDepth(), cur.background->viewPort(), dColor(0, 255, 255));
+		drawLineSegment(cur.scr, cur.dscr, p0, p1, GetDepth(), cur.background->ViewPort(), dColor(0, 255, 255));
 	}
 
 	if (!track.empty())
@@ -321,7 +321,7 @@ void Body::Render(SimulationApp& cur) const
 		vector2 p0 = track.front();
 		for (auto p1 : track)
 		{
-			drawLineSegment(cur.scr, cur.dscr, p0, p1, 10, cur.background->viewPort(), dColor(255, 0, 255));
+			drawLineSegment(cur.scr, cur.dscr, p0, p1, 10, cur.background->ViewPort(), dColor(255, 0, 255));
 			p0 = p1;
 		}
 	}
@@ -334,7 +334,7 @@ void Body::Step(SimulationApp& cur, double stepDt)
 		velocity -= dampCoeff * velocity * stepDt;
 		velocity += cur.gravity * stepDt;
 		velocityAngular -= dampCoeffAngular * velocityAngular * stepDt;
-		if (preset_v_ang) { followPresetVelocityAngular(cur); }
+		if (preset_v_ang) { FollowPresetAngularVelocity(cur); }
 		position += velocity * stepDt;
 		radian += velocityAngular * stepDt;
 	}
@@ -342,22 +342,22 @@ void Body::Step(SimulationApp& cur, double stepDt)
 	{
 		velocity = {};
 		velocityAngular = 0;
-		if (preset_o) { followPresetO(cur, stepDt); }
-		if (preset_ang) { followPresetAngle(cur, stepDt); }
+		if (preset_o) { FollowPresetPosition(cur, stepDt); }
+		if (preset_ang) { FollowPresetAngle(cur, stepDt); }
 	}
 
 	if (dragged)
 	{
-		if (cur.input.msd[2]) { handleDragWhole(cur); }
-		else if (!cur.own.keyboardOwner && cur.input.kbd[L'F']) { handleDragForce(cur, stepDt); }
-		else if (invMass == 0) { handleDragWhole(cur); }
-		else { handleDragPoint(cur); }
+		if (cur.input.msd[2]) { HandleDragWhole(cur); }
+		else if (!cur.own.keyboardOwner && cur.input.kbd[L'F']) { HandleDragForce(cur, stepDt); }
+		else if (invMass == 0) { HandleDragWhole(cur); }
+		else { HandleDragPoint(cur); }
 	}
 
 	UpdateShapesPositionAndAABB();
 }
 
-void Body::followPresetO(SimulationApp& cur, double stepDt)
+void Body::FollowPresetPosition(SimulationApp& cur, double stepDt)
 {
 	if (!positionProgram) { return; }
 	Scope scope;
@@ -373,7 +373,7 @@ void Body::followPresetO(SimulationApp& cur, double stepDt)
 	velocity = velocityNew;
 }
 
-void Body::followPresetAngle(SimulationApp& cur, double stepDt)
+void Body::FollowPresetAngle(SimulationApp& cur, double stepDt)
 {
 	if (!angleProgram) { return; }
 
@@ -391,7 +391,7 @@ void Body::followPresetAngle(SimulationApp& cur, double stepDt)
 	velocityAngular = velocityAngularNew;
 }
 
-void Body::followPresetVelocityAngular(SimulationApp& cur)
+void Body::FollowPresetAngularVelocity(SimulationApp& cur)
 {
 	if (!angularVelocityProgram) { return; }
 
@@ -403,7 +403,7 @@ void Body::followPresetVelocityAngular(SimulationApp& cur)
 	velocityAngular = velocityAngularNew;
 }
 
-void Body::updateDragAngle(SimulationApp& cur)
+void Body::UpdateDragAngle(SimulationApp& cur)
 {
 	velocityAngularDrag = 0;
 	if (!cur.own.keyboardOwner)
@@ -414,7 +414,7 @@ void Body::updateDragAngle(SimulationApp& cur)
 	radianDrag = radian + velocityAngularDrag * cur.real_dt;
 }
 
-void Body::handleDragPoint(SimulationApp& cur)
+void Body::HandleDragPoint(SimulationApp& cur)
 {
 	// 下列命名指定o,p,m三点为body中心、被拖拽点及鼠标现在点
 	vector2 mousePos = vector2(cur.input.msp);
@@ -439,7 +439,7 @@ void Body::handleDragPoint(SimulationApp& cur)
 /// 所有点同步被拖拽位移
 /// </summary>
 /// <param name="cur"></param>
-void Body::handleDragWhole(SimulationApp& cur)
+void Body::HandleDragWhole(SimulationApp& cur)
 {
 	vector2 mousePos = vector2(cur.input.msp);
 	vector2 dragPointPos = position + transform * relativeDragPoint;
@@ -451,7 +451,7 @@ void Body::handleDragWhole(SimulationApp& cur)
 	position += mousePos - dragPointPos; // 中心平行位移
 }
 
-void Body::handleDragForce(SimulationApp& cur, double deltaTime)
+void Body::HandleDragForce(SimulationApp& cur, double deltaTime)
 {
 	// 运动路径方向
 	vector2 p1 = vector2(cur.input.msp);
@@ -478,19 +478,19 @@ void Body::Update(SimulationApp& cur)
 	if (dragged)
 	{
 		// 检查拖拽模式，应用函数
-		updateDragAngle(cur);
+		UpdateDragAngle(cur);
 		if (cur.input.msd[2])
 		{
-			handleDragWhole(cur);
+			HandleDragWhole(cur);
 		}
 		else if (!cur.own.keyboardOwner && cur.input.kbd[L'F']) { }
 		else if (invMass == 0)
 		{
-			handleDragWhole(cur);
+			HandleDragWhole(cur);
 		}
 		else
 		{
-			handleDragPoint(cur);
+			HandleDragPoint(cur);
 		}
 		dragged = cur.input.msd[0] && (cur.mode == MODE_DRAG);
 	}
@@ -502,7 +502,7 @@ void Body::Update(SimulationApp& cur)
 		{
 			// p移到m，那么mo = 变换*原距离 = 变换*原相对位置=po，故有。
 			relativeDragPoint = transform.inverse() * ((vector2) cur.input.msp - position);
-			updateDragAngle(cur);
+			UpdateDragAngle(cur);
 		}
 	}
 
@@ -537,7 +537,7 @@ void Body::Update(SimulationApp& cur)
 void Body::PreUpdate(SimulationApp& cur)
 {
 	bool ok = cur.own.hoveredDepth <= GetDepth() &&
-		inside((vector2) cur.input.msp) && isInside(cur.input.msp, cur.background->viewPort());
+		IsInside((vector2) cur.input.msp) && isInside(cur.input.msp, cur.background->ViewPort());
 	if (ok) { cur.own.hoveredDepth = GetDepth(); cur.own.hovered = this; }
 }
 

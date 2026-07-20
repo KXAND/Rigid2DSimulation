@@ -32,18 +32,18 @@ struct Connection {
 
 	Connection();
 	Connection(SimulationApp& cur, FILE* f);
-	void save(SimulationApp const& cur, FILE* f) const;
+	void Save(SimulationApp const& cur, FILE* f) const;
 
 	void ReadCfg(Var const& cfg);
 	void SignUpToBodies();
 	void UpdatePosition();
-	void refresh(SimulationApp& cur);
-	void simulateTypeRopeLink(bool useEqualPositionCorrection);
-	void simulateTypeCordSpring(double sdt);
+	void RefreshFromScript(SimulationApp& cur);
+	void SimulateRopeOrLink(bool useEqualPositionCorrection);
+	void SimulateCordOrSpring(double sdt);
 	void Simulate(double sdt, bool useEqualPositionCorrection);
 	void Render(SimulationApp& cur) const;
 };
 
-Body* getTheOtherBody(Body* b, Connection const& con);
+Body* GetOtherBody(Body* b, Connection const& con);
 
 

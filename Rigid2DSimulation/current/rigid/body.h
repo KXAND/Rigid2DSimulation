@@ -58,14 +58,14 @@ struct Body
 	Body(ptr<Shape> sh);
 	Body(vector<ptr<Shape>> const& _shs);
 	Body(SimulationApp& cur, FILE* f);
-	void save(FILE* f) const;
+	void Save(FILE* f) const;
 
 	vector2 GenerateRandomPointInside() const;
-	bool inside(vector2 p) const;
-	void refresh(SimulationApp& cur);
+	bool IsInside(vector2 p) const;
+	void RefreshFromScript(SimulationApp& cur);
 	void ReadCfg(Var const& cfg);
 	void UpdateShapesPositionAndAABB();
-	void warp(dRect rc);
+	void Warp(dRect rc);
 	void RegisterGrid(SimulationApp& cur);
 private:
 	double GetDepth() const;
@@ -79,13 +79,13 @@ public:
 	void PreUpdate(SimulationApp& cur);
 
 private:
-	void updateDragAngle(SimulationApp& cur);
-	void handleDragWhole(SimulationApp& cur);
-	void handleDragPoint(SimulationApp& cur);
-	void handleDragForce(SimulationApp& cur, double sdt);
-	void followPresetO(SimulationApp& cur, double sdt);
-	void followPresetAngle(SimulationApp& cur, double sdt);
-	void followPresetVelocityAngular(SimulationApp& cur);
+	void UpdateDragAngle(SimulationApp& cur);
+	void HandleDragWhole(SimulationApp& cur);
+	void HandleDragPoint(SimulationApp& cur);
+	void HandleDragForce(SimulationApp& cur, double sdt);
+	void FollowPresetPosition(SimulationApp& cur, double sdt);
+	void FollowPresetAngle(SimulationApp& cur, double sdt);
+	void FollowPresetAngularVelocity(SimulationApp& cur);
 
 };
 

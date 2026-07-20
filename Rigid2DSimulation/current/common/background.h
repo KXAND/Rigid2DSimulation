@@ -17,7 +17,7 @@ struct Background
 	bool wheeled = false;
 
 	Background(SimulationApp& cur);
-	dRect viewPort() const { return { topLeft, width, height }; }
+	dRect ViewPort() const { return { topLeft, width, height }; }
 	
 	/// <summary>
 	/// @todo:将该函数的调用从update中移动到了cur中，执行的顺序依然远在其他render函数之前，理由有待明确

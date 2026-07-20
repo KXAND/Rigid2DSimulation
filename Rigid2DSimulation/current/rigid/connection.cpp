@@ -16,7 +16,7 @@ Connection::Connection()
 	colorCord = dColor::CYAN;
 	colorCordTight = dColor::MAGENTA;
 }
-void Connection::save(SimulationApp const& cur, FILE* f) const
+void Connection::Save(SimulationApp const& cur, FILE* f) const
 {
 	int sz = 0;
 	fwt(type); fwtv(scriptText);
@@ -35,7 +35,7 @@ Connection::Connection(SimulationApp& cur, FILE* f) : Connection()
 	frd(ind0); frd(ind1);
 	body0 = &*cur.bodies[ind0]; body1 = &*cur.bodies[ind1];
 	frd(p0Relative); frd(p1Relative); frd(len); frd(hooke);
-	refresh(cur); SignUpToBodies(); UpdatePosition();
+	RefreshFromScript(cur); SignUpToBodies(); UpdatePosition();
 }
 
 void Connection::ReadCfg(Var const& cfg)
@@ -67,7 +67,7 @@ void Connection::UpdatePosition()
 	p1 = body1->position + body1->transform * p1Relative;
 }
 
-void Connection::refresh(SimulationApp& cur)
+void Connection::RefreshFromScript(SimulationApp& cur)
 {
 	cur.curScope[L"conn"] = msh<Var>();
 	Execute(cur.curScope, Compile(scriptText));
@@ -77,7 +77,7 @@ void Connection::refresh(SimulationApp& cur)
 	UpdatePosition();
 }
 
-void Connection::simulateTypeRopeLink(bool equalReponse)
+void Connection::SimulateRopeOrLink(bool equalReponse)
 {
 	UpdatePosition();
 	if (body0 == body1) { return; }
@@ -131,7 +131,7 @@ void Connection::simulateTypeRopeLink(bool equalReponse)
 	body1->position -= d * (currLenth - len) * body1->invMass / (body0->invMass + body1->invMass);
 }
 
-void Connection::simulateTypeCordSpring(double deltaTime)
+void Connection::SimulateCordOrSpring(double deltaTime)
 {
 	UpdatePosition();
 	if (body0 == body1) { return; }
@@ -171,11 +171,11 @@ void Connection::Simulate(double deltaTime, bool useEqualPositionCorrection)
 	{
 		case CON_ROPE:
 		case CON_LINK:
-			simulateTypeRopeLink(useEqualPositionCorrection);
+			SimulateRopeOrLink(useEqualPositionCorrection);
 			return;
 		case CON_CORD:
 		case CON_SPRING:
-			simulateTypeCordSpring(deltaTime);
+			SimulateCordOrSpring(deltaTime);
 			return;
 	}
 }
@@ -190,10 +190,10 @@ void Connection::Render(SimulationApp& cur) const
 		case CON_CORD: color = isTight ? colorCordTight : colorCord; break;
 		case CON_SPRING: color = isTight ? colorSpringStretch : colorSpringCompress; break;
 	}
-	drawLineSegment(cur.scr, cur.dscr, p0, p1, 2, cur.background->viewPort(), color);
+	drawLineSegment(cur.scr, cur.dscr, p0, p1, 2, cur.background->ViewPort(), color);
 }
 
-Body* getTheOtherBody(Body* b, Connection const& con)
+Body* GetOtherBody(Body* b, Connection const& con)
 {
 	if (con.body0 == b && con.body1 == b)
 	{

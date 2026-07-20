@@ -7,7 +7,7 @@ struct SceneParameter {
 	bool del = false;
 
 	SceneParameter(wstring const& nm = {});
-	void save(FILE* f);
+	void Save(FILE* f);
 	SceneParameter(FILE* f);
 };
 

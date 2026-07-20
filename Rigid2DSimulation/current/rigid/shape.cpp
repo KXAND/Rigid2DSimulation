@@ -75,7 +75,7 @@ aabb Shape::GetBoundingBox() const
 	aabb box;
 	for (auto v : vertices)
 	{
-		box.expand(v);
+		box.Expand(v);
 	}
 	return box;
 }
