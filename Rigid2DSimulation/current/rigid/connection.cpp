@@ -55,7 +55,7 @@ Connection::Connection(SimulationApp& cur, FILE* file) : Connection()
 
 void Connection::ReadCfg(Var const& cfg)
 {
-	TryReadConfigNumber(cfg, L"len", len);
+	TryReadConfigNumber(cfg, L"length", len);
 	TryReadConfigNumber(cfg, L"hooke", hooke);
 	if (auto md = FindConfigValue(cfg, L"type"))
 	{

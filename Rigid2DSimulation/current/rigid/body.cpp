@@ -116,20 +116,20 @@ void Body::RefreshFromScript(SimulationApp& cur)
 	ReadCfg(body_cfg);
 
 	// 这些单独放是因为它们无法只能通过 scriptText 获得，无法保存。
-	TryReadConfigNumber(body_cfg, L"preset_o", hasPositionPreset);
-	TryReadConfigNumber(body_cfg, L"preset_ang", hasAnglePreset);
-	TryReadConfigNumber(body_cfg, L"preset_v_ang", hasAngularVelocityPreset);
-	if (auto value = FindConfigValue(body_cfg, L"o_prog")) { positionProgram = std::make_shared<Program>(value->procs); }
-	if (auto value = FindConfigValue(body_cfg, L"ang_prog")) { angleProgram = std::make_shared<Program>(value->procs); }
-	if (auto value = FindConfigValue(body_cfg, L"v_ang_prog")) { angularVelocityProgram = std::make_shared<Program>(value->procs); }
+	TryReadConfigNumber(body_cfg, L"hasPositionPreset", hasPositionPreset);
+	TryReadConfigNumber(body_cfg, L"hasAnglePreset", hasAnglePreset);
+	TryReadConfigNumber(body_cfg, L"hasAngularVelocityPreset", hasAngularVelocityPreset);
+	if (auto value = FindConfigValue(body_cfg, L"positionProgram")) { positionProgram = std::make_shared<Program>(value->procs); }
+	if (auto value = FindConfigValue(body_cfg, L"angleProgram")) { angleProgram = std::make_shared<Program>(value->procs); }
+	if (auto value = FindConfigValue(body_cfg, L"angularVelocityProgram")) { angularVelocityProgram = std::make_shared<Program>(value->procs); }
 	Init();
 }
 
 void Body::ReadCfg(Var const& cfg)
 {
-	if (auto value = FindConfigValue(cfg, L"o")) { position = ToVector2(*value); }
-	if (auto value = FindConfigValue(cfg, L"v")) { velocity = ToVector2(*value); }
-	if (auto value = FindConfigValue(cfg, L"col")) { innerColor = (dColor)ToVector3(*value); }
+	if (auto value = FindConfigValue(cfg, L"position")) { position = ToVector2(*value); }
+	if (auto value = FindConfigValue(cfg, L"velocity")) { velocity = ToVector2(*value); }
+	if (auto value = FindConfigValue(cfg, L"innerColor")) { innerColor = (dColor)ToVector3(*value); }
 	TryReadConfigNumber(cfg, L"radian", radian);
 	TryReadConfigNumber(cfg, L"velocityAngular", velocityAngular);
 	TryReadConfigNumber(cfg, L"elasticity", elasticity);
