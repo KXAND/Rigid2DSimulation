@@ -7,7 +7,11 @@ clip::clip(wstring const& nm, bool *ok) {
 		return; 
 	}
 	int sz = 0;
-	frd(sp); frd(replay); frdv(vs);
+	fread(&(sp), sizeof(sp), 1, f);
+	fread(&(replay), sizeof(replay), 1, f);
+	fread(&(sz), sizeof(sz), 1, f);
+	(vs).resize(sz);
+	fread(&*(vs).begin(), sizeof(*(&*(vs).begin())), sz, f);
 	fclose(f); 
 	if (ok) { *ok = true; }
 }
@@ -24,7 +28,11 @@ void clip::save(wstring const& nm) const {
 	FILE* f = wfopen(nm, L"wb");
 	if (!f) { return; } 
 	int sz = 0;
-	fwt(sp); fwt(replay); fwtv(vs);
+	fwrite(&(sp), sizeof(sp), 1, f);
+	fwrite(&(replay), sizeof(replay), 1, f);
+	sz = (vs).size();
+	fwrite(&(sz), sizeof(sz), 1, f);
+	fwrite(&*(vs).begin(), sizeof(*(&*(vs).begin())), sz, f);
 	fclose(f);
 }
 

@@ -41,30 +41,53 @@ Body::Body(vector<std::shared_ptr<Shape>> const& _shs) : Body()
 void Body::Save(FILE* f) const
 {
 	int sz = 0;
-	fwt(point); fwt(fixed);
+	fwrite(&(point), sizeof(point), 1, f);
+	fwrite(&(fixed), sizeof(fixed), 1, f);
 	sz = shapes.size();
-	fwt(sz);
+	fwrite(&(sz), sizeof(sz), 1, f);
 	for (auto sh : shapes) { sh->Save(f); }
-	fwt(position); fwt(velocity); fwtv(scriptText);
-	fwt(radian); fwt(velocityAngular); fwt(density);
-	fwt(elasticity); fwt(frictionStatic); fwt(frictionDynamic);
-	fwt(dampCoeff); fwt(dampCoeffAngular);
-	fwt(chargeDensity); fwt(innerColor);
+	fwrite(&(position), sizeof(position), 1, f);
+	fwrite(&(velocity), sizeof(velocity), 1, f);
+	sz = (scriptText).size();
+	fwrite(&(sz), sizeof(sz), 1, f);
+	fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), sz, f);
+	fwrite(&(radian), sizeof(radian), 1, f);
+	fwrite(&(velocityAngular), sizeof(velocityAngular), 1, f);
+	fwrite(&(density), sizeof(density), 1, f);
+	fwrite(&(elasticity), sizeof(elasticity), 1, f);
+	fwrite(&(frictionStatic), sizeof(frictionStatic), 1, f);
+	fwrite(&(frictionDynamic), sizeof(frictionDynamic), 1, f);
+	fwrite(&(dampCoeff), sizeof(dampCoeff), 1, f);
+	fwrite(&(dampCoeffAngular), sizeof(dampCoeffAngular), 1, f);
+	fwrite(&(chargeDensity), sizeof(chargeDensity), 1, f);
+	fwrite(&(innerColor), sizeof(innerColor), 1, f);
 }
 Body::Body(SimulationApp& cur, FILE* f) : Body()
 {
 	int sz = 0;
-	frd(point); frd(fixed);
-	frd(sz);
+	fread(&(point), sizeof(point), 1, f);
+	fread(&(fixed), sizeof(fixed), 1, f);
+	fread(&(sz), sizeof(sz), 1, f);
 	for (int i = (0), iEnd = int(sz); i < iEnd; ++i)
 	{
 		shapes.push_back(std::make_shared<Shape>(f));
 	}
-	frd(position); frd(velocity); frdv(scriptText); temporaryScriptText = scriptText;
-	frd(radian); frd(velocityAngular); frd(density);
-	frd(elasticity); frd(frictionStatic); frd(frictionDynamic);
-	frd(dampCoeff); frd(dampCoeffAngular);
-	frd(chargeDensity); frd(innerColor);
+	fread(&(position), sizeof(position), 1, f);
+	fread(&(velocity), sizeof(velocity), 1, f);
+	fread(&(sz), sizeof(sz), 1, f);
+	(scriptText).resize(sz);
+	fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), sz, f);
+	temporaryScriptText = scriptText;
+	fread(&(radian), sizeof(radian), 1, f);
+	fread(&(velocityAngular), sizeof(velocityAngular), 1, f);
+	fread(&(density), sizeof(density), 1, f);
+	fread(&(elasticity), sizeof(elasticity), 1, f);
+	fread(&(frictionStatic), sizeof(frictionStatic), 1, f);
+	fread(&(frictionDynamic), sizeof(frictionDynamic), 1, f);
+	fread(&(dampCoeff), sizeof(dampCoeff), 1, f);
+	fread(&(dampCoeffAngular), sizeof(dampCoeffAngular), 1, f);
+	fread(&(chargeDensity), sizeof(chargeDensity), 1, f);
+	fread(&(innerColor), sizeof(innerColor), 1, f);
 
 	RefreshFromScript(cur);
 }

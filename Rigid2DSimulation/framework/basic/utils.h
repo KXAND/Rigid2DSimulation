@@ -6,12 +6,6 @@ double constexpr EU = 2.7182818284;
 
 #define tw to_wstring
 
-#define frd(x) fread(&(x), sizeof(x), 1, f);
-#define fwt(x) fwrite(&(x), sizeof(x), 1, f);
-#define frds(x, n) fread(x, sizeof(*(x)), n, f);
-#define fwts(x, n) fwrite(x, sizeof(*(x)), n, f);
-#define frdv(x) frd(sz); (x).resize(sz); frds(&*(x).begin(), sz);
-#define fwtv(x) sz = (x).size(); fwt(sz); fwts(&*(x).begin(), sz);
 
 // 注意 insd 是开区间，clmp 闭区间。
 template<class T>

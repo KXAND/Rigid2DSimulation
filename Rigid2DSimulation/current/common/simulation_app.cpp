@@ -38,12 +38,18 @@ void SimulationApp::Save(wstring const& name) const
 {
 	FILE* f = wfopen(name, L"wb");
 	if (!f) { return; }
-	int sz = 0; fwtv(scriptText); SaveParameters(f);
+	int sz = 0;
+	sz = (scriptText).size();
+	fwrite(&(sz), sizeof(sz), 1, f);
+	fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), sz, f);
+	SaveParameters(f);
 
 	// 可能会保存一些即将被删除的元素，但是也无所谓。
-	sz = bodies.size(); fwt(sz);
+	sz = bodies.size();
+	fwrite(&(sz), sizeof(sz), 1, f);
 	for (auto b : bodies) { b->Save(f); }
-	sz = connections.size(); fwt(sz);
+	sz = connections.size();
+	fwrite(&(sz), sizeof(sz), 1, f);
 	for (auto c : connections) { c->Save(*this, f); }
 
 	fclose(f);
@@ -52,12 +58,15 @@ void SimulationApp::Load(wstring const& name)
 {
 	FILE* f = wfopen(name, L"rb");
 	if (!f) { return; } Reset();
-	int sz = 0; frdv(scriptText);
+	int sz = 0;
+	fread(&(sz), sizeof(sz), 1, f);
+	(scriptText).resize(sz);
+	fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), sz, f);
 	temporaryScriptText = scriptText; LoadParameters(f);
 
-	frd(sz);
+	fread(&(sz), sizeof(sz), 1, f);
 	for (int i = (0), iEnd = int(sz); i < iEnd; ++i) { bodies.push_back(std::make_shared<Body>(*this, f)); }
-	frd(sz);
+	fread(&(sz), sizeof(sz), 1, f);
 	for (int i = (0), iEnd = int(sz); i < iEnd; ++i) { connections.push_back(std::make_shared<Connection>(*this, f)); }
 	isSceneChanged = true;
 
@@ -297,12 +306,14 @@ void SimulationApp::DetectCollisions()
 
 void SimulationApp::SaveParameters(FILE* f) const
 {
-	int sz = parameters.size(); fwt(sz);
+	int sz = parameters.size();
+	fwrite(&(sz), sizeof(sz), 1, f);
 	for (auto p : parameters) { p->Save(f); }
 }
 void SimulationApp::LoadParameters(FILE* f)
 {
-	int sz = 0; frd(sz);
+	int sz = 0;
+	fread(&(sz), sizeof(sz), 1, f);
 	for (int i = (0), iEnd = int(sz); i < iEnd; ++i) { parameters.push_back(std::make_shared<SceneParameter>(f)); }
 }
 void SimulationApp::InitializeDefaultFunctions()

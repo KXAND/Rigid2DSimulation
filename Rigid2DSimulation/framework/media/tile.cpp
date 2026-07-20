@@ -53,17 +53,23 @@ void tile::save(wstring const& fileName) const
 {
 	FILE* f = wfopen(fileName, L"wb");
 	if (!f) { return; }
-	fwt(width); fwt(height);
-	fwts(&colors[0], area()); fwts(&as[0], area()); fclose(f);
+	fwrite(&(width), sizeof(width), 1, f);
+	fwrite(&(height), sizeof(height), 1, f);
+	fwrite(&colors[0], sizeof(*(&colors[0])), area(), f);
+	fwrite(&as[0], sizeof(*(&as[0])), area(), f);
+	fclose(f);
 }
 tile::tile(wstring const& fileName, bool* ok)
 {
 	FILE* f = wfopen(fileName, L"rb");
 	if (ok) { *ok = f; }
 	if (!f) { return; }
-	frd(width); frd(height);
+	fread(&(width), sizeof(width), 1, f);
+	fread(&(height), sizeof(height), 1, f);
 	colors.resize(width * height); as.resize(width * height);
-	frds(&colors[0], area()); frds(&as[0], area()); fclose(f);
+	fread(&colors[0], sizeof(*(&colors[0])), area(), f);
+	fread(&as[0], sizeof(*(&as[0])), area(), f);
+	fclose(f);
 }
 
 int tile::area() const { return width * height; }

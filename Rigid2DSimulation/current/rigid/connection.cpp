@@ -19,22 +19,37 @@ Connection::Connection()
 void Connection::Save(SimulationApp const& cur, FILE* f) const
 {
 	int sz = 0;
-	fwt(type); fwtv(scriptText);
+	fwrite(&(type), sizeof(type), 1, f);
+	sz = (scriptText).size();
+	fwrite(&(sz), sizeof(sz), 1, f);
+	fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), sz, f);
 	auto pred0 = [this](std::shared_ptr<Body> b) { return &*b == body0; };
 	int ind0 = find_if(cur.bodies.begin(), cur.bodies.end(), pred0) - cur.bodies.begin();
 	auto pred1 = [this](std::shared_ptr<Body> b) { return &*b == body1; };
 	int ind1 = find_if(cur.bodies.begin(), cur.bodies.end(), pred1) - cur.bodies.begin();
-	fwt(ind0); fwt(ind1);
-	fwt(p0Relative); fwt(p1Relative); fwt(len); fwt(hooke);
+	fwrite(&(ind0), sizeof(ind0), 1, f);
+	fwrite(&(ind1), sizeof(ind1), 1, f);
+	fwrite(&(p0Relative), sizeof(p0Relative), 1, f);
+	fwrite(&(p1Relative), sizeof(p1Relative), 1, f);
+	fwrite(&(len), sizeof(len), 1, f);
+	fwrite(&(hooke), sizeof(hooke), 1, f);
 }
 Connection::Connection(SimulationApp& cur, FILE* f) : Connection()
 {
 	int sz = 0;
-	frd(type); frdv(scriptText); temporaryScriptText = scriptText;
+	fread(&(type), sizeof(type), 1, f);
+	fread(&(sz), sizeof(sz), 1, f);
+	(scriptText).resize(sz);
+	fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), sz, f);
+	temporaryScriptText = scriptText;
 	int ind0 = 0, ind1 = 0;
-	frd(ind0); frd(ind1);
+	fread(&(ind0), sizeof(ind0), 1, f);
+	fread(&(ind1), sizeof(ind1), 1, f);
 	body0 = &*cur.bodies[ind0]; body1 = &*cur.bodies[ind1];
-	frd(p0Relative); frd(p1Relative); frd(len); frd(hooke);
+	fread(&(p0Relative), sizeof(p0Relative), 1, f);
+	fread(&(p1Relative), sizeof(p1Relative), 1, f);
+	fread(&(len), sizeof(len), 1, f);
+	fread(&(hooke), sizeof(hooke), 1, f);
 	RefreshFromScript(cur); SignUpToBodies(); UpdatePosition();
 }
 

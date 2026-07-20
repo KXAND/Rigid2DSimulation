@@ -16,14 +16,25 @@ Shape::Shape(vector<vector2> const& _verticesRelative)
 void Shape::Save(FILE* f) const
 {
 	int sz = 0;
-	fwt(isCircle); fwt(r); fwt(radian); fwt(relativePosition);
-	fwtv(verticesRelative);
+	fwrite(&(isCircle), sizeof(isCircle), 1, f);
+	fwrite(&(r), sizeof(r), 1, f);
+	fwrite(&(radian), sizeof(radian), 1, f);
+	fwrite(&(relativePosition), sizeof(relativePosition), 1, f);
+	sz = (verticesRelative).size();
+	fwrite(&(sz), sizeof(sz), 1, f);
+	fwrite(&*(verticesRelative).begin(), sizeof(*(&*(verticesRelative).begin())), sz, f);
 }
 Shape::Shape(FILE* f)
 {
 	int sz = 0;
-	frd(isCircle); frd(r); frd(radian); frd(relativePosition);
-	frdv(verticesRelative); vertices.resize(verticesRelative.size());
+	fread(&(isCircle), sizeof(isCircle), 1, f);
+	fread(&(r), sizeof(r), 1, f);
+	fread(&(radian), sizeof(radian), 1, f);
+	fread(&(relativePosition), sizeof(relativePosition), 1, f);
+	fread(&(sz), sizeof(sz), 1, f);
+	(verticesRelative).resize(sz);
+	fread(&*(verticesRelative).begin(), sizeof(*(&*(verticesRelative).begin())), sz, f);
+	vertices.resize(verticesRelative.size());
 }
 
 vector2 Shape::GenerateRandomPointInside() const
