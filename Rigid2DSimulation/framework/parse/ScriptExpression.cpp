@@ -118,23 +118,23 @@ ScriptExpression ParsePreExpression(vector<PreExpression> const& preExpressions)
 	return ScriptExpression(L"error");
 }
 
-ScriptExpression ParseCall(vector<BracketGroup> const& in) {
-	ScriptExpression ex(L"call");
-	ex.functionName = in[0].token.variableName;
-	ex.isGlobal = in[0].token.isGlobal;
+ScriptExpression ParseCall(vector<BracketGroup> const& groups) {
+	ScriptExpression expression(L"call");
+	expression.functionName = groups[0].token.variableName;
+	expression.isGlobal = groups[0].token.isGlobal;
 
-	vector<BracketGroup> tmp;
-	for (auto const& b : in[1].children) {
-		if (b.token.type == L",") {
-			ex.arguments.push_back(ParseExpression(tmp));
-			tmp.clear();
+	vector<BracketGroup> argumentGroups;
+	for (auto const& group : groups[1].children) {
+		if (group.token.type == L",") {
+			expression.arguments.push_back(ParseExpression(argumentGroups));
+			argumentGroups.clear();
 		}
 		else {
-			tmp.push_back(b);
+			argumentGroups.push_back(group);
 		}
 	}
-	if (!tmp.empty()) { ex.arguments.push_back(ParseExpression(tmp)); }
-	return ex;
+	if (!argumentGroups.empty()) { expression.arguments.push_back(ParseExpression(argumentGroups)); }
+	return expression;
 }
 ScriptExpression ParseBinaryExpressions(vector<BracketGroup> const& in) {
 	vector<BracketGroup> tmp;
@@ -154,20 +154,20 @@ ScriptExpression ParseBinaryExpressions(vector<BracketGroup> const& in) {
 	if (!tmp.empty()) { pres.push_back(ParseExpression(tmp)); }
 	return ParsePreExpression(pres);
 }
-ScriptExpression ParseVector(vector<BracketGroup> const& in) {
-	ScriptExpression ex(L"vec");
-	vector<BracketGroup> tmp;
-	for (auto const& b : in[0].children) {
-		if (b.token.type == L",") {
-			ex.elements.push_back(ParseExpression(tmp));
-			tmp.clear();
+ScriptExpression ParseVector(vector<BracketGroup> const& groups) {
+	ScriptExpression expression(L"vec");
+	vector<BracketGroup> elementGroups;
+	for (auto const& group : groups[0].children) {
+		if (group.token.type == L",") {
+			expression.elements.push_back(ParseExpression(elementGroups));
+			elementGroups.clear();
 		}
 		else {
-			tmp.push_back(b);
+			elementGroups.push_back(group);
 		}
 	}
-	if (!tmp.empty()) { ex.elements.push_back(ParseExpression(tmp)); }
-	return ex;
+	if (!elementGroups.empty()) { expression.elements.push_back(ParseExpression(elementGroups)); }
+	return expression;
 }
 ScriptExpression ParseAccess(vector<BracketGroup> const& in) {
 	ScriptExpression ex(L"access");

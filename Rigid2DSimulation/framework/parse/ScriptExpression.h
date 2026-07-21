@@ -44,9 +44,9 @@ bool ParseNegation(vector<PreExpression> const& preExpressions, ScriptExpression
 bool ParseBinary(vector<PreExpression> const& preExpressions, ScriptExpression& result, vector<wstring> const& operatorTypes);
 ScriptExpression ParsePreExpression(vector<PreExpression> const& preExpressions);
 
-ScriptExpression ParseCall(vector<BracketGroup> const& in);
+ScriptExpression ParseCall(vector<BracketGroup> const& groups);
 ScriptExpression ParseBinaryExpressions(vector<BracketGroup> const& in);
-ScriptExpression ParseVector(vector<BracketGroup> const& in);
+ScriptExpression ParseVector(vector<BracketGroup> const& groups);
 ScriptExpression ParseAccess(vector<BracketGroup> const& in);
 ScriptExpression ParseExpression(vector<BracketGroup> const& in);
 
