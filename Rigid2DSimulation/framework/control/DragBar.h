@@ -20,9 +20,9 @@ struct HorizontalDragBar : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	double uval() const;
-	void set_nx_rel(double uv);
-	DVector2 tl_node() const;
+	double GetNormalizedValue() const;
+	void SetNormalizedNodePosition(double uv);
+	DVector2 GetNodeTopLeft() const;
 
 	void Render(App& app);
 	virtual void Sync(App& app) {}

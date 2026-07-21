@@ -19,12 +19,12 @@ int HorizontalDragBar::GetW() const { return bw + gap.x + w_txt; }
 int HorizontalDragBar::GetH() const { return nh + gap.y; }
 
 // 下面的表达式是正确的，不需要加一减一什么的。
-double HorizontalDragBar::uval() const { return (double)nx_rel / (bw - nw); }
-void HorizontalDragBar::set_nx_rel(double uv) {
+double HorizontalDragBar::GetNormalizedValue() const { return (double)nx_rel / (bw - nw); }
+void HorizontalDragBar::SetNormalizedNodePosition(double uv) {
 	int tmp = uv * (bw - nw);
 	nx_rel = clamp(tmp, 0, bw - nw);
 }
-DVector2 HorizontalDragBar::tl_node() const { return tl + DVector2(w_txt + nx_rel, 0); }
+DVector2 HorizontalDragBar::GetNodeTopLeft() const { return tl + DVector2(w_txt + nx_rel, 0); }
 void HorizontalDragBar::Render(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (nh - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
@@ -35,7 +35,7 @@ void HorizontalDragBar::Render(App& app) {
 		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
 	DVector2 tl_bar = tl + DVector2(w_txt, (nh - bh) / 2);
 	drawRectangleRaw(app.scr, tl_bar, bw, bh, vp, c_bar);
-	drawRectangleRaw(app.scr, tl_node(), nw, nh, vp, c);
+	drawRectangleRaw(app.scr, GetNodeTopLeft(), nw, nh, vp, c);
 }
 
 void HorizontalDragBar::Update(App& app) {
@@ -58,7 +58,7 @@ void HorizontalDragBar::Discard(App& app) {
 }
 void HorizontalDragBar::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { tl_node(), nw, nh }) && isInside(app.input.msp, vp);
+		isInside(app.input.msp, { GetNodeTopLeft(), nw, nh }) && isInside(app.input.msp, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 

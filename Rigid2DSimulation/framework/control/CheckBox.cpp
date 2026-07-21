@@ -21,7 +21,7 @@ CheckBox::CheckBox(bool big) {
 int CheckBox::GetW() const { return s_box + gap.x + w_txt; }
 int CheckBox::GetH() const { return h + gap.y; }
 
-DVector2 CheckBox::tl_box() const { return tl + DVector2(w_txt, (h - s_box) / 2); }
+DVector2 CheckBox::GetBoxTopLeft() const { return tl + DVector2(w_txt, (h - s_box) / 2); }
 void CheckBox::Render(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
@@ -29,10 +29,10 @@ void CheckBox::Render(App& app) {
 	Color const& c =
 		!enabled ? c_invalid :
 		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
-	drawRectangleRaw(app.scr, tl_box(), s_box, s_box, vp, c);
+	drawRectangleRaw(app.scr, GetBoxTopLeft(), s_box, s_box, vp, c);
 	if (checked) {
 		int hs = (s_box - s_box_in) / 2;
-		DVector2 tl_box_in = tl_box() + DVector2(hs, hs);
+		DVector2 tl_box_in = GetBoxTopLeft() + DVector2(hs, hs);
 		drawRectangleRaw(app.scr, tl_box_in, s_box_in, s_box_in, vp, innerColor);
 	}
 }
@@ -50,7 +50,7 @@ void CheckBox::Discard(App& app) {
 }
 void CheckBox::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { tl_box(), s_box, s_box }) && isInside(app.input.msp, vp);
+		isInside(app.input.msp, { GetBoxTopLeft(), s_box, s_box }) && isInside(app.input.msp, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 

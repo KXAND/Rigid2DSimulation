@@ -8,8 +8,8 @@ void ParameterNameTextBox::OnDone(App& app) const { auto& simulationApp = static
 DeleteParameterButton::DeleteParameterButton(int id) : id(id), LocalizedButton(80, L"bt_del_par") {}
 void DeleteParameterButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->isMarkedForDeletion = true; }
 ParameterValueDragBar::ParameterValueDragBar(int id) : id(id), HorizontalDragBar(270) {}
-void ParameterValueDragBar::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); set_nx_rel(simulationApp.parameters[id]->value); }
-void ParameterValueDragBar::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = uval(); }
+void ParameterValueDragBar::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); SetNormalizedNodePosition(simulationApp.parameters[id]->value); }
+void ParameterValueDragBar::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = GetNormalizedValue(); }
 ParameterValueTextBox::ParameterValueTextBox(int id) : id(id), TextBox(80) {};
 void ParameterValueTextBox::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = FormatFixed2(simulationApp.parameters[id]->value); }
 void ParameterValueTextBox::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = wtof(str); }

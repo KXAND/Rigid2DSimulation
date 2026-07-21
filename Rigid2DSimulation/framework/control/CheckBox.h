@@ -19,7 +19,7 @@ struct CheckBox : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	DVector2 tl_box() const;
+	DVector2 GetBoxTopLeft() const;
 	void Render(App& app);
 	virtual void Sync(App& app) {}
 	virtual void Upload(App& app) const {}
