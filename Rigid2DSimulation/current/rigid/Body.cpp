@@ -23,20 +23,20 @@ Body::Body()
 	hoveredColor = { 0, 0, 255 };
 	draggedColor = { 255, 0, 0 };
 	selectedColor = { 255, 0, 255 };
-	selectedConColor = { 255, 255, 0 };
+	selectedConnectionColor = { 255, 255, 0 };
 }
-Body::Body(Vector2 const& _o) : Body()
+Body::Body(Vector2 const& position) : Body()
 {
 	point = true;
-	position = _o;
+	this->position = position;
 }
-Body::Body(std::shared_ptr<Shape> sh) : Body()
+Body::Body(std::shared_ptr<Shape> shape) : Body()
 {
-	shapes = { sh };
+	shapes = { shape };
 }
-Body::Body(vector<std::shared_ptr<Shape>> const& _shs) : Body()
+Body::Body(vector<std::shared_ptr<Shape>> const& shapes) : Body()
 {
-	shapes = _shs;
+	this->shapes = shapes;
 }
 void Body::Save(FILE* file) const
 {
@@ -62,7 +62,7 @@ void Body::Save(FILE* file) const
 	fwrite(&(chargeDensity), sizeof(chargeDensity), 1, file);
 	fwrite(&(innerColor), sizeof(innerColor), 1, file);
 }
-Body::Body(SimulationApp& cur, FILE* file) : Body()
+Body::Body(SimulationApp& simulationApp, FILE* file) : Body()
 {
 	int size = 0;
 	fread(&(point), sizeof(point), 1, file);
@@ -89,7 +89,7 @@ Body::Body(SimulationApp& cur, FILE* file) : Body()
 	fread(&(chargeDensity), sizeof(chargeDensity), 1, file);
 	fread(&(innerColor), sizeof(innerColor), 1, file);
 
-	RefreshFromScript(cur);
+	RefreshFromScript(simulationApp);
 }
 
 double Body::GetDepth() const
@@ -107,13 +107,13 @@ bool Body::IsInside(Vector2 p) const
 	return false;
 }
 
-void Body::RefreshFromScript(SimulationApp& cur)
+void Body::RefreshFromScript(SimulationApp& simulationApp)
 {
-	cur.currentScope[L"body"] = std::make_shared<Value>();
-	Execute(cur.currentScope, Compile(scriptText));
-	if (cur.currentScope.find(L"body") == cur.currentScope.end()) { return; }
-	auto const& body_cfg = *cur.currentScope[L"body"];
-	ReadCfg(body_cfg);
+	simulationApp.currentScope[L"body"] = std::make_shared<Value>();
+	Execute(simulationApp.currentScope, Compile(scriptText));
+	if (simulationApp.currentScope.find(L"body") == simulationApp.currentScope.end()) { return; }
+	auto const& body_cfg = *simulationApp.currentScope[L"body"];
+	ReadConfig(body_cfg);
 
 	// 这些单独放是因为它们无法只能通过 scriptText 获得，无法保存。
 	TryReadConfigNumber(body_cfg, L"hasPositionPreset", hasPositionPreset);
@@ -125,7 +125,7 @@ void Body::RefreshFromScript(SimulationApp& cur)
 	Init();
 }
 
-void Body::ReadCfg(Value const& cfg)
+void Body::ReadConfig(Value const& cfg)
 {
 	if (auto value = FindConfigValue(cfg, L"position")) { position = ToVector2(*value); }
 	if (auto value = FindConfigValue(cfg, L"velocity")) { velocity = ToVector2(*value); }
@@ -184,36 +184,36 @@ void Body::UpdateAABB()
 }
 
 // 这个方法已经过时了。
-void Body::Warp(DRect rc)
+void Body::Warp(DRect rectangle)
 {
 	if (invMass == 0 || dragged) { return; }
 
-	if (position.x < rc.GetLeft()) { position.x += rc.width; }
-	else if (position.x > rc.GetRight()) { position.x -= rc.width; }
-	if (position.y < rc.GetTop()) { position.y += rc.height; }
-	else if (position.y > rc.GetBottom()) { position.y -= rc.height; }
+	if (position.x < rectangle.GetLeft()) { position.x += rectangle.width; }
+	else if (position.x > rectangle.GetRight()) { position.x -= rectangle.width; }
+	if (position.y < rectangle.GetTop()) { position.y += rectangle.height; }
+	else if (position.y > rectangle.GetBottom()) { position.y -= rectangle.height; }
 }
 
-void Body::RegisterGrid(SimulationApp& cur)
+void Body::RegisterGrid(SimulationApp& simulationApp)
 {
 	if (point) { return; }
 
-	auto const& top_left = cur.rectScene.topLeftPosition;
-	int x0 = floor((box.x0 - top_left.x) / cur.gridSize);
-	int y0 = floor((box.y0 - top_left.y) / cur.gridSize);
-	int x1 = floor((box.x1 - top_left.x) / cur.gridSize);
-	int y1 = floor((box.y1 - top_left.y) / cur.gridSize);
-	x0 = Clamp(x0, 0, cur.gridNumX - 1);
-	x1 = Clamp(x1, 0, cur.gridNumX - 1);
-	y0 = Clamp(y0, 0, cur.gridNumY - 1);
-	y1 = Clamp(y1, 0, cur.gridNumY - 1);
+	auto const& top_left = simulationApp.rectScene.topLeftPosition;
+	int x0 = floor((box.x0 - top_left.x) / simulationApp.gridSize);
+	int y0 = floor((box.y0 - top_left.y) / simulationApp.gridSize);
+	int x1 = floor((box.x1 - top_left.x) / simulationApp.gridSize);
+	int y1 = floor((box.y1 - top_left.y) / simulationApp.gridSize);
+	x0 = Clamp(x0, 0, simulationApp.gridNumX - 1);
+	x1 = Clamp(x1, 0, simulationApp.gridNumX - 1);
+	y0 = Clamp(y0, 0, simulationApp.gridNumY - 1);
+	y1 = Clamp(y1, 0, simulationApp.gridNumY - 1);
 	if (x1 > x0 + 1 || y1 > y0 + 1)
 	{
 		// 是多个跨越多个grid的物体
-		cur.multiGridBodies.push_back(this);
+		simulationApp.multiGridBodies.push_back(this);
 		return;
 	}
-	cur.grid[y0 * cur.gridNumX + x0].push_back(this);
+	simulationApp.grid[y0 * simulationApp.gridNumX + x0].push_back(this);
 }
 
 void Body::Init(bool resetPosition)
@@ -228,9 +228,9 @@ void Body::Init(bool resetPosition)
 		shapes->area = 0; Vector2 sub_center;
 		if (shapes->isCircle)
 		{
-			shapes->area = kPi * shapes->r * shapes->r;
+			shapes->area = kPi * shapes->radius * shapes->radius;
 			sub_center = shapes->area * shapes->relativePosition;
-			inertia += shapes->area * (shapes->r * shapes->r) / 2;
+			inertia += shapes->area * (shapes->radius * shapes->radius) / 2;
 		}
 		else
 		{
@@ -265,12 +265,12 @@ void Body::Init(bool resetPosition)
 	}
 	UpdateShapesPositionAndAABB();
 }
-void Body::Render(SimulationApp& cur) const
+void Body::Render(SimulationApp& simulationApp) const
 {
-	bool isSelectedConnection = cur.connectionSelecting &&
-		(cur.connectionSelecting->body0 == this || cur.connectionSelecting->body1 == this);
+	bool isSelectedConnection = simulationApp.connectionSelecting &&
+		(simulationApp.connectionSelecting->body0 == this || simulationApp.connectionSelecting->body1 == this);
 	Color normalColor;
-	switch (cur.display)
+	switch (simulationApp.display)
 	{
 		case kColorDisplay:
 			normalColor = innerColor;
@@ -279,14 +279,14 @@ void Body::Render(SimulationApp& cur) const
 		case kEnergyDisplay:
 		{
 			double energy = velocity.GetLengthSquared() + velocityAngular * velocityAngular * inertia / area;
-			normalColor = (Color) Vector3(energy * cur.energyMultiplier, 0, 0);
+			normalColor = (Color) Vector3(energy * simulationApp.energyMultiplier, 0, 0);
 			break;
 		}
 		case kChargesDisplay:
 		{
 			normalColor = chargeDensity > 0 ?
-				(Color) Vector3(chargeDensity * cur.chargeMultiplier, 0, 0) :
-				(Color) Vector3(0, 0, -chargeDensity * cur.chargeMultiplier);
+				(Color) Vector3(chargeDensity * simulationApp.chargeMultiplier, 0, 0) :
+				(Color) Vector3(0, 0, -chargeDensity * simulationApp.chargeMultiplier);
 			break;
 		}
 		default:
@@ -295,48 +295,48 @@ void Body::Render(SimulationApp& cur) const
 
 	Color color =
 		dragged ? draggedColor :
-		(cur.bodySelecting == this) ? selectedColor :
+		(simulationApp.bodySelecting == this) ? selectedColor :
 		hovered ? hoveredColor :
-		isSelectedConnection ? selectedConColor :
+		isSelectedConnection ? selectedConnectionColor :
 		normalColor;
 
 	if (point)
 	{
-		DrawEllipse(cur.screen, cur.depthBuffer, GetDepth(), position, pointRadius, pointRadius, cur.background->GetViewport(), color);
-		DrawEllipseBorder(cur.screen, cur.depthBuffer, GetDepth(), position, pointRadius, pointRadius, cur.background->GetViewport(), borderColor, 20);
+		DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, GetDepth(), position, pointRadius, pointRadius, simulationApp.background->GetViewport(), color);
+		DrawEllipseBorder(simulationApp.screen, simulationApp.depthBuffer, GetDepth(), position, pointRadius, pointRadius, simulationApp.background->GetViewport(), borderColor, 20);
 	}
 	for (auto& shape : shapes)
 	{
 		if (shape->isCircle)
 		{
-			DrawEllipse(cur.screen, cur.depthBuffer, GetDepth(),
-				shape->position, shape->r, shape->r, cur.background->GetViewport(), color);
-			DrawEllipseBorder(cur.screen, cur.depthBuffer, GetDepth(),
-				shape->position, shape->r, shape->r, cur.background->GetViewport(), borderColor, 30);
+			DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, GetDepth(),
+				shape->position, shape->radius, shape->radius, simulationApp.background->GetViewport(), color);
+			DrawEllipseBorder(simulationApp.screen, simulationApp.depthBuffer, GetDepth(),
+				shape->position, shape->radius, shape->radius, simulationApp.background->GetViewport(), borderColor, 30);
 
 			// 显示一条半径以便于我们判断圆的旋转角度
-			auto peakPoint = Vector2(cos(shape->radian), sin(shape->radian)) * shape->r + shape->position;
-			DrawLineSegment(cur.screen, cur.depthBuffer, shape->position, peakPoint, GetDepth(), cur.background->GetViewport(), borderColor);
+			auto peakPoint = Vector2(cos(shape->radian), sin(shape->radian)) * shape->radius + shape->position;
+			DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, shape->position, peakPoint, GetDepth(), simulationApp.background->GetViewport(), borderColor);
 			continue;
 		}
 
 		for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
 		{
 			int j = (i + 1) % shape->vertices.size();
-			DrawTriangle(cur.screen, cur.depthBuffer, cur.background->GetViewport(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
+			DrawTriangle(simulationApp.screen, simulationApp.depthBuffer, simulationApp.background->GetViewport(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
 		}
 		for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
 		{
 			int j = (i + 1) % shape->vertices.size();
-			DrawLineSegment(cur.screen, cur.depthBuffer, shape->vertices[i], shape->vertices[j], GetDepth(), cur.background->GetViewport(), borderColor);
+			DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, shape->vertices[i], shape->vertices[j], GetDepth(), simulationApp.background->GetViewport(), borderColor);
 		}
 	}
 
 	if (dragged)
 	{
-		Vector2 p1 = Vector2(cur.input.mousePosition);
+		Vector2 p1 = Vector2(simulationApp.input.mousePosition);
 		Vector2 p0 = position + transform * relativeDragPoint;
-		DrawLineSegment(cur.screen, cur.depthBuffer, p0, p1, GetDepth(), cur.background->GetViewport(), Color(0, 255, 255));
+		DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, GetDepth(), simulationApp.background->GetViewport(), Color(0, 255, 255));
 	}
 
 	if (!track.empty())
@@ -344,20 +344,20 @@ void Body::Render(SimulationApp& cur) const
 		Vector2 p0 = track.front();
 		for (auto p1 : track)
 		{
-			DrawLineSegment(cur.screen, cur.depthBuffer, p0, p1, 10, cur.background->GetViewport(), Color(255, 0, 255));
+			DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, 10, simulationApp.background->GetViewport(), Color(255, 0, 255));
 			p0 = p1;
 		}
 	}
 }
 
-void Body::Step(SimulationApp& cur, double stepDt)
+void Body::Step(SimulationApp& simulationApp, double stepDt)
 {
 	if (invMass)
 	{
 		velocity -= dampCoeff * velocity * stepDt;
-		velocity += cur.gravity * stepDt;
+		velocity += simulationApp.gravity * stepDt;
 		velocityAngular -= dampCoeffAngular * velocityAngular * stepDt;
-		if (hasAngularVelocityPreset) { FollowPresetAngularVelocity(cur); }
+		if (hasAngularVelocityPreset) { FollowPresetAngularVelocity(simulationApp); }
 		position += velocity * stepDt;
 		radian += velocityAngular * stepDt;
 	}
@@ -365,30 +365,30 @@ void Body::Step(SimulationApp& cur, double stepDt)
 	{
 		velocity = {};
 		velocityAngular = 0;
-		if (hasPositionPreset) { FollowPresetPosition(cur, stepDt); }
-		if (hasAnglePreset) { FollowPresetAngle(cur, stepDt); }
+		if (hasPositionPreset) { FollowPresetPosition(simulationApp, stepDt); }
+		if (hasAnglePreset) { FollowPresetAngle(simulationApp, stepDt); }
 	}
 
 	if (dragged)
 	{
-		if (cur.input.mouseButtonDown[2]) { HandleDragWhole(cur); }
-		else if (!cur.inputOwners.keyboardOwner && cur.input.keyDown[L'F']) { HandleDragForce(cur, stepDt); }
-		else if (invMass == 0) { HandleDragWhole(cur); }
-		else { HandleDragPoint(cur); }
+		if (simulationApp.input.mouseButtonDown[2]) { HandleDragWhole(simulationApp); }
+		else if (!simulationApp.inputOwners.keyboardOwner && simulationApp.input.keyDown[L'F']) { HandleDragForce(simulationApp, stepDt); }
+		else if (invMass == 0) { HandleDragWhole(simulationApp); }
+		else { HandleDragPoint(simulationApp); }
 	}
 
 	UpdateShapesPositionAndAABB();
 }
 
-void Body::FollowPresetPosition(SimulationApp& cur, double stepDt)
+void Body::FollowPresetPosition(SimulationApp& simulationApp, double stepDt)
 {
 	if (!positionProgram) { return; }
 	Scope scope;
 	bool ret = false;
-	scope[L"time"] = std::make_shared<Value>(cur.simulationTime);
-	auto positionOld = ToVector2(Execute(ret, cur.currentScope, scope, *positionProgram)->elements);
-	scope.clear(); scope[L"time"] = std::make_shared<Value>(cur.simulationTime + stepDt); ret = false;
-	auto positionNew = ToVector2(Execute(ret, cur.currentScope, scope, *positionProgram)->elements);
+	scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime);
+	auto positionOld = ToVector2(Execute(ret, simulationApp.currentScope, scope, *positionProgram)->elements);
+	scope.clear(); scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime + stepDt); ret = false;
+	auto positionNew = ToVector2(Execute(ret, simulationApp.currentScope, scope, *positionProgram)->elements);
 	auto velocityNew = (positionNew - positionOld) / stepDt;
 
 	// 其实我觉得应当选用时间较小的值。
@@ -396,53 +396,53 @@ void Body::FollowPresetPosition(SimulationApp& cur, double stepDt)
 	velocity = velocityNew;
 }
 
-void Body::FollowPresetAngle(SimulationApp& cur, double stepDt)
+void Body::FollowPresetAngle(SimulationApp& simulationApp, double stepDt)
 {
 	if (!angleProgram) { return; }
 
 	Scope scope;
 	bool ret = false;
-	scope[L"time"] = std::make_shared<Value>(cur.simulationTime);
-	auto radianOld = Execute(ret, cur.currentScope, scope, *angleProgram)->number;
+	scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime);
+	auto radianOld = Execute(ret, simulationApp.currentScope, scope, *angleProgram)->number;
 	scope.clear();
-	scope[L"time"] = std::make_shared<Value>(cur.simulationTime + stepDt);
+	scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime + stepDt);
 	ret = false;
-	auto radianNew = Execute(ret, cur.currentScope, scope, *angleProgram)->number;
+	auto radianNew = Execute(ret, simulationApp.currentScope, scope, *angleProgram)->number;
 	auto velocityAngularNew = (radianNew - radianOld) / stepDt;
 
 	radian = radianNew;
 	velocityAngular = velocityAngularNew;
 }
 
-void Body::FollowPresetAngularVelocity(SimulationApp& cur)
+void Body::FollowPresetAngularVelocity(SimulationApp& simulationApp)
 {
 	if (!angularVelocityProgram) { return; }
 
 	Scope sc;
 	bool ret = false;
-	sc[L"time"] = std::make_shared<Value>(cur.simulationTime);
-	auto velocityAngularNew = Execute(ret, cur.currentScope, sc, *angularVelocityProgram)->number;
+	sc[L"time"] = std::make_shared<Value>(simulationApp.simulationTime);
+	auto velocityAngularNew = Execute(ret, simulationApp.currentScope, sc, *angularVelocityProgram)->number;
 
 	velocityAngular = velocityAngularNew;
 }
 
-void Body::UpdateDragAngle(SimulationApp& cur)
+void Body::UpdateDragAngle(SimulationApp& simulationApp)
 {
 	velocityAngularDrag = 0;
-	if (!cur.inputOwners.keyboardOwner)
+	if (!simulationApp.inputOwners.keyboardOwner)
 	{
-		if (cur.input.keyDown[L'Q']) { velocityAngularDrag = -cur.velocityAngularDrag; }
-		if (cur.input.keyDown[L'E']) { velocityAngularDrag = +cur.velocityAngularDrag; }
+		if (simulationApp.input.keyDown[L'Q']) { velocityAngularDrag = -simulationApp.velocityAngularDrag; }
+		if (simulationApp.input.keyDown[L'E']) { velocityAngularDrag = +simulationApp.velocityAngularDrag; }
 	}
-	radianDrag = radian + velocityAngularDrag * cur.realDeltaTime;
+	radianDrag = radian + velocityAngularDrag * simulationApp.realDeltaTime;
 }
 
-void Body::HandleDragPoint(SimulationApp& cur)
+void Body::HandleDragPoint(SimulationApp& simulationApp)
 {
 	// 下列命名指定o,p,m三点为body中心、被拖拽点及鼠标现在点
-	Vector2 mousePos = Vector2(cur.input.mousePosition);
+	Vector2 mousePos = Vector2(simulationApp.input.mousePosition);
 	Vector2 pPos = position + transform * relativeDragPoint;
-	Vector2 mouseVelocity = Vector2(cur.input.mousePosition - cur.input.previousMousePosition) / cur.realDeltaTime;
+	Vector2 mouseVelocity = Vector2(simulationApp.input.mousePosition - simulationApp.input.previousMousePosition) / simulationApp.realDeltaTime;
 	Vector2 pmDir = (mousePos - pPos).GetNormalized();
 
 	Vector2 opDir = pPos - position;
@@ -461,12 +461,12 @@ void Body::HandleDragPoint(SimulationApp& cur)
 /// <summary>
 /// 所有点同步被拖拽位移
 /// </summary>
-/// <param name="cur"></param>
-void Body::HandleDragWhole(SimulationApp& cur)
+/// <param name="simulationApp"></param>
+void Body::HandleDragWhole(SimulationApp& simulationApp)
 {
-	Vector2 mousePos = Vector2(cur.input.mousePosition);
+	Vector2 mousePos = Vector2(simulationApp.input.mousePosition);
 	Vector2 dragPointPos = position + transform * relativeDragPoint;
-	Vector2 newVelocity = Vector2(cur.input.mousePosition - cur.input.previousMousePosition) / cur.realDeltaTime;
+	Vector2 newVelocity = Vector2(simulationApp.input.mousePosition - simulationApp.input.previousMousePosition) / simulationApp.realDeltaTime;
 
 	velocity = newVelocity;
 	radian = radianDrag;
@@ -474,10 +474,10 @@ void Body::HandleDragWhole(SimulationApp& cur)
 	position += mousePos - dragPointPos; // 中心平行位移
 }
 
-void Body::HandleDragForce(SimulationApp& cur, double deltaTime)
+void Body::HandleDragForce(SimulationApp& simulationApp, double deltaTime)
 {
 	// 运动路径方向
-	Vector2 p1 = Vector2(cur.input.mousePosition);
+	Vector2 p1 = Vector2(simulationApp.input.mousePosition);
 	Vector2 p0 = position + transform * relativeDragPoint;
 	Vector2 d = (p1 - p0).GetNormalized();
 
@@ -492,76 +492,76 @@ void Body::HandleDragForce(SimulationApp& cur, double deltaTime)
 	velocity += impulse * invMass;
 	velocityAngular += Dot(impulse, r0) * invInertia;
 }
-void Body::Update(SimulationApp& cur)
+void Body::Update(SimulationApp& simulationApp)
 {
-	hovered = (cur.inputOwners.hovered == this);
+	hovered = (simulationApp.inputOwners.hovered == this);
 
-	if (cur.mode == kDeleteMode && hovered && cur.input.IsMouseClickedDown(0)) { isMarkedForDeletion = true; }
-	if (cur.mode == kSelectMode && hovered && cur.input.IsMouseClickedDown(0)) { cur.bodySelecting = this; }
+	if (simulationApp.mode == kDeleteMode && hovered && simulationApp.input.IsMouseClickedDown(0)) { isMarkedForDeletion = true; }
+	if (simulationApp.mode == kSelectMode && hovered && simulationApp.input.IsMouseClickedDown(0)) { simulationApp.bodySelecting = this; }
 	if (dragged)
 	{
 		// 检查拖拽模式，应用函数
-		UpdateDragAngle(cur);
-		if (cur.input.mouseButtonDown[2])
+		UpdateDragAngle(simulationApp);
+		if (simulationApp.input.mouseButtonDown[2])
 		{
-			HandleDragWhole(cur);
+			HandleDragWhole(simulationApp);
 		}
-		else if (!cur.inputOwners.keyboardOwner && cur.input.keyDown[L'F']) { }
+		else if (!simulationApp.inputOwners.keyboardOwner && simulationApp.input.keyDown[L'F']) { }
 		else if (invMass == 0)
 		{
-			HandleDragWhole(cur);
+			HandleDragWhole(simulationApp);
 		}
 		else
 		{
-			HandleDragPoint(cur);
+			HandleDragPoint(simulationApp);
 		}
-		dragged = cur.input.mouseButtonDown[0] && (cur.mode == kDragMode);
+		dragged = simulationApp.input.mouseButtonDown[0] && (simulationApp.mode == kDragMode);
 	}
 	else
 	{
 		// 检查 draged是否判断正确，更新被拖拽角度
-		dragged = hovered && cur.input.IsMouseClickedDown(0) && (cur.mode == kDragMode);
+		dragged = hovered && simulationApp.input.IsMouseClickedDown(0) && (simulationApp.mode == kDragMode);
 		if (dragged)
 		{
 			// p移到m，那么mo = 变换*原距离 = 变换*原相对位置=po，故有。
-			relativeDragPoint = transform.Inverse() * ((Vector2) cur.input.mousePosition - position);
-			UpdateDragAngle(cur);
+			relativeDragPoint = transform.Inverse() * ((Vector2) simulationApp.input.mousePosition - position);
+			UpdateDragAngle(simulationApp);
 		}
 	}
 
-	if (this == cur.bodySelecting && cur.isTrackShown && !cur.isPaused)
+	if (this == simulationApp.bodySelecting && simulationApp.isTrackShown && !simulationApp.isPaused)
 	{
 		// 绘制运动轨迹
 		track.push_back(position);
 	}
-	else if (this != cur.bodySelecting || !cur.isTrackShown)
+	else if (this != simulationApp.bodySelecting || !simulationApp.isTrackShown)
 	{
 		//不符合条件时清空轨迹信息
 		track.clear();
 	}
 
 	// 创造连接
-	bool canCreate = hovered && cur.mode == kCreateMode &&
-		(cur.creator->mode == CREATE_CONN || cur.creator->mode == CREATE_NAIL);
+	bool canCreate = hovered && simulationApp.mode == kCreateMode &&
+		(simulationApp.creator->mode == CREATE_CONN || simulationApp.creator->mode == CREATE_NAIL);
 	if (canCreate)
 	{
-		if (cur.input.IsMouseClickedDown(0) && !cur.creator->active)
+		if (simulationApp.input.IsMouseClickedDown(0) && !simulationApp.creator->active)
 		{
-			cur.creator->body0 = this;
-			cur.creator->p0Relative = transform.Inverse() * ((Vector2) cur.input.mousePosition - position);
+			simulationApp.creator->body0 = this;
+			simulationApp.creator->p0Relative = transform.Inverse() * ((Vector2) simulationApp.input.mousePosition - position);
 		}
-		else if (!cur.input.mouseButtonDown[0] && cur.input.previousMouseButtonDown[0] && cur.creator->active)
+		else if (!simulationApp.input.mouseButtonDown[0] && simulationApp.input.previousMouseButtonDown[0] && simulationApp.creator->active)
 		{
-			cur.creator->body1 = this;
-			cur.creator->p1Relative = transform.Inverse() * ((Vector2) cur.input.mousePosition - position);
+			simulationApp.creator->body1 = this;
+			simulationApp.creator->p1Relative = transform.Inverse() * ((Vector2) simulationApp.input.mousePosition - position);
 		}
 	}
 }
-void Body::PreUpdate(SimulationApp& cur)
+void Body::PreUpdate(SimulationApp& simulationApp)
 {
-	bool ok = cur.inputOwners.hoveredDepth <= GetDepth() &&
-		IsInside((Vector2) cur.input.mousePosition) && ::IsInside(cur.input.mousePosition, cur.background->GetViewport());
-	if (ok) { cur.inputOwners.hoveredDepth = GetDepth(); cur.inputOwners.hovered = this; }
+	bool ok = simulationApp.inputOwners.hoveredDepth <= GetDepth() &&
+		IsInside((Vector2) simulationApp.input.mousePosition) && ::IsInside(simulationApp.input.mousePosition, simulationApp.background->GetViewport());
+	if (ok) { simulationApp.inputOwners.hoveredDepth = GetDepth(); simulationApp.inputOwners.hovered = this; }
 }
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulombConstant)

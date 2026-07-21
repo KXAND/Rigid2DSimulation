@@ -16,7 +16,7 @@ Connection::Connection()
 	colorCord = Color::CYAN;
 	colorCordTight = Color::MAGENTA;
 }
-void Connection::Save(SimulationApp const& cur, FILE* file) const
+void Connection::Save(SimulationApp const& simulationApp, FILE* file) const
 {
 	int size = 0;
 	fwrite(&(type), sizeof(type), 1, file);
@@ -24,17 +24,17 @@ void Connection::Save(SimulationApp const& cur, FILE* file) const
 	fwrite(&(size), sizeof(size), 1, file);
 	fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
 	auto pred0 = [this](std::shared_ptr<Body> b) { return &*b == body0; };
-	int ind0 = find_if(cur.bodies.begin(), cur.bodies.end(), pred0) - cur.bodies.begin();
+	int ind0 = find_if(simulationApp.bodies.begin(), simulationApp.bodies.end(), pred0) - simulationApp.bodies.begin();
 	auto pred1 = [this](std::shared_ptr<Body> b) { return &*b == body1; };
-	int ind1 = find_if(cur.bodies.begin(), cur.bodies.end(), pred1) - cur.bodies.begin();
+	int ind1 = find_if(simulationApp.bodies.begin(), simulationApp.bodies.end(), pred1) - simulationApp.bodies.begin();
 	fwrite(&(ind0), sizeof(ind0), 1, file);
 	fwrite(&(ind1), sizeof(ind1), 1, file);
 	fwrite(&(p0Relative), sizeof(p0Relative), 1, file);
 	fwrite(&(p1Relative), sizeof(p1Relative), 1, file);
-	fwrite(&(len), sizeof(len), 1, file);
+	fwrite(&(length), sizeof(length), 1, file);
 	fwrite(&(springConstant), sizeof(springConstant), 1, file);
 }
-Connection::Connection(SimulationApp& cur, FILE* file) : Connection()
+Connection::Connection(SimulationApp& simulationApp, FILE* file) : Connection()
 {
 	int size = 0;
 	fread(&(type), sizeof(type), 1, file);
@@ -45,27 +45,27 @@ Connection::Connection(SimulationApp& cur, FILE* file) : Connection()
 	int ind0 = 0, ind1 = 0;
 	fread(&(ind0), sizeof(ind0), 1, file);
 	fread(&(ind1), sizeof(ind1), 1, file);
-	body0 = &*cur.bodies[ind0]; body1 = &*cur.bodies[ind1];
+	body0 = &*simulationApp.bodies[ind0]; body1 = &*simulationApp.bodies[ind1];
 	fread(&(p0Relative), sizeof(p0Relative), 1, file);
 	fread(&(p1Relative), sizeof(p1Relative), 1, file);
-	fread(&(len), sizeof(len), 1, file);
+	fread(&(length), sizeof(length), 1, file);
 	fread(&(springConstant), sizeof(springConstant), 1, file);
-	RefreshFromScript(cur); SignUpToBodies(); UpdatePosition();
+	RefreshFromScript(simulationApp); SignUpToBodies(); UpdatePosition();
 }
 
-void Connection::ReadCfg(Value const& cfg)
+void Connection::ReadConfig(Value const& configuration)
 {
-	TryReadConfigNumber(cfg, L"length", len);
-	TryReadConfigNumber(cfg, L"springConstant", springConstant);
-	if (auto md = FindConfigValue(cfg, L"type"))
+	TryReadConfigNumber(configuration, L"length", length);
+	TryReadConfigNumber(configuration, L"springConstant", springConstant);
+	if (auto md = FindConfigValue(configuration, L"type"))
 	{
 		if (md->type == L"str")
 		{
 			auto s = md->stringValue;
-			if (s == L"rope") { type = CON_ROPE; }
-			else if (s == L"link") { type = CON_LINK; }
-			else if (s == L"spring") { type = CON_SPRING; }
-			else if (s == L"cord") { type = CON_CORD; }
+			if (s == L"rope") { type = kRopeConnection; }
+			else if (s == L"link") { type = kLinkConnection; }
+			else if (s == L"spring") { type = kSpringConnection; }
+			else if (s == L"cord") { type = kCordConnection; }
 		}
 		else { type = md->number; }
 	}
@@ -82,12 +82,12 @@ void Connection::UpdatePosition()
 	p1 = body1->position + body1->transform * p1Relative;
 }
 
-void Connection::RefreshFromScript(SimulationApp& cur)
+void Connection::RefreshFromScript(SimulationApp& simulationApp)
 {
-	cur.currentScope[L"connection"] = std::make_shared<Value>();
-	Execute(cur.currentScope, Compile(scriptText));
-	if (cur.currentScope.find(L"connection") == cur.currentScope.end()) { return; }
-	ReadCfg(*cur.currentScope[L"connection"]);
+	simulationApp.currentScope[L"connection"] = std::make_shared<Value>();
+	Execute(simulationApp.currentScope, Compile(scriptText));
+	if (simulationApp.currentScope.find(L"connection") == simulationApp.currentScope.end()) { return; }
+	ReadConfig(*simulationApp.currentScope[L"connection"]);
 
 	UpdatePosition();
 }
@@ -109,15 +109,15 @@ void Connection::SimulateRopeOrLink(bool equalReponse)
 	Vector2 d = p1 - p0;
 	double currLenth = d.GetLength();
 	d = d.GetNormalized();
-	isTight = currLenth > len;
-	if (!isTight && type == CON_ROPE) { return; }// rope在压缩时不受力，拉伸时和link一样不形变
+	isTight = currLenth > length;
+	if (!isTight && type == kRopeConnection) { return; }// rope在压缩时不受力，拉伸时和link一样不形变
 
 	double torque0 = Dot(r0, d);
 	double torque1 = Dot(r1, d);
 	double accelFactor0 = body0->invMass + torque0 * torque0 * body0->invInertia;
 	double accelFactor1 = body1->invMass + torque1 * torque1 * body1->invInertia;
 	double velocityDiffOnD = Dot(v0 - v1, d);
-	if (type == CON_ROPE) { velocityDiffOnD = min(0.0, velocityDiffOnD); }
+	if (type == kRopeConnection) { velocityDiffOnD = min(0.0, velocityDiffOnD); }
 	Vector2 impulse = -velocityDiffOnD / (accelFactor0 + accelFactor1) * d;
 
 	body0->velocity += impulse * body0->invMass;
@@ -129,21 +129,21 @@ void Connection::SimulateRopeOrLink(bool equalReponse)
 	{
 		if (body0->invMass == 0)
 		{
-			body1->position += (currLenth - len) * d;
+			body1->position += (currLenth - length) * d;
 		}
 		else if (body1->invMass == 0)
 		{
-			body0->position -= (currLenth - len) * d;
+			body0->position -= (currLenth - length) * d;
 		}
 		else
 		{
-			body0->position += (currLenth - len) * d / 2;
-			body1->position -= (currLenth - len) * d / 2;
+			body0->position += (currLenth - length) * d / 2;
+			body1->position -= (currLenth - length) * d / 2;
 		}
 		return;
 	}
-	body0->position += d * (currLenth - len) * body0->invMass / (body0->invMass + body1->invMass);
-	body1->position -= d * (currLenth - len) * body1->invMass / (body0->invMass + body1->invMass);
+	body0->position += d * (currLenth - length) * body0->invMass / (body0->invMass + body1->invMass);
+	body1->position -= d * (currLenth - length) * body1->invMass / (body0->invMass + body1->invMass);
 }
 
 void Connection::SimulateCordOrSpring(double deltaTime)
@@ -165,13 +165,13 @@ void Connection::SimulateCordOrSpring(double deltaTime)
 	p0p1Vec = p0p1Vec.GetNormalized();
 	if (p0p1Vec.IsZero()) { p0p1Vec = Vector2(1, 0); }
 
-	isTight = currLenth > len;
-	if (!isTight && type == CON_CORD) { return; }// cord在压缩不受力，拉伸和spring一样
+	isTight = currLenth > length;
+	if (!isTight && type == kCordConnection) { return; }// cord在压缩不受力，拉伸和spring一样
 
 	// @todo:关于力矩的公式我已经忘了，需要再推导
 	double torgue0 = Dot(r0, p0p1Vec);
 	double torgue1 = Dot(r1, p0p1Vec);
-	Vector2 springsForce = (currLenth - len) * springConstant * deltaTime * p0p1Vec;
+	Vector2 springsForce = (currLenth - length) * springConstant * deltaTime * p0p1Vec;
 
 	// 每 dt内计算一次，可以直接加上加速度
 	body0->velocity += springsForce * body0->invMass;
@@ -184,41 +184,41 @@ void Connection::Simulate(double deltaTime, bool useEqualPositionCorrection)
 {
 	switch (type)
 	{
-		case CON_ROPE:
-		case CON_LINK:
+		case kRopeConnection:
+		case kLinkConnection:
 			SimulateRopeOrLink(useEqualPositionCorrection);
 			return;
-		case CON_CORD:
-		case CON_SPRING:
+		case kCordConnection:
+		case kSpringConnection:
 			SimulateCordOrSpring(deltaTime);
 			return;
 	}
 }
 
-void Connection::Render(SimulationApp& cur) const
+void Connection::Render(SimulationApp& simulationApp) const
 {
 	Color color;
 	switch (type)
 	{
-		case CON_ROPE: color = isTight ? colorRopeTight : colorRope; break;
-		case CON_LINK: color = colorLink; break;
-		case CON_CORD: color = isTight ? colorCordTight : colorCord; break;
-		case CON_SPRING: color = isTight ? colorSpringStretch : colorSpringCompress; break;
+		case kRopeConnection: color = isTight ? colorRopeTight : colorRope; break;
+		case kLinkConnection: color = colorLink; break;
+		case kCordConnection: color = isTight ? colorCordTight : colorCord; break;
+		case kSpringConnection: color = isTight ? colorSpringStretch : colorSpringCompress; break;
 	}
-	DrawLineSegment(cur.screen, cur.depthBuffer, p0, p1, 2, cur.background->GetViewport(), color);
+	DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, 2, simulationApp.background->GetViewport(), color);
 }
 
-Body* GetOtherBody(Body* b, Connection const& con)
+Body* GetOtherBody(Body* body, Connection const& connection)
 {
-	if (con.body0 == b && con.body1 == b)
+	if (connection.body0 == body && connection.body1 == body)
 	{
 		return NULL;
 	}
-	if (con.body0 != b && con.body1 != b)
+	if (connection.body0 != body && connection.body1 != body)
 	{
 		return NULL;
 	}
-	return con.body0 == b ? con.body1 : con.body0;
+	return connection.body0 == body ? connection.body1 : connection.body0;
 }
 
 

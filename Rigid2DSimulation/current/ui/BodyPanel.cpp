@@ -26,10 +26,10 @@ void BodyConnectionLabel::Sync(App& app) {
 	auto* connection = simulationApp.bodySelecting->connections[id];
 	wstring type;
 	switch (connection->type) {
-	case CON_ROPE: type = simulationApp.GetLocalizedString(L"conn_rope"); break;
-	case CON_LINK: type = simulationApp.GetLocalizedString(L"conn_link"); break;
-	case CON_SPRING: type = simulationApp.GetLocalizedString(L"conn_spring"); break;
-	case CON_CORD: type = simulationApp.GetLocalizedString(L"conn_cord"); break;
+	case kRopeConnection: type = simulationApp.GetLocalizedString(L"conn_rope"); break;
+	case kLinkConnection: type = simulationApp.GetLocalizedString(L"conn_link"); break;
+	case kSpringConnection: type = simulationApp.GetLocalizedString(L"conn_spring"); break;
+	case kCordConnection: type = simulationApp.GetLocalizedString(L"conn_cord"); break;
 	}
 	text = simulationApp.GetLocalizedString(L"conn") + std::to_wstring(id) + L": " + type;
 }

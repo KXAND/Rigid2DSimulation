@@ -14,15 +14,15 @@ private:
 	bool IsInsideTriangle(Vector2 v, Vector2 v0, Vector2 v1, Vector2 v2) const;
 public:
 	bool isCircle = false;
-	double r = 0;
+	double radius = 0;
 	double radian = 0;
 	double area = 0;
 	Vector2 relativePosition;
 	Vector2 position;
 	vector<Vector2> verticesRelative, vertices;
 
-	Shape(double _r, Vector2 _o_rel = {});
-	Shape(vector<Vector2> const& _verticesRelative);
+	Shape(double radius, Vector2 relativePosition = {});
+	Shape(vector<Vector2> const& verticesRelative);
 	Shape(FILE* file);
 	void Save(FILE* file) const;
 
@@ -31,6 +31,6 @@ public:
 	Aabb GetBoundingBox() const;
 };
 
-vector<Vector2> GetRectVerticesByCenter(double w, double h);
+vector<Vector2> GetRectVerticesByCenter(double width, double height);
 
 

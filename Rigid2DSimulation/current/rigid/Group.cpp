@@ -3,7 +3,7 @@
 #include "Connection.h"
 #include "SimulationApp.h"
 
-void Group::Warp(DRect Rect)
+void Group::Warp(DRect rectangle)
 {
 	for (auto b : bodies)
 		if (b->invMass == 0 || b->dragged) { return; }
@@ -11,39 +11,39 @@ void Group::Warp(DRect Rect)
 
 	isInRect = true;
 	for (auto b : bodies)
-		if (b->position.x > Rect.GetLeft()) { isInRect = false; break; }
+		if (b->position.x > rectangle.GetLeft()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->position.x += Rect.width; b->track.clear(); }
+		for (auto b : bodies) { b->position.x += rectangle.width; b->track.clear(); }
 
 	isInRect = true;
 	for (auto b : bodies)
-		if (b->position.x < Rect.GetRight()) { isInRect = false; break; }
+		if (b->position.x < rectangle.GetRight()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->position.x -= Rect.width; b->track.clear(); }
+		for (auto b : bodies) { b->position.x -= rectangle.width; b->track.clear(); }
 
 	isInRect = true;
 	for (auto b : bodies)
-		if (b->position.y > Rect.GetTop()) { isInRect = false; break; }
+		if (b->position.y > rectangle.GetTop()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->position.y += Rect.height;  b->track.clear(); }
+		for (auto b : bodies) { b->position.y += rectangle.height;  b->track.clear(); }
 
 	isInRect = true;
 	for (auto b : bodies)
-		if (b->position.y < Rect.GetBottom()) { isInRect = false; break; }
+		if (b->position.y < rectangle.GetBottom()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->position.y -= Rect.height; b->track.clear(); }
+		for (auto b : bodies) { b->position.y -= rectangle.height; b->track.clear(); }
 }
 
-void findBodiesInGroup(vector<Body*>& out, Body* body)
+void FindBodiesInGroup(vector<Body*>& bodies, Body* body)
 {
 	body->visited = true;
-	out.push_back(body);
+	bodies.push_back(body);
 	for (auto connnection : body->connections)
 	{
 		auto tmp = GetOtherBody(body, *connnection);
 		if (tmp && !tmp->visited)
 		{
-			findBodiesInGroup(out, tmp);
+			FindBodiesInGroup(bodies, tmp);
 		}
 	}
 }
@@ -57,7 +57,7 @@ vector<std::shared_ptr<Group>> FormGroups(vector<std::shared_ptr<Body>> const& b
 		if (!b->visited)
 		{
 			connectedBodies.clear();
-			findBodiesInGroup(connectedBodies, &*b);
+			FindBodiesInGroup(connectedBodies, &*b);
 			out.push_back(std::make_shared<Group>(connectedBodies));
 		}
 	}

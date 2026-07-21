@@ -1,15 +1,15 @@
 #include "Shape.h"
 
-Shape::Shape(double _r, Vector2 _o_rel)
+Shape::Shape(double radius, Vector2 relativePosition)
 {
 	isCircle = true;
-	r = _r;
-	relativePosition = _o_rel;
+	this->radius = radius;
+	this->relativePosition = relativePosition;
 }
 
-Shape::Shape(vector<Vector2> const& _verticesRelative)
+Shape::Shape(vector<Vector2> const& verticesRelative)
 {
-	verticesRelative = _verticesRelative;
+	this->verticesRelative = verticesRelative;
 	vertices.resize(verticesRelative.size());
 }
 
@@ -17,7 +17,7 @@ void Shape::Save(FILE* file) const
 {
 	int size = 0;
 	fwrite(&(isCircle), sizeof(isCircle), 1, file);
-	fwrite(&(r), sizeof(r), 1, file);
+	fwrite(&(radius), sizeof(radius), 1, file);
 	fwrite(&(radian), sizeof(radian), 1, file);
 	fwrite(&(relativePosition), sizeof(relativePosition), 1, file);
 	size = (verticesRelative).size();
@@ -28,7 +28,7 @@ Shape::Shape(FILE* file)
 {
 	int size = 0;
 	fread(&(isCircle), sizeof(isCircle), 1, file);
-	fread(&(r), sizeof(r), 1, file);
+	fread(&(radius), sizeof(radius), 1, file);
 	fread(&(radian), sizeof(radian), 1, file);
 	fread(&(relativePosition), sizeof(relativePosition), 1, file);
 	fread(&(size), sizeof(size), 1, file);
@@ -42,7 +42,7 @@ Vector2 Shape::GenerateRandomPointInside() const
 	if (isCircle)
 	{
 		double randomRadian = GenerateRandomFloat(2 * kPi);
-		double randomRadius = sqrt(GenerateRandomFloat(1)) * r;
+		double randomRadius = sqrt(GenerateRandomFloat(1)) * radius;
 		return Vector2(cos(randomRadian), sin(randomRadian)) * randomRadius;
 	}
 
@@ -67,7 +67,7 @@ Vector2 Shape::GenerateRandomPointInside() const
 bool Shape::IsInside(Vector2 p) const
 {
 	if (isCircle)
-		return (p - position).GetLengthSquared() < r * r;
+		return (p - position).GetLengthSquared() < radius * radius;
 
 	for (int i = (0), iEnd = int(vertices.size()); i < iEnd; ++i)
 	{
@@ -81,7 +81,7 @@ bool Shape::IsInside(Vector2 p) const
 Aabb Shape::GetBoundingBox() const
 {
 	if (isCircle)
-		return Aabb(position.x - r, position.x + r, position.y - r, position.y + r);
+		return Aabb(position.x - radius, position.x + radius, position.y - radius, position.y + radius);
 
 	Aabb box;
 	for (auto v : vertices)

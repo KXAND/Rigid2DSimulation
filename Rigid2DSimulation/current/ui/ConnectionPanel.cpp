@@ -50,13 +50,13 @@ void ConnectionDetailsLabel::Sync(App& app) {
 
 	wstring type;
 	switch (connection.type) {
-	case CON_ROPE: type = simulationApp.GetLocalizedString(L"conn_rope"); break;
-	case CON_LINK: type = simulationApp.GetLocalizedString(L"conn_link"); break;
-	case CON_SPRING: type = simulationApp.GetLocalizedString(L"conn_spring"); break;
-	case CON_CORD: type = simulationApp.GetLocalizedString(L"conn_cord"); break;
+	case kRopeConnection: type = simulationApp.GetLocalizedString(L"conn_rope"); break;
+	case kLinkConnection: type = simulationApp.GetLocalizedString(L"conn_link"); break;
+	case kSpringConnection: type = simulationApp.GetLocalizedString(L"conn_spring"); break;
+	case kCordConnection: type = simulationApp.GetLocalizedString(L"conn_cord"); break;
 	}
 	text += simulationApp.GetLocalizedString(L"conn_type") + type + L"\n";
-	text += simulationApp.GetLocalizedString(L"conn_len") + FormatFixed2(connection.len) + L"\n";
+	text += simulationApp.GetLocalizedString(L"conn_len") + FormatFixed2(connection.length) + L"\n";
 	text += simulationApp.GetLocalizedString(L"conn_hooke") + FormatFixed2(connection.springConstant) + L"\n";
 }
 

@@ -13,11 +13,11 @@ struct Group {
 	/// <summary>
 	/// @todo
 	/// </summary>
-	/// <param name="Rect"></param>
-	void Warp(DRect Rect);
+	/// <param name="rectangle"></param>
+	void Warp(DRect rectangle);
 };
 
-void findBodiesInGroup(vector<Body*>& out, Body* b);
+void FindBodiesInGroup(vector<Body*>& bodies, Body* body);
 /// <summary>
 /// 将输入的 body 划分为 group
 /// </summary>

@@ -6,9 +6,9 @@
 #include "DrawGeometry.h"
 
 //	疑似废弃
-void Collision::Render(SimulationApp& cur) const
+void Collision::Render(SimulationApp& simulationApp) const
 {
-	DrawEllipse(cur.screen, cur.depthBuffer, 100, c, 5, 5, cur.background->GetViewport(), Color::YELLOW);
+	DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, 100, contactPoint, 5, 5, simulationApp.background->GetViewport(), Color::YELLOW);
 }
 void Collision::Simulate(bool equalResponse)
 {
@@ -21,9 +21,9 @@ void Collision::Simulate(bool equalResponse)
 	double frictionDynamic = min(body0->frictionDynamic, body1->frictionDynamic);
 	double frictionStatic = min(body0->frictionStatic, body1->frictionStatic);
 
-	// c 点处两个物体的切向量（tangent vector）和对应速度
-	Vector2 tanC1 = c - body0->position;
-	Vector2 tanC2 = c - body1->position;
+	// 接触点处两个物体的切向量（tangent vector）和对应速度
+	Vector2 tanC1 = contactPoint - body0->position;
+	Vector2 tanC2 = contactPoint - body1->position;
 	tanC1 = Vector2(-tanC1.y, tanC1.x);//逆时针转90度
 	tanC2 = Vector2(-tanC2.y, tanC2.x);
 	Vector2 velocity0 = body0->velocity + body0->velocityAngular * tanC1;
@@ -31,14 +31,14 @@ void Collision::Simulate(bool equalResponse)
 
 	// 法线方向
 	// @todo：这里需要补物理知识
-	double tanC0normal = Dot(tanC1, n);
-	double tanC1normal = Dot(tanC2, n);
+	double tanC0normal = Dot(tanC1, normal);
+	double tanC1normal = Dot(tanC2, normal);
 	double inverse_i0 = body0->invMass + tanC0normal * tanC0normal * body0->invInertia;
 	double inverse_i1 = body1->invMass + tanC1normal * tanC1normal * body1->invInertia;
-	double impulseNormal = (1 + elasticity) * max(0.0, Dot(velocity0 - velocity1, n)) / (inverse_i0 + inverse_i1); // 法向方向的冲量
+	double impulseNormal = (1 + elasticity) * max(0.0, Dot(velocity0 - velocity1, normal)) / (inverse_i0 + inverse_i1); // 法向方向的冲量
 
 	Vector2 impulse;
-	impulse = -impulseNormal * n;
+	impulse = -impulseNormal * normal;
 	body0->velocity += impulse * body0->invMass;
 	body1->velocity -= impulse * body1->invMass;
 	body0->velocityAngular += Dot(impulse, tanC1) * body0->invInertia;
@@ -52,7 +52,7 @@ void Collision::Simulate(bool equalResponse)
 
 
 	// 切线方向
-	Vector2 tangentDirection = Vector2(-n.y, n.x);
+	Vector2 tangentDirection = Vector2(-normal.y, normal.x);
 	double impulseTangential = Dot(updatedVelocity0 - updatedVelocity1, tangentDirection);
 	if (impulseTangential < 0)
 	{
@@ -80,19 +80,19 @@ void Collision::Simulate(bool equalResponse)
 
 	if (equalResponse)
 	{
-		if (body0->invMass == 0) { body1->position += n * d; }
-		else if (body1->invMass == 0) { body0->position -= n * d; }
+		if (body0->invMass == 0) { body1->position += normal * depth; }
+		else if (body1->invMass == 0) { body0->position -= normal * depth; }
 		else
 		{
-			body0->position -= n * d / 2;
-			body1->position += n * d / 2;
+			body0->position -= normal * depth / 2;
+			body1->position += normal * depth / 2;
 		}
 		return;
 	}
 	// 我是真的不知道这个有没有道理。
 	double sum = body0->invMass + body1->invMass;
-	body0->position -= n * d * body0->invMass / sum;
-	body1->position += n * d * body1->invMass / sum;
+	body0->position -= normal * depth * body0->invMass / sum;
+	body1->position += normal * depth * body1->invMass / sum;
 }
 
 void Collide(Body& b0, Body& b1, vector<std::shared_ptr<Collision>>& out, double parallelEpsilon)
@@ -114,17 +114,17 @@ void Collide(Body& b0, Body& b1, vector<std::shared_ptr<Collision>>& out, double
 			}
 			else
 			{
-				if (!collide(*shape0, *shape1, collision, false)) { continue; }
-				if (!collide(*shape1, *shape0, collision, true)) { continue; }
+				if (!CollideShapes(*shape0, *shape1, collision, false)) { continue; }
+				if (!CollideShapes(*shape1, *shape0, collision, true)) { continue; }
 			}
 
 
 			// 都不是圆，检查最近距离是否小于阈值
-			if (!shape0->isCircle && !shape1->isCircle && collision.diff < parallelEpsilon)
+			if (!shape0->isCircle && !shape1->isCircle && collision.difference < parallelEpsilon)
 			{
 				double distanceSquareClosest = DBL_MAX;
-				FindClosestContactVertex(*shape0, *shape1, collision.c, distanceSquareClosest);
-				FindClosestContactVertex(*shape1, *shape0, collision.c, distanceSquareClosest);
+				FindClosestContactVertex(*shape0, *shape1, collision.contactPoint, distanceSquareClosest);
+				FindClosestContactVertex(*shape1, *shape0, collision.contactPoint, distanceSquareClosest);
 			}
 
 			out.push_back(std::make_shared<Collision>(collision));
@@ -133,93 +133,93 @@ void Collide(Body& b0, Body& b1, vector<std::shared_ptr<Collision>>& out, double
 
 /***need be move to private↓***/
 
-bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
+bool CollideShapes(Shape& firstShape, Shape& secondShape, Collision& collision, bool reverse)
 {
-	Vector2 c;
-	if (sh0.isCircle)
+	Vector2 contactPoint;
+	if (firstShape.isCircle)
 	{
-		for (int i = (0), iEnd = int(sh1.vertices.size()); i < iEnd; ++i)
+		for (int i = (0), iEnd = int(secondShape.vertices.size()); i < iEnd; ++i)
 		{
-			Vector2 n = (sh1.vertices[i] - sh0.position).GetNormalized();
-			if (n.IsZero()) { n = Vector2(0, 1); }
-			auto d = CalculatePolygonCollisionDepth(n, sh0.position + n * sh0.r, sh1, c);
+			Vector2 normal = (secondShape.vertices[i] - firstShape.position).GetNormalized();
+			if (normal.IsZero()) { normal = Vector2(0, 1); }
+			auto d = CalculatePolygonCollisionDepth(normal, firstShape.position + normal * firstShape.radius, secondShape, contactPoint);
 			if (d < 0) { return false; }
-			if (d < out.d)
+			if (d < collision.depth)
 			{
-				out.diff = out.d - d;
-				out.d = d;
-				out.c = c;
-				out.n = reverse ? -n : n;
+				collision.difference = collision.depth - d;
+				collision.depth = d;
+				collision.contactPoint = contactPoint;
+				collision.normal = reverse ? -normal : normal;
 			}
 		}
 		return true;
 	}
 
-	for (int i = (0), iEnd = int(sh0.vertices.size()); i < iEnd; ++i)
+	for (int i = (0), iEnd = int(firstShape.vertices.size()); i < iEnd; ++i)
 	{
-		int j = (i + 1) % sh0.vertices.size();
-		Vector2 n = sh0.vertices[j] - sh0.vertices[i];
-		n = Vector2(n.y, -n.x).GetNormalized();
-		auto d = sh1.isCircle ?
-			CalculateBallCollisionDepth(n, sh0.vertices[i], sh1, c) :
-			CalculatePolygonCollisionDepth(n, sh0.vertices[i], sh1, c);
+		int j = (i + 1) % firstShape.vertices.size();
+		Vector2 normal = firstShape.vertices[j] - firstShape.vertices[i];
+		normal = Vector2(normal.y, -normal.x).GetNormalized();
+		auto d = secondShape.isCircle ?
+			CalculateBallCollisionDepth(normal, firstShape.vertices[i], secondShape, contactPoint) :
+			CalculatePolygonCollisionDepth(normal, firstShape.vertices[i], secondShape, contactPoint);
 		if (d < 0) { return false; }
-		if (d < out.d)
+		if (d < collision.depth)
 		{
-			out.diff = out.d - d;
-			out.d = d;
-			out.c = c;
-			out.n = reverse ? -n : n;
+			collision.difference = collision.depth - d;
+			collision.depth = d;
+			collision.contactPoint = contactPoint;
+			collision.normal = reverse ? -normal : normal;
 		}
 	} return true;
 }
-void FindClosestContactVertex(Shape& shape0, Shape& shape1, Vector2& contactP, double& closestDistanceSqr)
+void FindClosestContactVertex(Shape& firstShape, Shape& secondShape, Vector2& contactPoint, double& closestDistanceSquared)
 {
-	for (int i = (0), iEnd = int(shape0.vertices.size()); i < iEnd; ++i)
+	for (int i = (0), iEnd = int(firstShape.vertices.size()); i < iEnd; ++i)
 	{
-		int j = (i + 1) % shape0.vertices.size();
-		for (auto v : shape1.vertices)
+		int j = (i + 1) % firstShape.vertices.size();
+		for (auto v : secondShape.vertices)
 		{
-			//算出该顶点到 shape0 当前顶点和下一个顶点所构成的线段的距离平方
-			double distanceSquare = GetDistanceSquare(shape0.vertices[i], shape0.vertices[j], v);
-			if (distanceSquare < closestDistanceSqr)
+			//算出该顶点到 firstShape 当前顶点和下一个顶点所构成的线段的距离平方
+			double distanceSquare = GetDistanceSquare(firstShape.vertices[i], firstShape.vertices[j], v);
+			if (distanceSquare < closestDistanceSquared)
 			{
-				closestDistanceSqr = distanceSquare;
-				contactP = v;
+				closestDistanceSquared = distanceSquare;
+				contactPoint = v;
 			}
 		}
 	}
 }
-bool CollideBalls(Shape& sh0, Shape& sh1, Collision& out)
+bool CollideBalls(Shape& firstShape, Shape& secondShape, Collision& collision)
 {
-	Vector2 o10 = sh1.position - sh0.position;
-	double d = sh0.r + sh1.r - o10.GetLength();
+	Vector2 o10 = secondShape.position - firstShape.position;
+	double d = firstShape.radius + secondShape.radius - o10.GetLength();
 	if (d < 0) { return false; }
-	out.d = d;
-	out.n = o10.IsZero() ? Vector2(0, 1) : o10.GetNormalized();
-	if (sh0.r < sh1.r)
+	collision.depth = d;
+	collision.normal = o10.IsZero() ? Vector2(0, 1) : o10.GetNormalized();
+	if (firstShape.radius < secondShape.radius)
 	{
-		out.c = sh0.position + sh0.r * out.n;
+		collision.contactPoint = firstShape.position + firstShape.radius * collision.normal;
 	}
 	else
 	{
-		out.c = sh1.position - sh1.r * out.n;
+		collision.contactPoint = secondShape.position - secondShape.radius * collision.normal;
 	} return true;
 }
-double CalculateBallCollisionDepth(Vector2 n, Vector2 o, Shape const& sh, Vector2& c)
+double CalculateBallCollisionDepth(Vector2 normal, Vector2 origin, Shape const& sh, Vector2& contactPoint)
 {
-	auto tmp = Dot(sh.position - o, n) - sh.r;
-	c = sh.position - sh.r * n; return -tmp;
+	auto tmp = Dot(sh.position - origin, normal) - sh.radius;
+	contactPoint = sh.position - sh.radius * normal; return -tmp;
 }
-double CalculatePolygonCollisionDepth(Vector2 n, Vector2 o, Shape const& sh, Vector2& c)
+double CalculatePolygonCollisionDepth(Vector2 normal, Vector2 origin, Shape const& sh, Vector2& contactPoint)
 {
 	double out = DBL_MAX;
 	for (auto v : sh.vertices)
 	{
-		auto tmp = Dot(v - o, n);
+		auto tmp = Dot(v - origin, normal);
 		if (tmp < out)
 		{
-			out = tmp; c = v;
+			out = tmp; contactPoint = v;
 		}
 	} return -out;
 }

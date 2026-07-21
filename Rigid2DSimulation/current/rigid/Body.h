@@ -51,41 +51,41 @@ struct Body
 	Color hoveredColor;
 	Color draggedColor;
 	Color selectedColor;
-	Color selectedConColor;
+	Color selectedConnectionColor;
 
 	Body();
-	Body(Vector2 const& _o);
-	Body(std::shared_ptr<Shape> sh);
-	Body(vector<std::shared_ptr<Shape>> const& _shs);
-	Body(SimulationApp& cur, FILE* file);
+	Body(Vector2 const& position);
+	Body(std::shared_ptr<Shape> shape);
+	Body(vector<std::shared_ptr<Shape>> const& shapes);
+	Body(SimulationApp& simulationApp, FILE* file);
 	void Save(FILE* file) const;
 
 	Vector2 GenerateRandomPointInside() const;
 	bool IsInside(Vector2 p) const;
-	void RefreshFromScript(SimulationApp& cur);
-	void ReadCfg(Value const& cfg);
+	void RefreshFromScript(SimulationApp& simulationApp);
+	void ReadConfig(Value const& cfg);
 	void UpdateShapesPositionAndAABB();
-	void Warp(DRect rc);
-	void RegisterGrid(SimulationApp& cur);
+	void Warp(DRect rectangle);
+	void RegisterGrid(SimulationApp& simulationApp);
 private:
 	double GetDepth() const;
 	void UpdateAABB();
 
 public:
 	void Init(bool resetPosition = false);
-	void Render(SimulationApp& cur) const;
-	void Step(SimulationApp& cur, double sdt);
-	void Update(SimulationApp& cur);
-	void PreUpdate(SimulationApp& cur);
+	void Render(SimulationApp& simulationApp) const;
+	void Step(SimulationApp& simulationApp, double stepDeltaTime);
+	void Update(SimulationApp& simulationApp);
+	void PreUpdate(SimulationApp& simulationApp);
 
 private:
-	void UpdateDragAngle(SimulationApp& cur);
-	void HandleDragWhole(SimulationApp& cur);
-	void HandleDragPoint(SimulationApp& cur);
-	void HandleDragForce(SimulationApp& cur, double sdt);
-	void FollowPresetPosition(SimulationApp& cur, double sdt);
-	void FollowPresetAngle(SimulationApp& cur, double sdt);
-	void FollowPresetAngularVelocity(SimulationApp& cur);
+	void UpdateDragAngle(SimulationApp& simulationApp);
+	void HandleDragWhole(SimulationApp& simulationApp);
+	void HandleDragPoint(SimulationApp& simulationApp);
+	void HandleDragForce(SimulationApp& simulationApp, double stepDeltaTime);
+	void FollowPresetPosition(SimulationApp& simulationApp, double stepDeltaTime);
+	void FollowPresetAngle(SimulationApp& simulationApp, double stepDeltaTime);
+	void FollowPresetAngularVelocity(SimulationApp& simulationApp);
 
 };
 

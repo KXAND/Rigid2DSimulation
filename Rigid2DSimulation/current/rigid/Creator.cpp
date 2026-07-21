@@ -62,7 +62,7 @@ void Creator::UpdateBox(SimulationApp& cur)
 			body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(x1 - x0, y1 - y0)));
 			body->position = Vector2(x0 + x1, y0 + y1) / 2;
 			body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
+			if (bodyConfiguration) { body->ReadConfig(*bodyConfiguration); }
 			body->Init();
 		}
 
@@ -95,7 +95,7 @@ void Creator::UpdateBall(SimulationApp& cur)
 			body = std::make_shared<Body>(std::make_shared<Shape>(r));
 			body->position = Vector2(creationStartPoint);
 			body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
+			if (bodyConfiguration) { body->ReadConfig(*bodyConfiguration); }
 			body->Init();
 		}
 
@@ -131,7 +131,7 @@ void Creator::UpdatePlate(SimulationApp& cur)
 			body->position = Vector2(creationStartPoint + cur.input.mousePosition) / 2;
 			body->radian = atan2(v.y, v.x);
 			body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
+			if (bodyConfiguration) { body->ReadConfig(*bodyConfiguration); }
 			body->Init();
 		}
 
@@ -158,7 +158,7 @@ void Creator::UpdateConnection(SimulationApp& cur)
 	if (active)
 	{
 		connection = std::make_shared<Connection>();
-		if (connectionConfiguration) { connection->ReadCfg(*connectionConfiguration); }
+		if (connectionConfiguration) { connection->ReadConfig(*connectionConfiguration); }
 		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
 		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
 		if (!cur.input.mouseButtonDown[0])
@@ -172,7 +172,7 @@ void Creator::UpdateConnection(SimulationApp& cur)
 
 				connection->SignUpToBodies();
 				connection->UpdatePosition();
-				connection->len = (connection->p0 - connection->p1).GetLength();
+				connection->length = (connection->p0 - connection->p1).GetLength();
 				cur.connections.push_back(connection);
 				cur.isSceneChanged = true;
 			}
@@ -191,7 +191,7 @@ void Creator::UpdatePoint(SimulationApp& cur)
 	{
 		body = std::make_shared<Body>((Vector2) cur.input.mousePosition);
 		body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-		if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
+		if (bodyConfiguration) { body->ReadConfig(*bodyConfiguration); }
 		body->Init();
 		cur.bodies.push_back(body);
 		body = NULL; 
@@ -206,7 +206,7 @@ void Creator::UpdateNail(SimulationApp& cur)
 		body->Init();
 		cur.bodies.push_back(body);
 		connection = std::make_shared<Connection>();
-		connection->type = CON_LINK;
+		connection->type = kLinkConnection;
 		connection->body0 = body0;
 		connection->body1 = &*body;
 		connection->p0Relative = p0Relative;
@@ -225,7 +225,7 @@ void Creator::UpdateParticle(SimulationApp& cur)
 		body = std::make_shared<Body>(std::make_shared<Shape>(rad));
 		body->position = (Vector2) cur.input.mousePosition;
 		body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-		if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
+		if (bodyConfiguration) { body->ReadConfig(*bodyConfiguration); }
 		body->Init();
 		cur.bodies.push_back(body);
 		body = NULL; cur.isSceneChanged = true;

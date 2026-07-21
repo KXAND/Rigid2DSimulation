@@ -1,10 +1,10 @@
 #pragma once
 #include "Tile.h"
 
-int constexpr CON_ROPE = 0;
-int constexpr CON_LINK = 1;
-int constexpr CON_SPRING = 3;
-int constexpr CON_CORD = 4;
+int constexpr kRopeConnection = 0;
+int constexpr kLinkConnection = 1;
+int constexpr kSpringConnection = 3;
+int constexpr kCordConnection = 4;
 
 struct Value;
 struct SimulationApp;
@@ -20,7 +20,7 @@ struct Connection {
 	Body* body1 = NULL;
 	Vector2 p0Relative, p1Relative;
 	Vector2 p0, p1;
-	double len = 0;
+	double length = 0;
 	double springConstant = 0;
 	bool isTight = false;
 
@@ -31,19 +31,19 @@ struct Connection {
 	Color colorSpringStretch, colorSpringCompress;
 
 	Connection();
-	Connection(SimulationApp& cur, FILE* file);
-	void Save(SimulationApp const& cur, FILE* file) const;
+	Connection(SimulationApp& simulationApp, FILE* file);
+	void Save(SimulationApp const& simulationApp, FILE* file) const;
 
-	void ReadCfg(Value const& cfg);
+	void ReadConfig(Value const& configuration);
 	void SignUpToBodies();
 	void UpdatePosition();
-	void RefreshFromScript(SimulationApp& cur);
+	void RefreshFromScript(SimulationApp& simulationApp);
 	void SimulateRopeOrLink(bool useEqualPositionCorrection);
-	void SimulateCordOrSpring(double sdt);
-	void Simulate(double sdt, bool useEqualPositionCorrection);
-	void Render(SimulationApp& cur) const;
+	void SimulateCordOrSpring(double stepDeltaTime);
+	void Simulate(double stepDeltaTime, bool useEqualPositionCorrection);
+	void Render(SimulationApp& simulationApp) const;
 };
 
-Body* GetOtherBody(Body* b, Connection const& con);
+Body* GetOtherBody(Body* body, Connection const& connection);
 
 
