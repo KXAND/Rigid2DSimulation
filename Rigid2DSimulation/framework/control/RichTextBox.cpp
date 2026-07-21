@@ -282,7 +282,7 @@ void RichTextBox::Update(App& app) {
 	} else {
 		Sync(app);
 		if (enabled && hovered && app.input.isMouseClickedDown(0)) {
-			if (clr_upon_edit) { value.clear(); }
+			if (clearUponEdit) { value.clear(); }
 			SelectStart(app); edit = true;
 		}
 	} 

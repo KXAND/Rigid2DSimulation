@@ -8,7 +8,7 @@ struct RichTextBox : Control {
 	int lineWidth = 0;
 	double depth = 0;
 	int w = 0, h = 0;
-	bool clr_upon_edit = false;
+	bool clearUponEdit = false;
 	Color c_str, c_edit, c_frame, c_normal,
 		c_cursor, hoveredColor, c_invalid, selectedColor;
 
