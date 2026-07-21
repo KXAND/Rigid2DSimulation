@@ -205,7 +205,7 @@ void Connection::Render(SimulationApp& cur) const
 		case CON_CORD: color = isTight ? colorCordTight : colorCord; break;
 		case CON_SPRING: color = isTight ? colorSpringStretch : colorSpringCompress; break;
 	}
-	drawLineSegment(cur.screen, cur.depthBuffer, p0, p1, 2, cur.background->ViewPort(), color);
+	DrawLineSegment(cur.screen, cur.depthBuffer, p0, p1, 2, cur.background->ViewPort(), color);
 }
 
 Body* GetOtherBody(Body* b, Connection const& con)

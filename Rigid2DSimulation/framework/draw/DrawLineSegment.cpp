@@ -39,7 +39,7 @@ void ClipLineEndpointAtY(DVector2& endpoint, DVector2 const& otherEndpoint,
 
 // 好像这里经常发生溢出问题，不知能不能处理一下。
 // 把 int 换成 long long 了，应该会有帮助。
-bool preDrawLineSegment(DVector2& pa, DVector2& pb, DRect viewPort) {
+bool ClipLineSegment(DVector2& pa, DVector2& pb, DRect viewPort) {
 	long long x0 = viewPort.GetLeft();
 	long long x1 = viewPort.GetRight() - 1;
 	long long y0 = viewPort.GetTop();
@@ -64,11 +64,11 @@ bool preDrawLineSegment(DVector2& pa, DVector2& pb, DRect viewPort) {
 	ClipLineEndpointAtY(pb, pa, y1, BoundarySide::Maximum);
 	return true;
 }
-void drawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
+void DrawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
 	DVector2 pa, DVector2 pb, double d, DRect viewPort, Color color)
 {
 	if (viewPort.w <= 0 || viewPort.h <= 0) { return; }
-	if (!preDrawLineSegment(pa, pb, viewPort)) { return; }
+	if (!ClipLineSegment(pa, pb, viewPort)) { return; }
 
 	bool changed = false;
 	int x = pa.x; int y = pa.y;
@@ -95,9 +95,9 @@ void drawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
 		if (zBuffer[id] <= d) { zBuffer[id] = d; targetTile.colors[id] = color; }
 	}
 }
-void drawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
+void DrawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
 	Vector2 pa, Vector2 pb, double depth, DRect viewPort, Color color)
 {
-	drawLineSegment(targetTile, zBuffer, (DVector2)pa, (DVector2)pb, depth, viewPort, color);
+	DrawLineSegment(targetTile, zBuffer, (DVector2)pa, (DVector2)pb, depth, viewPort, color);
 }
 

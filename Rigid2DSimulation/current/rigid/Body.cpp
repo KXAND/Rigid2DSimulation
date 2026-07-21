@@ -303,7 +303,7 @@ void Body::Render(SimulationApp& cur) const
 	if (point)
 	{
 		drawEllipse(cur.screen, cur.depthBuffer, GetDepth(), position, pointRadius, pointRadius, cur.background->ViewPort(), color);
-		drawEllipseBorder(cur.screen, cur.depthBuffer, GetDepth(), position, pointRadius, pointRadius, cur.background->ViewPort(), borderColor, 20);
+		DrawEllipseBorder(cur.screen, cur.depthBuffer, GetDepth(), position, pointRadius, pointRadius, cur.background->ViewPort(), borderColor, 20);
 	}
 	for (auto& shape : shapes)
 	{
@@ -311,12 +311,12 @@ void Body::Render(SimulationApp& cur) const
 		{
 			drawEllipse(cur.screen, cur.depthBuffer, GetDepth(),
 				shape->position, shape->r, shape->r, cur.background->ViewPort(), color);
-			drawEllipseBorder(cur.screen, cur.depthBuffer, GetDepth(),
+			DrawEllipseBorder(cur.screen, cur.depthBuffer, GetDepth(),
 				shape->position, shape->r, shape->r, cur.background->ViewPort(), borderColor, 30);
 
 			// 显示一条半径以便于我们判断圆的旋转角度
 			auto peakPoint = Vector2(cos(shape->radian), sin(shape->radian)) * shape->r + shape->position;
-			drawLineSegment(cur.screen, cur.depthBuffer, shape->position, peakPoint, GetDepth(), cur.background->ViewPort(), borderColor);
+			DrawLineSegment(cur.screen, cur.depthBuffer, shape->position, peakPoint, GetDepth(), cur.background->ViewPort(), borderColor);
 			continue;
 		}
 
@@ -328,7 +328,7 @@ void Body::Render(SimulationApp& cur) const
 		for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
 		{
 			int j = (i + 1) % shape->vertices.size();
-			drawLineSegment(cur.screen, cur.depthBuffer, shape->vertices[i], shape->vertices[j], GetDepth(), cur.background->ViewPort(), borderColor);
+			DrawLineSegment(cur.screen, cur.depthBuffer, shape->vertices[i], shape->vertices[j], GetDepth(), cur.background->ViewPort(), borderColor);
 		}
 	}
 
@@ -336,7 +336,7 @@ void Body::Render(SimulationApp& cur) const
 	{
 		Vector2 p1 = Vector2(cur.input.mousePosition);
 		Vector2 p0 = position + transform * relativeDragPoint;
-		drawLineSegment(cur.screen, cur.depthBuffer, p0, p1, GetDepth(), cur.background->ViewPort(), Color(0, 255, 255));
+		DrawLineSegment(cur.screen, cur.depthBuffer, p0, p1, GetDepth(), cur.background->ViewPort(), Color(0, 255, 255));
 	}
 
 	if (!track.empty())
@@ -344,7 +344,7 @@ void Body::Render(SimulationApp& cur) const
 		Vector2 p0 = track.front();
 		for (auto p1 : track)
 		{
-			drawLineSegment(cur.screen, cur.depthBuffer, p0, p1, 10, cur.background->ViewPort(), Color(255, 0, 255));
+			DrawLineSegment(cur.screen, cur.depthBuffer, p0, p1, 10, cur.background->ViewPort(), Color(255, 0, 255));
 			p0 = p1;
 		}
 	}

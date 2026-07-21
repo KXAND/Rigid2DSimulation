@@ -139,9 +139,9 @@ void FloatPanel::RenderClose(App& app) {
 
 	DVector2 closeMarkCenter = GetCloseTopLeft() + DVector2(closeButtonSize, closeButtonSize) / 2;
 	DVector2 closeMarkArm = { closeMarkHalfSize , closeMarkHalfSize };
-	drawLineSegment(app.screen, app.depthBuffer, closeMarkCenter - closeMarkArm, closeMarkCenter + closeMarkArm, depth, app.screen.Rect(), closeMarkColor);
+	DrawLineSegment(app.screen, app.depthBuffer, closeMarkCenter - closeMarkArm, closeMarkCenter + closeMarkArm, depth, app.screen.Rect(), closeMarkColor);
 	closeMarkArm = { -closeMarkHalfSize , closeMarkHalfSize };
-	drawLineSegment(app.screen, app.depthBuffer, closeMarkCenter - closeMarkArm, closeMarkCenter + closeMarkArm, depth, app.screen.Rect(), closeMarkColor);
+	DrawLineSegment(app.screen, app.depthBuffer, closeMarkCenter - closeMarkArm, closeMarkCenter + closeMarkArm, depth, app.screen.Rect(), closeMarkColor);
 }
 void FloatPanel::Render(App& app) {
 	RenderMain(app); RenderClose(app);
