@@ -28,6 +28,6 @@ ScriptStatement ParseAssignment(vector<BracketGroup> const& groups);
 ScriptStatement ParseIf(vector<BracketGroup> const& groups);
 ScriptStatement ParseWhile(vector<BracketGroup> const& groups);
 
-ScriptStatement ParseStatement(vector<BracketGroup> const& in);
-vector<ScriptStatement> ParseStatements(vector<BracketGroup> const& in);
+ScriptStatement ParseStatement(vector<BracketGroup> const& groups);
+vector<ScriptStatement> ParseStatements(vector<BracketGroup> const& groups);
 

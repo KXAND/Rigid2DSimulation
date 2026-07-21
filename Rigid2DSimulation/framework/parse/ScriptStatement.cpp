@@ -87,53 +87,53 @@ ScriptStatement ParseWhile(vector<BracketGroup> const& groups) {
 	return statement;
 }
 
-ScriptStatement ParseStatement(vector<BracketGroup> const& in) {
-	if (in.empty()) { return ScriptStatement(L"error"); }
-	if (in[0].token.type == L"def") { return ParseDefinition(in); }
-	if (in[0].token.type == L"return") { return ParseReturn(in); }
-	if (in[0].token.type == L"if") { return ParseIf(in); }
-	if (in[0].token.type == L"while") { return ParseWhile(in); }
-	for (auto const& b : in) {
-		if (b.token.type == L"=") { return ParseAssignment(in); }
+ScriptStatement ParseStatement(vector<BracketGroup> const& groups) {
+	if (groups.empty()) { return ScriptStatement(L"error"); }
+	if (groups[0].token.type == L"def") { return ParseDefinition(groups); }
+	if (groups[0].token.type == L"return") { return ParseReturn(groups); }
+	if (groups[0].token.type == L"if") { return ParseIf(groups); }
+	if (groups[0].token.type == L"while") { return ParseWhile(groups); }
+	for (auto const& group : groups) {
+		if (group.token.type == L"=") { return ParseAssignment(groups); }
 	}
-	ScriptStatement p(L"single");
-	p.expression = ParseExpression(in);
-	return p;
+	ScriptStatement statement(L"single");
+	statement.expression = ParseExpression(groups);
+	return statement;
 }
-vector<ScriptStatement> ParseStatements(vector<BracketGroup> const& in) {
-	vector<BracketGroup> cur;
-	vector<ScriptStatement> out;
-	bool curly = false;
+vector<ScriptStatement> ParseStatements(vector<BracketGroup> const& groups) {
+	vector<BracketGroup> currentGroups;
+	vector<ScriptStatement> statements;
+	bool isCurlyGroup = false;
 
-	for (auto const& b : in) {
-		if (b.token.type == L";") {
-			if (!cur.empty()) {
-				auto p = ParseStatement(cur);
-				if (p.type == L"error") { return {}; }
-				out.push_back(p);
-				cur.clear();
+	for (auto const& group : groups) {
+		if (group.token.type == L";") {
+			if (!currentGroups.empty()) {
+				auto statement = ParseStatement(currentGroups);
+				if (statement.type == L"error") { return {}; }
+				statements.push_back(statement);
+				currentGroups.clear();
 			}
 		}
 		else {
-			if (b.token.type != L"else" && curly) {
-				auto p = ParseStatement(cur);
-				if (p.type == L"error") { return {}; }
-				out.push_back(p);
-				cur.clear();
+			if (group.token.type != L"else" && isCurlyGroup) {
+				auto statement = ParseStatement(currentGroups);
+				if (statement.type == L"error") { return {}; }
+				statements.push_back(statement);
+				currentGroups.clear();
 			}
-			cur.push_back(b);
+			currentGroups.push_back(group);
 		}
-		curly = (b.type == 2);
+		isCurlyGroup = (group.type == 2);
 	}
 
-	if (curly) {
-		auto p = ParseStatement(cur);
-		if (p.type == L"error") { return {}; }
-		out.push_back(p);
+	if (isCurlyGroup) {
+		auto statement = ParseStatement(currentGroups);
+		if (statement.type == L"error") { return {}; }
+		statements.push_back(statement);
 	}
-	else if (!cur.empty()) {
+	else if (!currentGroups.empty()) {
 		return {};
 	}
-	return out;
+	return statements;
 }
 
