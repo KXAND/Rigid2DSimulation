@@ -22,11 +22,11 @@ struct ScriptStatement {
 };
 wstring ToWString(ScriptStatement const& statement);
 
-ScriptStatement ParseDefinition(vector<BracketGroup> const& in);
-ScriptStatement ParseReturn(vector<BracketGroup> const& in);
-ScriptStatement ParseAssignment(vector<BracketGroup> const& in);
-ScriptStatement ParseIf(vector<BracketGroup> const& in);
-ScriptStatement ParseWhile(vector<BracketGroup> const& in);
+ScriptStatement ParseDefinition(vector<BracketGroup> const& groups);
+ScriptStatement ParseReturn(vector<BracketGroup> const& groups);
+ScriptStatement ParseAssignment(vector<BracketGroup> const& groups);
+ScriptStatement ParseIf(vector<BracketGroup> const& groups);
+ScriptStatement ParseWhile(vector<BracketGroup> const& groups);
 
 ScriptStatement ParseStatement(vector<BracketGroup> const& in);
 vector<ScriptStatement> ParseStatements(vector<BracketGroup> const& in);

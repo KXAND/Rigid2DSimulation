@@ -31,60 +31,60 @@ wstring ToWString(ScriptStatement const& statement) {
 	return serializedText;
 }
 
-ScriptStatement ParseDefinition(vector<BracketGroup> const& in) {
-	if (in.size() < 4) { return ScriptStatement(L"error"); }
+ScriptStatement ParseDefinition(vector<BracketGroup> const& groups) {
+	if (groups.size() < 4) { return ScriptStatement(L"error"); }
 	// 不想让这里的函数和参数也牵扯到 global 里面去，感觉完全不必要。
-	if (in[1].token.type != L"var" || in[1].token.isGlobal) { return ScriptStatement(L"error"); }
-	ScriptStatement p(L"define");
-	p.functionName = in[1].token.variableName;
+	if (groups[1].token.type != L"var" || groups[1].token.isGlobal) { return ScriptStatement(L"error"); }
+	ScriptStatement statement(L"define");
+	statement.functionName = groups[1].token.variableName;
 	bool comma = true;
 
-	for (auto const& b : in[2].children) {
+	for (auto const& group : groups[2].children) {
 		if (comma) {
-			p.parameterNames.push_back(b.token.variableName);
-			if (b.token.type != L"var" || b.token.isGlobal) { return ScriptStatement(L"error"); }
+			statement.parameterNames.push_back(group.token.variableName);
+			if (group.token.type != L"var" || group.token.isGlobal) { return ScriptStatement(L"error"); }
 		}
-		else if (b.token.type != L",") { return ScriptStatement(L"error"); }
+		else if (group.token.type != L",") { return ScriptStatement(L"error"); }
 		comma = !comma;
 	}
-	p.bodyStatements = ParseStatements(in[3].children);
-	return p;
+	statement.bodyStatements = ParseStatements(groups[3].children);
+	return statement;
 }
-ScriptStatement ParseReturn(vector<BracketGroup> const& in) {
-	ScriptStatement p(L"return");
-	auto tmp = vector<BracketGroup>(in.begin() + 1, in.end());
-	p.returnExpression = tmp.empty() ? ScriptExpression(L"null") : ParseExpression(tmp);
-	return p;
+ScriptStatement ParseReturn(vector<BracketGroup> const& groups) {
+	ScriptStatement statement(L"return");
+	auto expressionGroups = vector<BracketGroup>(groups.begin() + 1, groups.end());
+	statement.returnExpression = expressionGroups.empty() ? ScriptExpression(L"null") : ParseExpression(expressionGroups);
+	return statement;
 }
-ScriptStatement ParseAssignment(vector<BracketGroup> const& in) {
-	ScriptStatement p(L"assign");
-	auto it = in.begin();
-	for (; it != in.end() && it->token.type != L"="; ++it);
-	p.leftExpression = ParseExpression(vector<BracketGroup>(in.begin(), it));
-	p.rightExpression = ParseExpression(vector<BracketGroup>(it + 1, in.end()));
-	return p;
+ScriptStatement ParseAssignment(vector<BracketGroup> const& groups) {
+	ScriptStatement statement(L"assign");
+	auto assignmentIterator = groups.begin();
+	for (; assignmentIterator != groups.end() && assignmentIterator->token.type != L"="; ++assignmentIterator);
+	statement.leftExpression = ParseExpression(vector<BracketGroup>(groups.begin(), assignmentIterator));
+	statement.rightExpression = ParseExpression(vector<BracketGroup>(assignmentIterator + 1, groups.end()));
+	return statement;
 }
-ScriptStatement ParseIf(vector<BracketGroup> const& in) {
-	if (in.size() < 3) { return ScriptStatement(L"error"); }
-	if (in[1].type != 1 || in[2].type != 2) { return ScriptStatement(L"error"); }
+ScriptStatement ParseIf(vector<BracketGroup> const& groups) {
+	if (groups.size() < 3) { return ScriptStatement(L"error"); }
+	if (groups[1].type != 1 || groups[2].type != 2) { return ScriptStatement(L"error"); }
 
-	ScriptStatement p(L"if");
-	p.condition = ParseExpression(in[1].children);
-	p.thenStatements = ParseStatements(in[2].children);
-	if (in.size() != 3) {
-		if (in.size() != 5) { return ScriptStatement(L"error"); }
-		if (in[3].token.type != L"else" || in[4].type != 2) { return ScriptStatement(L"error"); }
-		p.elseStatements = ParseStatements(in[4].children);
+	ScriptStatement statement(L"if");
+	statement.condition = ParseExpression(groups[1].children);
+	statement.thenStatements = ParseStatements(groups[2].children);
+	if (groups.size() != 3) {
+		if (groups.size() != 5) { return ScriptStatement(L"error"); }
+		if (groups[3].token.type != L"else" || groups[4].type != 2) { return ScriptStatement(L"error"); }
+		statement.elseStatements = ParseStatements(groups[4].children);
 	}
-	return p;
+	return statement;
 }
-ScriptStatement ParseWhile(vector<BracketGroup> const& in) {
-	if (in.size() != 3) { return ScriptStatement(L"error"); }
-	if (in[1].type != 1 || in[2].type != 2) { return ScriptStatement(L"error"); }
-	ScriptStatement p(L"while");
-	p.loopCondition = ParseExpression(in[1].children);
-	p.loopStatements = ParseStatements(in[2].children);
-	return p;
+ScriptStatement ParseWhile(vector<BracketGroup> const& groups) {
+	if (groups.size() != 3) { return ScriptStatement(L"error"); }
+	if (groups[1].type != 1 || groups[2].type != 2) { return ScriptStatement(L"error"); }
+	ScriptStatement statement(L"while");
+	statement.loopCondition = ParseExpression(groups[1].children);
+	statement.loopStatements = ParseStatements(groups[2].children);
+	return statement;
 }
 
 ScriptStatement ParseStatement(vector<BracketGroup> const& in) {
