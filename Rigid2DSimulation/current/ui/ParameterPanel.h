@@ -31,17 +31,17 @@ struct ParameterValueTextBox : TextBox {
 };
 
 struct ParameterControlRow : VerticalControlList {
-	std::shared_ptr<ParameterNameTextBox> tb_nm;
-	std::shared_ptr<DeleteParameterButton> bt_del;
-	std::shared_ptr<HorizontalControlList> clx_nm;
-	std::shared_ptr<ParameterValueDragBar> dbx_val;
-	std::shared_ptr<ParameterValueTextBox> tb_val;
-	std::shared_ptr<HorizontalControlList> clx_val;
-	std::shared_ptr<HorizontalSeparator> spy;
+	std::shared_ptr<ParameterNameTextBox> nameTextBox;
+	std::shared_ptr<DeleteParameterButton> deleteButton;
+	std::shared_ptr<HorizontalControlList> nameControls;
+	std::shared_ptr<ParameterValueDragBar> valueDragBar;
+	std::shared_ptr<ParameterValueTextBox> valueTextBox;
+	std::shared_ptr<HorizontalControlList> valueControls;
+	std::shared_ptr<HorizontalSeparator> separator;
 	ParameterControlRow(int id);
 };
 struct ParameterControlList : VerticalControlList {
-	vector<std::shared_ptr<ParameterControlRow>> mbs;
+	vector<std::shared_ptr<ParameterControlRow>> parameterRows;
 	void Update(App& app) override;
 };
 struct AddParameterButton : LocalizedButton {
@@ -50,9 +50,9 @@ struct AddParameterButton : LocalizedButton {
 };
 
 struct ParameterPanel : LocalizedFloatPanel {
-	std::shared_ptr<ParameterControlList> cly_pars;
-	std::shared_ptr<AddParameterButton> bt_add_par;
-	std::shared_ptr<VerticalControlList> cly;
+	std::shared_ptr<ParameterControlList> parameterList;
+	std::shared_ptr<AddParameterButton> addButton;
+	std::shared_ptr<VerticalControlList> controls;
 	ParameterPanel(App& app);
 };
 

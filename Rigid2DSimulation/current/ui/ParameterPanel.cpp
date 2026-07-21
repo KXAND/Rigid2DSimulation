@@ -16,36 +16,36 @@ void ParameterValueTextBox::OnDone(App& app) const { auto& simulationApp = stati
 
 ParameterControlRow::ParameterControlRow(int id) {
 	vector<Control*> tmp;
-	tb_nm = std::make_shared<ParameterNameTextBox>(id); bt_del = std::make_shared<DeleteParameterButton>(id);
-	tmp = { &*tb_nm, &*bt_del };
-	clx_nm = std::make_shared<HorizontalControlList>(tmp);
+	nameTextBox = std::make_shared<ParameterNameTextBox>(id); deleteButton = std::make_shared<DeleteParameterButton>(id);
+	tmp = { &*nameTextBox, &*deleteButton };
+	nameControls = std::make_shared<HorizontalControlList>(tmp);
 	tmp = {};
-	dbx_val = std::make_shared<ParameterValueDragBar>(id); tb_val = std::make_shared<ParameterValueTextBox>(id);
-	tmp = { &*dbx_val, &*tb_val };
-	clx_val = std::make_shared<HorizontalControlList>(tmp);
+	valueDragBar = std::make_shared<ParameterValueDragBar>(id); valueTextBox = std::make_shared<ParameterValueTextBox>(id);
+	tmp = { &*valueDragBar, &*valueTextBox };
+	valueControls = std::make_shared<HorizontalControlList>(tmp);
 	tmp = {};
-	spy = std::make_shared<HorizontalSeparator>(400);
-	cs = { &*clx_nm, &*clx_val, &*spy };
+	separator = std::make_shared<HorizontalSeparator>(400);
+	cs = { &*nameControls, &*valueControls, &*separator };
 }
 void ParameterControlList::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	cs.clear();
-	for (int i = (mbs.size()), iEnd = int(simulationApp.parameters.size()); i < iEnd; ++i) { mbs.push_back(std::make_shared<ParameterControlRow>(i)); }
-	for (int i = (0), iEnd = int(simulationApp.parameters.size()); i < iEnd; ++i) { cs.push_back(&*mbs[i]); }
-	for (int i = (simulationApp.parameters.size()), iEnd = int(mbs.size()); i < iEnd; ++i) { mbs[i]->Discard(app); }
+	for (int i = (parameterRows.size()), iEnd = int(simulationApp.parameters.size()); i < iEnd; ++i) { parameterRows.push_back(std::make_shared<ParameterControlRow>(i)); }
+	for (int i = (0), iEnd = int(simulationApp.parameters.size()); i < iEnd; ++i) { cs.push_back(&*parameterRows[i]); }
+	for (int i = (simulationApp.parameters.size()), iEnd = int(parameterRows.size()); i < iEnd; ++i) { parameterRows[i]->Discard(app); }
 	VerticalControlList::Update(app);
 }
 
-AddParameterButton::AddParameterButton() : LocalizedButton(160, L"bt_add_par") {}
+AddParameterButton::AddParameterButton() : LocalizedButton(160, L"addButton") {}
 void AddParameterButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters.push_back(std::make_shared<SceneParameter>(simulationApp.getLocalizedString(L"unnamed_par"))); }
 
 ParameterPanel::ParameterPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_par") {
 	vector<Control*> tmp;
-	cly_pars = std::make_shared<ParameterControlList>();
-	bt_add_par = std::make_shared<AddParameterButton>();
-	tmp = { &*cly_pars, &*bt_add_par };
-	cly = std::make_shared<VerticalControlList>(tmp);
-	c = &*cly;
+	parameterList = std::make_shared<ParameterControlList>();
+	addButton = std::make_shared<AddParameterButton>();
+	tmp = { &*parameterList, &*addButton };
+	controls = std::make_shared<VerticalControlList>(tmp);
+	c = &*controls;
 	Init(app);
 }
 
