@@ -17,12 +17,12 @@ DeleteConnectionButton::DeleteConnectionButton() : LocalizedButton(70, L"bt_con_
 void DeleteConnectionButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->isMarkedForDeletion = true; simulationApp.isSceneChanged = true; }
 
 ConnectionEditorControls::ConnectionEditorControls() {
-	vector<Control*> tmp;
+	vector<Control*> controls;
 	scriptEditor = std::make_shared<ConnectionScriptEditor>();
 	applyButton = std::make_shared<ApplyConnectionButton>(); deleteButton = std::make_shared<DeleteConnectionButton>();
-	tmp = { &*applyButton, &*deleteButton };
-	actionButtons = std::make_shared<HorizontalControlList>(tmp);
-	tmp = {};
+	controls = { &*applyButton, &*deleteButton };
+	actionButtons = std::make_shared<HorizontalControlList>(controls);
+	controls = {};
 	separator = std::make_shared<HorizontalSeparator>(400);
 }
 void ConnectionEditorControls::Update(App& app) {
@@ -61,11 +61,11 @@ void ConnectionDetailsLabel::Sync(App& app) {
 }
 
 ConnectionPanel::ConnectionPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_con") {
-	vector<Control*> tmp;
+	vector<Control*> controls;
 	editorControls = std::make_shared<ConnectionEditorControls>(); detailsLabel = std::make_shared<ConnectionDetailsLabel>();
-	tmp = { &*editorControls, &*detailsLabel };
-	controls = std::make_shared<VerticalControlList>(tmp);
-	contentControl = &*controls;
+	controls = { &*editorControls, &*detailsLabel };
+	this->controls = std::make_shared<VerticalControlList>(controls);
+	contentControl = &*this->controls;
 	Init(app);
 }
 

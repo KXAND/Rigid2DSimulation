@@ -15,15 +15,15 @@ void ParameterValueTextBox::Sync(App& app) { auto& simulationApp = static_cast<S
 void ParameterValueTextBox::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = ParseDouble(value); }
 
 ParameterControlRow::ParameterControlRow(int id) {
-	vector<Control*> tmp;
+	vector<Control*> controls;
 	nameTextBox = std::make_shared<ParameterNameTextBox>(id); deleteButton = std::make_shared<DeleteParameterButton>(id);
-	tmp = { &*nameTextBox, &*deleteButton };
-	nameControls = std::make_shared<HorizontalControlList>(tmp);
-	tmp = {};
+	controls = { &*nameTextBox, &*deleteButton };
+	nameControls = std::make_shared<HorizontalControlList>(controls);
+	controls = {};
 	valueDragBar = std::make_shared<ParameterValueDragBar>(id); valueTextBox = std::make_shared<ParameterValueTextBox>(id);
-	tmp = { &*valueDragBar, &*valueTextBox };
-	valueControls = std::make_shared<HorizontalControlList>(tmp);
-	tmp = {};
+	controls = { &*valueDragBar, &*valueTextBox };
+	valueControls = std::make_shared<HorizontalControlList>(controls);
+	controls = {};
 	separator = std::make_shared<HorizontalSeparator>(400);
 	controls = { &*nameControls, &*valueControls, &*separator };
 }
@@ -40,12 +40,12 @@ AddParameterButton::AddParameterButton() : LocalizedButton(160, L"addButton") {}
 void AddParameterButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters.push_back(std::make_shared<SceneParameter>(simulationApp.GetLocalizedString(L"unnamed_par"))); }
 
 ParameterPanel::ParameterPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_par") {
-	vector<Control*> tmp;
+	vector<Control*> controls;
 	parameterList = std::make_shared<ParameterControlList>();
 	addButton = std::make_shared<AddParameterButton>();
-	tmp = { &*parameterList, &*addButton };
-	controls = std::make_shared<VerticalControlList>(tmp);
-	contentControl = &*controls;
+	controls = { &*parameterList, &*addButton };
+	this->controls = std::make_shared<VerticalControlList>(controls);
+	contentControl = &*this->controls;
 	Init(app);
 }
 

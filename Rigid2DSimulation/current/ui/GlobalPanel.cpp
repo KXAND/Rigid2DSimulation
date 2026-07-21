@@ -37,19 +37,19 @@ void GlobalDetailsLabel::Sync(App& app) {
 }
 
 GlobalPanel::GlobalPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_global") {
-	vector<Control*> tmp;
+	vector<Control*> controls;
 	savePathTextBox = std::make_shared<TextBox>(270); saveButton = std::make_shared<SaveButton>();
-	tmp = { &*savePathTextBox, &*saveButton };
-	saveControls = std::make_shared<HorizontalControlList>(tmp);
-	tmp = {};
+	controls = { &*savePathTextBox, &*saveButton };
+	saveControls = std::make_shared<HorizontalControlList>(controls);
+	controls = {};
 	loadPathTextBox = std::make_shared<TextBox>(270); loadButton = std::make_shared<LoadButton>();
-	tmp = { &*loadPathTextBox, &*loadButton };
-	loadControls = std::make_shared<HorizontalControlList>(tmp);
-	tmp = {};
+	controls = { &*loadPathTextBox, &*loadButton };
+	loadControls = std::make_shared<HorizontalControlList>(controls);
+	controls = {};
 	separator = std::make_shared<HorizontalSeparator>(400); detailsLabel = std::make_shared<GlobalDetailsLabel>();
-	tmp = { &*saveControls, &*loadControls, &*separator, &*detailsLabel };
-	controls = std::make_shared<VerticalControlList>(tmp);
-	contentControl = &*controls;
+	controls = { &*saveControls, &*loadControls, &*separator, &*detailsLabel };
+	this->controls = std::make_shared<VerticalControlList>(controls);
+	contentControl = &*this->controls;
 	Init(app);
 }
 

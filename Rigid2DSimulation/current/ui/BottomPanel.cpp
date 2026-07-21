@@ -20,11 +20,11 @@ void MousePositionLabel::Sync(App& app) {
 }
 
 BottomPanel::BottomPanel(App& app) : Panel(Panel::CreateBottomPanel(app)) {
-	vector<Control*> tmp;
+	vector<Control*> controls;
 	frameRateLabel = std::make_shared<FrameRateLabel>(); timeLabel = std::make_shared<TimeLabel>(); mousePositionLabel = std::make_shared<MousePositionLabel>();
-	tmp = { &*frameRateLabel, &*timeLabel, &*mousePositionLabel };
-	controls = std::make_shared<HorizontalControlList>(tmp);
-	contentControl = &*controls;
+	controls = { &*frameRateLabel, &*timeLabel, &*mousePositionLabel };
+	this->controls = std::make_shared<HorizontalControlList>(controls);
+	contentControl = &*this->controls;
 	Init(app);
 }
 

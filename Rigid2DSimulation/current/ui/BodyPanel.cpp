@@ -59,12 +59,12 @@ void BodyConnectionControlList::Update(App& app) {
 }
 
 BodyEditorControls::BodyEditorControls() {
-	vector<Control*> tmp;
+	vector<Control*> controls;
 	scriptEditor = std::make_shared<BodyScriptEditor>();
 	applyButton = std::make_shared<ApplyBodyButton>(); deleteButton = std::make_shared<DeleteBodyButton>();
-	tmp = { &*applyButton, &*deleteButton };
-	actionButtons = std::make_shared<HorizontalControlList>(tmp);
-	tmp = {};
+	controls = { &*applyButton, &*deleteButton };
+	actionButtons = std::make_shared<HorizontalControlList>(controls);
+	controls = {};
 	connectionList = std::make_shared<BodyConnectionControlList>(); separator = std::make_shared<HorizontalSeparator>(400);
 }
 void BodyEditorControls::Update(App& app) {
@@ -105,11 +105,11 @@ void BodyDetailsLabel::Sync(App& app) {
 }
 
 BodyPanel :: BodyPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_body") {
-	vector<Control*> tmp;
+	vector<Control*> controls;
 	editorControls = std::make_shared<BodyEditorControls>(); detailsLabel = std::make_shared<BodyDetailsLabel>();
-	tmp = { &*editorControls, &*detailsLabel };
-	controls = std::make_shared<VerticalControlList>(tmp);
-	contentControl = &*controls;
+	controls = { &*editorControls, &*detailsLabel };
+	this->controls = std::make_shared<VerticalControlList>(controls);
+	contentControl = &*this->controls;
 	Init(app);
 }
 

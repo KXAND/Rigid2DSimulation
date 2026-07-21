@@ -13,31 +13,31 @@
 
 
 void UserInterface::SortFloatPanels() { sort(fpns.begin(), fpns.end(), CompareFloatPanels); }
-void UserInterface::Init(SimulationApp& cur) {
-	globalPanel = std::make_shared<GlobalPanel>(cur); fpns.push_back(&*globalPanel);
-	bodyPanel = std::make_shared<BodyPanel>(cur); fpns.push_back(&*bodyPanel);
-	connectionPanel = std::make_shared<ConnectionPanel>(cur); fpns.push_back(&*connectionPanel);
-	commandPanel = std::make_shared<CommandPanel>(cur); fpns.push_back(&*commandPanel);
-	parameterPanel = std::make_shared<ParameterPanel>(cur); fpns.push_back(&*parameterPanel);
-	languagePanel = std::make_shared<LanguagePanel>(cur); fpns.push_back(&*languagePanel);
-	aboutPanel = std::make_shared<AboutPanel>(cur); fpns.push_back(&*aboutPanel);
+void UserInterface::Init(SimulationApp& simulationApp) {
+	globalPanel = std::make_shared<GlobalPanel>(simulationApp); fpns.push_back(&*globalPanel);
+	bodyPanel = std::make_shared<BodyPanel>(simulationApp); fpns.push_back(&*bodyPanel);
+	connectionPanel = std::make_shared<ConnectionPanel>(simulationApp); fpns.push_back(&*connectionPanel);
+	commandPanel = std::make_shared<CommandPanel>(simulationApp); fpns.push_back(&*commandPanel);
+	parameterPanel = std::make_shared<ParameterPanel>(simulationApp); fpns.push_back(&*parameterPanel);
+	languagePanel = std::make_shared<LanguagePanel>(simulationApp); fpns.push_back(&*languagePanel);
+	aboutPanel = std::make_shared<AboutPanel>(simulationApp); fpns.push_back(&*aboutPanel);
 
 	// menuPanel 放在后面是因为要等 float_panel 先加载完。
 	// menuPanel 放在后面是因为要等 float_panel 先加载完。
 	// 这主要是 BtFPn 的原因。
-	menuPanel = std::make_shared<MenuPanel>(cur);
-	bottomPanel = std::make_shared<BottomPanel>(cur);
+	menuPanel = std::make_shared<MenuPanel>(simulationApp);
+	bottomPanel = std::make_shared<BottomPanel>(simulationApp);
 }
-void UserInterface::Update(SimulationApp& cur) {
-	menuPanel->Update(cur);
-	bottomPanel->Update(cur);
-	for (auto fp : fpns) { fp->Update(cur); }
+void UserInterface::Update(SimulationApp& simulationApp) {
+	menuPanel->Update(simulationApp);
+	bottomPanel->Update(simulationApp);
+	for (auto fp : fpns) { fp->Update(simulationApp); }
 }
-void UserInterface::PreUpdate(SimulationApp& cur) {
-	menuPanel->PreUpdate(cur);
-	bottomPanel->PreUpdate(cur);
+void UserInterface::PreUpdate(SimulationApp& simulationApp) {
+	menuPanel->PreUpdate(simulationApp);
+	bottomPanel->PreUpdate(simulationApp);
 	SortFloatPanels();
-	for (auto fp : fpns) { fp->PreUpdate(cur); }
+	for (auto fp : fpns) { fp->PreUpdate(simulationApp); }
 }
 
 

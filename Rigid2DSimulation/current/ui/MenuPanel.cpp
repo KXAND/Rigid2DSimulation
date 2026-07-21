@@ -65,7 +65,7 @@ void DisplayButton::OnClick(App& app) {
 
 MenuPanel::MenuPanel(App& app) : Panel(Panel::CreateMenuPanel(app)) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	vector<Control*> tmp;
+	vector<Control*> controls;
 	pauseButton = std::make_shared<PauseButton>(); resetButton = std::make_shared<ResetButton>(); muteButton = std::make_shared<MuteButton>();
 	globalPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->globalPanel);
 	bodyPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->bodyPanel);
@@ -75,11 +75,11 @@ MenuPanel::MenuPanel(App& app) : Panel(Panel::CreateMenuPanel(app)) {
 	parameterPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->parameterPanel);
 	languagePanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->languagePanel);
 	aboutPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->aboutPanel);
-	tmp = { &*pauseButton, &*resetButton, &*muteButton, &*globalPanelButton,
+	controls = { &*pauseButton, &*resetButton, &*muteButton, &*globalPanelButton,
 		&*bodyPanelButton, &*connectionPanelButton, &*modeButton, &*displayButton,
 		&*commandPanelButton, &*parameterPanelButton, &*languagePanelButton, &*aboutPanelButton };
-	controls = std::make_shared<VerticalControlList>(tmp);
-	contentControl = &*controls;
+	this->controls = std::make_shared<VerticalControlList>(controls);
+	contentControl = &*this->controls;
 	Init(app);
 }
 

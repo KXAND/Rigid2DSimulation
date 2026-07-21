@@ -185,4 +185,4 @@
 | 6 | `refactor(common): clarify scene state names` | 已完成 | `Background`、配置读取工具和 `SimulationApp` 的集合局部变量 | 场景逻辑、网格算法和 DSL 键 |
 | 7 | `refactor(rigid): clarify physics data names` | 已完成 | `Body`、`Shape`、`Connection`、`Collision`、`Group` 的字段、接口、常量和直接调用点 | 物理公式、序列化布局和碰撞流程 |
 | 8 | `refactor(rigid): clarify scene builder names` | 已完成 | `Creator`、`SceneBuilders`、`ShapeBuiltins` 的参数、局部变量和直接调用点 | 创建流程、DSL 语法和配置键 |
-| 9 | `refactor(ui): clarify panel local names` | 待执行 | `UserInterface` 应用参数和各面板控件列表局部变量 | 面板业务逻辑、资源字符串键和排版 |
+| 9 | `refactor(ui): clarify panel local names` | 已完成 | `UserInterface` 应用参数和各面板控件列表局部变量 | 面板业务逻辑、资源字符串键和排版 |
