@@ -15,5 +15,5 @@ struct Aabb {
 
 	void Expand(Vector2 v);
 };
-bool IsOverlap(Aabb const& b0, Aabb const& b1);
+bool IsOverlap(Aabb const& box0, Aabb const& box1);
 

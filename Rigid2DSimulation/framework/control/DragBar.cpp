@@ -57,9 +57,9 @@ void HorizontalDragBar::Discard(App& app) {
 	dragged = hovered = false;
 }
 void HorizontalDragBar::PreUpdate(App& app) {
-	bool ok = app.inputOwners.hoveredDepth <= depth &&
+	bool canReceivePointer = app.inputOwners.hoveredDepth <= depth &&
 		IsInside(app.input.mousePosition, { GetNodeTopLeft(), nodeWidth, nodeHeight }) && IsInside(app.input.mousePosition, viewport);
-	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
+	if (canReceivePointer) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
 LocalizedHorizontalDragBar::LocalizedHorizontalDragBar(wstring const& id, int width) : HorizontalDragBar(width), textId(id) {}

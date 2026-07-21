@@ -1,20 +1,20 @@
 #include "Aabb.h"
 
-Aabb::Aabb(Aabb const& b0, Aabb const& b1) {
-	x0 = min(b0.x0, b1.x0);
-	x1 = max(b0.x1, b1.x1);
-	y0 = min(b0.y0, b1.y0);
-	y1 = max(b0.y1, b1.y1);
+Aabb::Aabb(Aabb const& firstBox, Aabb const& secondBox) {
+	x0 = min(firstBox.x0, secondBox.x0);
+	x1 = max(firstBox.x1, secondBox.x1);
+	y0 = min(firstBox.y0, secondBox.y0);
+	y1 = max(firstBox.y1, secondBox.y1);
 }
-void Aabb::Expand(Vector2 v) {
-	x0 = min(v.x, x0);
-	x1 = max(v.x, x1);
-	y0 = min(v.y, y0);
-	y1 = max(v.y, y1);
+void Aabb::Expand(Vector2 point) {
+	x0 = min(point.x, x0);
+	x1 = max(point.x, x1);
+	y0 = min(point.y, y0);
+	y1 = max(point.y, y1);
 }
 
 bool IsOverlap(Aabb const& box0, Aabb const& box1) {
-	bool bx = max(box0.x0, box1.x0) <= min(box0.x1, box1.x1);
-	bool by = max(box0.y0, box1.y0) <= min(box0.y1, box1.y1);
-	return bx && by;
+	bool hasXOverlap = max(box0.x0, box1.x0) <= min(box0.x1, box1.x1);
+	bool hasYOverlap = max(box0.y0, box1.y0) <= min(box0.y1, box1.y1);
+	return hasXOverlap && hasYOverlap;
 }

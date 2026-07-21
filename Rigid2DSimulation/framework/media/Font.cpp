@@ -7,8 +7,8 @@ Tile const& Font::operator[](wchar_t character) const {
 	return it == glyphs.end() ? missing : it->second;
 }
 wstring Font::GenerateRandomText(int count) const {
-	wstring s;
-	for (int i = (0), iEnd = int(count); i < iEnd; ++i) { s += chineseCharacters[GenerateRandomInt(chineseCharacters.size())]; } return s;
+	wstring text;
+	for (int i = (0), iEnd = int(count); i < iEnd; ++i) { text += chineseCharacters[GenerateRandomInt(chineseCharacters.size())]; } return text;
 }
 
 bool Font::LoadFont(wstring const& name, wchar_t character) {

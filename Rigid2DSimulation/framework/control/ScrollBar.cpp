@@ -49,9 +49,9 @@ void VerticalScrollBar::Discard(App& app) {
 	app.inputOwners.Remove(this); dragged = hovered = hasOverflow = hoveredThumb = false;
 }
 void VerticalScrollBar::PreUpdate(App& app) {
-	bool ok = app.inputOwners.hoveredDepth <= depth &&
+	bool canReceivePointer = app.inputOwners.hoveredDepth <= depth &&
 		IsInside(app.input.mousePosition, { topLeft, width, height }) && IsInside(app.input.mousePosition, app.screen.Rect());
-	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
+	if (canReceivePointer) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
 

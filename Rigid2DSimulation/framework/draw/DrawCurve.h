@@ -3,5 +3,5 @@
 #include "Tile.h"
 
 void DrawEllipseBorder(Tile& targetTile, DepthBuffer& zBuffer, double depth,
-	Vector2 center, double axisX, double axisY, DRect viewPort, Color color, int n);
+	Vector2 center, double horizontalRadius, double verticalRadius, DRect viewport, Color color, int segmentCount);
 

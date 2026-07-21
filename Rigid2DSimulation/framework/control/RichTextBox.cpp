@@ -298,13 +298,13 @@ void RichTextBox::Discard(App& app) {
 void RichTextBox::PreUpdate(App& app) {
 	if (edit) { app.inputOwners.keyboardOwner = this; }
 
-	bool ok = app.inputOwners.hoveredDepth <= depth &&
+	bool canReceivePointer = app.inputOwners.hoveredDepth <= depth &&
 		IsInside(app.input.mousePosition, { topLeft, width, height }) && IsInside(app.input.mousePosition, viewport);
-	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
+	if (canReceivePointer) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 
-	ok = app.inputOwners.wheeledDepth <= depth &&
+	bool canReceiveWheel = app.inputOwners.wheeledDepth <= depth &&
 		IsInside(app.input.mousePosition, { topLeft, width, height }) && IsInside(app.input.mousePosition, viewport);
-	if (ok) { app.inputOwners.wheeledDepth = depth; app.inputOwners.wheeled = this; }
+	if (canReceiveWheel) { app.inputOwners.wheeledDepth = depth; app.inputOwners.wheeled = this; }
 }
 
 

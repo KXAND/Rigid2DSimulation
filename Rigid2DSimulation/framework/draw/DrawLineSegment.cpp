@@ -39,11 +39,11 @@ void ClipLineEndpointAtY(DVector2& endpoint, DVector2 const& otherEndpoint,
 
 // 好像这里经常发生溢出问题，不知能不能处理一下。
 // 把 int 换成 long long 了，应该会有帮助。
-bool ClipLineSegment(DVector2& firstPoint, DVector2& secondPoint, DRect viewPort) {
-	long long left = viewPort.GetLeft();
-	long long right = viewPort.GetRight() - 1;
-	long long top = viewPort.GetTop();
-	long long bottom = viewPort.GetBottom() - 1;
+bool ClipLineSegment(DVector2& firstPoint, DVector2& secondPoint, DRect viewport) {
+	long long left = viewport.GetLeft();
+	long long right = viewport.GetRight() - 1;
+	long long top = viewport.GetTop();
+	long long bottom = viewport.GetBottom() - 1;
 
 	// 线性插值
 	// 下面假设了不会发生除以 0 的问题。
@@ -65,10 +65,10 @@ bool ClipLineSegment(DVector2& firstPoint, DVector2& secondPoint, DRect viewPort
 	return true;
 }
 void DrawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
-	DVector2 firstPoint, DVector2 secondPoint, double depth, DRect viewPort, Color color)
+	DVector2 firstPoint, DVector2 secondPoint, double depth, DRect viewport, Color color)
 {
-	if (viewPort.width <= 0 || viewPort.height <= 0) { return; }
-	if (!ClipLineSegment(firstPoint, secondPoint, viewPort)) { return; }
+	if (viewport.width <= 0 || viewport.height <= 0) { return; }
+	if (!ClipLineSegment(firstPoint, secondPoint, viewport)) { return; }
 
 	bool isYAxisMajor = false;
 	int x = firstPoint.x; int y = firstPoint.y;
@@ -96,8 +96,8 @@ void DrawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
 	}
 }
 void DrawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
-	Vector2 firstPoint, Vector2 secondPoint, double depth, DRect viewPort, Color color)
+	Vector2 firstPoint, Vector2 secondPoint, double depth, DRect viewport, Color color)
 {
-	DrawLineSegment(targetTile, zBuffer, (DVector2)firstPoint, (DVector2)secondPoint, depth, viewPort, color);
+	DrawLineSegment(targetTile, zBuffer, (DVector2)firstPoint, (DVector2)secondPoint, depth, viewport, color);
 }
 

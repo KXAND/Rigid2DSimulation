@@ -36,19 +36,19 @@ DRect TextBox::GetTextViewport() const {
 	return GetOverlapRect(viewport, { textViewportTopLeft, textViewportWidth, height });
 }
 wstring TextBox::GetLeftText() const {
-	auto a = value.begin();
-	auto b = value.begin() + GetEditBegin();
-	return wstring(a, b);
+	auto rangeBegin = value.begin();
+	auto rangeEnd = value.begin() + GetEditBegin();
+	return wstring(rangeBegin, rangeEnd);
 }
 wstring TextBox::GetSelectedText() const {
-	auto a = value.begin() + GetEditBegin();
-	auto b = value.begin() + GetEditEnd();
-	return wstring(a, b);
+	auto rangeBegin = value.begin() + GetEditBegin();
+	auto rangeEnd = value.begin() + GetEditEnd();
+	return wstring(rangeBegin, rangeEnd);
 }
 wstring TextBox::GetRightText() const {
-	auto a = value.begin() + GetEditEnd();
-	auto b = value.end();
-	return wstring(a, b);
+	auto rangeBegin = value.begin() + GetEditEnd();
+	auto rangeEnd = value.end();
+	return wstring(rangeBegin, rangeEnd);
 }
 int TextBox::GetEditBegin() const { return min(selectionStart, selectionEnd); }
 int TextBox::GetEditEnd() const { return max(selectionStart, selectionEnd); }
@@ -80,7 +80,7 @@ void TextBox::AddCharacters(App& app) {
 }
 void TextBox::HandleLeft(App& app) {
 	selecting = false; 
-	cursor_change = true;
+	isCursorChanged = true;
 
 	if (HasSelection()) { selectionStart = selectionEnd = GetEditBegin(); }
 	else {
@@ -90,7 +90,7 @@ void TextBox::HandleLeft(App& app) {
 }
 void TextBox::HandleRight(App& app) {
 	selecting = false; 
-	cursor_change = true;
+	isCursorChanged = true;
 
 	if (HasSelection()) { selectionStart = selectionEnd = GetEditEnd(); }
 	else {
@@ -101,7 +101,7 @@ void TextBox::HandleRight(App& app) {
 }
 void TextBox::HandleBackspace(App& app) {
 	selecting = false; 
-	cursor_change = true;
+	isCursorChanged = true;
 
 	if (HasSelection()) {
 		value = GetLeftText() + GetRightText();
@@ -109,23 +109,23 @@ void TextBox::HandleBackspace(App& app) {
 	} else if (GetEditBegin() > 0) {
 		valueOffsetX += app.font[value[selectionStart]].width;
 		valueOffsetX = min<double>(valueOffsetX, editMarginWidth);
-		auto a = value.begin();
-		auto b = value.begin() + selectionStart - 1;
-		value = wstring(a, b) + GetRightText();
+		auto rangeBegin = value.begin();
+		auto rangeEnd = value.begin() + selectionStart - 1;
+		value = wstring(rangeBegin, rangeEnd) + GetRightText();
 		selectionEnd = --selectionStart;
 	}
 }
 void TextBox::HandleDelete(App& app) {
 	selecting = false; 
-	cursor_change = true;
+	isCursorChanged = true;
 
 	if (HasSelection()) {
 		value = GetLeftText() + GetRightText();
 		selectionStart = selectionEnd = GetEditBegin();
 	} else if (GetEditEnd() < value.size()) {
-		auto a = value.begin() + selectionStart + 1;
-		auto b = value.end();
-		value = GetLeftText() + wstring(a, b);
+		auto rangeBegin = value.begin() + selectionStart + 1;
+		auto rangeEnd = value.end();
+		value = GetLeftText() + wstring(rangeBegin, rangeEnd);
 	}
 }
 void TextBox::HandleCut(App& app) {
@@ -146,7 +146,7 @@ void TextBox::HandleSelectAll(App& app) {
 	selectionStart = 0; selectionEnd = value.size();
 }
 void TextBox::HandleKey(App& app) {
-	cursor_change = false;
+	isCursorChanged = false;
 
 	if (app.input.keyMessageCounts[VK_LEFT]) { HandleLeft(app); }
 	else if (app.input.keyMessageCounts[VK_RIGHT]) { HandleRight(app); }
@@ -162,10 +162,10 @@ void TextBox::HandleKey(App& app) {
 }
 
 void TextBox::ClampSelectingCursor(App& app) {
-	double val = (app.input.mousePosition.x - GetBoxTopLeft().x) - GetMaxCursorX();
-	if (val > 0) { valueOffsetX -= app.frameRate.GetDeltaTime() * slideMultiplier * val; }
-	val = editMarginWidth - (app.input.mousePosition.x - GetBoxTopLeft().x);
-	if (val > 0) { valueOffsetX += app.frameRate.GetDeltaTime() * slideMultiplier * val; }
+	double cursorOverflow = (app.input.mousePosition.x - GetBoxTopLeft().x) - GetMaxCursorX();
+	if (cursorOverflow > 0) { valueOffsetX -= app.frameRate.GetDeltaTime() * slideMultiplier * cursorOverflow; }
+	cursorOverflow = editMarginWidth - (app.input.mousePosition.x - GetBoxTopLeft().x);
+	if (cursorOverflow > 0) { valueOffsetX += app.frameRate.GetDeltaTime() * slideMultiplier * cursorOverflow; }
 }
 void TextBox::ClampCursor(App& app) {
 	if (GetCursorX(app) > GetMaxCursorX()) {
@@ -203,9 +203,9 @@ void TextBox::RenderMain(App& app) {
 	DrawString(app.screen, app.depthBuffer, depth, GetRightText(), valueColor, app.font, valueTopLeft, cursorX, 0, GetTextViewport());
 }
 void TextBox::RenderCursor(App& app) {
-	bool show_cursor = edit &&
-		(sin(app.frameRate.GetElapsedTime() * blinkMultiplier) > 0 || cursor_change);
-	if (show_cursor) {
+	bool isCursorVisible = edit &&
+		(sin(app.frameRate.GetElapsedTime() * blinkMultiplier) > 0 || isCursorChanged);
+	if (isCursorVisible) {
 		int cursorScreenX = GetBoxTopLeft().x + GetCursorX(app) - cursorWidth / 2;
 		int cursorScreenY = GetBoxTopLeft().y + (height - cursorHeight) / 2;
 		DrawRectangleRaw(app.screen, { cursorScreenX, cursorScreenY }, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
@@ -241,15 +241,15 @@ void TextBox::Update(App& app) {
 void TextBox::Discard(App& app) {
 	app.inputOwners.Remove(this); app.inputOwners.ReleaseKeyboard(this);
 	labelTextWidth = 0; edit = hovered = false;
-	selecting = cursor_change = false;
+	selecting = isCursorChanged = false;
 	selectionStart = selectionEnd = 0;
 }
 void TextBox::PreUpdate(App& app) {
 	if (edit) { app.inputOwners.keyboardOwner = this; }
 
-	bool ok = app.inputOwners.hoveredDepth <= depth &&
+	bool canReceivePointer = app.inputOwners.hoveredDepth <= depth &&
 		IsInside(app.input.mousePosition, { GetBoxTopLeft(), width, height }) && IsInside(app.input.mousePosition, viewport);
-	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
+	if (canReceivePointer) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
 LocalizedTextBox::LocalizedTextBox(wstring const& id, int width) : TextBox(width), labelTextId(id) {}

@@ -32,6 +32,8 @@
 - 函数内普通 `const` 变量仍使用 lower camel。
 - 允许上下文清晰的数学或通用缩写：`x`、`y`、`dx`、`dy`、`id`、`ui`、`rgb`、`size`、`cnt`。
 - 容器或文本长度在无歧义时使用 `size`；需要区分对象时使用 `<对象>Len`。
+- `config` 是允许的工程常用缩写；需要限定领域时使用 `<对象>Config`，例如 `bodyConfig`、`shapeConfigs`。不使用 `cfg`。
+- 当前值使用完整单词 `current`；长度使用 `Len` 后缀，例如 `currentLen`，不使用 `currLen`。
 - 禁止项目内部含义不明的缩写、成员前缀和类型前缀，例如 `bo`、`mbs`、`_shs`、`m_`。
 - C 标准库、Windows SDK 和第三方库的类型、函数、宏名称必须保持其外部接口拼写，例如 `FILE`、`fread`、`fwrite`。
 

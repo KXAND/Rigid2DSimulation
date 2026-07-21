@@ -5,18 +5,18 @@ void DrawTileRaw(Tile& targetTile, DVector2 topLeft, Tile const& sourceTile)
 	auto targetViewport = targetTile.Rect();
 	auto sourceViewport = sourceTile.Rect();
 
-	int l = max(targetViewport.GetLeft(), topLeft.x);
-	int r = min(targetViewport.GetRight(), topLeft.x + sourceViewport.width);
-	int t = max(targetViewport.GetTop(), topLeft.y);
-	int b = min(targetViewport.GetBottom(), topLeft.y + sourceViewport.height);
-	if (l >= r || t >= b) { return; } // 坐标系为左上为原点，所以正常情况是 l<r, t<b
+	int left = max(targetViewport.GetLeft(), topLeft.x);
+	int right = min(targetViewport.GetRight(), topLeft.x + sourceViewport.width);
+	int top = max(targetViewport.GetTop(), topLeft.y);
+	int bottom = min(targetViewport.GetBottom(), topLeft.y + sourceViewport.height);
+	if (left >= right || top >= bottom) { return; } // 坐标系为左上为原点，所以正常情况是 left<right, top<bottom
 
-	for (int j = (t), jEnd = int(b); j < jEnd; ++j)
+	for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
 	{
-		int targetPixelIndex = j * targetTile.width + l;
+		int targetPixelIndex = j * targetTile.width + left;
 		int sourcePixelIndex = (j - topLeft.y + sourceViewport.GetTop()) * sourceTile.width +
-			(l - topLeft.x + sourceViewport.GetLeft());//将点/像素从世界坐标系转换到scrtile的内部坐标系
-		int rowSize = sizeof(Color) * (r - l);
+			(left - topLeft.x + sourceViewport.GetLeft());//将点/像素从世界坐标系转换到scrtile的内部坐标系
+		int rowSize = sizeof(Color) * (right - left);
 		memcpy(targetTile.colors.data() + targetPixelIndex, sourceTile.colors.data() + sourcePixelIndex, rowSize);
 	}
 }
@@ -24,18 +24,18 @@ void DrawTileRaw(Tile& targetTile, DVector2 topLeft, Tile const& sourceTile)
 void DrawTile(Tile& targetTile, DepthBuffer& depthBuffer, double depth, DVector2 topLeft,
 	DRect targetViewport, Tile const& sourceTile, DRect sourceViewport)
 {
-	int l = max(targetViewport.GetLeft(), topLeft.x);
-	int r = min(targetViewport.GetRight(), topLeft.x + sourceViewport.width);
-	int t = max(targetViewport.GetTop(), topLeft.y);
-	int b = min(targetViewport.GetBottom(), topLeft.y + sourceViewport.height);
-	if (l >= r || t >= b) { return; }
+	int left = max(targetViewport.GetLeft(), topLeft.x);
+	int right = min(targetViewport.GetRight(), topLeft.x + sourceViewport.width);
+	int top = max(targetViewport.GetTop(), topLeft.y);
+	int bottom = min(targetViewport.GetBottom(), topLeft.y + sourceViewport.height);
+	if (left >= right || top >= bottom) { return; }
 
-	for (int j = (t), jEnd = int(b); j < jEnd; ++j)
+	for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
 	{
-		int targetPixelIndex = j * targetTile.width + l;
+		int targetPixelIndex = j * targetTile.width + left;
 		int sourcePixelIndex = (j - topLeft.y + sourceViewport.GetTop()) * sourceTile.width +
-			(l - topLeft.x + sourceViewport.GetLeft());
-		for (int i = (l), iEnd = int(r); i < iEnd; ++i)
+			(left - topLeft.x + sourceViewport.GetLeft());
+		for (int i = (left), iEnd = int(right); i < iEnd; ++i)
 		{
 			if (depthBuffer[targetPixelIndex] <= depth && sourceTile.alphaValues[sourcePixelIndex] != 0)
 			{

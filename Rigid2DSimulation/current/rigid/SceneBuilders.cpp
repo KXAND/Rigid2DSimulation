@@ -12,24 +12,24 @@ void CreateBody(SimulationApp& simulationApp, Value const& shapeConfigurations, 
 	TryReadConfigNumber(configuration, L"point", point);
 	std::shared_ptr<Body> body;
 	vector<std::shared_ptr<Shape>> shapes;
-	for (auto v : shapeConfigurations.elements)
+	for (auto shapeConfig : shapeConfigurations.elements)
 	{
-		if (v->elements.empty()) { continue; }
+		if (shapeConfig->elements.empty()) { continue; }
 		std::shared_ptr<Shape> shape;
-		if (v->elements[0]->number)
+		if (shapeConfig->elements[0]->number)
 		{
-			if (v->elements.size() < 2) { continue; }
+			if (shapeConfig->elements.size() < 2) { continue; }
 			Vector2 relativePosition;
-			if (v->elements.size() >= 3) { relativePosition = ToVector2(*v->elements[2]); }
-			shape = std::make_shared<Shape>(v->elements[1]->number, relativePosition);
+			if (shapeConfig->elements.size() >= 3) { relativePosition = ToVector2(*shapeConfig->elements[2]); }
+			shape = std::make_shared<Shape>(shapeConfig->elements[1]->number, relativePosition);
 		}
 		else
 		{
-			if (v->elements.size() < 2) { continue; }
+			if (shapeConfig->elements.size() < 2) { continue; }
 			vector<Vector2> vertices;
-			for (auto w : v->elements[1]->elements)
+			for (auto vertexValue : shapeConfig->elements[1]->elements)
 			{
-				vertices.push_back(ToVector2(*w));
+				vertices.push_back(ToVector2(*vertexValue));
 			}
 			shape = std::make_shared<Shape>(vertices);
 		}
@@ -134,10 +134,10 @@ void Gear(SimulationApp& simulationApp, Value const& radius, Value const& toothC
 		double phi0 = 2 * kPi * i / (int)toothCount.number;
 		double phi1 = 2 * kPi * (i + 1) / (int)toothCount.number;
 		double phi = (phi0 + phi1) / 2;
-		Vector2 v = Vector2(cos(phi), sin(phi)) * (radius.number + toothHeight.number);
+		Vector2 toothTip = Vector2(cos(phi), sin(phi)) * (radius.number + toothHeight.number);
 		Vector2 v0 = Vector2(cos(phi0), sin(phi0)) * radius.number;
 		Vector2 v1 = Vector2(cos(phi1), sin(phi1)) * radius.number;
-		shapes.push_back(std::make_shared<Shape>(vector<Vector2>{ v0, v, v1 }));
+		shapes.push_back(std::make_shared<Shape>(vector<Vector2>{ v0, toothTip, v1 }));
 	}
 	auto wheel = std::make_shared<Body>(shapes);
 	wheel->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
@@ -161,10 +161,10 @@ void Strand(SimulationApp& simulationApp, Value const& point0Value, Value const&
 	Value const& countValue, Value const& ratio, Value const& bodyConfiguration, Value const& connectionConfiguration)
 {
 	Vector2 p0 = ToVector2(point0Value), p1 = ToVector2(point1Value);
-	int n = countValue.number;
+	int bodyCount = countValue.number;
 	std::shared_ptr<Body> previousBody, currentBody;
 	std::shared_ptr<Connection> connection;
-	double segmentLength = (p1 - p0).GetLength() / n;
+	double segmentLength = (p1 - p0).GetLength() / bodyCount;
 	double bodyRadius = 0.5 * ratio.number * segmentLength;
 	double gap = max(0.0, segmentLength - 2 * bodyRadius);
 	Color bodyColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
@@ -174,11 +174,11 @@ void Strand(SimulationApp& simulationApp, Value const& point0Value, Value const&
 	previousBody->ReadConfig(bodyConfiguration);
 	previousBody->Init();
 	simulationApp.bodies.push_back(previousBody);
-	for (int i = (1), iEnd = int(n + 1); i < iEnd; ++i)
+	for (int i = (1), iEnd = int(bodyCount + 1); i < iEnd; ++i)
 	{
 		currentBody = std::make_shared<Body>(std::make_shared<Shape>(bodyRadius));
 		currentBody->innerColor = bodyColor;
-		currentBody->position = (p0 * (n - i) + p1 * i) / n;
+		currentBody->position = (p0 * (bodyCount - i) + p1 * i) / bodyCount;
 		currentBody->ReadConfig(bodyConfiguration);
 		currentBody->Init();
 		simulationApp.bodies.push_back(currentBody);
@@ -200,10 +200,10 @@ void Necklace(SimulationApp& simulationApp, Value const& centerValue, Value cons
 	Value const& countValue, Value const& ratio, Value const& bodyConfiguration, Value const& connectionConfiguration)
 {
 	std::shared_ptr<Body> firstBody, previousBody, currentBody;
-	int n = countValue.number;
+	int bodyCount = countValue.number;
 	Vector2 center = ToVector2(centerValue);
 	std::shared_ptr<Connection> connection;
-	double segmentLength = 2 * kPi * radius.number / n;
+	double segmentLength = 2 * kPi * radius.number / bodyCount;
 	double ballRadius = 0.5 * ratio.number * segmentLength;
 	double gap = max(0.0, segmentLength - 2 * ballRadius);
 	Color bodyColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
@@ -214,9 +214,9 @@ void Necklace(SimulationApp& simulationApp, Value const& centerValue, Value cons
 	previousBody->Init();
 	simulationApp.bodies.push_back(previousBody);
 	firstBody = previousBody;
-	for (int i = (1), iEnd = int(n); i < iEnd; ++i)
+	for (int i = (1), iEnd = int(bodyCount); i < iEnd; ++i)
 	{
-		double phi = 2 * kPi * i / n;
+		double phi = 2 * kPi * i / bodyCount;
 		currentBody = std::make_shared<Body>(std::make_shared<Shape>(ballRadius));
 		currentBody->innerColor = bodyColor;
 		currentBody->position = center + Vector2(cos(phi), sin(phi)) * radius.number;
@@ -228,7 +228,7 @@ void Necklace(SimulationApp& simulationApp, Value const& centerValue, Value cons
 		connection->body1 = &*currentBody;
 		connection->length = gap;
 		connection->p1Relative = ballRadius * Vector2(+sin(phi), -cos(phi));
-		phi = 2 * kPi * (i - 1) / n;
+		phi = 2 * kPi * (i - 1) / bodyCount;
 		connection->p0Relative = ballRadius * Vector2(-sin(phi), +cos(phi));
 		connection->ReadConfig(connectionConfiguration);
 		connection->SignUpToBodies();
@@ -236,14 +236,14 @@ void Necklace(SimulationApp& simulationApp, Value const& centerValue, Value cons
 		simulationApp.connections.push_back(connection);
 		previousBody = currentBody;
 	}
-	double phi = 2 * kPi * n / n;
+	double phi = 2 * kPi * bodyCount / bodyCount;
 	currentBody = firstBody;
 	connection = std::make_shared<Connection>();
 	connection->body0 = &*previousBody;
 	connection->body1 = &*currentBody;
 	connection->length = gap;
 	connection->p1Relative = ballRadius * Vector2(+sin(phi), -cos(phi));
-	phi = 2 * kPi * (n - 1) / n;
+	phi = 2 * kPi * (bodyCount - 1) / bodyCount;
 	connection->p0Relative = ballRadius * Vector2(-sin(phi), +cos(phi));
 	connection->ReadConfig(connectionConfiguration);
 	connection->SignUpToBodies();

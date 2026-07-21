@@ -7,14 +7,14 @@ BodyScriptEditor::BodyScriptEditor() : RichTextBox(360, 400) {}
 void BodyScriptEditor::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); value = simulationApp.bodySelecting->temporaryScriptText; }
 void BodyScriptEditor::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->temporaryScriptText = value; }
 
-ApplyBodyButton::ApplyBodyButton() : LocalizedButton(70, L"bt_body_ok") {}
+ApplyBodyButton::ApplyBodyButton() : LocalizedButton(70, L"applyBodyButton") {}
 void ApplyBodyButton::OnClick(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto& selectedBody = *simulationApp.bodySelecting;
 	selectedBody.scriptText = selectedBody.temporaryScriptText;
 	selectedBody.RefreshFromScript(simulationApp);
 }
-DeleteBodyButton::DeleteBodyButton() : LocalizedButton(70, L"bt_body_del") {}
+DeleteBodyButton::DeleteBodyButton() : LocalizedButton(70, L"deleteBodyButton") {}
 void DeleteBodyButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->isMarkedForDeletion = true; simulationApp.isSceneChanged = true; }
 
 
@@ -26,15 +26,15 @@ void BodyConnectionLabel::Sync(App& app) {
 	auto* connection = simulationApp.bodySelecting->connections[id];
 	wstring type;
 	switch (connection->type) {
-	case kRopeConnection: type = simulationApp.GetLocalizedString(L"conn_rope"); break;
-	case kLinkConnection: type = simulationApp.GetLocalizedString(L"conn_link"); break;
-	case kSpringConnection: type = simulationApp.GetLocalizedString(L"conn_spring"); break;
-	case kCordConnection: type = simulationApp.GetLocalizedString(L"conn_cord"); break;
+	case kRopeConnection: type = simulationApp.GetLocalizedString(L"ropeConnection"); break;
+	case kLinkConnection: type = simulationApp.GetLocalizedString(L"linkConnection"); break;
+	case kSpringConnection: type = simulationApp.GetLocalizedString(L"springConnection"); break;
+	case kCordConnection: type = simulationApp.GetLocalizedString(L"cordConnection"); break;
 	}
 	text = simulationApp.GetLocalizedString(L"conn") + std::to_wstring(id) + L": " + type;
 }
 
-SelectBodyConnectionCheckBox::SelectBodyConnectionCheckBox(int id) : id(id), LocalizedCheckBox(L"cb_body_con") {}
+SelectBodyConnectionCheckBox::SelectBodyConnectionCheckBox(int id) : id(id), LocalizedCheckBox(L"selectBodyConnection") {}
 void SelectBodyConnectionCheckBox::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); checked = (simulationApp.connectionSelecting == simulationApp.bodySelecting->connections[id]); }
 void SelectBodyConnectionCheckBox::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting = checked ? simulationApp.bodySelecting->connections[id] : NULL; }
 
@@ -86,25 +86,25 @@ void BodyEditorControls::Discard(App& app) {
 void BodyDetailsLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto* selectedBody = simulationApp.bodySelecting;
-	if (!selectedBody) { text = simulationApp.GetLocalizedString(L"body_not_sel"); return; }
+	if (!selectedBody) { text = simulationApp.GetLocalizedString(L"noBodySelected"); return; }
 	auto& body = *selectedBody;
 	text.clear();
 
-	text += simulationApp.GetLocalizedString(L"body_o") + ToWString(body.position) + L"\n";
-	text += simulationApp.GetLocalizedString(L"body_v") + ToWString(body.velocity) + L"\n";
-	text += simulationApp.GetLocalizedString(L"body_ang") + FormatFixed2(body.radian) + L"\n";
-	text += simulationApp.GetLocalizedString(L"body_v_ang") + FormatFixed2(body.velocityAngular) + L"\n";
-	text += simulationApp.GetLocalizedString(L"body_fixed") + std::to_wstring(body.fixed) + L"\n";
-	text += simulationApp.GetLocalizedString(L"body_density") + FormatFixed2(body.density) + L"\n";
-	text += simulationApp.GetLocalizedString(L"body_charge_density") + FormatFixed2(body.chargeDensity) + L"\n";
-	text += simulationApp.GetLocalizedString(L"body_e") + FormatFixed2(body.elasticity) + L"\n";
-	text += simulationApp.GetLocalizedString(L"body_mu_s") + FormatFixed2(body.frictionStatic) + L"\n";
-	text += simulationApp.GetLocalizedString(L"body_mu_d") + FormatFixed2(body.frictionDynamic) + L"\n";
-	text += simulationApp.GetLocalizedString(L"body_damp_v") + FormatFixed2(body.dampCoeff) + L"\n";
-	text += simulationApp.GetLocalizedString(L"body_damp_v_ang") + FormatFixed2(body.dampCoeffAngular) + L"\n";
+	text += simulationApp.GetLocalizedString(L"bodyPosition") + ToWString(body.position) + L"\n";
+	text += simulationApp.GetLocalizedString(L"bodyVelocity") + ToWString(body.velocity) + L"\n";
+	text += simulationApp.GetLocalizedString(L"bodyAngle") + FormatFixed2(body.radian) + L"\n";
+	text += simulationApp.GetLocalizedString(L"bodyAngularVelocity") + FormatFixed2(body.velocityAngular) + L"\n";
+	text += simulationApp.GetLocalizedString(L"bodyFixed") + std::to_wstring(body.fixed) + L"\n";
+	text += simulationApp.GetLocalizedString(L"bodyDensity") + FormatFixed2(body.density) + L"\n";
+	text += simulationApp.GetLocalizedString(L"bodyChargeDensity") + FormatFixed2(body.chargeDensity) + L"\n";
+	text += simulationApp.GetLocalizedString(L"bodyElasticity") + FormatFixed2(body.elasticity) + L"\n";
+	text += simulationApp.GetLocalizedString(L"bodyStaticFriction") + FormatFixed2(body.frictionStatic) + L"\n";
+	text += simulationApp.GetLocalizedString(L"bodyDynamicFriction") + FormatFixed2(body.frictionDynamic) + L"\n";
+	text += simulationApp.GetLocalizedString(L"bodyVelocityDamping") + FormatFixed2(body.dampCoeff) + L"\n";
+	text += simulationApp.GetLocalizedString(L"bodyAngularVelocityDamping") + FormatFixed2(body.dampCoeffAngular) + L"\n";
 }
 
-BodyPanel :: BodyPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_body") {
+BodyPanel :: BodyPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"bodyPanelTitle") {
 	vector<Control*> controls;
 	editorControls = std::make_shared<BodyEditorControls>(); detailsLabel = std::make_shared<BodyDetailsLabel>();
 	controls = { &*editorControls, &*detailsLabel };

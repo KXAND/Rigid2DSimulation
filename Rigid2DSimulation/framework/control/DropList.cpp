@@ -92,9 +92,9 @@ void DropList::Discard(App& app) {
 }
 void DropList::PreUpdate(App& app) {
 	int visibleHeight = height + (edit ? itemCount * itemHeight : 0);
-	bool ok = app.inputOwners.hoveredDepth <= depth &&
+	bool canReceivePointer = app.inputOwners.hoveredDepth <= depth &&
 		IsInside(app.input.mousePosition, { GetBoxTopLeft(), width, visibleHeight}) && IsInside(app.input.mousePosition, viewport);
-	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
+	if (canReceivePointer) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
 LocalizedDropList::LocalizedDropList(wstring const& id, int width, DropListItemNameProvider const& itemNameProvider) : DropList(width, itemNameProvider), textId(id) {}

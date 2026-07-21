@@ -42,9 +42,9 @@ void Button::Update(App& app) {
 }
 void Button::Discard(App& app) { app.inputOwners.Remove(this); chosen = hovered = false; }
 void Button::PreUpdate(App& app) {
-	bool ok = app.inputOwners.hoveredDepth <= depth &&
+	bool canReceivePointer = app.inputOwners.hoveredDepth <= depth &&
 		IsInside(app.input.mousePosition, { topLeft, width, height }) && IsInside(app.input.mousePosition, viewport);
-	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
+	if (canReceivePointer) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
 LocalizedButton::LocalizedButton(int width, wstring const& id) : Button(width), textId(id) {}

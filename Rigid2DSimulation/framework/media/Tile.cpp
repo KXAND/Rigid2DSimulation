@@ -9,12 +9,12 @@ const Color Color::YELLOW = Color(255, 255, 0);
 const Color Color::WHITE = Color(255, 255, 255);
 const Color Color::BLACK = Color(0, 0, 0);
 
-Color::Color(wstring const& s)
+Color::Color(wstring const& text)
 {
-	int i = 0;
-	red = FetchNumber(i, s);
-	green = FetchNumber(i, s);
-	blue = FetchNumber(i, s);
+	int position = 0;
+	red = FetchNumber(position, text);
+	green = FetchNumber(position, text);
+	blue = FetchNumber(position, text);
 }
 wstring ToWString(Color color)
 {

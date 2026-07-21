@@ -14,27 +14,27 @@ Creator::Creator()
 	thickness = 10;
 	radius = 8;
 }
-Creator::Creator(Value const& v) : Creator()
+Creator::Creator(Value const& config) : Creator()
 {
-	if (auto md = FindConfigValue(v, L"mode"))
+	if (auto modeValue = FindConfigValue(config, L"mode"))
 	{
-		if (md->type == L"str")
+		if (modeValue->type == L"str")
 		{
-			auto s = md->stringValue;
-			if (s == L"box") { mode = kCreateBox; }
-			else if (s == L"ball") { mode = kCreateBall; }
-			else if (s == L"plate") { mode = kCreatePlate; }
-			else if (s == L"connection") { mode = kCreateConnection; }
-			else if (s == L"point") { mode = kCreatePoint; }
-			else if (s == L"nail") { mode = kCreateNail; }
-			else if (s == L"particle") { mode = kCreateParticle; }
+			auto modeName = modeValue->stringValue;
+			if (modeName == L"box") { mode = kCreateBox; }
+			else if (modeName == L"ball") { mode = kCreateBall; }
+			else if (modeName == L"plate") { mode = kCreatePlate; }
+			else if (modeName == L"connection") { mode = kCreateConnection; }
+			else if (modeName == L"point") { mode = kCreatePoint; }
+			else if (modeName == L"nail") { mode = kCreateNail; }
+			else if (modeName == L"particle") { mode = kCreateParticle; }
 		}
-		else { mode = md->number; }
+		else { mode = modeValue->number; }
 	}
-	TryReadConfigNumber(v, L"thickness", thickness);
-	TryReadConfigNumber(v, L"radius", radius);
-	if (auto value = FindConfigValue(v, L"bodyConfiguration")) { bodyConfiguration = std::make_shared<Value>(*value); }
-	if (auto value = FindConfigValue(v, L"connectionConfiguration")) { connectionConfiguration = std::make_shared<Value>(*value); }
+	TryReadConfigNumber(config, L"thickness", thickness);
+	TryReadConfigNumber(config, L"radius", radius);
+	if (auto value = FindConfigValue(config, L"bodyConfiguration")) { bodyConfiguration = std::make_shared<Value>(*value); }
+	if (auto value = FindConfigValue(config, L"connectionConfiguration")) { connectionConfiguration = std::make_shared<Value>(*value); }
 }
 
 double Creator::Depth() const
@@ -88,11 +88,11 @@ void Creator::UpdateBall(SimulationApp& simulationApp)
 {
 	if (active)
 	{
-		double r = sqrt((creationStartPoint - simulationApp.input.mousePosition).GetLengthSquared());
+		double dragRadius = sqrt((creationStartPoint - simulationApp.input.mousePosition).GetLengthSquared());
 		double minimumRadius = 7.5;
-		if (r > minimumRadius)
+		if (dragRadius > minimumRadius)
 		{
-			body = std::make_shared<Body>(std::make_shared<Shape>(r));
+			body = std::make_shared<Body>(std::make_shared<Shape>(dragRadius));
 			body->position = Vector2(creationStartPoint);
 			body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (bodyConfiguration) { body->ReadConfig(*bodyConfiguration); }
@@ -123,13 +123,13 @@ void Creator::UpdatePlate(SimulationApp& simulationApp)
 	{
 		double plateThickness = thickness;
 		double minimumLength = 5;
-		DVector2 v = creationStartPoint - simulationApp.input.mousePosition;
-		double len = sqrt(v.GetLengthSquared());
-		if (len > minimumLength)
+		DVector2 dragVector = creationStartPoint - simulationApp.input.mousePosition;
+		double dragLen = sqrt(dragVector.GetLengthSquared());
+		if (dragLen > minimumLength)
 		{
-			body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(len + plateThickness, plateThickness)));
+			body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(dragLen + plateThickness, plateThickness)));
 			body->position = Vector2(creationStartPoint + simulationApp.input.mousePosition) / 2;
-			body->radian = atan2(v.y, v.x);
+			body->radian = atan2(dragVector.y, dragVector.x);
 			body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (bodyConfiguration) { body->ReadConfig(*bodyConfiguration); }
 			body->Init();

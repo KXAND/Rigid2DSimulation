@@ -28,7 +28,7 @@ struct TextBox : Control {
 	bool enabled = true;
 	bool hovered = false;
 	bool selecting = false;
-	bool cursor_change = false;
+	bool isCursorChanged = false;
 
 	TextBox(int width = 0);
 	int GetWidth() const override;

@@ -63,7 +63,7 @@ struct Body
 	Vector2 GenerateRandomPointInside() const;
 	bool IsInside(Vector2 p) const;
 	void RefreshFromScript(SimulationApp& simulationApp);
-	void ReadConfig(Value const& cfg);
+	void ReadConfig(Value const& config);
 	void UpdateShapesPositionAndAABB();
 	void Warp(DRect rectangle);
 	void RegisterGrid(SimulationApp& simulationApp);

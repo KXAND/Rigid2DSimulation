@@ -5,7 +5,7 @@
 ParameterNameTextBox::ParameterNameTextBox(int id) : id(id), TextBox(270) {};
 void ParameterNameTextBox::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); value = simulationApp.parameters[id]->name; }
 void ParameterNameTextBox::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->name = value; }
-DeleteParameterButton::DeleteParameterButton(int id) : id(id), LocalizedButton(80, L"bt_del_par") {}
+DeleteParameterButton::DeleteParameterButton(int id) : id(id), LocalizedButton(80, L"deleteParameterButton") {}
 void DeleteParameterButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->isMarkedForDeletion = true; }
 ParameterValueDragBar::ParameterValueDragBar(int id) : id(id), HorizontalDragBar(270) {}
 void ParameterValueDragBar::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); SetNormalizedNodePosition(simulationApp.parameters[id]->value); }
@@ -36,10 +36,10 @@ void ParameterControlList::Update(App& app) {
 	VerticalControlList::Update(app);
 }
 
-AddParameterButton::AddParameterButton() : LocalizedButton(160, L"addButton") {}
-void AddParameterButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters.push_back(std::make_shared<SceneParameter>(simulationApp.GetLocalizedString(L"unnamed_par"))); }
+AddParameterButton::AddParameterButton() : LocalizedButton(160, L"addParameterButton") {}
+void AddParameterButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters.push_back(std::make_shared<SceneParameter>(simulationApp.GetLocalizedString(L"unnamedParameter"))); }
 
-ParameterPanel::ParameterPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_par") {
+ParameterPanel::ParameterPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"parameterPanelTitle") {
 	vector<Control*> controls;
 	parameterList = std::make_shared<ParameterControlList>();
 	addButton = std::make_shared<AddParameterButton>();

@@ -5,42 +5,42 @@
 
 void Group::Warp(DRect rectangle)
 {
-	for (auto b : bodies)
-		if (b->invMass == 0 || b->dragged) { return; }
+	for (auto body : bodies)
+		if (body->invMass == 0 || body->dragged) { return; }
 	bool isInRect = false;
 
 	isInRect = true;
-	for (auto b : bodies)
-		if (b->position.x > rectangle.GetLeft()) { isInRect = false; break; }
+	for (auto body : bodies)
+		if (body->position.x > rectangle.GetLeft()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->position.x += rectangle.width; b->track.clear(); }
+		for (auto body : bodies) { body->position.x += rectangle.width; body->track.clear(); }
 
 	isInRect = true;
-	for (auto b : bodies)
-		if (b->position.x < rectangle.GetRight()) { isInRect = false; break; }
+	for (auto body : bodies)
+		if (body->position.x < rectangle.GetRight()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->position.x -= rectangle.width; b->track.clear(); }
+		for (auto body : bodies) { body->position.x -= rectangle.width; body->track.clear(); }
 
 	isInRect = true;
-	for (auto b : bodies)
-		if (b->position.y > rectangle.GetTop()) { isInRect = false; break; }
+	for (auto body : bodies)
+		if (body->position.y > rectangle.GetTop()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->position.y += rectangle.height;  b->track.clear(); }
+		for (auto body : bodies) { body->position.y += rectangle.height;  body->track.clear(); }
 
 	isInRect = true;
-	for (auto b : bodies)
-		if (b->position.y < rectangle.GetBottom()) { isInRect = false; break; }
+	for (auto body : bodies)
+		if (body->position.y < rectangle.GetBottom()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->position.y -= rectangle.height; b->track.clear(); }
+		for (auto body : bodies) { body->position.y -= rectangle.height; body->track.clear(); }
 }
 
 void FindBodiesInGroup(vector<Body*>& bodies, Body* body)
 {
 	body->visited = true;
 	bodies.push_back(body);
-	for (auto connnection : body->connections)
+	for (auto connection : body->connections)
 	{
-		auto tmp = GetOtherBody(body, *connnection);
+		auto tmp = GetOtherBody(body, *connection);
 		if (tmp && !tmp->visited)
 		{
 			FindBodiesInGroup(bodies, tmp);
@@ -49,18 +49,18 @@ void FindBodiesInGroup(vector<Body*>& bodies, Body* body)
 }
 vector<std::shared_ptr<Group>> FormGroups(vector<std::shared_ptr<Body>> const& bodies)
 {
-	vector<std::shared_ptr<Group>> out;
+	vector<std::shared_ptr<Group>> groups;
 	vector<Body*> connectedBodies;
-	for (auto& b : bodies) { b->visited = false; }
-	for (auto& b : bodies)
+	for (auto& body : bodies) { body->visited = false; }
+	for (auto& body : bodies)
 	{
-		if (!b->visited)
+		if (!body->visited)
 		{
 			connectedBodies.clear();
-			FindBodiesInGroup(connectedBodies, &*b);
-			out.push_back(std::make_shared<Group>(connectedBodies));
+			FindBodiesInGroup(connectedBodies, &*body);
+			groups.push_back(std::make_shared<Group>(connectedBodies));
 		}
 	}
-	return out;
+	return groups;
 }
 

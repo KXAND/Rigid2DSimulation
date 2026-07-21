@@ -17,7 +17,7 @@ bool IsOutsideBoundary(DVector2 const& point, long long boundary,
 }
 
 bool ClipTriangleAtHorizontalBoundary(Tile& targetTile, DepthBuffer& zBuffer,
-    DRect const& viewPort, DVector2 const& firstPoint,
+    DRect const& viewport, DVector2 const& firstPoint,
     DVector2 const& middlePoint, DVector2 const& lastPoint, double depth,
     Color color, long long boundary, BoundarySide boundarySide)
 {
@@ -42,7 +42,7 @@ bool ClipTriangleAtHorizontalBoundary(Tile& targetTile, DepthBuffer& zBuffer,
         middleLastIntersection.y = boundary;
         middleLastIntersection.x += (middlePoint.x - lastPoint.x)
             * (boundary - lastPoint.y) / (middlePoint.y - lastPoint.y);
-        DrawTriangle(targetTile, zBuffer, viewPort, firstLastIntersection,
+        DrawTriangle(targetTile, zBuffer, viewport, firstLastIntersection,
             middleLastIntersection, lastPoint, depth, color);
         return true;
     }
@@ -51,9 +51,9 @@ bool ClipTriangleAtHorizontalBoundary(Tile& targetTile, DepthBuffer& zBuffer,
     firstMiddleIntersection.y = boundary;
     firstMiddleIntersection.x += (firstPoint.x - middlePoint.x)
         * (boundary - middlePoint.y) / (firstPoint.y - middlePoint.y);
-    DrawTriangle(targetTile, zBuffer, viewPort, firstLastIntersection,
+    DrawTriangle(targetTile, zBuffer, viewport, firstLastIntersection,
         middlePoint, lastPoint, depth, color);
-    DrawTriangle(targetTile, zBuffer, viewPort, firstLastIntersection,
+    DrawTriangle(targetTile, zBuffer, viewport, firstLastIntersection,
         middlePoint, firstMiddleIntersection, depth, color);
     return true;
 }
@@ -69,16 +69,16 @@ void DrawTriangleHalf(Tile& targetTile, DepthBuffer& zBuffer,
 	int dx = lastPoint.x > middlePoint.x ? 1 : -1;
 	for (int y = firstPoint.y; y != middlePoint.y + dy; y += dy)
 	{
-		int xb = firstPoint.x * (middlePoint.y - y) + middlePoint.x * (y - firstPoint.y); xb /= (middlePoint.y - firstPoint.y);
-		int xc = firstPoint.x * (middlePoint.y - y) + lastPoint.x * (y - firstPoint.y); xc /= (middlePoint.y - firstPoint.y);
-		for (int x = xb; x != xc + dx; x += dx)
+		int middleEdgeX = firstPoint.x * (middlePoint.y - y) + middlePoint.x * (y - firstPoint.y); middleEdgeX /= (middlePoint.y - firstPoint.y);
+		int lastEdgeX = firstPoint.x * (middlePoint.y - y) + lastPoint.x * (y - firstPoint.y); lastEdgeX /= (middlePoint.y - firstPoint.y);
+		for (int x = middleEdgeX; x != lastEdgeX + dx; x += dx)
 		{
 			int depthIndex = isYAxisMajor ? y * targetTile.width + x : x * targetTile.width + y;
 			if (zBuffer[depthIndex] <= depth) { zBuffer[depthIndex] = depth; targetTile.colors[depthIndex] = color; }
 		}
 	}
 }
-void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
+void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewport,
 	DVector2 firstPoint, DVector2 middlePoint, DVector2 lastPoint, double depth, Color color)
 {
 	// 如果可以让这里写得好看有条理，容易修改且不容易出 bug 就好了。
@@ -94,14 +94,14 @@ void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
 	int dx = firstPoint.x - lastPoint.x;
 
 	// 用屏幕边切割图形
-	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, firstPoint, middlePoint,
-		lastPoint, depth, color, (long long)viewPort.GetRight() - 1,
+	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewport, firstPoint, middlePoint,
+		lastPoint, depth, color, (long long)viewport.GetRight() - 1,
 		BoundarySide::Maximum))
 	{
 		return;
 	}
-	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, lastPoint, middlePoint,
-		firstPoint, depth, color, (long long)viewPort.GetLeft(), BoundarySide::Minimum))
+	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewport, lastPoint, middlePoint,
+		firstPoint, depth, color, (long long)viewport.GetLeft(), BoundarySide::Minimum))
 	{
 		return;
 	}
@@ -111,14 +111,14 @@ void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
 	if (middlePoint.y < lastPoint.y) { swap(middlePoint, lastPoint); }
 	if (firstPoint.y == lastPoint.y) { return; }
 	int dy = firstPoint.y - lastPoint.y;
-	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, firstPoint, middlePoint,
-		lastPoint, depth, color, (long long)viewPort.GetBottom() - 1,
+	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewport, firstPoint, middlePoint,
+		lastPoint, depth, color, (long long)viewport.GetBottom() - 1,
 		BoundarySide::Maximum))
 	{
 		return;
 	}
-	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, lastPoint, middlePoint,
-		firstPoint, depth, color, (long long)viewPort.GetTop(), BoundarySide::Minimum))
+	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewport, lastPoint, middlePoint,
+		firstPoint, depth, color, (long long)viewport.GetTop(), BoundarySide::Minimum))
 	{
 		return;
 	}
@@ -138,9 +138,9 @@ void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
 	DrawTriangleHalf(targetTile, zBuffer, firstPoint, middlePoint, splitPoint, depth, color, isYAxisMajor);
 	DrawTriangleHalf(targetTile, zBuffer, lastPoint, middlePoint, splitPoint, depth, color, isYAxisMajor);
 }
-void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
+void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewport,
 	Vector2 firstPoint, Vector2 middlePoint, Vector2 lastPoint, double depth, Color color)
 {
-	DrawTriangle(targetTile, zBuffer, viewPort, (DVector2) firstPoint, (DVector2) middlePoint, (DVector2) lastPoint, depth, color);
+	DrawTriangle(targetTile, zBuffer, viewport, (DVector2) firstPoint, (DVector2) middlePoint, (DVector2) lastPoint, depth, color);
 }
 

@@ -21,7 +21,7 @@ void Collide(Body& b0, Body& b1, vector<std::shared_ptr<Collision>>& out, double
 bool CollideShapes(Shape& firstShape, Shape& secondShape, Collision& collision, bool reverse);
 void FindClosestContactVertex(Shape& firstShape, Shape& secondShape, Vector2& contactPoint, double& closestDistanceSquared);
 bool CollideBalls(Shape& firstShape, Shape& secondShape, Collision& collision);
-double CalculateBallCollisionDepth(Vector2 normal, Vector2 origin, Shape const& sh, Vector2& contactPoint);
-double CalculatePolygonCollisionDepth(Vector2 normal, Vector2 origin, Shape const& sh, Vector2& contactPoint);
+double CalculateBallCollisionDepth(Vector2 normal, Vector2 origin, Shape const& shape, Vector2& contactPoint);
+double CalculatePolygonCollisionDepth(Vector2 normal, Vector2 origin, Shape const& shape, Vector2& contactPoint);
 
 

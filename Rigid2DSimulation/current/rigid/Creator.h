@@ -32,7 +32,7 @@ struct Creator
 	bool hovered = false;
 
 	Creator();
-	Creator(Value const& v);
+	Creator(Value const& config);
 	double Depth() const;
 	void Update(SimulationApp& simulationApp);
 	void Discard(SimulationApp& simulationApp);

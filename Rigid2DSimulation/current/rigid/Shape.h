@@ -11,7 +11,7 @@ struct Shape
 private:
 
 	Vector2 GenerateRandomPointInTriangle(Vector2 v0, Vector2 v1, Vector2 v2) const;
-	bool IsInsideTriangle(Vector2 v, Vector2 v0, Vector2 v1, Vector2 v2) const;
+	bool IsInsideTriangle(Vector2 point, Vector2 v0, Vector2 v1, Vector2 v2) const;
 public:
 	bool isCircle = false;
 	double radius = 0;

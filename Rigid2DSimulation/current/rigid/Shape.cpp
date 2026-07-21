@@ -84,9 +84,9 @@ Aabb Shape::GetBoundingBox() const
 		return Aabb(position.x - radius, position.x + radius, position.y - radius, position.y + radius);
 
 	Aabb box;
-	for (auto v : vertices)
+	for (auto vertex : vertices)
 	{
-		box.Expand(v);
+		box.Expand(vertex);
 	}
 	return box;
 }
@@ -105,10 +105,10 @@ Vector2 Shape::GenerateRandomPointInTriangle(Vector2 v0, Vector2 v1, Vector2 v2)
 	return x0 * v0 + x1 * v1 + (1 - x0 - x1) * v2;
 }
 
-bool Shape::IsInsideTriangle(Vector2 v, Vector2 v0, Vector2 v1, Vector2 v2) const
+bool Shape::IsInsideTriangle(Vector2 point, Vector2 v0, Vector2 v1, Vector2 v2) const
 {
 	// Æë´Î×ø±ê
-	Vector3 u(v.x, v.y, 1);
+	Vector3 u(point.x, point.y, 1);
 	Vector3 u0(v0.x, v0.y, 1);
 	Vector3 u1(v1.x, v1.y, 1);
 	Vector3 u2(v2.x, v2.y, 1);

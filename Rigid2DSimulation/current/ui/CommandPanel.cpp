@@ -13,7 +13,7 @@ void CompileButton::OnClick(App& app) {
 	Execute(simulationApp.currentScope, Compile(simulationApp.scriptText));
 }
 
-CommandPanel::CommandPanel(App& app) : LocalizedFloatPanel(app, 600, 600, L"fpn_cmd") {
+CommandPanel::CommandPanel(App& app) : LocalizedFloatPanel(app, 600, 600, L"commandPanelTitle") {
 	vector<Control*> controls;
 	scriptEditor = std::make_shared<CommandScriptEditor>();
 	compileButton = std::make_shared<CompileButton>();

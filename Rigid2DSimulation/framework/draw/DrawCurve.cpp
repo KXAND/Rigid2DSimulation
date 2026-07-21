@@ -2,18 +2,18 @@
 #include "DrawLineSegment.h"
 
 void DrawEllipseBorder(Tile& targetTile, DepthBuffer& zBuffer, double depth,
-	Vector2 center, double a, double b, DRect viewPort, Color color, int n)
+	Vector2 center, double horizontalRadius, double verticalRadius, DRect viewport, Color color, int segmentCount)
 {
-	// 参数方程 （x，y）=(h + a cos t,k + b sin t)
-	auto p0 = center + Vector2(a, 0);
-	for (int i = 0; i < n-1; ++i)
+	// 参数方程 （x，y）=(h + horizontalRadius cos t,k + verticalRadius sin t)
+	auto p0 = center + Vector2(horizontalRadius, 0);
+	for (int i = 0; i < segmentCount-1; ++i)
 	{
-		double phi = 2 * kPi * (i + 1) / n;
-		auto p1 = center + Vector2(a, b) * Vector2(cos(phi), sin(phi));
-		DrawLineSegment(targetTile, zBuffer, p0, p1, depth, viewPort, color);
+		double phi = 2 * kPi * (i + 1) / segmentCount;
+		auto p1 = center + Vector2(horizontalRadius, verticalRadius) * Vector2(cos(phi), sin(phi));
+		DrawLineSegment(targetTile, zBuffer, p0, p1, depth, viewport, color);
 		p0 = p1;
 	}
-	auto p1 = center + Vector2(a, 0);
-	DrawLineSegment(targetTile, zBuffer, p0, p1, depth, viewPort, color);
+	auto p1 = center + Vector2(horizontalRadius, 0);
+	DrawLineSegment(targetTile, zBuffer, p0, p1, depth, viewport, color);
 }
 
