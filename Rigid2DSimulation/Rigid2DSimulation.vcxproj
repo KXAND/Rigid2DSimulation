@@ -161,7 +161,7 @@
     <ClCompile Include="framework\draw\draw_tile.cpp" />
     <ClCompile Include="framework\draw\draw_tri.cpp" />
     <ClCompile Include="framework\control\droplist.cpp" />
-    <ClCompile Include="framework\basic\dvec.cpp" />
+    <ClCompile Include="framework\basic\DVector2.cpp" />
     <ClCompile Include="framework\parse\script_expr.cpp" />
     <ClCompile Include="framework\control\float_panel.cpp" />
     <ClCompile Include="framework\media\font.cpp" />
@@ -190,10 +190,10 @@
     <ClCompile Include="framework\media\tile.cpp" />
     <ClCompile Include="framework\parse\token.cpp" />
     <ClCompile Include="current\ui\ui.cpp" />
-    <ClCompile Include="framework\basic\utils.cpp" />
+    <ClCompile Include="framework\basic\Utils.cpp" />
     <ClCompile Include="framework\parse\var.cpp" />
-    <ClCompile Include="framework\basic\vector2.cpp" />
-    <ClCompile Include="framework\basic\vector3.cpp" />
+    <ClCompile Include="framework\basic\Vector2.cpp" />
+    <ClCompile Include="framework\basic\Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="current\rigid\aabb.h" />
@@ -224,7 +224,7 @@
     <ClInclude Include="framework\draw\draw_tile.h" />
     <ClInclude Include="framework\draw\draw_tri.h" />
     <ClInclude Include="framework\control\droplist.h" />
-    <ClInclude Include="framework\basic\dvec.h" />
+    <ClInclude Include="framework\basic\DVector2.h" />
     <ClInclude Include="framework\parse\script_expr.h" />
     <ClInclude Include="framework\control\float_panel.h" />
     <ClInclude Include="framework\media\font.h" />
@@ -236,7 +236,7 @@
     <ClInclude Include="current\ui\fpn_lang.h" />
     <ClInclude Include="current\ui\fpn_par.h" />
     <ClInclude Include="current\rigid\group.h" />
-    <ClInclude Include="framework\basic\include.h" />
+    <ClInclude Include="framework\basic\PlatformIncludes.h" />
     <ClInclude Include="framework\control\label.h" />
     <ClInclude Include="framework\control\panel.h" />
     <ClInclude Include="current\common\scene_parameter.h" />
@@ -252,11 +252,11 @@
     <ClInclude Include="framework\media\tile.h" />
     <ClInclude Include="framework\parse\token.h" />
     <ClInclude Include="current\ui\ui.h" />
-    <ClInclude Include="framework\basic\utils.h" />
+    <ClInclude Include="framework\basic\Utils.h" />
     <ClInclude Include="framework\parse\var.h" />
-    <ClInclude Include="framework\basic\vector2.h" />
-    <ClInclude Include="framework\basic\vector3.h" />
-    <ClInclude Include="framework\basic\vptr.h" />
+    <ClInclude Include="framework\basic\Vector2.h" />
+    <ClInclude Include="framework\basic\Vector3.h" />
+    <ClInclude Include="framework\basic\ValuePtr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

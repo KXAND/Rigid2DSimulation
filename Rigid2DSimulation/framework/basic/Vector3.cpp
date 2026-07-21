@@ -1,4 +1,4 @@
-#include "vector3.h"
+#include "Vector3.h"
 
 Vector3::Vector3(wstring const& s) {
 	int i = 0;

@@ -1,5 +1,5 @@
 #pragma once
-#include "vector2.h"
+#include "Vector2.h"
 #include "tile.h"
 
 void drawEllipseBorder(tile& targetTile, dbuf& zBuffer, double depth,

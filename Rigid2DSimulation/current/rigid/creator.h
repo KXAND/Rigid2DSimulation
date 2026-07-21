@@ -1,5 +1,5 @@
 #pragma once
-#include "vector2.h"
+#include "Vector2.h"
 
 int constexpr CREATE_BOX = 0;
 int constexpr CREATE_BALL = 1;

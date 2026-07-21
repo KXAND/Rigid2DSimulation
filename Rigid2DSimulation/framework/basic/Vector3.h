@@ -1,5 +1,5 @@
 #pragma once
-#include "vector2.h"
+#include "Vector2.h"
 
 struct Vector3;
 inline Vector3 operator/(Vector3 a, double b);

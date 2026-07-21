@@ -37,16 +37,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="framework\basic\dvec.cpp">
+    <ClCompile Include="framework\basic\DVector2.cpp">
       <Filter>framework\basic</Filter>
     </ClCompile>
-    <ClCompile Include="framework\basic\utils.cpp">
+    <ClCompile Include="framework\basic\Utils.cpp">
       <Filter>framework\basic</Filter>
     </ClCompile>
-    <ClCompile Include="framework\basic\vector2.cpp">
+    <ClCompile Include="framework\basic\Vector2.cpp">
       <Filter>framework\basic</Filter>
     </ClCompile>
-    <ClCompile Include="framework\basic\vector3.cpp">
+    <ClCompile Include="framework\basic\Vector3.cpp">
       <Filter>framework\basic</Filter>
     </ClCompile>
     <ClCompile Include="framework\media\ft_constant.cpp">
@@ -219,22 +219,22 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="framework\basic\dvec.h">
+    <ClInclude Include="framework\basic\DVector2.h">
       <Filter>framework\basic</Filter>
     </ClInclude>
-    <ClInclude Include="framework\basic\include.h">
+    <ClInclude Include="framework\basic\PlatformIncludes.h">
       <Filter>framework\basic</Filter>
     </ClInclude>
-    <ClInclude Include="framework\basic\utils.h">
+    <ClInclude Include="framework\basic\Utils.h">
       <Filter>framework\basic</Filter>
     </ClInclude>
-    <ClInclude Include="framework\basic\vector2.h">
+    <ClInclude Include="framework\basic\Vector2.h">
       <Filter>framework\basic</Filter>
     </ClInclude>
-    <ClInclude Include="framework\basic\vector3.h">
+    <ClInclude Include="framework\basic\Vector3.h">
       <Filter>framework\basic</Filter>
     </ClInclude>
-    <ClInclude Include="framework\basic\vptr.h">
+    <ClInclude Include="framework\basic\ValuePtr.h">
       <Filter>framework\basic</Filter>
     </ClInclude>
     <ClInclude Include="framework\media\font.h">

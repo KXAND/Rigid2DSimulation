@@ -1,6 +1,6 @@
 #include "var.h"
 #include "bracket_group.h"
-#include "vector3.h"
+#include "Vector3.h"
 #include "script_statement.h"
 
 // 每次都能找到新 bug，很可能还有一些 bug。

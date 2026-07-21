@@ -1,5 +1,5 @@
 #pragma once
-#include "vector3.h"
+#include "Vector3.h"
 struct dColor
 {
 	BYTE b = 0, g = 0, r = 0;

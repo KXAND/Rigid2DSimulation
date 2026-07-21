@@ -1,4 +1,4 @@
-#include "dvec.h"
+#include "DVector2.h"
 
 DVector2::DVector2(wstring const& s) {
 	int i = 0;

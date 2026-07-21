@@ -1,5 +1,5 @@
 #pragma once
-#include "vector2.h"
+#include "Vector2.h"
 
 struct SimulationApp;
 struct Body;
