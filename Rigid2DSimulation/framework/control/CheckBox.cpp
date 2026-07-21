@@ -22,7 +22,7 @@ int CheckBox::GetW() const { return s_box + gap.x + w_txt; }
 int CheckBox::GetH() const { return h + gap.y; }
 
 DVector2 CheckBox::tl_box() const { return tl + DVector2(w_txt, (h - s_box) / 2); }
-void CheckBox::render(App& app) {
+void CheckBox::Render(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
@@ -42,7 +42,7 @@ void CheckBox::Update(App& app) {
 	w_txt = GetStringSize(txt, app.ft, 0).x;
 	bool click = enabled && hovered && app.input.isMouseClickedDown(0);
 	if (click) { checked = !checked; Upload(app); }
-	else { Sync(app); } render(app);
+	else { Sync(app); } Render(app);
 }
 void CheckBox::Discard(App& app) {
 	app.own.remove(this); w_txt = 0;

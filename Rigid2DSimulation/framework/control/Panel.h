@@ -33,7 +33,7 @@ struct Panel {
 	void SetControl(App& app, Control* _c);
 	void InitializeControl(App& app);
 	void InitializeScrollBar();
-	void render(App& app);
+	void Render(App& app);
 
 	void Init(App& app);
 	virtual void Update(App& app);

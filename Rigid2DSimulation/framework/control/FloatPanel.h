@@ -56,7 +56,7 @@ struct FloatPanel {
 
 	void RenderMain(App& app);
 	void RenderClose(App& app);
-	void render(App& app);
+	void Render(App& app);
 
 	void Init(App& app);
 	virtual void Update(App& app);

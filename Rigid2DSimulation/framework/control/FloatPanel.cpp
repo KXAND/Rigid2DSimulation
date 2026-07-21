@@ -143,7 +143,7 @@ void FloatPanel::RenderClose(App& app) {
 	mark_arm = { -half_s_mark , half_s_mark };
 	drawLineSegment(app.scr, app.dscr, mark_ct - mark_arm, mark_ct + mark_arm, depth, app.scr.Rect(), c_mark);
 }
-void FloatPanel::render(App& app) {
+void FloatPanel::Render(App& app) {
 	RenderMain(app); RenderClose(app);
 }
 
@@ -162,7 +162,7 @@ void FloatPanel::Update(App& app) {
 
 	// 我觉得这里乱掉了。但是为了这个重构好像不值得。
 	if (shown) {
-		render(app);
+		Render(app);
 		if (c) { c->Update(app); }
 		if (use_sb) { sb->Update(app); }
 	}

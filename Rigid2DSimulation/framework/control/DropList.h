@@ -36,9 +36,9 @@ struct DropList : Control {
 
 	DVector2 tl_box() const;
 	DVector2 tl_item() const;
-	void render_main(App& app);
-	void render_items(App& app);
-	void render(App& app);
+	void RenderMain(App& app);
+	void RenderItems(App& app);
+	void Render(App& app);
 	virtual void Sync(App& app) {}
 	// 现在默认的是 Upload 的校正不改变控件本身值，只改变目标值。
 	virtual void Upload(App& app) const {}

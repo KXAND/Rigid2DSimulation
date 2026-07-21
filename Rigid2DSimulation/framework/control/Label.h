@@ -15,7 +15,7 @@ struct Label : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	void render(App& app);
+	void Render(App& app);
 	virtual void Sync(App& app) {}
 	void Update(App& app) override;
 };

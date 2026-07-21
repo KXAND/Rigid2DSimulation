@@ -11,7 +11,7 @@ struct HorizontalSeparator : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	void render(App& app);
+	void Render(App& app);
 	void Update(App& app) override;
 };
 

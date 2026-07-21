@@ -23,7 +23,7 @@ struct VerticalScrollBar {
 
 	VerticalScrollBar();
 	// 没有 set_c 不会 Discard 之前的对象。
-	void render(App& app);
+	void Render(App& app);
 
 	virtual void Update(App& app);
 	virtual void Discard(App& app);

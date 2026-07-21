@@ -24,7 +24,7 @@ struct HorizontalDragBar : Control {
 	void set_nx_rel(double uv);
 	DVector2 tl_node() const;
 
-	void render(App& app);
+	void Render(App& app);
 	virtual void Sync(App& app) {}
 	virtual void OnDone(App& app) const {}
 	virtual void Upload(App& app) const {}

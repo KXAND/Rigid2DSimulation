@@ -19,7 +19,7 @@ Button::Button(int w) : w(w) {
 int Button::GetW() const { return w + gap.x; }
 int Button::GetH() const { return h + gap.y; }
 
-void Button::render(App& app) {
+void Button::Render(App& app) {
 	Color const& c =
 		!enabled ? c_invalid :
 		chosen ? c_chosen :
@@ -38,7 +38,7 @@ void Button::Update(App& app) {
 		chosen = enabled && hovered && app.input.msd[0];
 	} else {
 		chosen = enabled && hovered && app.input.isMouseClickedDown(0);
-	} render(app);
+	} Render(app);
 }
 void Button::Discard(App& app) { app.own.remove(this); chosen = hovered = false; }
 void Button::PreUpdate(App& app) {

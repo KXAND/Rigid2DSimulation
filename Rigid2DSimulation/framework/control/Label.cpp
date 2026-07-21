@@ -11,14 +11,14 @@ Label::Label(bool big) {
 int Label::GetW() const { return w + gap.x; }
 int Label::GetH() const { return h + gap.y; }
 
-void Label::render(App& app) {
+void Label::Render(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, h - app.ft.h) / 2;
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 }
 void Label::Update(App& app) {
 	Sync(app);
 	if (!fixed_w) { w = GetStringSize(txt, app.ft, 0).x; }
-	render(app);
+	Render(app);
 }
 
 LocalizedLabel::LocalizedLabel(wstring const& id, bool big) : Label(big), id_txt(id) {}

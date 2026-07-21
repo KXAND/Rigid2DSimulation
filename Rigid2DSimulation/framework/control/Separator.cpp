@@ -10,11 +10,11 @@ HorizontalSeparator::HorizontalSeparator(int w) : w(w) {
 int HorizontalSeparator::GetW() const { return w + gap.x; }
 int HorizontalSeparator::GetH() const { return 1 + gap.y; }
 
-void HorizontalSeparator::render(App& app) {
+void HorizontalSeparator::Render(App& app) {
 	// 虽然 dep 没什么用，但出于习惯还是保留了。
 	drawRectangleRaw(app.scr, tl, w, 1, vp, c_mark);
 }
-void HorizontalSeparator::Update(App& app) { render(app); }
+void HorizontalSeparator::Update(App& app) { Render(app); }
 
 
 

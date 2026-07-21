@@ -25,7 +25,7 @@ void HorizontalDragBar::set_nx_rel(double uv) {
 	nx_rel = clamp(tmp, 0, bw - nw);
 }
 DVector2 HorizontalDragBar::tl_node() const { return tl + DVector2(w_txt + nx_rel, 0); }
-void HorizontalDragBar::render(App& app) {
+void HorizontalDragBar::Render(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (nh - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
@@ -50,7 +50,7 @@ void HorizontalDragBar::Update(App& app) {
 	} else {
 		Sync(app);
 		dragged = enabled && hovered && app.input.isMouseClickedDown(0);
-	} render(app);
+	} Render(app);
 }
 void HorizontalDragBar::Discard(App& app) {
 	app.own.remove(this); w_txt = 0;

@@ -14,7 +14,7 @@ VerticalScrollBar::VerticalScrollBar() {
 	hoveredColor = { 60, 60, 150 };
 	c_invalid = { 0, 0, 0 };
 }
-void VerticalScrollBar::render(App& app) {
+void VerticalScrollBar::Render(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), c_bar, c_frame);
 	if (full) {
 		Color const& c =
@@ -43,7 +43,7 @@ void VerticalScrollBar::Update(App& app) {
 			ny_rel = clamp(ny_rel, 0, h - nh);
 			dragged = full && enabled && hovered && app.input.isMouseClickedDown(0);
 		}
-	} else { dragged = false; } render(app);
+	} else { dragged = false; } Render(app);
 }
 void VerticalScrollBar::Discard(App& app) {
 	app.own.remove(this); dragged = hovered = full = hovered_node = false;

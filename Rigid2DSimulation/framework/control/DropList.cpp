@@ -30,7 +30,7 @@ int DropList::GetH() const {
 
 DVector2 DropList::tl_box() const { return tl + DVector2(w_txt, 0); }
 DVector2 DropList::tl_item() const { return tl_box() + DVector2(0, h); }
-void DropList::render_main(App& app) {
+void DropList::RenderMain(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
@@ -46,7 +46,7 @@ void DropList::render_main(App& app) {
 	DVector2 tl_item = tl + DVector2(x_txt_margin, (h - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, nm(picked, app), c_txt, app.ft, tl_txt, 0, vp);
 }
-void DropList::render_items(App& app) {
+void DropList::RenderItems(App& app) {
 	if (edit) {
 		drawRectangleWithBorder(app.scr, app.dscr, depth, 
 			tl_item(), w, h_item * n_item, vp, c_normal, c_frame);
@@ -63,8 +63,8 @@ void DropList::render_items(App& app) {
 		}
 	}
 }
-void DropList::render(App& app) {
-	render_main(app); render_items(app);
+void DropList::Render(App& app) {
+	RenderMain(app); RenderItems(app);
 }
 
 // 在内容可变的情形下怎么处理我还没想清楚的。
@@ -84,7 +84,7 @@ void DropList::Update(App& app) {
 	} else {
 		Sync(app);
 		edit = enabled && hovered && app.input.isMouseClickedDown(0);
-	} render(app);
+	} Render(app);
 }
 void DropList::Discard(App& app) {
 	app.own.remove(this); w_txt = 0;

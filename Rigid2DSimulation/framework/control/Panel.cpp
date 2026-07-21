@@ -70,7 +70,7 @@ void Panel::InitializeScrollBar() {
 	sb->h_show = h_show;
 	sb->top_show = tl.y + tl_show_rel.y;
 }
-void Panel::render(App& app) {
+void Panel::Render(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), c_panel, c_frame);
 }
 
@@ -90,7 +90,7 @@ void Panel::Update(App& app) {
 	// 下面 Update 顺序是为了方便绘制，本来应该控件先更新高度的。
 	// 下面 Update 顺序是为了方便绘制，本来应该控件先更新高度的。
 	// 这个是为了速度的牺牲，不知道有没有必要。
-	render(app);
+	Render(app);
 	if (c) { c->Update(app); }
 	if (use_sb) { sb->Update(app); }
 }
