@@ -9,8 +9,8 @@ struct RichTextBox : Control {
 	double depth = 0;
 	int w = 0, h = 0;
 	bool clearUponEdit = false;
-	Color c_str, c_edit, c_frame, c_normal,
-		c_cursor, hoveredColor, c_invalid, selectedColor;
+	Color valueColor, editColor, frameColor, normalColor,
+		cursorColor, hoveredColor, invalidColor, selectedColor;
 
 	DVector2 editMargin;
 	DVector2 textViewportMargin;

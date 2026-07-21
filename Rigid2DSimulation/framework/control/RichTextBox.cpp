@@ -9,13 +9,13 @@ RichTextBox::RichTextBox() : RichTextBox(0, 0) {}
 RichTextBox::RichTextBox(int w, int h, bool newline) : w(w), h(h) {
 	gap = { 10, 10 }; depth = 1000;
 
-	c_str = { 255, 255, 255 };
-	c_edit = { 80, 40, 40 };
-	c_frame = { 150, 150, 150 };
-	c_normal = { 40, 40, 40 };
-	c_cursor = { 255, 255, 255 };
+	valueColor = { 255, 255, 255 };
+	editColor = { 80, 40, 40 };
+	frameColor = { 150, 150, 150 };
+	normalColor = { 40, 40, 40 };
+	cursorColor = { 255, 255, 255 };
 	hoveredColor = { 40, 40, 80 };
-	c_invalid = { 0, 0, 0 };
+	invalidColor = { 0, 0, 0 };
 	selectedColor = { 150, 150, 255 };
 
 	editMargin = { 5, 5 };
@@ -238,24 +238,24 @@ void RichTextBox::ClampTextPosition(App& app) {
 }
 
 void RichTextBox::RenderMain(App& app) {
-	Color c =
-		!enabled ? c_invalid :
-		edit ? c_edit :
-		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
-	drawRectangleWithBorderRaw(app.scr, tl, w, h, vp, c, c_frame);
+	Color color =
+		!enabled ? invalidColor :
+		edit ? editColor :
+		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : normalColor;
+	drawRectangleWithBorderRaw(app.scr, tl, w, h, vp, color, frameColor);
 
 	int x_cur = 0;
 	DVector2 tl_txt = tl + (DVector2)valueOffset;
-	DrawString(app.scr, app.dscr, depth, GetLeftText(), c_str, app.ft, tl_txt, x_cur, lineWidth, GetTextViewport());
+	DrawString(app.scr, app.dscr, depth, GetLeftText(), valueColor, app.ft, tl_txt, x_cur, lineWidth, GetTextViewport());
 	DrawString(app.scr, app.dscr, depth, GetSelectedText(), selectedColor, app.ft, tl_txt, x_cur, lineWidth, GetTextViewport());
-	DrawString(app.scr, app.dscr, depth, GetRightText(), c_str, app.ft, tl_txt, x_cur, lineWidth, GetTextViewport());
+	DrawString(app.scr, app.dscr, depth, GetRightText(), valueColor, app.ft, tl_txt, x_cur, lineWidth, GetTextViewport());
 }
 void RichTextBox::RenderCursor(App& app) {
 	bool show_cursor = edit &&
 		(sin(app.fps.dur() * twinkle_mtp) > 0 || cursor_change);
 	if (show_cursor) {
 		DVector2 tl_cs = tl + GetCursorPosition(app) + DVector2(-w_cursor, app.ft.h - h_cursor) / 2;
-		drawRectangleRaw(app.scr, tl_cs, w_cursor, h_cursor, GetTextViewport(), c_cursor);
+		drawRectangleRaw(app.scr, tl_cs, w_cursor, h_cursor, GetTextViewport(), cursorColor);
 	}
 }
 void RichTextBox::Render(App& app) {
