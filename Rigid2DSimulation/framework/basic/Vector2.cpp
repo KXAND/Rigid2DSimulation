@@ -1,54 +1,68 @@
 #include "Vector2.h"
 
-Vector2::Vector2(wstring const& s)
+Vector2::Vector2(wstring const& text)
 {
-	int i = 0;
-	x = FetchNumber(i, s);
-	y = FetchNumber(i, s);
-}
-wstring ToWString(Vector2 v)
-{
-	return L"(" + FormatFixed2(v.x) + L"," + FormatFixed2(v.y) + L")";
+    int index = 0;
+    x = FetchNumber(index, text);
+    y = FetchNumber(index, text);
 }
 
-bool IsInside(Vector2 v, Rect r)
+wstring ToWString(Vector2 vector)
 {
-	return
-		IsBetween(v.x, r.GetLeft(), r.GetRight()) &&
-		IsBetween(v.y, r.GetTop(), r.GetBottom());
+    return L"(" + FormatFixed2(vector.x) + L"," + FormatFixed2(vector.y) + L")";
 }
-/// <summary>
-/// 递归计算获取任意次贝塞尔曲线上的点
-/// </summary>
-/// <param name="controlPoints">控制点集</param>
-/// <param name="t">[0,1]，结果点对应的参数</param>
-/// <returns></returns>
+
+bool IsInside(Vector2 vector, Rect rectangle)
+{
+    return
+        IsBetween(vector.x, rectangle.GetLeft(), rectangle.GetRight()) &&
+        IsBetween(vector.y, rectangle.GetTop(), rectangle.GetBottom());
+}
+
+/// <summary>0__
+/// <summary>1__
+/// <summary>2__
+/// <summary>3__
+/// <summary>4__
+/// <summary>5__
 Vector2 GetPositionOnBezier(vector<Vector2> controlPoints, double t)
 {
-// @todo：不知道能不能优化，同时二次和三次应该有单独的实现。
-	if (controlPoints.size() == 2) { return controlPoints[0] * (1 - t) + controlPoints[1] * t; }
+    /// <summary>6__
+    if (controlPoints.size() == 2)
+    {
+        return controlPoints[0] * (1 - t) + controlPoints[1] * t;
+    }
 
-	vector<Vector2> ps0, ps1;
-	for (int i = (0), iEnd = int(controlPoints.size()); i < iEnd; ++i)
-	{
-		if (i != 0) { ps1.push_back(controlPoints[i]); }
-		if (i != controlPoints.size() - 1) { ps0.push_back(controlPoints[i]); }
-	}
-	return GetPositionOnBezier(ps0, t) * (1 - t) + GetPositionOnBezier(ps1, t) * t;
+    vector<Vector2> firstControlPoints;
+    vector<Vector2> secondControlPoints;
+    int controlPointCount = int(controlPoints.size());
+    for (int index = 0; index < controlPointCount; ++index)
+    {
+        if (index != 0)
+        {
+            secondControlPoints.push_back(controlPoints[index]);
+        }
+        if (index != controlPoints.size() - 1)
+        {
+            firstControlPoints.push_back(controlPoints[index]);
+        }
+    }
+    return GetPositionOnBezier(firstControlPoints, t) * (1 - t) + GetPositionOnBezier(secondControlPoints, t) * t;
 }
 
-double GetDistanceSquare(Vector2 a, Vector2 b, Vector2 p)
+double GetDistanceSquare(Vector2 firstPoint, Vector2 secondPoint, Vector2 point)
 {
-	if (a == b) { return (a - p).GetLengthSquared(); }
+    if (firstPoint == secondPoint)
+    {
+        return (firstPoint - point).GetLengthSquared();
+    }
 
-	double ap = (p - a).GetLengthSquared();
-	double bp = (p - b).GetLengthSquared();
-	double ab = (a - b).GetLengthSquared();
-	double diff = ap - bp;
-	return
-		ab + bp < ap ? bp : // bp 太短，无法构成三角形，下同
-		ab + ap < bp ? ap :
-		(ap + bp) / 2 - ab / 4 - diff * diff / (4 * ab);// @todo：练习推导
+    double firstDistanceSquare = (point - firstPoint).GetLengthSquared();
+    double secondDistanceSquare = (point - secondPoint).GetLengthSquared();
+    double segmentLengthSquare = (firstPoint - secondPoint).GetLengthSquared();
+    double distanceDifference = firstDistanceSquare - secondDistanceSquare;
+    return
+        segmentLengthSquare + secondDistanceSquare < firstDistanceSquare ? secondDistanceSquare : /// <summary>7__
+        segmentLengthSquare + firstDistanceSquare < secondDistanceSquare ? firstDistanceSquare :
+        (firstDistanceSquare + secondDistanceSquare) / 2 - segmentLengthSquare / 4 - distanceDifference * distanceDifference / (4 * segmentLengthSquare); /// <summary>8__
 }
-
-

@@ -7,7 +7,7 @@ struct Vector2
 	Vector2() = default;
 	Vector2(double x, double y) : x(x), y(y) { }
 	explicit Vector2(double a) : Vector2(a, a) { }
-	explicit Vector2(wstring const& s);
+	explicit Vector2(wstring const& text);
 	explicit Vector2(DVector2 v) : x(v.x), y(v.y) { }
 	explicit operator DVector2() const { return DVector2(int(x), int(y)); }
 
@@ -55,7 +55,7 @@ inline double Dot(const Vector2& a, const Vector2& b) { return a.x * b.x + a.y *
 //顺序问题
 inline Vector2 operator*(const double& scale, const Vector2& vector) { return Vector2(vector.x * scale, vector.y * scale); }
 
-wstring ToWString(Vector2 v);
+wstring ToWString(Vector2 vector);
 
 struct Rect
 {
@@ -71,7 +71,7 @@ struct Rect
 	double GetRight() const { return GetLeft() + w; }
 	double GetBottom() const { return GetTop() + h; }
 };
-bool IsInside(Vector2 v, Rect r);
+bool IsInside(Vector2 vector, Rect rectangle);
 
 struct Matrix2;
 inline Matrix2 operator/(Matrix2 a, double b);
@@ -138,6 +138,6 @@ inline Matrix2 operator*(Matrix2 a, Matrix2 b)
 	};
 }
 
-Vector2 GetPositionOnBezier(vector<Vector2> ps, double t);// @todo：没有引用
-double GetDistanceSquare(Vector2 a, Vector2 b, Vector2 p);
+Vector2 GetPositionOnBezier(vector<Vector2> controlPoints, double t);// @todo：没有引用
+double GetDistanceSquare(Vector2 firstPoint, Vector2 secondPoint, Vector2 point);
 

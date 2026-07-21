@@ -94,6 +94,7 @@
 - `framework/basic/DVector2.h/.cpp` 已完成 Allman 大括号、4 空格缩进、单语句单行、字段声明拆分及参数、局部变量命名迁移；二维整数几何接口与运算顺序保持不变。
 - `framework/basic/ValuePtr.h` 已完成 Allman 大括号和 4 空格缩进；内部存储成员及构造、赋值参数已由无语义缩写迁移为完整 lower camel 名称。
 - `framework/basic/Utils.h/.cpp` 已完成 Allman 大括号、4 空格缩进、完整控制流大括号和局部命名迁移；随机、字符串、控制台、剪贴板与字符过滤的调用顺序保持不变。
+- `framework/basic/Vector2.cpp` 已完成贝塞尔与点线距离算法的 Allman 排版和局部命名迁移；递归求值、分支条件与距离计算公式保持不变。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。
