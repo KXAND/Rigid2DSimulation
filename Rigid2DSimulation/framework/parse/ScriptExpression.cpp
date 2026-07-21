@@ -25,8 +25,8 @@ wstring ToWString(ScriptExpression const& ex) {
 	else if (ex.type == L"num") { tmp += L":" + FormatFixed2(ex.number); }
 	else if (ex.type == L"str") { tmp += L":" + ex.stringValue; }
 	else if (ex.type == L"access") {
-		if (!ex.getLocalizedString || !ex.ind) { return {}; }
-		tmp += L":" + ToWString(*ex.getLocalizedString) + L"," + ToWString(*ex.ind);
+		if (!ex.accessedExpression || !ex.indexExpression) { return {}; }
+		tmp += L":" + ToWString(*ex.accessedExpression) + L"," + ToWString(*ex.indexExpression);
 	}
 	else if (ex.type == L"vec") {
 		tmp += L":";
@@ -171,8 +171,8 @@ ScriptExpression ParseVector(vector<BracketGroup> const& in) {
 }
 ScriptExpression ParseAccess(vector<BracketGroup> const& in) {
 	ScriptExpression ex(L"access");
-	ex.getLocalizedString = ParseExpression(vector<BracketGroup>(in.begin(), in.end() - 1));
-	ex.ind = ParseExpression(in.back().bras);
+	ex.accessedExpression = ParseExpression(vector<BracketGroup>(in.begin(), in.end() - 1));
+	ex.indexExpression = ParseExpression(in.back().bras);
 	return ex;
 }
 

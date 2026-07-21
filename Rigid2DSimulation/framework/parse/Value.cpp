@@ -83,7 +83,7 @@ bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpression const& ex
 std::shared_ptr<Value> EvaluateCall(Scope& gl, Scope& sc, ScriptExpression const& ex)
 {
 	Value tmp;
-	Scope getLocalizedString;
+	Scope localScope;
 	if (TryEvaluateDefaultFunction(gl, sc, ex, tmp)) { return std::make_shared<Value>(tmp); }
 
 	// 下面必须是值复制，这是为了避免函数自己被抹去。
@@ -100,41 +100,41 @@ std::shared_ptr<Value> EvaluateCall(Scope& gl, Scope& sc, ScriptExpression const
 
 	for (int i = (0), iEnd = int(min(functionValue->arguments.size(), ex.arguments.size())); i < iEnd; ++i)
 	{
-		getLocalizedString[functionValue->arguments[i]] = Evaluate(gl, sc, ex.arguments[i]);
+		localScope[functionValue->arguments[i]] = Evaluate(gl, sc, ex.arguments[i]);
 	}
 	bool ret = false;
-	return Execute(ret, gl, getLocalizedString, functionValue->procs);
+	return Execute(ret, gl, localScope, functionValue->procs);
 }
 std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpression const& ex)
 {
-	if (!ex.getLocalizedString || !ex.ind) { return std::make_shared<Value>(); }
-	auto getLocalizedString = Evaluate(gl, sc, *ex.getLocalizedString);
-	auto ind = Evaluate(gl, sc, *ex.ind);
+	if (!ex.accessedExpression || !ex.indexExpression) { return std::make_shared<Value>(); }
+	auto accessedValue = Evaluate(gl, sc, *ex.accessedExpression);
+	auto indexValue = Evaluate(gl, sc, *ex.indexExpression);
 
-	if (ind->type == L"num")
+	if (indexValue->type == L"num")
 	{
-		if (getLocalizedString->type != L"vec") {
-			*getLocalizedString = {};
-			getLocalizedString->type = L"vec";
+		if (accessedValue->type != L"vec") {
+			*accessedValue = {};
+			accessedValue->type = L"vec";
 		}
-		for (int i = (getLocalizedString->elements.size() - 1), iEnd = int(ind->number); i < iEnd; ++i)
+		for (int i = (accessedValue->elements.size() - 1), iEnd = int(indexValue->number); i < iEnd; ++i)
 		{
-			getLocalizedString->elements.push_back(std::make_shared<Value>());
+			accessedValue->elements.push_back(std::make_shared<Value>());
 		}
-		return getLocalizedString->elements[ind->number];
+		return accessedValue->elements[indexValue->number];
 	}
 
-	if (ind->type == L"ToString")
+	if (indexValue->type == L"ToString")
 	{
-		if (getLocalizedString->type != L"dic") {
-			*getLocalizedString = {};
-			getLocalizedString->type = L"dic";
+		if (accessedValue->type != L"dic") {
+			*accessedValue = {};
+			accessedValue->type = L"dic";
 		}
-		if (getLocalizedString->dictionary.find(ind->stringValue) == getLocalizedString->dictionary.end())
+		if (accessedValue->dictionary.find(indexValue->stringValue) == accessedValue->dictionary.end())
 		{
-			getLocalizedString->dictionary[ind->stringValue] = std::make_shared<Value>();
+			accessedValue->dictionary[indexValue->stringValue] = std::make_shared<Value>();
 		}
-		return getLocalizedString->dictionary[ind->stringValue];
+		return accessedValue->dictionary[indexValue->stringValue];
 	}
 
 	return std::make_shared<Value>();
