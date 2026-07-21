@@ -1,5 +1,5 @@
 #include "dragbar.h"
-#include "app.h"
+#include "App.h"
 #include "draw_geo.h"
 #include "draw_str.h"
 

@@ -1,5 +1,5 @@
 #include "button.h"
-#include "app.h"
+#include "App.h"
 #include "draw_str.h"
 #include "draw_comp.h"
 #include "float_panel.h"

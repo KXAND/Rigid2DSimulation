@@ -1,5 +1,5 @@
 #pragma once
-#include "app.h"
+#include "App.h"
 #include "var.h"
 
 int constexpr MODE_DRAG = 0;

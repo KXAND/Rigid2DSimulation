@@ -1,7 +1,7 @@
 #pragma once
 #include "font.h"
-#include "app_wv.h"
-#include "app_item.h"
+#include "WaveOutput.h"
+#include "AppItem.h"
 
 int constexpr LAN_CHI = 0;
 int constexpr LAN_ENG = 1;

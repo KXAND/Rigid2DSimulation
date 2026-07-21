@@ -1,4 +1,4 @@
-#include "app.h"
+#include "App.h"
 
 int created(App*& app, WPARAM wp, LPARAM lp) {
 	auto pcs = (CREATESTRUCT*)lp;

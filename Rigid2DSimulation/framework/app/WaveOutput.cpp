@@ -1,4 +1,4 @@
-#include "app_wv.h"
+#include "WaveOutput.h"
 
 wvblk::wvblk(int n) : dat(n) {
 	hdr.lpData = (LPSTR)dat.data();

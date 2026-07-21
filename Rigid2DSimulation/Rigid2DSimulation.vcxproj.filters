@@ -58,16 +58,16 @@
     <ClCompile Include="framework\media\tile.cpp">
       <Filter>framework\media</Filter>
     </ClCompile>
-    <ClCompile Include="framework\app\app.cpp">
+    <ClCompile Include="framework\app\App.cpp">
       <Filter>framework\app</Filter>
     </ClCompile>
-    <ClCompile Include="framework\app\app_item.cpp">
+    <ClCompile Include="framework\app\AppItem.cpp">
       <Filter>framework\app</Filter>
     </ClCompile>
-    <ClCompile Include="framework\app\app_msg.cpp">
+    <ClCompile Include="framework\app\AppMessage.cpp">
       <Filter>framework\app</Filter>
     </ClCompile>
-    <ClCompile Include="framework\app\app_wv.cpp">
+    <ClCompile Include="framework\app\WaveOutput.cpp">
       <Filter>framework\app</Filter>
     </ClCompile>
     <ClCompile Include="framework\parse\script_expr.cpp">
@@ -243,13 +243,13 @@
     <ClInclude Include="framework\media\tile.h">
       <Filter>framework\media</Filter>
     </ClInclude>
-    <ClInclude Include="framework\app\app.h">
+    <ClInclude Include="framework\app\App.h">
       <Filter>framework\app</Filter>
     </ClInclude>
-    <ClInclude Include="framework\app\app_item.h">
+    <ClInclude Include="framework\app\AppItem.h">
       <Filter>framework\app</Filter>
     </ClInclude>
-    <ClInclude Include="framework\app\app_wv.h">
+    <ClInclude Include="framework\app\WaveOutput.h">
       <Filter>framework\app</Filter>
     </ClInclude>
     <ClInclude Include="framework\parse\bracket_group.h">

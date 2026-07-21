@@ -1,5 +1,5 @@
 #include "label.h"
-#include "app.h"
+#include "App.h"
 #include "draw_str.h"
 
 

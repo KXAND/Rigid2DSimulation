@@ -1,5 +1,5 @@
 #include "scrollbar.h"
-#include "app.h"
+#include "App.h"
 #include "control.h"
 #include "draw_comp.h"
 

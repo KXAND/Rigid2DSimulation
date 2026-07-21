@@ -134,10 +134,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="current\rigid\aabb.cpp" />
-    <ClCompile Include="framework\app\app.cpp" />
-    <ClCompile Include="framework\app\app_item.cpp" />
-    <ClCompile Include="framework\app\app_msg.cpp" />
-    <ClCompile Include="framework\app\app_wv.cpp" />
+    <ClCompile Include="framework\app\App.cpp" />
+    <ClCompile Include="framework\app\AppItem.cpp" />
+    <ClCompile Include="framework\app\AppMessage.cpp" />
+    <ClCompile Include="framework\app\WaveOutput.cpp" />
     <ClCompile Include="current\common\background.cpp" />
     <ClCompile Include="current\rigid\body.cpp" />
     <ClCompile Include="framework\parse\bracket_group.cpp" />
@@ -197,9 +197,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="current\rigid\aabb.h" />
-    <ClInclude Include="framework\app\app.h" />
-    <ClInclude Include="framework\app\app_item.h" />
-    <ClInclude Include="framework\app\app_wv.h" />
+    <ClInclude Include="framework\app\App.h" />
+    <ClInclude Include="framework\app\AppItem.h" />
+    <ClInclude Include="framework\app\WaveOutput.h" />
     <ClInclude Include="current\common\background.h" />
     <ClInclude Include="current\rigid\body.h" />
     <ClInclude Include="framework\parse\bracket_group.h" />

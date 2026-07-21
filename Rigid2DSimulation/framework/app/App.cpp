@@ -1,4 +1,4 @@
-#include "app.h"
+#include "App.h"
 #include "tile.h"
 
 App::App()

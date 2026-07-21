@@ -1,5 +1,5 @@
 #include "float_panel.h"
-#include "app.h"
+#include "App.h"
 #include "control.h"
 #include "scrollbar.h"
 #include "draw_str.h"
