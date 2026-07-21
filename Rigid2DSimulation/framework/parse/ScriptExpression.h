@@ -37,8 +37,8 @@ struct PreExpression {
 	PreExpression(Token const& token);
 };
 
-bool IsUnaryOperator(Token const& tk);
-bool IsBinaryOperator(Token const& tk);
+bool IsUnaryOperator(Token const& token);
+bool IsBinaryOperator(Token const& token);
 
 bool ParseNegation(vector<PreExpression> const& in, ScriptExpression& out);
 bool ParseBinary(vector<PreExpression> const& in, ScriptExpression& out, vector<wstring> const& mark);

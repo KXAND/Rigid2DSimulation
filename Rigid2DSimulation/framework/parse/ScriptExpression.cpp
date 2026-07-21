@@ -43,15 +43,15 @@ wstring ToWString(ScriptExpression const& expression) {
 PreExpression::PreExpression(ScriptExpression const& expression) : expression(expression) {}
 PreExpression::PreExpression(Token const& token) : token(token) { isToken = true; }
 
-bool IsUnaryOperator(Token const& tk) {
+bool IsUnaryOperator(Token const& token) {
 	// 由于 +，- 的特殊性，它们都被当成二元运算符处理。
-	if (tk.type.empty()) { return false; }
-	auto const& s = tk.type;
-	return s == L"!";
+	if (token.type.empty()) { return false; }
+	auto const& operatorType = token.type;
+	return operatorType == L"!";
 }
-bool IsBinaryOperator(Token const& tk) {
-	if (tk.type.empty()) { return false; }
-	return !iswalnum(tk.type[0]) && !IsUnaryOperator(tk);
+bool IsBinaryOperator(Token const& token) {
+	if (token.type.empty()) { return false; }
+	return !iswalnum(token.type[0]) && !IsUnaryOperator(token);
 }
 
 bool ParseNegation(vector<PreExpression> const& in, ScriptExpression& out) {
