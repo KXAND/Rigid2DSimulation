@@ -103,7 +103,7 @@ void SimulationApp::Reset()
 	isSceneChanged = false;
 	gravity = Vector2();
 	maxRealDeltaTime = 0.05;
-	t = 0; stepNum = 60;
+	simulationTime = 0; stepNum = 60;
 	rectScene.topLeftPosition = background->topLeft;
 	rectScene.w = background->width;
 	rectScene.h = background->height;
@@ -193,7 +193,7 @@ void SimulationApp::Update()
 
 		for (int i = (0), iEnd = int(stepNum); i < iEnd; ++i)
 		{
-			currentScope[L"time"] = std::make_shared<Value>(t);
+			currentScope[L"time"] = std::make_shared<Value>(simulationTime);
 			for (const auto& b : bodies) { b->Step(*this, sdt); }
 			// for (auto b : bodies) { b->warp(rectScene); }
 			for (auto& g : groups) { g->Warp(rectScene); }
@@ -223,7 +223,7 @@ void SimulationApp::Update()
 			// Á¬½Ó
 			for (auto& connnection : connections) { connnection->Simulate(sdt, useEqualPositionCorrection); }
 
-			t += sdt;
+			simulationTime += sdt;
 		}
 	}
 
@@ -256,7 +256,7 @@ void SimulationApp::SetCfg(Value const& v)
 	stepNum = max(1, stepNum);
 	TryReadConfigNumber(v, L"gridSize", gridSize);
 	TryReadConfigNumber(v, L"useEqualPositionCorrection", useEqualPositionCorrection);
-	TryReadConfigNumber(v, L"time", t);
+	TryReadConfigNumber(v, L"time", simulationTime);
 	TryReadConfigNumber(v, L"isTrackShown", isTrackShown);
 	if (auto value = FindConfigValue(v, L"sceneLeft")) { rectScene.topLeftPosition.x = value->num; }
 	if (auto value = FindConfigValue(v, L"sceneTop")) { rectScene.topLeftPosition.y = value->num; }

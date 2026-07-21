@@ -11,7 +11,7 @@ void FrameRateLabel::Sync(App& app) {
 TimeLabel::TimeLabel() { w = 200; fixedWidth = true; }
 void TimeLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	text = simulationApp.getLocalizedString(L"timeLabel") + FormatFixed2(simulationApp.t);
+	text = simulationApp.getLocalizedString(L"timeLabel") + FormatFixed2(simulationApp.simulationTime);
 }
 MousePositionLabel::MousePositionLabel() { w = 300; fixedWidth = true; }
 void MousePositionLabel::Sync(App& app) {

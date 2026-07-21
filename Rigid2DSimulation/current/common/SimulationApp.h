@@ -48,7 +48,7 @@ struct SimulationApp : App
 	double coulomb = 0;
 	bool hasElectrostatic = false;
 	double maxRealDeltaTime = 0;
-	double realDeltaTime = 0, t = 0;
+	double realDeltaTime = 0, simulationTime = 0;
 	int stepNum = 0;
 	DRect rectScene;
 	std::shared_ptr<Creator> creator;
