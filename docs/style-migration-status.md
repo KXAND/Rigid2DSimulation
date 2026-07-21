@@ -83,6 +83,7 @@
 - `BracketGroup.h/.cpp` 已完成 4 空格缩进迁移，作为独立纯排版提交。
 - `Token.h/.cpp` 已完成 4 空格缩进迁移，作为独立纯排版提交。
 - `ScriptStatement.h/.cpp` 已完成 4 空格缩进迁移，作为独立纯排版提交。
+- `ScriptExpression.h/.cpp` 已完成 4 空格缩进迁移，作为独立纯排版提交。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。
