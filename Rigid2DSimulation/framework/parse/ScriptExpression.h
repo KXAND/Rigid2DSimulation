@@ -25,7 +25,7 @@ struct ScriptExpression {
 	static ScriptExpression CreateString(wstring const& text);
 	static ScriptExpression CreateVariable(wstring const& value, bool isGlobal);
 };
-wstring ToWString(ScriptExpression const& ex);
+wstring ToWString(ScriptExpression const& expression);
 
 struct PreExpression {
 	bool isToken = false;

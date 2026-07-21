@@ -8,36 +8,36 @@ ScriptExpression::ScriptExpression(wstring const& functionName, vector<ScriptExp
 	type = L"call";
 }
 ScriptExpression ScriptExpression::CreateString(wstring const& text) {
-	auto ex = ScriptExpression(L"str");
-	ex.stringValue = text;
-	return ex;
+	auto expression = ScriptExpression(L"str");
+	expression.stringValue = text;
+	return expression;
 }
 ScriptExpression ScriptExpression::CreateVariable(wstring const& value, bool isGlobal) {
-	auto ex = ScriptExpression(L"var");
-	ex.variableName = value;
-	ex.isGlobal = isGlobal;
-	return ex;
+	auto expression = ScriptExpression(L"var");
+	expression.variableName = value;
+	expression.isGlobal = isGlobal;
+	return expression;
 }
 
-wstring ToWString(ScriptExpression const& ex) {
-	wstring tmp = L"[" + ex.type;
-	if (ex.type == L"var") { tmp += (ex.isGlobal ? L":&" : L":") + ex.variableName; }
-	else if (ex.type == L"num") { tmp += L":" + FormatFixed2(ex.number); }
-	else if (ex.type == L"str") { tmp += L":" + ex.stringValue; }
-	else if (ex.type == L"access") {
-		if (!ex.accessedExpression || !ex.indexExpression) { return {}; }
-		tmp += L":" + ToWString(*ex.accessedExpression) + L"," + ToWString(*ex.indexExpression);
+wstring ToWString(ScriptExpression const& expression) {
+	wstring serializedText = L"[" + expression.type;
+	if (expression.type == L"var") { serializedText += (expression.isGlobal ? L":&" : L":") + expression.variableName; }
+	else if (expression.type == L"num") { serializedText += L":" + FormatFixed2(expression.number); }
+	else if (expression.type == L"str") { serializedText += L":" + expression.stringValue; }
+	else if (expression.type == L"access") {
+		if (!expression.accessedExpression || !expression.indexExpression) { return {}; }
+		serializedText += L":" + ToWString(*expression.accessedExpression) + L"," + ToWString(*expression.indexExpression);
 	}
-	else if (ex.type == L"vec") {
-		tmp += L":";
-		for (auto const& v : ex.elements) { tmp += ToWString(v) + L","; }
+	else if (expression.type == L"vec") {
+		serializedText += L":";
+		for (auto const& element : expression.elements) { serializedText += ToWString(element) + L","; }
 	}
-	else if (ex.type == L"call") {
-		tmp += L":" + ex.functionName + L",";
-		for (auto const& argument : ex.arguments) { tmp += ToWString(argument) + L","; }
+	else if (expression.type == L"call") {
+		serializedText += L":" + expression.functionName + L",";
+		for (auto const& argument : expression.arguments) { serializedText += ToWString(argument) + L","; }
 	}
-	tmp += L"]";
-	return tmp;
+	serializedText += L"]";
+	return serializedText;
 }
 
 PreExpression::PreExpression(ScriptExpression const& expression) : expression(expression) {}

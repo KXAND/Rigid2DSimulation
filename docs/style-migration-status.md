@@ -71,6 +71,7 @@
 - 解析器预表达式和括号组的判别、令牌、表达式及嵌套子节点字段已迁移为 `isToken`、`token`、`expression` 和 `children`。
 - 解析器运行时值的求值、变量查找和执行接口已迁移为完整作用域、表达式、结果和语句名称；原有作用域传递顺序保持不变。
 - 解析器令牌化的输入、游标、令牌、文本缓冲、解析状态和符号归一化局部变量已迁移为完整 lower camel 名称。
+- 解析器表达式的字符串与变量工厂、调试序列化辅助函数已迁移为完整的表达式、序列化文本和元素名称。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。
