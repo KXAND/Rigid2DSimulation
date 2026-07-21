@@ -36,7 +36,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="framework\basic\DVector2.cpp">
       <Filter>framework\basic</Filter>
     </ClCompile>

@@ -175,7 +175,7 @@
     <ClCompile Include="framework\media\FontCharacters.cpp" />
     <ClCompile Include="current\rigid\Group.cpp" />
     <ClCompile Include="framework\control\label.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="framework\control\panel.cpp" />
     <ClCompile Include="current\common\SceneParameter.cpp" />
     <ClCompile Include="current\ui\pn_bottom.cpp" />
