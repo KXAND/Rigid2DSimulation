@@ -10,30 +10,30 @@ TextBox::TextBox(int w) : w(w) {
 	gap = { 10, 10 }; 
 	depth = 1000; h = 30;
 
-	c_txt = { 255, 255, 255 };
-	c_str = { 255, 255, 255 };
-	c_edit = { 150, 60, 60 };
-	c_frame = { 150, 150, 150 };
-	c_normal = { 40, 40, 40 };
-	c_cursor = { 255, 255, 255 };
+	labelTextColor = { 255, 255, 255 };
+	valueColor = { 255, 255, 255 };
+	editColor = { 150, 60, 60 };
+	frameColor = { 150, 150, 150 };
+	normalColor = { 40, 40, 40 };
+	cursorColor = { 255, 255, 255 };
 	hoveredColor = { 60, 60, 150 };
-	c_invalid = { 0, 0, 0 };
+	invalidColor = { 0, 0, 0 };
 	selectedColor = { 150, 150, 255 };
 
-	w_edit_mg = 5;
-	w_show_txt_mg = 2;
-	slide_mtp = 8;
-	twinkle_mtp = 8;
-	w_cursor = 2; h_cursor = 20;
+	editMarginWidth = 5;
+	textViewportMarginWidth = 2;
+	slideMultiplier = 8;
+	blinkMultiplier = 8;
+	cursorWidth = 2; cursorHeight = 20;
 }
-int TextBox::GetW() const { return w + gap.x + w_txt; }
+int TextBox::GetW() const { return w + gap.x + labelTextWidth; }
 int TextBox::GetH() const { return h + gap.y; }
 
-DVector2 TextBox::GetBoxTopLeft() const { return tl + DVector2(w_txt, 0); }
+DVector2 TextBox::GetBoxTopLeft() const { return tl + DVector2(labelTextWidth, 0); }
 DRect TextBox::GetTextViewport() const {
-	DVector2 tl_show_txt = GetBoxTopLeft() + DVector2(w_show_txt_mg, 0);
-	int w_show_txt = w - 2 * w_show_txt_mg;
-	return getOverlapRect(vp, { tl_show_txt, w_show_txt, h });
+	DVector2 textViewportTopLeft = GetBoxTopLeft() + DVector2(textViewportMarginWidth, 0);
+	int textViewportWidth = w - 2 * textViewportMarginWidth;
+	return getOverlapRect(vp, { textViewportTopLeft, textViewportWidth, h });
 }
 wstring TextBox::GetLeftText() const {
 	auto a = value.begin();
@@ -50,24 +50,24 @@ wstring TextBox::GetRightText() const {
 	auto b = value.end();
 	return wstring(a, b);
 }
-int TextBox::GetEditBegin() const { return min(edit_a, edit_b); }
-int TextBox::GetEditEnd() const { return max(edit_a, edit_b); }
-bool TextBox::HasSelection() const { return edit_a != edit_b; }
+int TextBox::GetEditBegin() const { return min(selectionStart, selectionEnd); }
+int TextBox::GetEditEnd() const { return max(selectionStart, selectionEnd); }
+bool TextBox::HasSelection() const { return selectionStart != selectionEnd; }
 // 下面是对的，不需要加一减一什么的。
-int TextBox::GetMaxCursorX() const { return w - w_edit_mg; }
+int TextBox::GetMaxCursorX() const { return w - editMarginWidth; }
 int TextBox::GetCursorX(App& app) const {
-	wstring tmp(value.begin(), value.begin() + edit_b);
-	return x_str_rel + GetStringSize(tmp, app.ft, 0).x;
+	wstring tmp(value.begin(), value.begin() + selectionEnd);
+	return valueOffsetX + GetStringSize(tmp, app.ft, 0).x;
 }
 
 void TextBox::SelectStart(App& app) {
 	selecting = true;
-	int x = app.input.msp.x - (GetBoxTopLeft().x + x_str_rel);
-	edit_a = edit_b = GetStringIndexAtPosition(value, app.ft, { x, 0 }, 0);
+	int x = app.input.msp.x - (GetBoxTopLeft().x + valueOffsetX);
+	selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, { x, 0 }, 0);
 }
 void TextBox::SelectEnd(App& app) {
-	int x = app.input.msp.x - (GetBoxTopLeft().x + x_str_rel);
-	edit_b = GetStringIndexAtPosition(value, app.ft, { x, 0 }, 0);
+	int x = app.input.msp.x - (GetBoxTopLeft().x + valueOffsetX);
+	selectionEnd = GetStringIndexAtPosition(value, app.ft, { x, 0 }, 0);
 }
 
 void TextBox::AddCharacters(App& app) {
@@ -75,28 +75,28 @@ void TextBox::AddCharacters(App& app) {
 	if (!sifted.empty()) {
 		selecting = false;
 		value = GetLeftText() + sifted + GetRightText();
-		edit_a = edit_b = GetEditBegin() + sifted.size();
+		selectionStart = selectionEnd = GetEditBegin() + sifted.size();
 	}
 }
 void TextBox::HandleLeft(App& app) {
 	selecting = false; 
 	cursor_change = true;
 
-	if (HasSelection()) { edit_a = edit_b = GetEditBegin(); }
+	if (HasSelection()) { selectionStart = selectionEnd = GetEditBegin(); }
 	else {
-		if (--edit_a < 0) { edit_a = 0; }
-		edit_b = edit_a;
+		if (--selectionStart < 0) { selectionStart = 0; }
+		selectionEnd = selectionStart;
 	}
 }
 void TextBox::HandleRight(App& app) {
 	selecting = false; 
 	cursor_change = true;
 
-	if (HasSelection()) { edit_a = edit_b = GetEditEnd(); }
+	if (HasSelection()) { selectionStart = selectionEnd = GetEditEnd(); }
 	else {
 		// 下面不要减一。
-		if (++edit_a > value.size()) { edit_a = value.size(); }
-		edit_b = edit_a;
+		if (++selectionStart > value.size()) { selectionStart = value.size(); }
+		selectionEnd = selectionStart;
 	}
 }
 void TextBox::HandleBackspace(App& app) {
@@ -105,14 +105,14 @@ void TextBox::HandleBackspace(App& app) {
 
 	if (HasSelection()) {
 		value = GetLeftText() + GetRightText();
-		edit_a = edit_b = GetEditBegin();
+		selectionStart = selectionEnd = GetEditBegin();
 	} else if (GetEditBegin() > 0) {
-		x_str_rel += app.ft[value[edit_a]].width;
-		x_str_rel = min<double>(x_str_rel, w_edit_mg);
+		valueOffsetX += app.ft[value[selectionStart]].width;
+		valueOffsetX = min<double>(valueOffsetX, editMarginWidth);
 		auto a = value.begin();
-		auto b = value.begin() + edit_a - 1;
+		auto b = value.begin() + selectionStart - 1;
 		value = wstring(a, b) + GetRightText();
-		edit_b = --edit_a;
+		selectionEnd = --selectionStart;
 	}
 }
 void TextBox::HandleDelete(App& app) {
@@ -121,9 +121,9 @@ void TextBox::HandleDelete(App& app) {
 
 	if (HasSelection()) {
 		value = GetLeftText() + GetRightText();
-		edit_a = edit_b = GetEditBegin();
+		selectionStart = selectionEnd = GetEditBegin();
 	} else if (GetEditEnd() < value.size()) {
-		auto a = value.begin() + edit_a + 1;
+		auto a = value.begin() + selectionStart + 1;
 		auto b = value.end();
 		value = GetLeftText() + wstring(a, b);
 	}
@@ -132,18 +132,18 @@ void TextBox::HandleCut(App& app) {
 	selecting = false;
 	SetClipboard(GetSelectedText());
 	value = GetLeftText() + GetRightText();
-	edit_a = edit_b = GetEditBegin();
+	selectionStart = selectionEnd = GetEditBegin();
 }
 void TextBox::HandleCopy(App& app) { SetClipboard(GetSelectedText()); }
 void TextBox::HandlePaste(App& app) {
 	selecting = false;
 	wstring sifted = FilterCharacters(GetClipboard(), true);
 	value = GetLeftText() + sifted + GetRightText();
-	edit_a = edit_b = GetEditBegin() + sifted.size();
+	selectionStart = selectionEnd = GetEditBegin() + sifted.size();
 }
 void TextBox::HandleSelectAll(App& app) {
 	selecting = false;
-	edit_a = 0; edit_b = value.size();
+	selectionStart = 0; selectionEnd = value.size();
 }
 void TextBox::HandleKey(App& app) {
 	cursor_change = false;
@@ -163,15 +163,15 @@ void TextBox::HandleKey(App& app) {
 
 void TextBox::ClampSelectingCursor(App& app) {
 	double val = (app.input.msp.x - GetBoxTopLeft().x) - GetMaxCursorX();
-	if (val > 0) { x_str_rel -= app.fps.dt() * slide_mtp * val; }
-	val = w_edit_mg - (app.input.msp.x - GetBoxTopLeft().x);
-	if (val > 0) { x_str_rel += app.fps.dt() * slide_mtp * val; }
+	if (val > 0) { valueOffsetX -= app.fps.dt() * slideMultiplier * val; }
+	val = editMarginWidth - (app.input.msp.x - GetBoxTopLeft().x);
+	if (val > 0) { valueOffsetX += app.fps.dt() * slideMultiplier * val; }
 }
 void TextBox::ClampCursor(App& app) {
 	if (GetCursorX(app) > GetMaxCursorX()) {
-		x_str_rel -= GetCursorX(app) - GetMaxCursorX();
-	} else if (GetCursorX(app) < w_edit_mg) {
-		x_str_rel += w_edit_mg - GetCursorX(app);
+		valueOffsetX -= GetCursorX(app) - GetMaxCursorX();
+	} else if (GetCursorX(app) < editMarginWidth) {
+		valueOffsetX += editMarginWidth - GetCursorX(app);
 	}
 }
 void TextBox::ClampCursorPosition(App& app) {
@@ -179,36 +179,36 @@ void TextBox::ClampCursorPosition(App& app) {
 	else { ClampCursor(app); }
 }
 void TextBox::ClampTextPosition(App& app) {
-	int x_end_rel = x_str_rel + GetStringSize(value, app.ft, 0).x;
-	if (x_end_rel < GetMaxCursorX()) {
-		x_str_rel += GetMaxCursorX() - x_end_rel;
+	int valueEndX = valueOffsetX + GetStringSize(value, app.ft, 0).x;
+	if (valueEndX < GetMaxCursorX()) {
+		valueOffsetX += GetMaxCursorX() - valueEndX;
 	}
-	if (x_str_rel > w_edit_mg) { x_str_rel = w_edit_mg; }
+	if (valueOffsetX > editMarginWidth) { valueOffsetX = editMarginWidth; }
 }
 
 void TextBox::RenderMain(App& app) {
-	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
-	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
+	DVector2 labelTextTopLeft = tl + DVector2(0, (h - app.ft.h) / 2);
+	DrawString(app.scr, app.dscr, depth, labelText, labelTextColor, app.ft, labelTextTopLeft, 0, vp);
 
-	Color const& c =
-		!enabled ? c_invalid :
-		edit ? c_edit :
-		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
-	drawRectangleWithBorderRaw(app.scr, GetBoxTopLeft(), w, h, vp, c, c_frame);
+	Color const& color =
+		!enabled ? invalidColor :
+		edit ? editColor :
+		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : normalColor;
+	drawRectangleWithBorderRaw(app.scr, GetBoxTopLeft(), w, h, vp, color, frameColor);
 
-	int x_cur = 0;
-	DVector2 tl_str = GetBoxTopLeft() + DVector2(x_str_rel, (h - app.ft.h) / 2);
-	DrawString(app.scr, app.dscr, depth, GetLeftText(), c_str, app.ft, tl_str, x_cur, 0, GetTextViewport());
-	DrawString(app.scr, app.dscr, depth, GetSelectedText(), selectedColor, app.ft, tl_str, x_cur, 0, GetTextViewport());
-	DrawString(app.scr, app.dscr, depth, GetRightText(), c_str, app.ft, tl_str, x_cur, 0, GetTextViewport());
+	int cursorX = 0;
+	DVector2 valueTopLeft = GetBoxTopLeft() + DVector2(valueOffsetX, (h - app.ft.h) / 2);
+	DrawString(app.scr, app.dscr, depth, GetLeftText(), valueColor, app.ft, valueTopLeft, cursorX, 0, GetTextViewport());
+	DrawString(app.scr, app.dscr, depth, GetSelectedText(), selectedColor, app.ft, valueTopLeft, cursorX, 0, GetTextViewport());
+	DrawString(app.scr, app.dscr, depth, GetRightText(), valueColor, app.ft, valueTopLeft, cursorX, 0, GetTextViewport());
 }
 void TextBox::RenderCursor(App& app) {
 	bool show_cursor = edit &&
-		(sin(app.fps.dur() * twinkle_mtp) > 0 || cursor_change);
+		(sin(app.fps.dur() * blinkMultiplier) > 0 || cursor_change);
 	if (show_cursor) {
-		int x_cs = GetBoxTopLeft().x + GetCursorX(app) - w_cursor / 2;
-		int y_cs = GetBoxTopLeft().y + (h - h_cursor) / 2;
-		drawRectangleRaw(app.scr, { x_cs, y_cs }, w_cursor, h_cursor, GetTextViewport(), c_cursor);
+		int cursorScreenX = GetBoxTopLeft().x + GetCursorX(app) - cursorWidth / 2;
+		int cursorScreenY = GetBoxTopLeft().y + (h - cursorHeight) / 2;
+		drawRectangleRaw(app.scr, { cursorScreenX, cursorScreenY }, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
 	}
 }
 void TextBox::Render(App& app) {
@@ -217,7 +217,7 @@ void TextBox::Render(App& app) {
 
 void TextBox::Update(App& app) {
 	hovered = (app.own.hovered == this);
-	w_txt = GetStringSize(txt, app.ft, 0).x;
+	labelTextWidth = GetStringSize(labelText, app.ft, 0).x;
 	if (edit) {
 		if (selecting) { SelectEnd(app); }
 		if (enabled && hovered && app.input.isMouseClickedDown(0)) { SelectStart(app); }
@@ -228,21 +228,21 @@ void TextBox::Update(App& app) {
 		if (!enabled || !hovered && app.input.isMouseClickedDown(0)) {
 			// 请注意 kb_owner 的登记在 PreUpdate 中进行。
 			app.own.ReleaseKeyboard(this); edit = selecting = false;
-			edit_a = edit_b = 0;
+			selectionStart = selectionEnd = 0;
 		}
 	} else {
 		Sync(app);
 		if (enabled && hovered && app.input.isMouseClickedDown(0)) {
-			if (clr_upon_edit) { value.clear(); }
+			if (clearUponEdit) { value.clear(); }
 			SelectStart(app); edit = true;
 		}
 	} ClampTextPosition(app); Render(app);
 }
 void TextBox::Discard(App& app) {
 	app.own.remove(this); app.own.ReleaseKeyboard(this);
-	w_txt = 0; edit = hovered = false;
+	labelTextWidth = 0; edit = hovered = false;
 	selecting = cursor_change = false;
-	edit_a = edit_b = 0;
+	selectionStart = selectionEnd = 0;
 }
 void TextBox::PreUpdate(App& app) {
 	if (edit) { app.own.keyboardOwner = this; }
@@ -252,8 +252,8 @@ void TextBox::PreUpdate(App& app) {
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
-LocalizedTextBox::LocalizedTextBox(wstring const& id, int w) : TextBox(w), id_txt(id) {}
-void LocalizedTextBox::Update(App& app) { txt = app.getLocalizedString(id_txt); TextBox::Update(app); }
+LocalizedTextBox::LocalizedTextBox(wstring const& id, int w) : TextBox(w), labelTextId(id) {}
+void LocalizedTextBox::Update(App& app) { labelText = app.getLocalizedString(labelTextId); TextBox::Update(app); }
 
 
 

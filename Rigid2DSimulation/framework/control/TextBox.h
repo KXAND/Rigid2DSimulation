@@ -5,25 +5,25 @@
 struct TextBox : Control {
 	DVector2 gap;
 	double depth = 0;
-	wstring txt;
+	wstring labelText;
 	int w = 0, h = 0;
-	bool clr_upon_edit = false;
-	Color c_txt, c_str, c_edit, c_frame, c_normal,
-		c_cursor, hoveredColor, c_invalid, selectedColor;
+	bool clearUponEdit = false;
+	Color labelTextColor, valueColor, editColor, frameColor, normalColor,
+		cursorColor, hoveredColor, invalidColor, selectedColor;
 
 	// cs = cursor，mg = margin。
-	// 也是 x_str_rel 的默认值，否则一开始编辑文字的位置就会变化。
-	int w_edit_mg = 0;
-	int w_show_txt_mg = 0;
-	double slide_mtp = 0;
-	double twinkle_mtp = 0;
-	int w_cursor = 0, h_cursor = 0;
+	// 也是 valueOffsetX 的默认值，否则一开始编辑文字的位置就会变化。
+	int editMarginWidth = 0;
+	int textViewportMarginWidth = 0;
+	double slideMultiplier = 0;
+	double blinkMultiplier = 0;
+	int cursorWidth = 0, cursorHeight = 0;
 
 	wstring value;
-	double x_str_rel = 0;
-	int edit_a = 0, edit_b = 0;
+	double valueOffsetX = 0;
+	int selectionStart = 0, selectionEnd = 0;
 
-	int w_txt = 0;
+	int labelTextWidth = 0;
 	bool edit = false;
 	bool enabled = true;
 	bool hovered = false;
@@ -77,7 +77,7 @@ struct TextBox : Control {
 	void PreUpdate(App& app) override;
 };
 struct LocalizedTextBox : TextBox {
-	wstring id_txt;
+	wstring labelTextId;
 	LocalizedTextBox() = default;
 	LocalizedTextBox(wstring const& id, int w);
 	void Update(App& app) override;
