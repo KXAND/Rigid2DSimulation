@@ -24,8 +24,8 @@ struct Panel {
 	bool wheeled = false;
 
 	Panel();
-	static Panel menu(App& app);
-	static Panel bottom(App& app);
+	static Panel CreateMenuPanel(App& app);
+	static Panel CreateBottomPanel(App& app);
 
 	int GetMinY() const;
 	DRect GetVisibleViewport(App& app) const;

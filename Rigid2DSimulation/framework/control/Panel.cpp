@@ -14,7 +14,7 @@ Panel::Panel() {
 	c_panel = { 0, 0, 0 };
 }
 // 菜单按钮的宽度: 150.
-Panel Panel::menu(App& app) {
+Panel Panel::CreateMenuPanel(App& app) {
 	Panel pn;
 	pn.w = 169;
 	pn.h = app.h - 40;
@@ -26,7 +26,7 @@ Panel Panel::menu(App& app) {
 	tmp.h = pn.h - 20 + 4;
 	pn.vp_show_rel = tmp; return pn;
 }
-Panel Panel::bottom(App& app) {
+Panel Panel::CreateBottomPanel(App& app) {
 	Panel pn;
 	pn.w = app.w;
 	pn.h = 40;

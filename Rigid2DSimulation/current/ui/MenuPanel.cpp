@@ -63,7 +63,7 @@ void DisplayButton::OnClick(App& app) {
 	simulationApp.display = (simulationApp.display + 1) % 4;
 }
 
-MenuPanel::MenuPanel(App& app) : Panel(Panel::menu(app)) {
+MenuPanel::MenuPanel(App& app) : Panel(Panel::CreateMenuPanel(app)) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	vector<Control*> tmp;
 	pauseButton = std::make_shared<PauseButton>(); resetButton = std::make_shared<ResetButton>(); muteButton = std::make_shared<MuteButton>();

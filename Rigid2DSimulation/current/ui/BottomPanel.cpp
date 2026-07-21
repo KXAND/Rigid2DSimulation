@@ -19,7 +19,7 @@ void MousePositionLabel::Sync(App& app) {
 	txt = simulationApp.getLocalizedString(L"mousePositionLabel") + ToWString(simulationApp.input.msp);
 }
 
-BottomPanel::BottomPanel(App& app) : Panel(Panel::bottom(app)) {
+BottomPanel::BottomPanel(App& app) : Panel(Panel::CreateBottomPanel(app)) {
 	vector<Control*> tmp;
 	frameRateLabel = std::make_shared<FrameRateLabel>(); timeLabel = std::make_shared<TimeLabel>(); mousePositionLabel = std::make_shared<MousePositionLabel>();
 	tmp = { &*frameRateLabel, &*timeLabel, &*mousePositionLabel };
