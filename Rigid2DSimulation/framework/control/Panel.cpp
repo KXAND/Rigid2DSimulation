@@ -45,7 +45,7 @@ int Panel::GetMinY() const {
 }
 DRect Panel::GetVisibleViewport(App& app) const {
 	DRect visibleViewport = contentViewport;
-	visibleViewport.topLeftPosition += tl; return getOverlapRect(app.scr.Rect(), visibleViewport);
+	visibleViewport.topLeftPosition += tl; return getOverlapRect(app.screen.Rect(), visibleViewport);
 }
 void Panel::SetControl(App& app, Control* newContentControl) {
 	if (contentControl != newContentControl) {
@@ -71,14 +71,14 @@ void Panel::InitializeScrollBar() {
 	scrollBar->visibleTop = tl.y + contentOffset.y;
 }
 void Panel::Render(App& app) {
-	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), panelColor, frameColor);
+	drawRectangleWithBorderRaw(app.screen, tl, w, h, app.screen.Rect(), panelColor, frameColor);
 }
 
 void Panel::Init(App& app) { InitializeControl(app); InitializeScrollBar(); }
 void Panel::Update(App& app) {
 	hasOverflow = (contentControl != NULL) && visibleHeight < contentControl->GetH();
-	hovered = (app.own.hovered == this);
-	wheeled = (app.own.wheeled == this);
+	hovered = (app.inputOwners.hovered == this);
+	wheeled = (app.inputOwners.wheeled == this);
 
 	if (hasOverflow) {
 		int contentY = contentControl->tl.y;
@@ -95,17 +95,17 @@ void Panel::Update(App& app) {
 	if (useScrollBar) { scrollBar->Update(app); }
 }
 void Panel::Discard(App& app) {
-	app.own.Remove(this); scrollBar->Discard(app);
+	app.inputOwners.Remove(this); scrollBar->Discard(app);
 	if (contentControl) { contentControl->Discard(app); }
 }
 void Panel::PreUpdate(App& app) {
-	bool canOwnInput = app.own.hoveredDepth <= depth &&
-		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.scr.Rect());
-	if (canOwnInput) { app.own.hoveredDepth = depth; app.own.hovered = this; }
+	bool canOwnInput = app.inputOwners.hoveredDepth <= depth &&
+		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.screen.Rect());
+	if (canOwnInput) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 
-	canOwnInput = app.own.wheeledDepth <= depth &&
-		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.scr.Rect());
-	if (canOwnInput) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
+	canOwnInput = app.inputOwners.wheeledDepth <= depth &&
+		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.screen.Rect());
+	if (canOwnInput) { app.inputOwners.wheeledDepth = depth; app.inputOwners.wheeled = this; }
 
 	if (contentControl) { contentControl->PreUpdate(app); }
 	if (useScrollBar) { scrollBar->PreUpdate(app); }

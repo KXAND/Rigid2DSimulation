@@ -4,34 +4,34 @@
 App::App()
 {
 	w = 800; h = 600;
-	title = L"程序"; class_name = L"class";
+	title = L"程序"; windowClassName = L"class";
 }
 void App::Init()
 {
 	AddLog(L"开始加载程序.\n");
-	SetLocale(); scr = Tile(w, h);
-	dscr = ini_dscr = DepthBuffer(w * h, -DBL_MAX);
-	bool ret = ft.Initialize();
+	SetLocale(); screen = Tile(w, h);
+	depthBuffer = initialDepthBuffer = DepthBuffer(w * h, -DBL_MAX);
+	bool ret = font.Initialize();
 	AddLog(ret ? L"成功加载字体模块.\n" : L"加载字体模块失败.\n");
 
 	HRESULT hr = SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
 	AddLog(hr == S_OK ? L"成功设置 DPI 感知.\n" : L"设置 DPI 感知失败.\n");
-	hinst = GetModuleHandle(NULL);
-	AddLog(hinst ? L"成功取得模块句柄.\n" : L"取得模块句柄失败.\n");
+	instanceHandle = GetModuleHandle(NULL);
+	AddLog(instanceHandle ? L"成功取得模块句柄.\n" : L"取得模块句柄失败.\n");
 
 	RegisterWindowClass(); CreateApplicationWindow(); ret = waveOutput.Initialize();
 	AddLog(ret ? L"成功加载声音模块.\n" : L"加载声音模块失败.\n");
-	input.Initialize(hwnd); InitializeBitmapInfo(); LoadLocalizationFile();
+	input.Initialize(windowHandle); InitializeBitmapInfo(); LoadLocalizationFile();
 
-	hdc = GetDC(hwnd);
-	AddLog(hdc ? L"成功取得设备环境句柄.\n" : L"取得设备环境句柄失败.\n");
-	sys_hcs = LoadCursorW(NULL, IDC_ARROW);
-	AddLog(sys_hcs ? L"成功加载光标.\n" : L"加载光标失败.\n");
+	deviceContext = GetDC(windowHandle);
+	AddLog(deviceContext ? L"成功取得设备环境句柄.\n" : L"取得设备环境句柄失败.\n");
+	systemCursor = LoadCursorW(NULL, IDC_ARROW);
+	AddLog(systemCursor ? L"成功加载光标.\n" : L"加载光标失败.\n");
 }
 void App::Run(bool console)
 {
 	if (!console) { HideConsole(); }
-	MSG msg{}; fps.Start(); ShowWindow(hwnd, SW_SHOW);
+	MSG msg{}; frameRate.Start(); ShowWindow(windowHandle, SW_SHOW);
 
 	while (true)
 	{
@@ -43,28 +43,28 @@ void App::Run(bool console)
 		}
 		else
 		{
-			bool ret = SetWindowText(hwnd, title.c_str());
+			bool ret = SetWindowText(windowHandle, title.c_str());
 			if (!ret) { AddLog(L"设置标题失败.\n"); }
-			fps.Update(); ResetDepthBuffer();
-			ret = input.SyncMouse(hwnd);
+			frameRate.Update(); ResetDepthBuffer();
+			ret = input.SyncMouse(windowHandle);
 			if (!ret) { AddLog(L"同步鼠标位置失败.\n");
 			}
 			Update(); ret = waveOutput.Play();
 			if (!ret) { AddLog(L"播放声音失败.\n"); }
-			PresentScreen(); input.Reset(); own.Reset();
+			PresentScreen(); input.Reset(); inputOwners.Reset();
 		}
-	} ReleaseDC(hwnd, hdc);
+	} ReleaseDC(windowHandle, deviceContext);
 	waveOutput.Shutdown(); AddLog(L"退出程序.\n\n");
 }
 
 void App::ResetDepthBuffer()
 {
-	memcpy(dscr.data(), ini_dscr.data(), dscr.size() * sizeof(double));
+	memcpy(depthBuffer.data(), initialDepthBuffer.data(), depthBuffer.size() * sizeof(double));
 }
 void App::PresentScreen()
 {
-	int ret = SetDIBitsToDevice(hdc, 0, 0, w, h,
-		0, 0, 0, h, scr.colors.data(), &bmi, DIB_RGB_COLORS);
+	int ret = SetDIBitsToDevice(deviceContext, 0, 0, w, h,
+		0, 0, 0, h, screen.colors.data(), &bitmapInfo, DIB_RGB_COLORS);
 	if (!ret) { AddLog(L"展示屏幕失败.\n"); }
 }
 void App::AddLog(wstring const& s)
@@ -92,7 +92,7 @@ void App::InitializeBitmapInfo()
 	hd.biPlanes = 1;
 	hd.biBitCount = 24;
 	hd.biCompression = BI_RGB;
-	bmi.bmiHeader = hd;
+	bitmapInfo.bmiHeader = hd;
 }
 void App::LoadLocalizationFile()
 {
@@ -130,8 +130,8 @@ void App::RegisterWindowClass()
 	WNDCLASSEXW wc{};
 	wc.cbSize = sizeof(wc);
 	wc.lpfnWndProc = WindowProcedure;
-	wc.hInstance = hinst;
-	wc.lpszClassName = class_name.c_str();
+	wc.hInstance = instanceHandle;
+	wc.lpszClassName = windowClassName.c_str();
 
 	ATOM ret = RegisterClassExW(&wc);
 	AddLog(ret ? L"成功注册窗口类.\n" : L"注册窗口类失败.\n");
@@ -145,8 +145,8 @@ void App::CreateApplicationWindow()
 	int rw = cr.right - cr.left;
 	int rh = cr.bottom - cr.top;
 
-	hwnd = CreateWindowExW(0, class_name.c_str(),
-		title.c_str(), sty, 0, 0, rw, rh, NULL, NULL, hinst, this);
-	AddLog(hwnd ? L"成功创建窗口.\n" : L"创建窗口失败.\n");
+	windowHandle = CreateWindowExW(0, windowClassName.c_str(),
+		title.c_str(), sty, 0, 0, rw, rh, NULL, NULL, instanceHandle, this);
+	AddLog(windowHandle ? L"成功创建窗口.\n" : L"创建窗口失败.\n");
 }
 

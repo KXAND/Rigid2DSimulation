@@ -53,6 +53,7 @@
 - `Vector3::near_zero` 已迁移为 PascalCase 的 `IsNearZero`，不改变其数值判定逻辑。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。
 - `AppInput` 的鼠标、键盘和文本输入状态字段，以及 `FrameRate` 的采样与时间统计字段，已迁移为表达职责的 lower camel 名称；输入事件和帧率计算逻辑保持不变。
+- `App` 的画布、深度缓冲、字体、帧率、输入所有者、窗口资源和窗口类配置字段已迁移为完整 lower camel；绘制、窗口和消息处理调用点已同步。
 - `WaveBlock`、`WaveOutput` 及 `App::waveOutput` 的音频输出字段和接口已迁移为完整 lower camel 与 PascalCase，并同步更新应用初始化和模拟层调用点。
 - `App` 的日志、国际化查询和本地化文件加载接口已迁移为 PascalCase；仅更新应用与界面调用链，解析器中的同名数据字段保持不变。
 - 已完成的提交保持文件改名、类型名改名、宏替换和纯排版互相分离。

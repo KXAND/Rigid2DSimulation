@@ -15,8 +15,8 @@ int HandleKillFocus(App* app, WPARAM wp, LPARAM lp) {
 }
 int HandleSetCursor(App* app, WPARAM wp, LPARAM lp) {
 	HCURSOR cs =
-		LOWORD(lp) != HTCLIENT || app->use_sys_cs ?
-		app->sys_hcs : NULL;
+		LOWORD(lp) != HTCLIENT || app->useSystemCursor ?
+		app->systemCursor : NULL;
 	SetCursor(cs);
 	return 0;
 }

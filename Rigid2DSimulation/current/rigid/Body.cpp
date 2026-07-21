@@ -302,33 +302,33 @@ void Body::Render(SimulationApp& cur) const
 
 	if (point)
 	{
-		drawEllipse(cur.scr, cur.dscr, GetDepth(), position, pointRadius, pointRadius, cur.background->ViewPort(), color);
-		drawEllipseBorder(cur.scr, cur.dscr, GetDepth(), position, pointRadius, pointRadius, cur.background->ViewPort(), borderColor, 20);
+		drawEllipse(cur.screen, cur.depthBuffer, GetDepth(), position, pointRadius, pointRadius, cur.background->ViewPort(), color);
+		drawEllipseBorder(cur.screen, cur.depthBuffer, GetDepth(), position, pointRadius, pointRadius, cur.background->ViewPort(), borderColor, 20);
 	}
 	for (auto& shape : shapes)
 	{
 		if (shape->isCircle)
 		{
-			drawEllipse(cur.scr, cur.dscr, GetDepth(),
+			drawEllipse(cur.screen, cur.depthBuffer, GetDepth(),
 				shape->position, shape->r, shape->r, cur.background->ViewPort(), color);
-			drawEllipseBorder(cur.scr, cur.dscr, GetDepth(),
+			drawEllipseBorder(cur.screen, cur.depthBuffer, GetDepth(),
 				shape->position, shape->r, shape->r, cur.background->ViewPort(), borderColor, 30);
 
 			// 显示一条半径以便于我们判断圆的旋转角度
 			auto peakPoint = Vector2(cos(shape->radian), sin(shape->radian)) * shape->r + shape->position;
-			drawLineSegment(cur.scr, cur.dscr, shape->position, peakPoint, GetDepth(), cur.background->ViewPort(), borderColor);
+			drawLineSegment(cur.screen, cur.depthBuffer, shape->position, peakPoint, GetDepth(), cur.background->ViewPort(), borderColor);
 			continue;
 		}
 
 		for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
 		{
 			int j = (i + 1) % shape->vertices.size();
-			drawTriangle(cur.scr, cur.dscr, cur.background->ViewPort(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
+			drawTriangle(cur.screen, cur.depthBuffer, cur.background->ViewPort(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
 		}
 		for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
 		{
 			int j = (i + 1) % shape->vertices.size();
-			drawLineSegment(cur.scr, cur.dscr, shape->vertices[i], shape->vertices[j], GetDepth(), cur.background->ViewPort(), borderColor);
+			drawLineSegment(cur.screen, cur.depthBuffer, shape->vertices[i], shape->vertices[j], GetDepth(), cur.background->ViewPort(), borderColor);
 		}
 	}
 
@@ -336,7 +336,7 @@ void Body::Render(SimulationApp& cur) const
 	{
 		Vector2 p1 = Vector2(cur.input.mousePosition);
 		Vector2 p0 = position + transform * relativeDragPoint;
-		drawLineSegment(cur.scr, cur.dscr, p0, p1, GetDepth(), cur.background->ViewPort(), Color(0, 255, 255));
+		drawLineSegment(cur.screen, cur.depthBuffer, p0, p1, GetDepth(), cur.background->ViewPort(), Color(0, 255, 255));
 	}
 
 	if (!track.empty())
@@ -344,7 +344,7 @@ void Body::Render(SimulationApp& cur) const
 		Vector2 p0 = track.front();
 		for (auto p1 : track)
 		{
-			drawLineSegment(cur.scr, cur.dscr, p0, p1, 10, cur.background->ViewPort(), Color(255, 0, 255));
+			drawLineSegment(cur.screen, cur.depthBuffer, p0, p1, 10, cur.background->ViewPort(), Color(255, 0, 255));
 			p0 = p1;
 		}
 	}
@@ -372,7 +372,7 @@ void Body::Step(SimulationApp& cur, double stepDt)
 	if (dragged)
 	{
 		if (cur.input.mouseButtonDown[2]) { HandleDragWhole(cur); }
-		else if (!cur.own.keyboardOwner && cur.input.keyDown[L'F']) { HandleDragForce(cur, stepDt); }
+		else if (!cur.inputOwners.keyboardOwner && cur.input.keyDown[L'F']) { HandleDragForce(cur, stepDt); }
 		else if (invMass == 0) { HandleDragWhole(cur); }
 		else { HandleDragPoint(cur); }
 	}
@@ -429,7 +429,7 @@ void Body::FollowPresetAngularVelocity(SimulationApp& cur)
 void Body::UpdateDragAngle(SimulationApp& cur)
 {
 	velocityAngularDrag = 0;
-	if (!cur.own.keyboardOwner)
+	if (!cur.inputOwners.keyboardOwner)
 	{
 		if (cur.input.keyDown[L'Q']) { velocityAngularDrag = -cur.velocityAngularDrag; }
 		if (cur.input.keyDown[L'E']) { velocityAngularDrag = +cur.velocityAngularDrag; }
@@ -494,7 +494,7 @@ void Body::HandleDragForce(SimulationApp& cur, double deltaTime)
 }
 void Body::Update(SimulationApp& cur)
 {
-	hovered = (cur.own.hovered == this);
+	hovered = (cur.inputOwners.hovered == this);
 
 	if (cur.mode == MODE_DEL && hovered && cur.input.IsMouseClickedDown(0)) { isMarkedForDeletion = true; }
 	if (cur.mode == MODE_SEL && hovered && cur.input.IsMouseClickedDown(0)) { cur.bodySelecting = this; }
@@ -506,7 +506,7 @@ void Body::Update(SimulationApp& cur)
 		{
 			HandleDragWhole(cur);
 		}
-		else if (!cur.own.keyboardOwner && cur.input.keyDown[L'F']) { }
+		else if (!cur.inputOwners.keyboardOwner && cur.input.keyDown[L'F']) { }
 		else if (invMass == 0)
 		{
 			HandleDragWhole(cur);
@@ -559,9 +559,9 @@ void Body::Update(SimulationApp& cur)
 }
 void Body::PreUpdate(SimulationApp& cur)
 {
-	bool ok = cur.own.hoveredDepth <= GetDepth() &&
+	bool ok = cur.inputOwners.hoveredDepth <= GetDepth() &&
 		IsInside((Vector2) cur.input.mousePosition) && isInside(cur.input.mousePosition, cur.background->ViewPort());
-	if (ok) { cur.own.hoveredDepth = GetDepth(); cur.own.hovered = this; }
+	if (ok) { cur.inputOwners.hoveredDepth = GetDepth(); cur.inputOwners.hovered = this; }
 }
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulomb)

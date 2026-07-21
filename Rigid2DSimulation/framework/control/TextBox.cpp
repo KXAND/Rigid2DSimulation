@@ -57,17 +57,17 @@ bool TextBox::HasSelection() const { return selectionStart != selectionEnd; }
 int TextBox::GetMaxCursorX() const { return w - editMarginWidth; }
 int TextBox::GetCursorX(App& app) const {
 	wstring tmp(value.begin(), value.begin() + selectionEnd);
-	return valueOffsetX + GetStringSize(tmp, app.ft, 0).x;
+	return valueOffsetX + GetStringSize(tmp, app.font, 0).x;
 }
 
 void TextBox::SelectStart(App& app) {
 	selecting = true;
 	int x = app.input.mousePosition.x - (GetBoxTopLeft().x + valueOffsetX);
-	selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, { x, 0 }, 0);
+	selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.font, { x, 0 }, 0);
 }
 void TextBox::SelectEnd(App& app) {
 	int x = app.input.mousePosition.x - (GetBoxTopLeft().x + valueOffsetX);
-	selectionEnd = GetStringIndexAtPosition(value, app.ft, { x, 0 }, 0);
+	selectionEnd = GetStringIndexAtPosition(value, app.font, { x, 0 }, 0);
 }
 
 void TextBox::AddCharacters(App& app) {
@@ -107,7 +107,7 @@ void TextBox::HandleBackspace(App& app) {
 		value = GetLeftText() + GetRightText();
 		selectionStart = selectionEnd = GetEditBegin();
 	} else if (GetEditBegin() > 0) {
-		valueOffsetX += app.ft[value[selectionStart]].width;
+		valueOffsetX += app.font[value[selectionStart]].width;
 		valueOffsetX = min<double>(valueOffsetX, editMarginWidth);
 		auto a = value.begin();
 		auto b = value.begin() + selectionStart - 1;
@@ -163,9 +163,9 @@ void TextBox::HandleKey(App& app) {
 
 void TextBox::ClampSelectingCursor(App& app) {
 	double val = (app.input.mousePosition.x - GetBoxTopLeft().x) - GetMaxCursorX();
-	if (val > 0) { valueOffsetX -= app.fps.GetDeltaTime() * slideMultiplier * val; }
+	if (val > 0) { valueOffsetX -= app.frameRate.GetDeltaTime() * slideMultiplier * val; }
 	val = editMarginWidth - (app.input.mousePosition.x - GetBoxTopLeft().x);
-	if (val > 0) { valueOffsetX += app.fps.GetDeltaTime() * slideMultiplier * val; }
+	if (val > 0) { valueOffsetX += app.frameRate.GetDeltaTime() * slideMultiplier * val; }
 }
 void TextBox::ClampCursor(App& app) {
 	if (GetCursorX(app) > GetMaxCursorX()) {
@@ -179,7 +179,7 @@ void TextBox::ClampCursorPosition(App& app) {
 	else { ClampCursor(app); }
 }
 void TextBox::ClampTextPosition(App& app) {
-	int valueEndX = valueOffsetX + GetStringSize(value, app.ft, 0).x;
+	int valueEndX = valueOffsetX + GetStringSize(value, app.font, 0).x;
 	if (valueEndX < GetMaxCursorX()) {
 		valueOffsetX += GetMaxCursorX() - valueEndX;
 	}
@@ -187,28 +187,28 @@ void TextBox::ClampTextPosition(App& app) {
 }
 
 void TextBox::RenderMain(App& app) {
-	DVector2 labelTextTopLeft = tl + DVector2(0, (h - app.ft.h) / 2);
-	DrawString(app.scr, app.dscr, depth, labelText, labelTextColor, app.ft, labelTextTopLeft, 0, vp);
+	DVector2 labelTextTopLeft = tl + DVector2(0, (h - app.font.h) / 2);
+	DrawString(app.screen, app.depthBuffer, depth, labelText, labelTextColor, app.font, labelTextTopLeft, 0, vp);
 
 	Color const& color =
 		!enabled ? invalidColor :
 		edit ? editColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-	drawRectangleWithBorderRaw(app.scr, GetBoxTopLeft(), w, h, vp, color, frameColor);
+	drawRectangleWithBorderRaw(app.screen, GetBoxTopLeft(), w, h, vp, color, frameColor);
 
 	int cursorX = 0;
-	DVector2 valueTopLeft = GetBoxTopLeft() + DVector2(valueOffsetX, (h - app.ft.h) / 2);
-	DrawString(app.scr, app.dscr, depth, GetLeftText(), valueColor, app.ft, valueTopLeft, cursorX, 0, GetTextViewport());
-	DrawString(app.scr, app.dscr, depth, GetSelectedText(), selectedColor, app.ft, valueTopLeft, cursorX, 0, GetTextViewport());
-	DrawString(app.scr, app.dscr, depth, GetRightText(), valueColor, app.ft, valueTopLeft, cursorX, 0, GetTextViewport());
+	DVector2 valueTopLeft = GetBoxTopLeft() + DVector2(valueOffsetX, (h - app.font.h) / 2);
+	DrawString(app.screen, app.depthBuffer, depth, GetLeftText(), valueColor, app.font, valueTopLeft, cursorX, 0, GetTextViewport());
+	DrawString(app.screen, app.depthBuffer, depth, GetSelectedText(), selectedColor, app.font, valueTopLeft, cursorX, 0, GetTextViewport());
+	DrawString(app.screen, app.depthBuffer, depth, GetRightText(), valueColor, app.font, valueTopLeft, cursorX, 0, GetTextViewport());
 }
 void TextBox::RenderCursor(App& app) {
 	bool show_cursor = edit &&
-		(sin(app.fps.GetElapsedTime() * blinkMultiplier) > 0 || cursor_change);
+		(sin(app.frameRate.GetElapsedTime() * blinkMultiplier) > 0 || cursor_change);
 	if (show_cursor) {
 		int cursorScreenX = GetBoxTopLeft().x + GetCursorX(app) - cursorWidth / 2;
 		int cursorScreenY = GetBoxTopLeft().y + (h - cursorHeight) / 2;
-		drawRectangleRaw(app.scr, { cursorScreenX, cursorScreenY }, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
+		drawRectangleRaw(app.screen, { cursorScreenX, cursorScreenY }, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
 	}
 }
 void TextBox::Render(App& app) {
@@ -216,8 +216,8 @@ void TextBox::Render(App& app) {
 }
 
 void TextBox::Update(App& app) {
-	hovered = (app.own.hovered == this);
-	labelTextWidth = GetStringSize(labelText, app.ft, 0).x;
+	hovered = (app.inputOwners.hovered == this);
+	labelTextWidth = GetStringSize(labelText, app.font, 0).x;
 	if (edit) {
 		if (selecting) { SelectEnd(app); }
 		if (enabled && hovered && app.input.IsMouseClickedDown(0)) { SelectStart(app); }
@@ -227,7 +227,7 @@ void TextBox::Update(App& app) {
 		if (enabled && !hovered && app.input.IsMouseClickedDown(0)) { OnDone(app); }
 		if (!enabled || !hovered && app.input.IsMouseClickedDown(0)) {
 			// 请注意 kb_owner 的登记在 PreUpdate 中进行。
-			app.own.ReleaseKeyboard(this); edit = selecting = false;
+			app.inputOwners.ReleaseKeyboard(this); edit = selecting = false;
 			selectionStart = selectionEnd = 0;
 		}
 	} else {
@@ -239,17 +239,17 @@ void TextBox::Update(App& app) {
 	} ClampTextPosition(app); Render(app);
 }
 void TextBox::Discard(App& app) {
-	app.own.Remove(this); app.own.ReleaseKeyboard(this);
+	app.inputOwners.Remove(this); app.inputOwners.ReleaseKeyboard(this);
 	labelTextWidth = 0; edit = hovered = false;
 	selecting = cursor_change = false;
 	selectionStart = selectionEnd = 0;
 }
 void TextBox::PreUpdate(App& app) {
-	if (edit) { app.own.keyboardOwner = this; }
+	if (edit) { app.inputOwners.keyboardOwner = this; }
 
-	bool ok = app.own.hoveredDepth <= depth &&
+	bool ok = app.inputOwners.hoveredDepth <= depth &&
 		isInside(app.input.mousePosition, { GetBoxTopLeft(), w, h }) && isInside(app.input.mousePosition, vp);
-	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
+	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
 LocalizedTextBox::LocalizedTextBox(wstring const& id, int w) : TextBox(w), labelTextId(id) {}

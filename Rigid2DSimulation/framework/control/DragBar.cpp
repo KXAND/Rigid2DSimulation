@@ -26,21 +26,21 @@ void HorizontalDragBar::SetNormalizedNodePosition(double normalizedValue) {
 }
 DVector2 HorizontalDragBar::GetNodeTopLeft() const { return tl + DVector2(textWidth + nodeX, 0); }
 void HorizontalDragBar::Render(App& app) {
-	DVector2 textTopLeft = tl + DVector2(0, (nodeHeight - app.ft.h) / 2);
-	DrawString(app.scr, app.dscr, depth, text, textColor, app.ft, textTopLeft, 0, vp);
+	DVector2 textTopLeft = tl + DVector2(0, (nodeHeight - app.font.h) / 2);
+	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, vp);
 
 	Color const& color =
 		!enabled ? invalidColor :
 		dragged ? draggedColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
 	DVector2 barTopLeft = tl + DVector2(textWidth, (nodeHeight - barHeight) / 2);
-	drawRectangleRaw(app.scr, barTopLeft, barWidth, barHeight, vp, barColor);
-	drawRectangleRaw(app.scr, GetNodeTopLeft(), nodeWidth, nodeHeight, vp, color);
+	drawRectangleRaw(app.screen, barTopLeft, barWidth, barHeight, vp, barColor);
+	drawRectangleRaw(app.screen, GetNodeTopLeft(), nodeWidth, nodeHeight, vp, color);
 }
 
 void HorizontalDragBar::Update(App& app) {
-	hovered = (app.own.hovered == this);
-	textWidth = GetStringSize(text, app.ft, 0).x;
+	hovered = (app.inputOwners.hovered == this);
+	textWidth = GetStringSize(text, app.font, 0).x;
 	if (dragged) {
 		nodeX = clamp(app.input.mousePosition.x - (tl.x + textWidth + nodeWidth / 2), 0, barWidth - nodeWidth);
 		// 在刚刚抓住的那一帧没有更新，在放下的那一帧还在更新。省事。
@@ -53,13 +53,13 @@ void HorizontalDragBar::Update(App& app) {
 	} Render(app);
 }
 void HorizontalDragBar::Discard(App& app) {
-	app.own.Remove(this); textWidth = 0;
+	app.inputOwners.Remove(this); textWidth = 0;
 	dragged = hovered = false;
 }
 void HorizontalDragBar::PreUpdate(App& app) {
-	bool ok = app.own.hoveredDepth <= depth &&
+	bool ok = app.inputOwners.hoveredDepth <= depth &&
 		isInside(app.input.mousePosition, { GetNodeTopLeft(), nodeWidth, nodeHeight }) && isInside(app.input.mousePosition, vp);
-	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
+	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
 LocalizedHorizontalDragBar::LocalizedHorizontalDragBar(wstring const& id, int w) : HorizontalDragBar(w), textId(id) {}

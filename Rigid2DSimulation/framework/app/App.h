@@ -9,27 +9,27 @@ int constexpr LAN_ENG = 1;
 LRESULT CALLBACK WindowProcedure(HWND wnd, UINT msg, WPARAM wp, LPARAM lp);
 struct App {
 	int w = 0, h = 0;
-	Tile scr;
-	DepthBuffer dscr, ini_dscr;
+	Tile screen;
+	DepthBuffer depthBuffer, initialDepthBuffer;
 
-	Font ft;
+	Font font;
 	int languageIdx = 0;
 	map<wstring, vector<wstring>> localizationDict;
 
 	WaveOutput waveOutput;
-	FrameRate fps;
+	FrameRate frameRate;
 	AppInput input;
-	InputOwners own;
+	InputOwners inputOwners;
 
-	HDC hdc = NULL;
-	HWND hwnd = NULL;
-	BITMAPINFO bmi{};
-	HCURSOR sys_hcs{};
-	HINSTANCE hinst = NULL;
+	HDC deviceContext = NULL;
+	HWND windowHandle = NULL;
+	BITMAPINFO bitmapInfo{};
+	HCURSOR systemCursor{};
+	HINSTANCE instanceHandle = NULL;
 
 	wstring title;
-	bool use_sys_cs = true;
-	wstring class_name;
+	bool useSystemCursor = true;
+	wstring windowClassName;
 
 	App();
 	void Init();

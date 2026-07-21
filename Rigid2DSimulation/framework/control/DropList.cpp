@@ -31,35 +31,35 @@ int DropList::GetH() const {
 DVector2 DropList::GetBoxTopLeft() const { return tl + DVector2(textWidth, 0); }
 DVector2 DropList::GetItemsTopLeft() const { return GetBoxTopLeft() + DVector2(0, h); }
 void DropList::RenderMain(App& app) {
-	DVector2 labelTextTopLeft = tl + DVector2(0, (h - app.ft.h) / 2);
-	DrawString(app.scr, app.dscr, depth, text, textColor, app.ft, labelTextTopLeft, 0, vp);
+	DVector2 labelTextTopLeft = tl + DVector2(0, (h - app.font.h) / 2);
+	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, labelTextTopLeft, 0, vp);
 
 	Color const& color =
 		!enabled ? invalidColor :
 		edit ? editColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-	drawRectangleWithBorder(app.scr, app.dscr, depth, GetBoxTopLeft(), w, h, vp, color, frameColor);
+	drawRectangleWithBorder(app.screen, app.depthBuffer, depth, GetBoxTopLeft(), w, h, vp, color, frameColor);
 
 	Vector2 signCenter = (Vector2)GetBoxTopLeft() + Vector2(w - signMargin, h / 2);
-	drawEllipse(app.scr, app.dscr, depth, signCenter, signRadius, signRadius, vp, markColor);
+	drawEllipse(app.screen, app.depthBuffer, depth, signCenter, signRadius, signRadius, vp, markColor);
 
-	DVector2 selectedItemTextTopLeft = tl + DVector2(textMarginX, (h - app.ft.h) / 2);
-	DrawString(app.scr, app.dscr, depth, itemNameProvider(selectedIndex, app), textColor, app.ft, labelTextTopLeft, 0, vp);
+	DVector2 selectedItemTextTopLeft = tl + DVector2(textMarginX, (h - app.font.h) / 2);
+	DrawString(app.screen, app.depthBuffer, depth, itemNameProvider(selectedIndex, app), textColor, app.font, labelTextTopLeft, 0, vp);
 }
 void DropList::RenderItems(App& app) {
 	if (edit) {
-		drawRectangleWithBorder(app.scr, app.dscr, depth, 
+		drawRectangleWithBorder(app.screen, app.depthBuffer, depth,
 			GetItemsTopLeft(), w, itemHeight * itemCount, vp, normalColor, frameColor);
 		if (hoveredItemIndex != -1) {
 			DVector2 hoveredItemTopLeft = GetBoxTopLeft() + DVector2(0, h + itemHeight * hoveredItemIndex);
-			drawRectangleWithBorder(app.scr, app.dscr, depth,
+			drawRectangleWithBorder(app.screen, app.depthBuffer, depth,
 				hoveredItemTopLeft, w, itemHeight, vp, hoveredColor, frameColor);
 		}
 		for (int i = (0), endIndex = int(itemCount); i < endIndex; ++i) {
 			DVector2 itemTextTopLeft = GetBoxTopLeft() +
 				DVector2(0, h + itemHeight * i) +
-				DVector2(textMarginX, (itemHeight - app.ft.h) / 2);
-			DrawString(app.scr, app.dscr, depth, itemNameProvider(i, app), textColor, app.ft, itemTextTopLeft, 0, vp);
+				DVector2(textMarginX, (itemHeight - app.font.h) / 2);
+			DrawString(app.screen, app.depthBuffer, depth, itemNameProvider(i, app), textColor, app.font, itemTextTopLeft, 0, vp);
 		}
 	}
 }
@@ -69,8 +69,8 @@ void DropList::Render(App& app) {
 
 // 在内容可变的情形下怎么处理我还没想清楚的。
 void DropList::Update(App& app) {
-	hovered = (app.own.hovered == this);
-	textWidth = GetStringSize(text, app.ft, 0).x;
+	hovered = (app.inputOwners.hovered == this);
+	textWidth = GetStringSize(text, app.font, 0).x;
 	if (edit) {
 		if (hovered) {
 			int itemRelativeY = app.input.mousePosition.y - GetBoxTopLeft().y - h;
@@ -87,14 +87,14 @@ void DropList::Update(App& app) {
 	} Render(app);
 }
 void DropList::Discard(App& app) {
-	app.own.Remove(this); textWidth = 0;
+	app.inputOwners.Remove(this); textWidth = 0;
 	edit = hovered = false; hoveredItemIndex = -1;
 }
 void DropList::PreUpdate(App& app) {
 	int visibleHeight = h + (edit ? itemCount * itemHeight : 0);
-	bool ok = app.own.hoveredDepth <= depth &&
+	bool ok = app.inputOwners.hoveredDepth <= depth &&
 		isInside(app.input.mousePosition, { GetBoxTopLeft(), w, visibleHeight}) && isInside(app.input.mousePosition, vp);
-	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
+	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
 LocalizedDropList::LocalizedDropList(wstring const& id, int w, DropListItemNameProvider const& itemNameProvider) : DropList(w, itemNameProvider), textId(id) {}

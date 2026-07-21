@@ -12,12 +12,12 @@ int Label::GetW() const { return w + gap.x; }
 int Label::GetH() const { return h + gap.y; }
 
 void Label::Render(App& app) {
-	DVector2 textTopLeft = tl + DVector2(0, h - app.ft.h) / 2;
-	DrawString(app.scr, app.dscr, depth, text, textColor, app.ft, textTopLeft, 0, vp);
+	DVector2 textTopLeft = tl + DVector2(0, h - app.font.h) / 2;
+	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, vp);
 }
 void Label::Update(App& app) {
 	Sync(app);
-	if (!fixedWidth) { w = GetStringSize(text, app.ft, 0).x; }
+	if (!fixedWidth) { w = GetStringSize(text, app.font, 0).x; }
 	Render(app);
 }
 

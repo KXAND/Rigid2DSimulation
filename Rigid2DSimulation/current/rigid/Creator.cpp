@@ -233,7 +233,7 @@ void Creator::UpdateParticle(SimulationApp& cur)
 }
 void Creator::Update(SimulationApp& cur)
 {
-	hovered = (cur.own.hovered == this);
+	hovered = (cur.inputOwners.hovered == this);
 	body = NULL; connection = NULL;
 
 	switch (mode)
@@ -258,16 +258,16 @@ void Creator::Update(SimulationApp& cur)
 }
 void Creator::Discard(SimulationApp& cur)
 {
-	cur.own.Remove(this); body0 = body1 = NULL;
+	cur.inputOwners.Remove(this); body0 = body1 = NULL;
 	body = NULL; connection = NULL;
 	hovered = active = false;
 }
 void Creator::PreUpdate(SimulationApp& cur)
 {
-	if (cur.own.hoveredDepth <= Depth() && isInside(cur.input.mousePosition, cur.background->ViewPort()))
+	if (cur.inputOwners.hoveredDepth <= Depth() && isInside(cur.input.mousePosition, cur.background->ViewPort()))
 	{
-		cur.own.hoveredDepth = Depth();
-		cur.own.hovered = this;
+		cur.inputOwners.hoveredDepth = Depth();
+		cur.inputOwners.hovered = this;
 	}
 }
 

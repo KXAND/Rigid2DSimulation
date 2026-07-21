@@ -148,7 +148,7 @@ void SimulationApp::Update()
 	}
 
 	// 检查暂停
-	if (!own.keyboardOwner)
+	if (!inputOwners.keyboardOwner)
 	{
 		if (input.IsKeyPressedDown(L' ')) { isPaused = !isPaused; }
 	}
@@ -178,8 +178,8 @@ void SimulationApp::Update()
 	// 更新运行信息
 	(*background).Update(*this);
 	(*background).Render(*this);
-	realDeltaTime = min(maxRealDeltaTime, fps.GetDeltaTime());
-	currentScope[L"cur.fps.GetDeltaTime()"] = std::make_shared<Value>(realDeltaTime);
+	realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
+	currentScope[L"cur.frameRate.GetDeltaTime()"] = std::make_shared<Value>(realDeltaTime);
 	gridNumX = ceil(rectScene.w / gridSize);
 	gridNumY = ceil(rectScene.h / gridSize);
 	if (isSceneChanged) { isSceneChanged = false; groups = FormGroups(bodies); }

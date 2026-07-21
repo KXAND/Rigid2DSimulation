@@ -23,35 +23,35 @@ int CheckBox::GetH() const { return h + gap.y; }
 
 DVector2 CheckBox::GetBoxTopLeft() const { return tl + DVector2(textWidth, (h - boxSize) / 2); }
 void CheckBox::Render(App& app) {
-	DVector2 textTopLeft = tl + DVector2(0, (h - app.ft.h) / 2);
-	DrawString(app.scr, app.dscr, depth, text, textColor, app.ft, textTopLeft, 0, vp);
+	DVector2 textTopLeft = tl + DVector2(0, (h - app.font.h) / 2);
+	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, vp);
 
 	Color const& color =
 		!enabled ? invalidColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-	drawRectangleRaw(app.scr, GetBoxTopLeft(), boxSize, boxSize, vp, color);
+	drawRectangleRaw(app.screen, GetBoxTopLeft(), boxSize, boxSize, vp, color);
 	if (checked) {
 		int innerOffset = (boxSize - innerBoxSize) / 2;
 		DVector2 innerBoxTopLeft = GetBoxTopLeft() + DVector2(innerOffset, innerOffset);
-		drawRectangleRaw(app.scr, innerBoxTopLeft, innerBoxSize, innerBoxSize, vp, innerColor);
+		drawRectangleRaw(app.screen, innerBoxTopLeft, innerBoxSize, innerBoxSize, vp, innerColor);
 	}
 }
 
 void CheckBox::Update(App& app) {
-	hovered = (app.own.hovered == this);
-	textWidth = GetStringSize(text, app.ft, 0).x;
+	hovered = (app.inputOwners.hovered == this);
+	textWidth = GetStringSize(text, app.font, 0).x;
 	bool click = enabled && hovered && app.input.IsMouseClickedDown(0);
 	if (click) { checked = !checked; Upload(app); }
 	else { Sync(app); } Render(app);
 }
 void CheckBox::Discard(App& app) {
-	app.own.Remove(this); textWidth = 0;
+	app.inputOwners.Remove(this); textWidth = 0;
 	hovered = false;
 }
 void CheckBox::PreUpdate(App& app) {
-	bool ok = app.own.hoveredDepth <= depth &&
+	bool ok = app.inputOwners.hoveredDepth <= depth &&
 		isInside(app.input.mousePosition, { GetBoxTopLeft(), boxSize, boxSize }) && isInside(app.input.mousePosition, vp);
-	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
+	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
 LocalizedCheckBox::LocalizedCheckBox(wstring const& id, bool big) : CheckBox(big), textId(id) {}

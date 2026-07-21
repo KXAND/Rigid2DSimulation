@@ -24,15 +24,15 @@ void Button::Render(App& app) {
 		!enabled ? invalidColor :
 		chosen ? chosenColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-	DVector2 textSize = GetStringSize(text, app.ft, 0);
+	DVector2 textSize = GetStringSize(text, app.font, 0);
 	DVector2 textTopLeft = tl + DVector2(w, h) / 2 - textSize / 2;
 
-	drawRectangleWithBorderRaw(app.scr, tl, w, h, vp, color, frameColor);
-	DrawString(app.scr, app.dscr, depth, text, textColor, app.ft, textTopLeft, 0, vp);
+	drawRectangleWithBorderRaw(app.screen, tl, w, h, vp, color, frameColor);
+	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, vp);
 }
 
 void Button::Update(App& app) {
-	hovered = (app.own.hovered == this);
+	hovered = (app.inputOwners.hovered == this);
 	if (chosen) {
 		if (enabled && !app.input.mouseButtonDown[0]) { OnClick(app); }
 		chosen = enabled && hovered && app.input.mouseButtonDown[0];
@@ -40,11 +40,11 @@ void Button::Update(App& app) {
 		chosen = enabled && hovered && app.input.IsMouseClickedDown(0);
 	} Render(app);
 }
-void Button::Discard(App& app) { app.own.Remove(this); chosen = hovered = false; }
+void Button::Discard(App& app) { app.inputOwners.Remove(this); chosen = hovered = false; }
 void Button::PreUpdate(App& app) {
-	bool ok = app.own.hoveredDepth <= depth &&
+	bool ok = app.inputOwners.hoveredDepth <= depth &&
 		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, vp);
-	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
+	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
 LocalizedButton::LocalizedButton(int w, wstring const& id) : Button(w), textId(id) {}

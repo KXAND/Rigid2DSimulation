@@ -15,19 +15,19 @@ VerticalScrollBar::VerticalScrollBar() {
 	invalidColor = { 0, 0, 0 };
 }
 void VerticalScrollBar::Render(App& app) {
-	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), barColor, frameColor);
+	drawRectangleWithBorderRaw(app.screen, tl, w, h, app.screen.Rect(), barColor, frameColor);
 	if (hasOverflow) {
 		Color const& color =
 			!enabled ? invalidColor :
 			dragged ? draggedColor :
 			(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-		drawRectangleWithBorderRaw(app.scr, tl + DVector2(0, thumbY), w, thumbHeight, app.scr.Rect(), color, frameColor);
+		drawRectangleWithBorderRaw(app.screen, tl + DVector2(0, thumbY), w, thumbHeight, app.screen.Rect(), color, frameColor);
 	}
 }
 
 void VerticalScrollBar::Update(App& app) {
 	hasOverflow = (contentControl != NULL) && visibleHeight < contentControl->GetH();
-	hovered = (app.own.hovered == this);
+	hovered = (app.inputOwners.hovered == this);
 	hoveredThumb = hovered && isInside(app.input.mousePosition, { tl + DVector2(0, thumbY), w, thumbHeight });
 
 	// 这个状态变化比一般的控件是要复杂的。
@@ -46,12 +46,12 @@ void VerticalScrollBar::Update(App& app) {
 	} else { dragged = false; } Render(app);
 }
 void VerticalScrollBar::Discard(App& app) {
-	app.own.Remove(this); dragged = hovered = hasOverflow = hoveredThumb = false;
+	app.inputOwners.Remove(this); dragged = hovered = hasOverflow = hoveredThumb = false;
 }
 void VerticalScrollBar::PreUpdate(App& app) {
-	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.scr.Rect());
-	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
+	bool ok = app.inputOwners.hoveredDepth <= depth &&
+		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.screen.Rect());
+	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
 

@@ -13,11 +13,11 @@ int RichLabel::GetH() const { return h + gap.y; }
 
 int RichLabel::GetLineWidth() const { return fixedWidth ? w : 0; }
 void RichLabel::Render(App& app) {
-	DrawString(app.scr, app.dscr, depth, text, textColor, app.ft, tl, GetLineWidth(), vp);
+	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, tl, GetLineWidth(), vp);
 }
 void RichLabel::Update(App& app) {
 	Sync(app);
-	DVector2 textSize = GetStringSize(text, app.ft, GetLineWidth());
+	DVector2 textSize = GetStringSize(text, app.font, GetLineWidth());
 	if (!fixedWidth) { w = textSize.x; }
 	if (!fixedHeight) { h = textSize.y; }
 	Render(app);
