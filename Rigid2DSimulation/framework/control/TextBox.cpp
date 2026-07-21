@@ -62,16 +62,16 @@ int TextBox::GetCursorX(App& app) const {
 
 void TextBox::SelectStart(App& app) {
 	selecting = true;
-	int x = app.input.msp.x - (GetBoxTopLeft().x + valueOffsetX);
+	int x = app.input.mousePosition.x - (GetBoxTopLeft().x + valueOffsetX);
 	selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, { x, 0 }, 0);
 }
 void TextBox::SelectEnd(App& app) {
-	int x = app.input.msp.x - (GetBoxTopLeft().x + valueOffsetX);
+	int x = app.input.mousePosition.x - (GetBoxTopLeft().x + valueOffsetX);
 	selectionEnd = GetStringIndexAtPosition(value, app.ft, { x, 0 }, 0);
 }
 
 void TextBox::AddCharacters(App& app) {
-	wstring sifted = FilterCharacters(app.input.chs, true);
+	wstring sifted = FilterCharacters(app.input.typedCharacters, true);
 	if (!sifted.empty()) {
 		selecting = false;
 		value = GetLeftText() + sifted + GetRightText();
@@ -148,12 +148,12 @@ void TextBox::HandleSelectAll(App& app) {
 void TextBox::HandleKey(App& app) {
 	cursor_change = false;
 
-	if (app.input.kbmsg[VK_LEFT]) { HandleLeft(app); }
-	else if (app.input.kbmsg[VK_RIGHT]) { HandleRight(app); }
-	else if (app.input.kbmsg[VK_DELETE]) { HandleDelete(app); }
-	else if (app.input.kbmsg[VK_BACK]) { HandleBackspace(app); }
+	if (app.input.keyMessageCounts[VK_LEFT]) { HandleLeft(app); }
+	else if (app.input.keyMessageCounts[VK_RIGHT]) { HandleRight(app); }
+	else if (app.input.keyMessageCounts[VK_DELETE]) { HandleDelete(app); }
+	else if (app.input.keyMessageCounts[VK_BACK]) { HandleBackspace(app); }
 
-	if (app.input.kbd[VK_CONTROL]) {
+	if (app.input.keyDown[VK_CONTROL]) {
 		if (app.input.IsKeyPressedDown('C')) { HandleCopy(app); }
 		else if (app.input.IsKeyPressedDown('X')) { HandleCut(app); }
 		else if (app.input.IsKeyPressedDown('V')) { HandlePaste(app); }
@@ -162,9 +162,9 @@ void TextBox::HandleKey(App& app) {
 }
 
 void TextBox::ClampSelectingCursor(App& app) {
-	double val = (app.input.msp.x - GetBoxTopLeft().x) - GetMaxCursorX();
+	double val = (app.input.mousePosition.x - GetBoxTopLeft().x) - GetMaxCursorX();
 	if (val > 0) { valueOffsetX -= app.fps.GetDeltaTime() * slideMultiplier * val; }
-	val = editMarginWidth - (app.input.msp.x - GetBoxTopLeft().x);
+	val = editMarginWidth - (app.input.mousePosition.x - GetBoxTopLeft().x);
 	if (val > 0) { valueOffsetX += app.fps.GetDeltaTime() * slideMultiplier * val; }
 }
 void TextBox::ClampCursor(App& app) {
@@ -193,7 +193,7 @@ void TextBox::RenderMain(App& app) {
 	Color const& color =
 		!enabled ? invalidColor :
 		edit ? editColor :
-		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : normalColor;
+		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
 	drawRectangleWithBorderRaw(app.scr, GetBoxTopLeft(), w, h, vp, color, frameColor);
 
 	int cursorX = 0;
@@ -221,7 +221,7 @@ void TextBox::Update(App& app) {
 	if (edit) {
 		if (selecting) { SelectEnd(app); }
 		if (enabled && hovered && app.input.IsMouseClickedDown(0)) { SelectStart(app); }
-		if (!app.input.msd[0]) { selecting = false; }
+		if (!app.input.mouseButtonDown[0]) { selecting = false; }
 		HandleKey(app); AddCharacters(app); ClampCursorPosition(app); Upload(app);
 
 		if (enabled && !hovered && app.input.IsMouseClickedDown(0)) { OnDone(app); }
@@ -248,7 +248,7 @@ void TextBox::PreUpdate(App& app) {
 	if (edit) { app.own.keyboardOwner = this; }
 
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { GetBoxTopLeft(), w, h }) && isInside(app.input.msp, vp);
+		isInside(app.input.mousePosition, { GetBoxTopLeft(), w, h }) && isInside(app.input.mousePosition, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 

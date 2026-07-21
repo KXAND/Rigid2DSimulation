@@ -10,7 +10,7 @@ int destroyed(App* app, WPARAM wp, LPARAM lp) {
 	return 0;
 }
 int HandleKillFocus(App* app, WPARAM wp, LPARAM lp) {
-	app->input.kbd.fill(false);
+	app->input.keyDown.fill(false);
 	return 0;
 }
 int HandleSetCursor(App* app, WPARAM wp, LPARAM lp) {
@@ -21,21 +21,21 @@ int HandleSetCursor(App* app, WPARAM wp, LPARAM lp) {
 	return 0;
 }
 int HandleCaptureChanged(App* app, WPARAM wp, LPARAM lp) {
-	app->input.isBbarClicked = true;
-	app->input.kbd.fill(false);
+	app->input.isTitleBarClicked = true;
+	app->input.keyDown.fill(false);
 	return 0;
 }
 int HandleCharacter(App* app, WPARAM wp, LPARAM lp) {
-	app->input.chs += (wchar_t)wp;
+	app->input.typedCharacters += (wchar_t)wp;
 	return 0;
 }
 int HandleKeyUp(App* app, WPARAM wp, LPARAM lp) {
-	app->input.kbd[wp] = false;
+	app->input.keyDown[wp] = false;
 	return 0;
 }
 int HandleKeyDown(App* app, WPARAM wp, LPARAM lp) {
-	app->input.kbmsg[wp]++;
-	app->input.kbd[wp] = true;
+	app->input.keyMessageCounts[wp]++;
+	app->input.keyDown[wp] = true;
 	return 0;
 }
 int HandleMouseMove(App* app, WPARAM wp, LPARAM lp) {
@@ -43,7 +43,7 @@ int HandleMouseMove(App* app, WPARAM wp, LPARAM lp) {
 }
 int HandleMouseWheel(App* app, WPARAM wp, LPARAM lp) {
 	int dt = GET_WHEEL_DELTA_WPARAM(wp);
-	app->input.msw = (double)dt / WHEEL_DELTA;
+	app->input.mouseWheelDelta = (double)dt / WHEEL_DELTA;
 	return 0;
 }
 
@@ -52,40 +52,40 @@ int HandleMouseWheel(App* app, WPARAM wp, LPARAM lp) {
 // 窗口最小化或者被遮挡之后，如何判断鼠标是否在窗口内。
 // 好像鼠标在桌面之外的时候不会有 MOUSELEAVE 消息。
 int HandleMouseLeave(App* app, WPARAM wp, LPARAM lp) {
-	app->input.mouse_owned = false;
-	app->input.mouse_tracked = false;
+	app->input.isMouseInputOwned = false;
+	app->input.isMouseLeaveTracked = false;
 	return 0;
 }
 int HandleLeftMouseUp(App* app, WPARAM wp, LPARAM lp) {
-	app->input.msd[0] = false;
-	app->input.mouse_owned = true;
+	app->input.mouseButtonDown[0] = false;
+	app->input.isMouseInputOwned = true;
 	return 0;
 }
 int HandleLeftMouseDown(App* app, WPARAM wp, LPARAM lp) {
-	app->input.msd[0] = true;
-	app->input.mouse_owned = true;
+	app->input.mouseButtonDown[0] = true;
+	app->input.isMouseInputOwned = true;
 	app->input.TrackMouse();
 	return 0;
 }
 int HandleMiddleMouseUp(App* app, WPARAM wp, LPARAM lp) {
-	app->input.msd[1] = false;
-	app->input.mouse_owned = true;
+	app->input.mouseButtonDown[1] = false;
+	app->input.isMouseInputOwned = true;
 	return 0;
 }
 int HandleMiddleMouseDown(App* app, WPARAM wp, LPARAM lp) {
-	app->input.msd[1] = true;
-	app->input.mouse_owned = true;
+	app->input.mouseButtonDown[1] = true;
+	app->input.isMouseInputOwned = true;
 	app->input.TrackMouse();
 	return 0;
 }
 int HandleRightMouseUp(App* app, WPARAM wp, LPARAM lp) {
-	app->input.msd[2] = false;
-	app->input.mouse_owned = true;
+	app->input.mouseButtonDown[2] = false;
+	app->input.isMouseInputOwned = true;
 	return 0;
 }
 int HandleRightMouseDown(App* app, WPARAM wp, LPARAM lp) {
-	app->input.msd[2] = true;
-	app->input.mouse_owned = true;
+	app->input.mouseButtonDown[2] = true;
+	app->input.isMouseInputOwned = true;
 	app->input.TrackMouse();
 	return 0;
 }

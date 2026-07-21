@@ -334,7 +334,7 @@ void Body::Render(SimulationApp& cur) const
 
 	if (dragged)
 	{
-		Vector2 p1 = Vector2(cur.input.msp);
+		Vector2 p1 = Vector2(cur.input.mousePosition);
 		Vector2 p0 = position + transform * relativeDragPoint;
 		drawLineSegment(cur.scr, cur.dscr, p0, p1, GetDepth(), cur.background->ViewPort(), Color(0, 255, 255));
 	}
@@ -371,8 +371,8 @@ void Body::Step(SimulationApp& cur, double stepDt)
 
 	if (dragged)
 	{
-		if (cur.input.msd[2]) { HandleDragWhole(cur); }
-		else if (!cur.own.keyboardOwner && cur.input.kbd[L'F']) { HandleDragForce(cur, stepDt); }
+		if (cur.input.mouseButtonDown[2]) { HandleDragWhole(cur); }
+		else if (!cur.own.keyboardOwner && cur.input.keyDown[L'F']) { HandleDragForce(cur, stepDt); }
 		else if (invMass == 0) { HandleDragWhole(cur); }
 		else { HandleDragPoint(cur); }
 	}
@@ -431,8 +431,8 @@ void Body::UpdateDragAngle(SimulationApp& cur)
 	velocityAngularDrag = 0;
 	if (!cur.own.keyboardOwner)
 	{
-		if (cur.input.kbd[L'Q']) { velocityAngularDrag = -cur.velocityAngularDrag; }
-		if (cur.input.kbd[L'E']) { velocityAngularDrag = +cur.velocityAngularDrag; }
+		if (cur.input.keyDown[L'Q']) { velocityAngularDrag = -cur.velocityAngularDrag; }
+		if (cur.input.keyDown[L'E']) { velocityAngularDrag = +cur.velocityAngularDrag; }
 	}
 	radianDrag = radian + velocityAngularDrag * cur.realDeltaTime;
 }
@@ -440,9 +440,9 @@ void Body::UpdateDragAngle(SimulationApp& cur)
 void Body::HandleDragPoint(SimulationApp& cur)
 {
 	// 下列命名指定o,p,m三点为body中心、被拖拽点及鼠标现在点
-	Vector2 mousePos = Vector2(cur.input.msp);
+	Vector2 mousePos = Vector2(cur.input.mousePosition);
 	Vector2 pPos = position + transform * relativeDragPoint;
-	Vector2 mouseVelocity = Vector2(cur.input.msp - cur.input.msp_old) / cur.realDeltaTime;
+	Vector2 mouseVelocity = Vector2(cur.input.mousePosition - cur.input.previousMousePosition) / cur.realDeltaTime;
 	Vector2 pmDir = (mousePos - pPos).normalize();
 
 	Vector2 opDir = pPos - position;
@@ -464,9 +464,9 @@ void Body::HandleDragPoint(SimulationApp& cur)
 /// <param name="cur"></param>
 void Body::HandleDragWhole(SimulationApp& cur)
 {
-	Vector2 mousePos = Vector2(cur.input.msp);
+	Vector2 mousePos = Vector2(cur.input.mousePosition);
 	Vector2 dragPointPos = position + transform * relativeDragPoint;
-	Vector2 newVelocity = Vector2(cur.input.msp - cur.input.msp_old) / cur.realDeltaTime;
+	Vector2 newVelocity = Vector2(cur.input.mousePosition - cur.input.previousMousePosition) / cur.realDeltaTime;
 
 	velocity = newVelocity;
 	radian = radianDrag;
@@ -477,7 +477,7 @@ void Body::HandleDragWhole(SimulationApp& cur)
 void Body::HandleDragForce(SimulationApp& cur, double deltaTime)
 {
 	// 运动路径方向
-	Vector2 p1 = Vector2(cur.input.msp);
+	Vector2 p1 = Vector2(cur.input.mousePosition);
 	Vector2 p0 = position + transform * relativeDragPoint;
 	Vector2 d = (p1 - p0).normalize();
 
@@ -502,11 +502,11 @@ void Body::Update(SimulationApp& cur)
 	{
 		// 检查拖拽模式，应用函数
 		UpdateDragAngle(cur);
-		if (cur.input.msd[2])
+		if (cur.input.mouseButtonDown[2])
 		{
 			HandleDragWhole(cur);
 		}
-		else if (!cur.own.keyboardOwner && cur.input.kbd[L'F']) { }
+		else if (!cur.own.keyboardOwner && cur.input.keyDown[L'F']) { }
 		else if (invMass == 0)
 		{
 			HandleDragWhole(cur);
@@ -515,7 +515,7 @@ void Body::Update(SimulationApp& cur)
 		{
 			HandleDragPoint(cur);
 		}
-		dragged = cur.input.msd[0] && (cur.mode == MODE_DRAG);
+		dragged = cur.input.mouseButtonDown[0] && (cur.mode == MODE_DRAG);
 	}
 	else
 	{
@@ -524,7 +524,7 @@ void Body::Update(SimulationApp& cur)
 		if (dragged)
 		{
 			// p移到m，那么mo = 变换*原距离 = 变换*原相对位置=po，故有。
-			relativeDragPoint = transform.inverse() * ((Vector2) cur.input.msp - position);
+			relativeDragPoint = transform.inverse() * ((Vector2) cur.input.mousePosition - position);
 			UpdateDragAngle(cur);
 		}
 	}
@@ -548,19 +548,19 @@ void Body::Update(SimulationApp& cur)
 		if (cur.input.IsMouseClickedDown(0) && !cur.creator->active)
 		{
 			cur.creator->body0 = this;
-			cur.creator->p0Relative = transform.inverse() * ((Vector2) cur.input.msp - position);
+			cur.creator->p0Relative = transform.inverse() * ((Vector2) cur.input.mousePosition - position);
 		}
-		else if (!cur.input.msd[0] && cur.input.msd_old[0] && cur.creator->active)
+		else if (!cur.input.mouseButtonDown[0] && cur.input.previousMouseButtonDown[0] && cur.creator->active)
 		{
 			cur.creator->body1 = this;
-			cur.creator->p1Relative = transform.inverse() * ((Vector2) cur.input.msp - position);
+			cur.creator->p1Relative = transform.inverse() * ((Vector2) cur.input.mousePosition - position);
 		}
 	}
 }
 void Body::PreUpdate(SimulationApp& cur)
 {
 	bool ok = cur.own.hoveredDepth <= GetDepth() &&
-		IsInside((Vector2) cur.input.msp) && isInside(cur.input.msp, cur.background->ViewPort());
+		IsInside((Vector2) cur.input.mousePosition) && isInside(cur.input.mousePosition, cur.background->ViewPort());
 	if (ok) { cur.own.hoveredDepth = GetDepth(); cur.own.hovered = this; }
 }
 

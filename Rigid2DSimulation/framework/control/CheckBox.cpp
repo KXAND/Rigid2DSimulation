@@ -28,7 +28,7 @@ void CheckBox::Render(App& app) {
 
 	Color const& color =
 		!enabled ? invalidColor :
-		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : normalColor;
+		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
 	drawRectangleRaw(app.scr, GetBoxTopLeft(), boxSize, boxSize, vp, color);
 	if (checked) {
 		int innerOffset = (boxSize - innerBoxSize) / 2;
@@ -50,7 +50,7 @@ void CheckBox::Discard(App& app) {
 }
 void CheckBox::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { GetBoxTopLeft(), boxSize, boxSize }) && isInside(app.input.msp, vp);
+		isInside(app.input.mousePosition, { GetBoxTopLeft(), boxSize, boxSize }) && isInside(app.input.mousePosition, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 

@@ -94,27 +94,27 @@ void FloatPanel::InitializeScrollBar() {
 void FloatPanel::Hide(App& app) { shown = false; Discard(app); }
 void FloatPanel::Show(App& app) { shown = true; lastClickTime = app.fps.GetElapsedTime(); }
 void FloatPanel::HandleCaption(App& app) {
-	closeButtonHovered = hovered && isInside(app.input.msp, { GetCloseTopLeft(), closeButtonSize, closeButtonSize });
-	titleBarHovered = hovered && !closeButtonHovered && isInside(app.input.msp, { tl, w, titleBarHeight });
+	closeButtonHovered = hovered && isInside(app.input.mousePosition, { GetCloseTopLeft(), closeButtonSize, closeButtonSize });
+	titleBarHovered = hovered && !closeButtonHovered && isInside(app.input.mousePosition, { tl, w, titleBarHeight });
 
 	if (titleBarDragged) {
-		DVector2 newTopLeft = tl + app.input.msp - app.input.msp_old;
+		DVector2 newTopLeft = tl + app.input.mousePosition - app.input.previousMousePosition;
 		newTopLeft.x = clamp(newTopLeft.x, 0, app.scr.width - w);
 		newTopLeft.y = clamp(newTopLeft.y, 0, app.scr.height - titleBarHeight); SetTopLeft(app, newTopLeft);
-		titleBarDragged = app.input.msd[0];
+		titleBarDragged = app.input.mouseButtonDown[0];
 	}
 	else { titleBarDragged = titleBarHovered && app.input.IsMouseClickedDown(0); }
 
 	if (closeButtonChosen) {
-		if (closeButtonEnabled && !app.input.msd[0]) { Hide(app); return; }
-		closeButtonChosen = closeButtonEnabled && closeButtonHovered && app.input.msd[0];
+		if (closeButtonEnabled && !app.input.mouseButtonDown[0]) { Hide(app); return; }
+		closeButtonChosen = closeButtonEnabled && closeButtonHovered && app.input.mouseButtonDown[0];
 	}
 	else { closeButtonChosen = closeButtonEnabled && closeButtonHovered && app.input.IsMouseClickedDown(0); }
 }
 void FloatPanel::HandleWheelAndClampContent(App& app) {
 	if (hasOverflow) {
 		int contentY = contentControl->tl.y;
-		if (wheeled) { contentY += app.input.msw * wheelMultiplier; }
+		if (wheeled) { contentY += app.input.mouseWheelDelta * wheelMultiplier; }
 		contentControl->tl.y = clamp(contentY, GetMinY(), tl.y + contentOffset.y);
 	}
 	else if (contentControl) { contentControl->tl.y = tl.y + contentOffset.y; }
@@ -124,7 +124,7 @@ void FloatPanel::RenderMain(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), panelColor, frameColor);
 	Color const& titleBarColor =
 		titleBarDragged ? titleBarDraggedColor :
-		titleBarHovered && (!app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? titleBarHoveredColor : titleBarNormalColor;
+		titleBarHovered && (!app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? titleBarHoveredColor : titleBarNormalColor;
 	drawRectangleWithBorderRaw(app.scr, tl, w, titleBarHeight, app.scr.Rect(), titleBarColor, frameColor);
 
 	DVector2 titleTopLeft = tl + DVector2(titleMargin, (titleBarHeight - app.ft.h) / 2);
@@ -134,7 +134,7 @@ void FloatPanel::RenderClose(App& app) {
 	Color const& closeButtonColor =
 		!closeButtonEnabled ? closeButtonInvalidColor :
 		closeButtonChosen ? closeButtonChosenColor :
-		closeButtonHovered && (!app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? closeButtonHoveredColor : closeButtonNormalColor;
+		closeButtonHovered && (!app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? closeButtonHoveredColor : closeButtonNormalColor;
 	drawRectangleRaw(app.scr, GetCloseTopLeft(), closeButtonSize, closeButtonSize, app.scr.Rect(), closeButtonColor);
 
 	DVector2 closeMarkCenter = GetCloseTopLeft() + DVector2(closeButtonSize, closeButtonSize) / 2;
@@ -176,11 +176,11 @@ void FloatPanel::Discard(App& app) {
 void FloatPanel::PreUpdate(App& app) {
 	if (!shown) return;
 	bool canOwnInput = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
+		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.scr.Rect());
 	if (canOwnInput) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 
 	canOwnInput = app.own.wheeledDepth <= depth &&
-		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
+		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.scr.Rect());
 	if (canOwnInput) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
 
 	if (contentControl) { contentControl->PreUpdate(app); }

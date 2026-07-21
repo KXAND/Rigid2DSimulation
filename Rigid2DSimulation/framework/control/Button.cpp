@@ -23,7 +23,7 @@ void Button::Render(App& app) {
 	Color const& color =
 		!enabled ? invalidColor :
 		chosen ? chosenColor :
-		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : normalColor;
+		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
 	DVector2 textSize = GetStringSize(text, app.ft, 0);
 	DVector2 textTopLeft = tl + DVector2(w, h) / 2 - textSize / 2;
 
@@ -34,8 +34,8 @@ void Button::Render(App& app) {
 void Button::Update(App& app) {
 	hovered = (app.own.hovered == this);
 	if (chosen) {
-		if (enabled && !app.input.msd[0]) { OnClick(app); }
-		chosen = enabled && hovered && app.input.msd[0];
+		if (enabled && !app.input.mouseButtonDown[0]) { OnClick(app); }
+		chosen = enabled && hovered && app.input.mouseButtonDown[0];
 	} else {
 		chosen = enabled && hovered && app.input.IsMouseClickedDown(0);
 	} Render(app);
@@ -43,7 +43,7 @@ void Button::Update(App& app) {
 void Button::Discard(App& app) { app.own.Remove(this); chosen = hovered = false; }
 void Button::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, vp);
+		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 

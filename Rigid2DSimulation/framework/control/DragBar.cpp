@@ -32,7 +32,7 @@ void HorizontalDragBar::Render(App& app) {
 	Color const& color =
 		!enabled ? invalidColor :
 		dragged ? draggedColor :
-		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : normalColor;
+		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
 	DVector2 barTopLeft = tl + DVector2(textWidth, (nodeHeight - barHeight) / 2);
 	drawRectangleRaw(app.scr, barTopLeft, barWidth, barHeight, vp, barColor);
 	drawRectangleRaw(app.scr, GetNodeTopLeft(), nodeWidth, nodeHeight, vp, color);
@@ -42,11 +42,11 @@ void HorizontalDragBar::Update(App& app) {
 	hovered = (app.own.hovered == this);
 	textWidth = GetStringSize(text, app.ft, 0).x;
 	if (dragged) {
-		nodeX = clamp(app.input.msp.x - (tl.x + textWidth + nodeWidth / 2), 0, barWidth - nodeWidth);
+		nodeX = clamp(app.input.mousePosition.x - (tl.x + textWidth + nodeWidth / 2), 0, barWidth - nodeWidth);
 		// 在刚刚抓住的那一帧没有更新，在放下的那一帧还在更新。省事。
 		Upload(app);
-		if (enabled && !app.input.msd[0]) { OnDone(app); }
-		dragged = enabled && app.input.msd[0];
+		if (enabled && !app.input.mouseButtonDown[0]) { OnDone(app); }
+		dragged = enabled && app.input.mouseButtonDown[0];
 	} else {
 		Sync(app);
 		dragged = enabled && hovered && app.input.IsMouseClickedDown(0);
@@ -58,7 +58,7 @@ void HorizontalDragBar::Discard(App& app) {
 }
 void HorizontalDragBar::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { GetNodeTopLeft(), nodeWidth, nodeHeight }) && isInside(app.input.msp, vp);
+		isInside(app.input.mousePosition, { GetNodeTopLeft(), nodeWidth, nodeHeight }) && isInside(app.input.mousePosition, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 

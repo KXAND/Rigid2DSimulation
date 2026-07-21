@@ -82,7 +82,7 @@ void Panel::Update(App& app) {
 
 	if (hasOverflow) {
 		int contentY = contentControl->tl.y;
-		if (wheeled) { contentY += app.input.msw * wheelMultiplier; }
+		if (wheeled) { contentY += app.input.mouseWheelDelta * wheelMultiplier; }
 		contentControl->tl.y = clamp(contentY, GetMinY(), tl.y + contentOffset.y);
 	}
 	else if (contentControl) { contentControl->tl.y = tl.y + contentOffset.y; }
@@ -100,11 +100,11 @@ void Panel::Discard(App& app) {
 }
 void Panel::PreUpdate(App& app) {
 	bool canOwnInput = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
+		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.scr.Rect());
 	if (canOwnInput) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 
 	canOwnInput = app.own.wheeledDepth <= depth &&
-		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
+		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.scr.Rect());
 	if (canOwnInput) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
 
 	if (contentControl) { contentControl->PreUpdate(app); }

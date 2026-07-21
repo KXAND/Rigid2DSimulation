@@ -37,7 +37,7 @@ void DropList::RenderMain(App& app) {
 	Color const& color =
 		!enabled ? invalidColor :
 		edit ? editColor :
-		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : normalColor;
+		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
 	drawRectangleWithBorder(app.scr, app.dscr, depth, GetBoxTopLeft(), w, h, vp, color, frameColor);
 
 	Vector2 signCenter = (Vector2)GetBoxTopLeft() + Vector2(w - signMargin, h / 2);
@@ -73,7 +73,7 @@ void DropList::Update(App& app) {
 	textWidth = GetStringSize(text, app.ft, 0).x;
 	if (edit) {
 		if (hovered) {
-			int itemRelativeY = app.input.msp.y - GetBoxTopLeft().y - h;
+			int itemRelativeY = app.input.mousePosition.y - GetBoxTopLeft().y - h;
 			hoveredItemIndex = itemRelativeY >= 0 ? itemRelativeY / itemHeight : -1;
 		}
 		if (enabled && hovered && app.input.IsMouseClickedDown(0)) {
@@ -93,7 +93,7 @@ void DropList::Discard(App& app) {
 void DropList::PreUpdate(App& app) {
 	int visibleHeight = h + (edit ? itemCount * itemHeight : 0);
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { GetBoxTopLeft(), w, visibleHeight}) && isInside(app.input.msp, vp);
+		isInside(app.input.mousePosition, { GetBoxTopLeft(), w, visibleHeight}) && isInside(app.input.mousePosition, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 

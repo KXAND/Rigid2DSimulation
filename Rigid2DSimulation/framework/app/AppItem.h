@@ -2,23 +2,23 @@
 #include "DVector2.h"
 
 struct AppInput {
-	double msw = 0;
-	wstring chs;
-	DVector2 msp, msp_old;
-	array<BYTE, 3> msd{}, msd_old{};
-	array<int, 256> kbmsg{};
-	array<BYTE, 256> kbd{}, kbd_old{};
+	double mouseWheelDelta = 0;
+	wstring typedCharacters;
+	DVector2 mousePosition, previousMousePosition;
+	array<BYTE, 3> mouseButtonDown{}, previousMouseButtonDown{};
+	array<int, 256> keyMessageCounts{};
+	array<BYTE, 256> keyDown{}, previousKeyDown{};
 	// 比如说播音乐, 在窗口移动时可以使音乐暂停。
-	bool isBbarClicked = false;
+	bool isTitleBarClicked = false;
 
 	// 我觉得这个鼠标逻辑还是比较奇怪，可能有多余之处。
 	// 以后要改一下，但请注意这里各种不合理的布置都是有理由的。
-	bool mouse_owned = false;
-	bool mouse_tracked = false;
-	TRACKMOUSEEVENT mouse_track{};
+	bool isMouseInputOwned = false;
+	bool isMouseLeaveTracked = false;
+	TRACKMOUSEEVENT mouseLeaveTracking{};
 
-	bool IsMouseClickedDown(int m) { return msd[m] && !msd_old[m]; }
-	bool IsKeyPressedDown(int k) { return kbd[k] && !kbd_old[k]; }
+	bool IsMouseClickedDown(int m) { return mouseButtonDown[m] && !previousMouseButtonDown[m]; }
+	bool IsKeyPressedDown(int k) { return keyDown[k] && !previousKeyDown[k]; }
 
 	void TrackMouse();
 	bool SyncMouse(HWND hwnd);
@@ -28,19 +28,19 @@ struct AppInput {
 };
 
 struct FrameRate {
-	int frm_cnt = 0;
-	int frm_cnt_max = 0;
-	long long ns_cnt = 0;
-	double fps = 0, frm_time = 0;
-	long long real_dt = 0, real_dur = 0;
-	std::chrono::high_resolution_clock::time_point tm;
+	int frameCount = 0;
+	int frameSampleCount = 0;
+	long long sampleNanoseconds = 0;
+	double framesPerSecond = 0, averageFrameTime = 0;
+	long long deltaNanoseconds = 0, elapsedNanoseconds = 0;
+	std::chrono::high_resolution_clock::time_point previousFrameTimePoint;
 
 	FrameRate();
 	void Start();
 	void Update();
 
-	double GetDeltaTime() const { return real_dt / 1e9; }
-	double GetElapsedTime() const { return real_dur / 1e9; }
+	double GetDeltaTime() const { return deltaNanoseconds / 1e9; }
+	double GetElapsedTime() const { return elapsedNanoseconds / 1e9; }
 };
 
 struct InputOwners {

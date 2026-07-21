@@ -1,9 +1,9 @@
 #include "AppItem.h"
 
 void AppInput::TrackMouse() {
-	if (!mouse_tracked) {
-		mouse_tracked = true;
-		TrackMouseEvent(&mouse_track);
+	if (!isMouseLeaveTracked) {
+		isMouseLeaveTracked = true;
+		TrackMouseEvent(&mouseLeaveTracking);
 	}
 }
 bool AppInput::SyncMouse(HWND hwnd) {
@@ -12,40 +12,40 @@ bool AppInput::SyncMouse(HWND hwnd) {
 	ret = ScreenToClient(hwnd, &pnt);
 	if (!ret) { return false; }
 
-	msp_old = msp; msp = { pnt.x, pnt.y };
-	if (!mouse_owned) {
+	previousMousePosition = mousePosition; mousePosition = { pnt.x, pnt.y };
+	if (!isMouseInputOwned) {
 		bool hold = HIWORD(GetAsyncKeyState(VK_LBUTTON));
-		if (!hold) { msd[0] = false; }
+		if (!hold) { mouseButtonDown[0] = false; }
 		hold = HIWORD(GetAsyncKeyState(VK_MBUTTON));
-		if (!hold) { msd[1] = false; }
+		if (!hold) { mouseButtonDown[1] = false; }
 		hold = HIWORD(GetAsyncKeyState(VK_RBUTTON));
-		if (!hold) { msd[2] = false; }
+		if (!hold) { mouseButtonDown[2] = false; }
 	} return true;
 }
 
 void AppInput::Initialize(HWND hwnd) {
-	mouse_track.cbSize = sizeof(mouse_track);
-	mouse_track.dwFlags = TME_LEAVE;
-	mouse_track.hwndTrack = hwnd;
+	mouseLeaveTracking.cbSize = sizeof(mouseLeaveTracking);
+	mouseLeaveTracking.dwFlags = TME_LEAVE;
+	mouseLeaveTracking.hwndTrack = hwnd;
 }
 void AppInput::Reset() {
-	msw = 0; chs.clear();
-	// msp 在 App 中已经做过了。
-	msd_old = msd; kbd_old = kbd;
-	kbmsg.fill(0); isBbarClicked = false;
+	mouseWheelDelta = 0; typedCharacters.clear();
+	// mousePosition 在 App 中已经做过了。
+	previousMouseButtonDown = mouseButtonDown; previousKeyDown = keyDown;
+	keyMessageCounts.fill(0); isTitleBarClicked = false;
 }
 
-FrameRate::FrameRate() { frm_cnt_max = 10; }
-void FrameRate::Start() { tm = std::chrono::high_resolution_clock::now(); }
+FrameRate::FrameRate() { frameSampleCount = 10; }
+void FrameRate::Start() { previousFrameTimePoint = std::chrono::high_resolution_clock::now(); }
 void FrameRate::Update() {
 	auto now = std::chrono::high_resolution_clock::now();
-	real_dur += real_dt = (now - tm).count();
-	tm = now; frm_cnt++; ns_cnt += real_dt;
+	elapsedNanoseconds += deltaNanoseconds = (now - previousFrameTimePoint).count();
+	previousFrameTimePoint = now; frameCount++; sampleNanoseconds += deltaNanoseconds;
 
-	if (frm_cnt == frm_cnt_max) {
-		frm_time = (double)ns_cnt / frm_cnt * 1e-9;
-		fps = 1 / frm_time;
-		frm_cnt = ns_cnt = 0;
+	if (frameCount == frameSampleCount) {
+		averageFrameTime = (double)sampleNanoseconds / frameCount * 1e-9;
+		framesPerSecond = 1 / averageFrameTime;
+		frameCount = sampleNanoseconds = 0;
 	}
 }
 

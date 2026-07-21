@@ -4,8 +4,8 @@
 FrameRateLabel::FrameRateLabel() { w = 450; fixedWidth = true; }
 void FrameRateLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	text = simulationApp.GetLocalizedString(L"frm_tm") + FormatFixed2(simulationApp.fps.frm_time * 1000) +
-		L", FPS: " + FormatFixed2(simulationApp.fps.fps);
+	text = simulationApp.GetLocalizedString(L"frm_tm") + FormatFixed2(simulationApp.fps.averageFrameTime * 1000) +
+		L", FPS: " + FormatFixed2(simulationApp.fps.framesPerSecond);
 }
 
 TimeLabel::TimeLabel() { w = 200; fixedWidth = true; }
@@ -16,7 +16,7 @@ void TimeLabel::Sync(App& app) {
 MousePositionLabel::MousePositionLabel() { w = 300; fixedWidth = true; }
 void MousePositionLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	text = simulationApp.GetLocalizedString(L"mousePositionLabel") + ToWString(simulationApp.input.msp);
+	text = simulationApp.GetLocalizedString(L"mousePositionLabel") + ToWString(simulationApp.input.mousePosition);
 }
 
 BottomPanel::BottomPanel(App& app) : Panel(Panel::CreateBottomPanel(app)) {

@@ -55,7 +55,7 @@ void Creator::UpdateBox(SimulationApp& cur)
 	if (active)
 	{
 		double x0 = creationStartPoint.x, y0 = creationStartPoint.y;
-		double x1 = cur.input.msp.x, y1 = cur.input.msp.y;
+		double x1 = cur.input.mousePosition.x, y1 = cur.input.mousePosition.y;
 		double min_wh = 10;
 		if (x1 - x0 >= min_wh && y1 - y0 >= min_wh)
 		{
@@ -66,7 +66,7 @@ void Creator::UpdateBox(SimulationApp& cur)
 			body->Init();
 		}
 
-		if (!cur.input.msd[0])
+		if (!cur.input.mouseButtonDown[0])
 		{
 			active = false;
 			if (body)
@@ -80,7 +80,7 @@ void Creator::UpdateBox(SimulationApp& cur)
 	{
 		if (hovered && cur.input.IsMouseClickedDown(0))
 		{
-			active = true; creationStartPoint = cur.input.msp;
+			active = true; creationStartPoint = cur.input.mousePosition;
 		}
 	}
 }
@@ -88,7 +88,7 @@ void Creator::UpdateBall(SimulationApp& cur)
 {
 	if (active)
 	{
-		double r = sqrt((creationStartPoint - cur.input.msp).lensqr());
+		double r = sqrt((creationStartPoint - cur.input.mousePosition).lensqr());
 		double min_r = 7.5;
 		if (r > min_r)
 		{
@@ -99,7 +99,7 @@ void Creator::UpdateBall(SimulationApp& cur)
 			body->Init();
 		}
 
-		if (!cur.input.msd[0])
+		if (!cur.input.mouseButtonDown[0])
 		{
 			active = false;
 			if (body)
@@ -113,7 +113,7 @@ void Creator::UpdateBall(SimulationApp& cur)
 	{
 		if (hovered && cur.input.IsMouseClickedDown(0))
 		{
-			active = true; creationStartPoint = cur.input.msp;
+			active = true; creationStartPoint = cur.input.mousePosition;
 		}
 	}
 }
@@ -123,19 +123,19 @@ void Creator::UpdatePlate(SimulationApp& cur)
 	{
 		double thk = thick;
 		double min_len = 5;
-		DVector2 v = creationStartPoint - cur.input.msp;
+		DVector2 v = creationStartPoint - cur.input.mousePosition;
 		double len = sqrt(v.lensqr());
 		if (len > min_len)
 		{
 			body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(len + thk, thk)));
-			body->position = Vector2(creationStartPoint + cur.input.msp) / 2;
+			body->position = Vector2(creationStartPoint + cur.input.mousePosition) / 2;
 			body->radian = atan2(v.y, v.x);
 			body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 			body->Init();
 		}
 
-		if (!cur.input.msd[0])
+		if (!cur.input.mouseButtonDown[0])
 		{
 			active = false;
 			if (body)
@@ -149,7 +149,7 @@ void Creator::UpdatePlate(SimulationApp& cur)
 	{
 		if (hovered && cur.input.IsMouseClickedDown(0))
 		{
-			active = true; creationStartPoint = cur.input.msp;
+			active = true; creationStartPoint = cur.input.mousePosition;
 		}
 	}
 }
@@ -161,7 +161,7 @@ void Creator::UpdateConnection(SimulationApp& cur)
 		if (connectionConfiguration) { connection->ReadCfg(*connectionConfiguration); }
 		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
 		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
-		if (!cur.input.msd[0])
+		if (!cur.input.mouseButtonDown[0])
 		{
 			if (body1)
 			{
@@ -189,7 +189,7 @@ void Creator::UpdatePoint(SimulationApp& cur)
 {
 	if (hovered && cur.input.IsMouseClickedDown(0))
 	{
-		body = std::make_shared<Body>((Vector2) cur.input.msp);
+		body = std::make_shared<Body>((Vector2) cur.input.mousePosition);
 		body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 		if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 		body->Init();
@@ -223,7 +223,7 @@ void Creator::UpdateParticle(SimulationApp& cur)
 	if (hovered && cur.input.IsMouseClickedDown(0))
 	{
 		body = std::make_shared<Body>(std::make_shared<Shape>(rad));
-		body->position = (Vector2) cur.input.msp;
+		body->position = (Vector2) cur.input.mousePosition;
 		body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 		if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 		body->Init();
@@ -252,7 +252,7 @@ void Creator::Update(SimulationApp& cur)
 	if (connection && body0)
 	{
 		connection->p0 = body0->position + body0->transform * p0Relative;
-		connection->p1 = (Vector2) cur.input.msp;
+		connection->p1 = (Vector2) cur.input.mousePosition;
 		connection->Render(cur);
 	}
 }
@@ -264,7 +264,7 @@ void Creator::Discard(SimulationApp& cur)
 }
 void Creator::PreUpdate(SimulationApp& cur)
 {
-	if (cur.own.hoveredDepth <= Depth() && isInside(cur.input.msp, cur.background->ViewPort()))
+	if (cur.own.hoveredDepth <= Depth() && isInside(cur.input.mousePosition, cur.background->ViewPort()))
 	{
 		cur.own.hoveredDepth = Depth();
 		cur.own.hovered = this;

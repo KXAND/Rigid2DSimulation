@@ -65,12 +65,12 @@ DVector2 RichTextBox::GetCursorPosition(App& app) const {
 
 void RichTextBox::SelectStart(App& app) {
 	selecting = true;
-	DVector2 mousePosition = app.input.msp - (tl + (DVector2)valueOffset);
+	DVector2 mousePosition = app.input.mousePosition - (tl + (DVector2)valueOffset);
 	selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, mousePosition, lineWidth);
 	UpdateCursorXHistory(app);
 }
 void RichTextBox::SelectEnd(App& app) {
-	DVector2 mousePosition = app.input.msp - (tl + (DVector2)valueOffset);
+	DVector2 mousePosition = app.input.mousePosition - (tl + (DVector2)valueOffset);
 	selectionEnd = GetStringIndexAtPosition(value, app.ft, mousePosition, lineWidth);
 	UpdateCursorXHistory(app);
 }
@@ -81,7 +81,7 @@ void RichTextBox::UpdateCursorXHistory(App& app) {
 }
 
 void RichTextBox::AddCharacters(App& app) {
-	wstring sifted = FilterCharacters(app.input.chs, false);
+	wstring sifted = FilterCharacters(app.input.typedCharacters, false);
 	if (!sifted.empty()) {
 		selecting = false;
 		value = GetLeftText() + sifted + GetRightText();
@@ -186,14 +186,14 @@ void RichTextBox::HandleSelectAll(App& app) {
 void RichTextBox::HandleKey(App& app) {
 	cursorChanged = false;
 
-	if (app.input.kbmsg[VK_LEFT]) { HandleLeft(app); }
-	else if (app.input.kbmsg[VK_RIGHT]) { HandleRight(app); }
-	else if (app.input.kbmsg[VK_UP]) { HandleUp(app); }
-	else if (app.input.kbmsg[VK_DOWN]) { HandleDown(app); }
-	else if (app.input.kbmsg[VK_DELETE]) { HandleDelete(app); }
-	else if (app.input.kbmsg[VK_BACK]) { HandleBackspace(app); }
+	if (app.input.keyMessageCounts[VK_LEFT]) { HandleLeft(app); }
+	else if (app.input.keyMessageCounts[VK_RIGHT]) { HandleRight(app); }
+	else if (app.input.keyMessageCounts[VK_UP]) { HandleUp(app); }
+	else if (app.input.keyMessageCounts[VK_DOWN]) { HandleDown(app); }
+	else if (app.input.keyMessageCounts[VK_DELETE]) { HandleDelete(app); }
+	else if (app.input.keyMessageCounts[VK_BACK]) { HandleBackspace(app); }
 
-	if (app.input.kbd[VK_CONTROL]) {
+	if (app.input.keyDown[VK_CONTROL]) {
 		if (app.input.IsKeyPressedDown('C')) { HandleCopy(app); }
 		else if (app.input.IsKeyPressedDown('X')) { HandleCut(app); }
 		else if (app.input.IsKeyPressedDown('V')) { HandlePaste(app); }
@@ -202,13 +202,13 @@ void RichTextBox::HandleKey(App& app) {
 }
 
 void RichTextBox::ClampCursorWhileSelecting(App& app) {
-	double overflowDistance = (app.input.msp.x - tl.x) - GetMaxCursorX();
+	double overflowDistance = (app.input.mousePosition.x - tl.x) - GetMaxCursorX();
 	if (overflowDistance > 0) { valueOffset.x -= app.fps.GetDeltaTime() * slideMultiplier * overflowDistance; }
-	overflowDistance = editMargin.x - (app.input.msp.x - tl.x);
+	overflowDistance = editMargin.x - (app.input.mousePosition.x - tl.x);
 	if (overflowDistance > 0) { valueOffset.x += app.fps.GetDeltaTime() * slideMultiplier * overflowDistance; }
-	overflowDistance = (app.input.msp.y - tl.y) - GetMaxCursorY();
+	overflowDistance = (app.input.mousePosition.y - tl.y) - GetMaxCursorY();
 	if (overflowDistance > 0) { valueOffset.y -= app.fps.GetDeltaTime() * slideMultiplier * overflowDistance; }
-	overflowDistance = editMargin.y - (app.input.msp.y - tl.y);
+	overflowDistance = editMargin.y - (app.input.mousePosition.y - tl.y);
 	if (overflowDistance > 0) { valueOffset.y += app.fps.GetDeltaTime() * slideMultiplier * overflowDistance; }
 }
 void RichTextBox::ClampCursorWithoutSelection(App& app) {
@@ -241,7 +241,7 @@ void RichTextBox::RenderMain(App& app) {
 	Color color =
 		!enabled ? invalidColor :
 		edit ? editColor :
-		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : normalColor;
+		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, vp, color, frameColor);
 
 	int textCursorX = 0;
@@ -270,7 +270,7 @@ void RichTextBox::Update(App& app) {
 		// 怎么看待 UI 交互真的是个大问题。怎么清晰的表达需求。
 		if (selecting) { SelectEnd(app); }
 		if (enabled && hovered && app.input.IsMouseClickedDown(0)) { SelectStart(app); }
-		if (!app.input.msd[0]) { selecting = false; }
+		if (!app.input.mouseButtonDown[0]) { selecting = false; }
 		HandleKey(app); AddCharacters(app); ClampCursor(app); Upload(app);
 
 		if (enabled && !hovered && app.input.IsMouseClickedDown(0)) { OnDone(app); }
@@ -287,7 +287,7 @@ void RichTextBox::Update(App& app) {
 		}
 	} 
 
-	if (app.own.wheeled == this) { valueOffset.y += app.input.msw * wheelMultiplier; }
+	if (app.own.wheeled == this) { valueOffset.y += app.input.mouseWheelDelta * wheelMultiplier; }
 	ClampTextPosition(app); Render(app);
 }
 void RichTextBox::Discard(App& app) {
@@ -299,11 +299,11 @@ void RichTextBox::PreUpdate(App& app) {
 	if (edit) { app.own.keyboardOwner = this; }
 
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, vp);
+		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 
 	ok = app.own.wheeledDepth <= depth &&
-		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, vp);
+		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, vp);
 	if (ok) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
 }
 
