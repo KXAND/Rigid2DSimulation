@@ -11,27 +11,27 @@
 #include "Creator.h"
 
 
-BtPause::BtPause() : Button(150) {}
-void BtPause::Update(App& app) {
+PauseButton::PauseButton() : Button(150) {}
+void PauseButton::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	txt = simulationApp.isPaused ? simulationApp.getLocalizedString(L"start") : simulationApp.getLocalizedString(L"pause");
 	Button::Update(app);
 }
-void BtPause::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.isPaused = !simulationApp.isPaused; }
+void PauseButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.isPaused = !simulationApp.isPaused; }
 
-BtReset::BtReset() : LocalizedButton(150, L"bt_reset") {}
-void BtReset::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Reset(); }
+ResetButton::ResetButton() : LocalizedButton(150, L"bt_reset") {}
+void ResetButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Reset(); }
 
-BtMute::BtMute() : Button(150) {}
-void BtMute::Update(App& app) {
+MuteButton::MuteButton() : Button(150) {}
+void MuteButton::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	txt = simulationApp.isMuted ? simulationApp.getLocalizedString(L"unmute") : simulationApp.getLocalizedString(L"mute");
 	Button::Update(app);
 }
-void BtMute::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.isMuted = !simulationApp.isMuted; }
+void MuteButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.isMuted = !simulationApp.isMuted; }
 
-BtMode::BtMode() : Button(150) {}
-void BtMode::Update(App& app) {
+ModeButton::ModeButton() : Button(150) {}
+void ModeButton::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	switch (simulationApp.mode) {
 	case MODE_DRAG: txt = simulationApp.getLocalizedString(L"mode_drag"); break;
@@ -41,14 +41,14 @@ void BtMode::Update(App& app) {
 	}
 	Button::Update(app);
 }
-void BtMode::OnClick(App& app) {
+void ModeButton::OnClick(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	simulationApp.creator->Discard(simulationApp); 
 	simulationApp.mode = (simulationApp.mode + 1) % 4;
 }
 
-BtDisplay::BtDisplay() : Button(150) {}
-void BtDisplay::Update(App& app) {
+DisplayButton::DisplayButton() : Button(150) {}
+void DisplayButton::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	switch (simulationApp.display) {
 	case DISPLAY_COLOR: txt = simulationApp.getLocalizedString(L"disp_col"); break;
@@ -58,7 +58,7 @@ void BtDisplay::Update(App& app) {
 	}
 	Button::Update(app);
 }
-void BtDisplay::OnClick(App& app) {
+void DisplayButton::OnClick(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	simulationApp.display = (simulationApp.display + 1) % 4;
 }
@@ -66,11 +66,11 @@ void BtDisplay::OnClick(App& app) {
 MenuPanel::MenuPanel(App& app) : Panel(Panel::menu(app)) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	vector<Control*> tmp;
-	bt_pause = std::make_shared<BtPause>(); bt_reset = std::make_shared<BtReset>(); bt_mute = std::make_shared<BtMute>();
+	bt_pause = std::make_shared<PauseButton>(); bt_reset = std::make_shared<ResetButton>(); bt_mute = std::make_shared<MuteButton>();
 	bt_global = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_global);
 	bt_body = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_body);
 	bt_con = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_con);
-	bt_mode = std::make_shared<BtMode>(); bt_display = std::make_shared<BtDisplay>();
+	bt_mode = std::make_shared<ModeButton>(); bt_display = std::make_shared<DisplayButton>();
 	bt_cmd = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_cmd);
 	bt_par = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_par);
 	bt_lang = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_lang);

@@ -3,24 +3,24 @@
 #include "Label.h"
 #include "ControlList.h"
 
-struct LbFPS : Label {
-	LbFPS();
+struct FrameRateLabel : Label {
+	FrameRateLabel();
 	void Sync(App& app) override;
 };
 
-struct LbTime : Label {
-	LbTime();
+struct TimeLabel : Label {
+	TimeLabel();
 	void Sync(App& app) override;
 };
-struct LbMouse : Label {
-	LbMouse();
+struct MousePositionLabel : Label {
+	MousePositionLabel();
 	void Sync(App& app) override;
 };
 
 struct BottomPanel : Panel {
-	std::shared_ptr<LbFPS> lb_fps;
-	std::shared_ptr<LbTime> lb_time;
-	std::shared_ptr<LbMouse> lb_mouse;
+	std::shared_ptr<FrameRateLabel> lb_fps;
+	std::shared_ptr<TimeLabel> lb_time;
+	std::shared_ptr<MousePositionLabel> lb_mouse;
 	std::shared_ptr<HorizontalControlList> clx;
 	BottomPanel(App& app);
 };

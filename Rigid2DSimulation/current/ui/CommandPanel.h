@@ -4,19 +4,19 @@
 #include "FloatPanel.h"
 #include "RichTextBox.h"
 
-struct RTbCmd : RichTextBox {
-	RTbCmd();
+struct CommandScriptEditor : RichTextBox {
+	CommandScriptEditor();
 	void Sync(App& app) override;
 	void OnDone(App& app) const override;
 };
-struct BtCompile : LocalizedButton {
-	BtCompile();
+struct CompileButton : LocalizedButton {
+	CompileButton();
 	void OnClick(App& app) override;
 };
 
 struct CommandPanel : LocalizedFloatPanel {
-	std::shared_ptr<RTbCmd> rtb;
-	std::shared_ptr<BtCompile> bt_compile;
+	std::shared_ptr<CommandScriptEditor> rtb;
+	std::shared_ptr<CompileButton> bt_compile;
 	std::shared_ptr<VerticalControlList> cly;
 	CommandPanel(App& app);
 };
