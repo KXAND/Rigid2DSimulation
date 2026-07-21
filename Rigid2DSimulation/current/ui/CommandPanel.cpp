@@ -2,7 +2,7 @@
 #include "SimulationApp.h"
 #include "Value.h"
 
-RTbCmd::RTbCmd() : RichTextbox(560, 500) {}
+RTbCmd::RTbCmd() : RichTextBox(560, 500) {}
 void RTbCmd::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.temporaryScriptText; }
 void RTbCmd::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.temporaryScriptText = str; }
 

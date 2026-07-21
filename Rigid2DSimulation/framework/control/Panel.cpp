@@ -63,7 +63,7 @@ void Panel::init_c(App& app) {
 	}
 }
 void Panel::init_sb() {
-	sb = std::make_shared<ScrollbarY>();
+	sb = std::make_shared<VerticalScrollBar>();
 	sb->c = c;
 	sb->h = h;
 	sb->tl = tl + DVector2(w - sb->w, 0);

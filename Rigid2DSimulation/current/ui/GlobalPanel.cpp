@@ -5,9 +5,9 @@
 
 
 BtSave::BtSave() : BtLan(80, L"bt_save") {}
-void BtSave::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Save(simulationApp.ui->fpn_global->tb_save->str); }
+void BtSave::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Save(simulationApp.userInterface->fpn_global->tb_save->str); }
 BtLoad::BtLoad() : BtLan(80, L"bt_load") {}
-void BtLoad::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Load(simulationApp.ui->fpn_global->tb_load->str); }
+void BtLoad::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Load(simulationApp.userInterface->fpn_global->tb_load->str); }
 
 void RLbGlobal::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
@@ -38,11 +38,11 @@ void RLbGlobal::Sync(App& app) {
 
 FPnGlobal::FPnGlobal(App& app) : FPnLan(app, 400, 600, L"fpn_global") {
 	vector<Control*> tmp;
-	tb_save = std::make_shared<Textbox>(270); bt_save = std::make_shared<BtSave>();
+	tb_save = std::make_shared<TextBox>(270); bt_save = std::make_shared<BtSave>();
 	tmp = { &*tb_save, &*bt_save };
 	clx_save = std::make_shared<CtrlListX>(tmp);
 	tmp = {};
-	tb_load = std::make_shared<Textbox>(270); bt_load = std::make_shared<BtLoad>();
+	tb_load = std::make_shared<TextBox>(270); bt_load = std::make_shared<BtLoad>();
 	tmp = { &*tb_load, &*bt_load };
 	clx_load = std::make_shared<CtrlListX>(tmp);
 	tmp = {};

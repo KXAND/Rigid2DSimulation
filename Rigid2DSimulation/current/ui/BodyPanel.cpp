@@ -3,7 +3,7 @@
 #include "Body.h"
 #include "Connection.h"
 
-RTbBody::RTbBody() : RichTextbox(360, 400) {}
+RTbBody::RTbBody() : RichTextBox(360, 400) {}
 void RTbBody::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.bodySelecting->temporaryScriptText; }
 void RTbBody::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->temporaryScriptText = str; }
 

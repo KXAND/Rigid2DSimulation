@@ -2,15 +2,15 @@
 #include "SimulationApp.h"
 #include "SceneParameter.h"
 
-TbParNm::TbParNm(int id) : id(id), Textbox(270) {};
+TbParNm::TbParNm(int id) : id(id), TextBox(270) {};
 void TbParNm::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.parameters[id]->name; }
 void TbParNm::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->name = str; }
 BtDelPar::BtDelPar(int id) : id(id), BtLan(80, L"bt_del_par") {}
 void BtDelPar::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->isMarkedForDeletion = true; }
-DbXParVal::DbXParVal(int id) : id(id), DragbarX(270) {}
+DbXParVal::DbXParVal(int id) : id(id), HorizontalDragBar(270) {}
 void DbXParVal::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); set_nx_rel(simulationApp.parameters[id]->value); }
 void DbXParVal::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = uval(); }
-TbParVal::TbParVal(int id) : id(id), Textbox(80) {};
+TbParVal::TbParVal(int id) : id(id), TextBox(80) {};
 void TbParVal::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = FormatFixed2(simulationApp.parameters[id]->value); }
 void TbParVal::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = wtof(str); }
 

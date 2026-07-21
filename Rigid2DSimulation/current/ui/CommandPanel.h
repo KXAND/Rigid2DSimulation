@@ -4,7 +4,7 @@
 #include "FloatPanel.h"
 #include "RichTextBox.h"
 
-struct RTbCmd : RichTextbox {
+struct RTbCmd : RichTextBox {
 	RTbCmd();
 	void Sync(App& app) override;
 	void OnDone(App& app) const override;

@@ -53,7 +53,7 @@ ScriptStatement ParseDefinition(vector<BracketGroup> const& in) {
 ScriptStatement ParseReturn(vector<BracketGroup> const& in) {
 	ScriptStatement p(L"return");
 	auto tmp = vector<BracketGroup>(in.begin() + 1, in.end());
-	p.ret = tmp.empty() ? ScriptExpr(L"null") : ParseExpression(tmp);
+	p.ret = tmp.empty() ? ScriptExpression(L"null") : ParseExpression(tmp);
 	return p;
 }
 ScriptStatement ParseAssignment(vector<BracketGroup> const& in) {

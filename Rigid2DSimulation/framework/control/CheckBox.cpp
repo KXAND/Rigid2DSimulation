@@ -4,7 +4,7 @@
 #include "DrawString.h"
 
 
-Checkbox::Checkbox(bool big) {
+CheckBox::CheckBox(bool big) {
 	h = big ? 30 : 20;
 	gap = { 10, 10 }; depth = 1000;
 	s_box = 20; s_box_in = 10;
@@ -18,11 +18,11 @@ Checkbox::Checkbox(bool big) {
 }
 // 这里会利用到空格的宽度刚好等于 gap.x。
 // 这里会利用到空格的宽度刚好等于 gap.x。
-int Checkbox::GetW() const { return s_box + gap.x + w_txt; }
-int Checkbox::GetH() const { return h + gap.y; }
+int CheckBox::GetW() const { return s_box + gap.x + w_txt; }
+int CheckBox::GetH() const { return h + gap.y; }
 
-DVector2 Checkbox::tl_box() const { return tl + DVector2(w_txt, (h - s_box) / 2); }
-void Checkbox::render(App& app) {
+DVector2 CheckBox::tl_box() const { return tl + DVector2(w_txt, (h - s_box) / 2); }
+void CheckBox::render(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
@@ -37,25 +37,25 @@ void Checkbox::render(App& app) {
 	}
 }
 
-void Checkbox::Update(App& app) {
+void CheckBox::Update(App& app) {
 	hovered = (app.own.hovered == this);
 	w_txt = str_wh(txt, app.ft, 0).x;
 	bool click = enabled && hovered && app.input.isMouseClickedDown(0);
 	if (click) { checked = !checked; Upload(app); }
 	else { Sync(app); } render(app);
 }
-void Checkbox::Discard(App& app) { 
+void CheckBox::Discard(App& app) {
 	app.own.remove(this); w_txt = 0;
-	hovered = false; 
+	hovered = false;
 }
-void Checkbox::PreUpdate(App& app) {
+void CheckBox::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl_box(), s_box, s_box }) && isInside(app.input.msp, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
-CbLan::CbLan(wstring const& id, bool big) : Checkbox(big), id_txt(id) {}
-void CbLan::Update(App& app) { txt = app.getLocalizedString(id_txt); Checkbox::Update(app); }
+CbLan::CbLan(wstring const& id, bool big) : CheckBox(big), id_txt(id) {}
+void CbLan::Update(App& app) { txt = app.getLocalizedString(id_txt); CheckBox::Update(app); }
 
 
 

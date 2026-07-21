@@ -83,7 +83,7 @@ void FloatPanel::init_c(App& app) {
 	}
 }
 void FloatPanel::init_sb() {
-	sb = std::make_shared<ScrollbarY>();
+	sb = std::make_shared<VerticalScrollBar>();
 	sb->c = c;
 	sb->h = h - h_bar;
 	sb->tl = tl + DVector2(w - sb->w, h_bar);

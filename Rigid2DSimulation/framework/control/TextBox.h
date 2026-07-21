@@ -2,7 +2,7 @@
 #include "Font.h"
 #include "Control.h"
 
-struct Textbox : Control {
+struct TextBox : Control {
 	DVector2 gap;
 	double depth = 0;
 	wstring txt;
@@ -30,7 +30,7 @@ struct Textbox : Control {
 	bool selecting = false;
 	bool cursor_change = false;
 
-	Textbox(int w = 0);
+	TextBox(int w = 0);
 	int GetW() const override;
 	int GetH() const override;
 
@@ -76,7 +76,7 @@ struct Textbox : Control {
 	void Discard(App& app) override;
 	void PreUpdate(App& app) override;
 };
-struct TbLan : Textbox {
+struct TbLan : TextBox {
 	wstring id_txt;
 	TbLan() = default;
 	TbLan(wstring const& id, int w);

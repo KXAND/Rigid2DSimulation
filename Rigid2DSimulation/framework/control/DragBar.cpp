@@ -4,7 +4,7 @@
 #include "DrawString.h"
 
 
-DragbarX::DragbarX(int w) : bw(w) {
+HorizontalDragBar::HorizontalDragBar(int w) : bw(w) {
 	gap = { 10, 10 }; depth = 1000;
 	bh = 2; nw = 12; nh = 30;
 
@@ -15,17 +15,17 @@ DragbarX::DragbarX(int w) : bw(w) {
 	c_invalid = { 0, 0, 0 };
 	draggedColor = { 250, 20, 20 };
 }
-int DragbarX::GetW() const { return bw + gap.x + w_txt; }
-int DragbarX::GetH() const { return nh + gap.y; }
+int HorizontalDragBar::GetW() const { return bw + gap.x + w_txt; }
+int HorizontalDragBar::GetH() const { return nh + gap.y; }
 
 // 下面的表达式是正确的，不需要加一减一什么的。
-double DragbarX::uval() const { return (double)nx_rel / (bw - nw); }
-void DragbarX::set_nx_rel(double uv) {
+double HorizontalDragBar::uval() const { return (double)nx_rel / (bw - nw); }
+void HorizontalDragBar::set_nx_rel(double uv) {
 	int tmp = uv * (bw - nw);
 	nx_rel = clamp(tmp, 0, bw - nw);
 }
-DVector2 DragbarX::tl_node() const { return tl + DVector2(w_txt + nx_rel, 0); }
-void DragbarX::render(App& app) {
+DVector2 HorizontalDragBar::tl_node() const { return tl + DVector2(w_txt + nx_rel, 0); }
+void HorizontalDragBar::render(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (nh - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
@@ -38,7 +38,7 @@ void DragbarX::render(App& app) {
 	drawRectangleRaw(app.scr, tl_node(), nw, nh, vp, c);
 }
 
-void DragbarX::Update(App& app) {
+void HorizontalDragBar::Update(App& app) {
 	hovered = (app.own.hovered == this);
 	w_txt = str_wh(txt, app.ft, 0).x;
 	if (dragged) {
@@ -52,18 +52,18 @@ void DragbarX::Update(App& app) {
 		dragged = enabled && hovered && app.input.isMouseClickedDown(0);
 	} render(app);
 }
-void DragbarX::Discard(App& app) { 
+void HorizontalDragBar::Discard(App& app) {
 	app.own.remove(this); w_txt = 0;
-	dragged = hovered = false; 
+	dragged = hovered = false;
 }
-void DragbarX::PreUpdate(App& app) {
+void HorizontalDragBar::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl_node(), nw, nh }) && isInside(app.input.msp, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
-DbXLan::DbXLan(wstring const& id, int w) : DragbarX(w), id_txt(id) {}
-void DbXLan::Update(App& app) { txt = app.getLocalizedString(id_txt); DragbarX::Update(app); }
+DbXLan::DbXLan(wstring const& id, int w) : HorizontalDragBar(w), id_txt(id) {}
+void DbXLan::Update(App& app) { txt = app.getLocalizedString(id_txt); HorizontalDragBar::Update(app); }
 
 
 

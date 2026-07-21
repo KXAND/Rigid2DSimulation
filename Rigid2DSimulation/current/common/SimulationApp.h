@@ -19,13 +19,13 @@ struct Creator;
 struct Collision;
 struct Connection;
 
-struct UI;
+struct UserInterface;
 struct Background;
 struct AudioClip;
 struct SceneParameter;
 struct SimulationApp : App
 {
-	std::shared_ptr<UI> ui;
+	std::shared_ptr<UserInterface> userInterface;
 	std::shared_ptr<Background> background;
 
 	Scope currentScope;

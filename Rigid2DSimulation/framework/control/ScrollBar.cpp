@@ -4,7 +4,7 @@
 #include "DrawBorderedRectangle.h"
 
 
-ScrollbarY::ScrollbarY() {
+VerticalScrollBar::VerticalScrollBar() {
 	depth = 1000; w = 20;
 
 	c_bar = { 0, 0, 0 };
@@ -14,7 +14,7 @@ ScrollbarY::ScrollbarY() {
 	hoveredColor = { 60, 60, 150 };
 	c_invalid = { 0, 0, 0 };
 }
-void ScrollbarY::render(App& app) {
+void VerticalScrollBar::render(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), c_bar, c_frame);
 	if (full) {
 		Color const& c =
@@ -25,7 +25,7 @@ void ScrollbarY::render(App& app) {
 	}
 }
 
-void ScrollbarY::Update(App& app) {
+void VerticalScrollBar::Update(App& app) {
 	full = (c != NULL) && h_show < c->GetH();
 	hovered = (app.own.hovered == this);
 	hovered_node = hovered && isInside(app.input.msp, { tl + DVector2(0, ny_rel), w, nh });
@@ -45,10 +45,10 @@ void ScrollbarY::Update(App& app) {
 		}
 	} else { dragged = false; } render(app);
 }
-void ScrollbarY::Discard(App& app) {
+void VerticalScrollBar::Discard(App& app) {
 	app.own.remove(this); dragged = hovered = full = hovered_node = false;
 }
-void ScrollbarY::PreUpdate(App& app) {
+void VerticalScrollBar::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }

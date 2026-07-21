@@ -3,7 +3,7 @@
 #include "Font.h"
 #include "Control.h"
 
-struct RichTextbox : Control {
+struct RichTextBox : Control {
 	DVector2 gap;
 	int w_str = 0;
 	double depth = 0;
@@ -31,8 +31,8 @@ struct RichTextbox : Control {
 	bool selecting = false;
 	bool cursor_change = false;
 
-	RichTextbox();
-	RichTextbox(int w, int h, bool newline = true);
+	RichTextBox();
+	RichTextBox(int w, int h, bool newline = true);
 	int GetW() const override;
 	int GetH() const override;
 

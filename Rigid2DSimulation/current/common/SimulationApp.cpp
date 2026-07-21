@@ -20,7 +20,7 @@ SimulationApp::SimulationApp()
 	App::Init();
 	print_console(L"字体加载完成.", true);
 	print_console(L"正在加载控件...");
-	ui = std::make_shared<UI>(*this); ui->Init(*this);
+	userInterface = std::make_shared<UserInterface>(*this); userInterface->Init(*this);
 	background = std::make_shared<Background>(*this); Reset();
 	print_console(L"控件加载完成.", true);
 	print_console(L"正在加载音乐...");
@@ -116,7 +116,7 @@ void SimulationApp::Update()
 	(*background).PreUpdate(*this);
 	if (mode == MODE_CREATE) { creator->PreUpdate(*this); }
 	for (auto& b : bodies) { b->PreUpdate(*this); }
-	ui->PreUpdate(*this);
+	userInterface->PreUpdate(*this);
 	UpdateBasicState();
 
 	if (currentScope.find(L"Update") != currentScope.end())
@@ -229,7 +229,7 @@ void SimulationApp::Update()
 	}
 
 	if (mode == MODE_CREATE) { creator->Update(*this); }
-	ui->Update(*this);
+	userInterface->Update(*this);
 }
 
 void SimulationApp::SetCfg(Value const& v)

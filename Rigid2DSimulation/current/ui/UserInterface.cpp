@@ -12,8 +12,8 @@
 #include "BottomPanel.h"
 
 
-void UI::SortFloatPanels() { sort(fpns.begin(), fpns.end(), less_fpn); }
-void UI::Init(SimulationApp& cur) {
+void UserInterface::SortFloatPanels() { sort(fpns.begin(), fpns.end(), less_fpn); }
+void UserInterface::Init(SimulationApp& cur) {
 	fpn_global = std::make_shared<FPnGlobal>(cur); fpns.push_back(&*fpn_global);
 	fpn_body = std::make_shared<FPnBody>(cur); fpns.push_back(&*fpn_body);
 	fpn_con = std::make_shared<FPnCon>(cur); fpns.push_back(&*fpn_con);
@@ -28,12 +28,12 @@ void UI::Init(SimulationApp& cur) {
 	pn_menu = std::make_shared<PnMenu>(cur);
 	pn_bottom = std::make_shared<PnBottom>(cur);
 }
-void UI::Update(SimulationApp& cur) {
+void UserInterface::Update(SimulationApp& cur) {
 	pn_menu->Update(cur);
 	pn_bottom->Update(cur);
 	for (auto fp : fpns) { fp->Update(cur); }
 }
-void UI::PreUpdate(SimulationApp& cur) {
+void UserInterface::PreUpdate(SimulationApp& cur) {
 	pn_menu->PreUpdate(cur);
 	pn_bottom->PreUpdate(cur);
 	SortFloatPanels();

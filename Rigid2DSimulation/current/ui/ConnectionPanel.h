@@ -7,7 +7,7 @@
 #include "Separator.h"
 
 struct Connection;
-struct RTbCon : RichTextbox {
+struct RTbCon : RichTextBox {
 	RTbCon();
 	void Sync(App& app) override;
 	void Upload(App& app) const override;

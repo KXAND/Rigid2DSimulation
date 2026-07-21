@@ -9,7 +9,7 @@
 #include "RichLabel.h"
 
 struct Body;
-struct RTbBody : RichTextbox {
+struct RTbBody : RichTextBox {
 	RTbBody();
 	void Sync(App& app) override;
 	void Upload(App& app) const override;

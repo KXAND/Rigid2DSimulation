@@ -47,7 +47,7 @@ std::shared_ptr<Value> FindVariable(Scope& gl, Scope& sc, wstring nm, bool isgl)
 		return sc[nm];
 	}
 }
-bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpr const& ex, Value& out)
+bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpression const& ex, Value& out)
 {
 	auto const& f = ex.fun;
 	// 保持按需 Evaluate，避免在确定运算符前提前计算所有参数。
@@ -80,7 +80,7 @@ bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpr const& ex, Valu
 	return false;
 }
 
-std::shared_ptr<Value> EvaluateCall(Scope& gl, Scope& sc, ScriptExpr const& ex)
+std::shared_ptr<Value> EvaluateCall(Scope& gl, Scope& sc, ScriptExpression const& ex)
 {
 	Value tmp;
 	Scope getLocalizedString;
@@ -105,7 +105,7 @@ std::shared_ptr<Value> EvaluateCall(Scope& gl, Scope& sc, ScriptExpr const& ex)
 	bool ret = false;
 	return Execute(ret, gl, getLocalizedString, fun->procs);
 }
-std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex)
+std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpression const& ex)
 {
 	if (!ex.getLocalizedString || !ex.ind) { return std::make_shared<Value>(); }
 	auto getLocalizedString = Evaluate(gl, sc, *ex.getLocalizedString);
@@ -139,7 +139,7 @@ std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex
 
 	return std::make_shared<Value>();
 }
-std::shared_ptr<Value> Evaluate(Scope& gl, Scope& sc, ScriptExpr const& ex)
+std::shared_ptr<Value> Evaluate(Scope& gl, Scope& sc, ScriptExpression const& ex)
 {
 	if (ex.typ == L"call") { return EvaluateCall(gl, sc, ex); }
 	else if (ex.typ == L"var")

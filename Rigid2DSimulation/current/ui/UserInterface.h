@@ -12,7 +12,7 @@ struct FPnLang;
 struct FPnAbout;
 struct PnMenu;
 struct PnBottom;
-struct UI {
+struct UserInterface {
 	vector<FloatPanel*> fpns;
 	std::shared_ptr<FPnGlobal> fpn_global;
 	std::shared_ptr<FPnBody> fpn_body;
@@ -24,7 +24,7 @@ struct UI {
 	std::shared_ptr<PnMenu> pn_menu;
 	std::shared_ptr<PnBottom> pn_bottom;
 
-	UI(SimulationApp& cur) {};
+	UserInterface(SimulationApp& cur) {};
 	void SortFloatPanels();
 
 	// 这里用 init 的原因是控件会用 cur->ui 来访问 ui, 但这个时候 ui 尚未初始化。

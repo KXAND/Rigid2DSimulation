@@ -5,7 +5,7 @@
 typedef function<wstring(int, App&)> DpNm;
 wstring dpnm_none(int id, App &app);
 
-struct Droplist : Control {
+struct DropList : Control {
 	DVector2 gap;
 	double depth = 0;
 	wstring txt;
@@ -30,7 +30,7 @@ struct Droplist : Control {
 	bool enabled = true;
 	bool hovered = false;
 
-	Droplist(int w = 0, DpNm const &nm = dpnm_none);
+	DropList(int w = 0, DpNm const &nm = dpnm_none);
 	int GetW() const override;
 	int GetH() const override;
 
@@ -47,7 +47,7 @@ struct Droplist : Control {
 	void Discard(App& app) override;
 	void PreUpdate(App& app) override;
 };
-struct DpLan : Droplist {
+struct DpLan : DropList {
 	wstring id_txt;
 	DpLan() = default;
 	DpLan(wstring const& id, int w, DpNm const& nm = dpnm_none);

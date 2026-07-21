@@ -20,10 +20,10 @@ struct RLbGlobal : RichLabel {
 };
 
 struct FPnGlobal : FPnLan {
-	std::shared_ptr<Textbox> tb_save;
+	std::shared_ptr<TextBox> tb_save;
 	std::shared_ptr<BtSave> bt_save;
 	std::shared_ptr<CtrlListX> clx_save;
-	std::shared_ptr<Textbox> tb_load;
+	std::shared_ptr<TextBox> tb_load;
 	std::shared_ptr<BtLoad> bt_load;
 	std::shared_ptr<CtrlListX> clx_load;
 	std::shared_ptr<SeparatorY> spy;

@@ -2,7 +2,7 @@
 #include "SimulationApp.h"
 #include "Connection.h"
 
-RTbCon::RTbCon() : RichTextbox(360, 400) {}
+RTbCon::RTbCon() : RichTextBox(360, 400) {}
 void RTbCon::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.connectionSelecting->temporaryScriptText; }
 void RTbCon::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->temporaryScriptText = str; }
 

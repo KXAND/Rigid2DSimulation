@@ -6,7 +6,7 @@
 #include "Separator.h"
 #include "FloatPanel.h"
 
-struct TbParNm : Textbox {
+struct TbParNm : TextBox {
 	int id = 0;
 	TbParNm(int id);
 	void Sync(App& app) override;
@@ -17,13 +17,13 @@ struct BtDelPar : BtLan {
 	BtDelPar(int id);
 	void OnClick(App& app) override;
 };
-struct DbXParVal : DragbarX {
+struct DbXParVal : HorizontalDragBar {
 	int id = 0;
 	DbXParVal(int id);
 	void Sync(App& app) override;
 	void Upload(App& app) const override;
 };
-struct TbParVal : Textbox {
+struct TbParVal : TextBox {
 	int id = 0;
 	TbParVal(int id);
 	void Sync(App& app) override;

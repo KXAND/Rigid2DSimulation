@@ -2,7 +2,7 @@
 #include "Tile.h"
 #include "Control.h"
 
-struct DragbarX : Control {
+struct HorizontalDragBar : Control {
 	DVector2 gap;
 	double depth = 0;
 	wstring txt;
@@ -16,7 +16,7 @@ struct DragbarX : Control {
 	bool enabled = true;
 	bool hovered = false;
 
-	DragbarX(int w = 0);
+	HorizontalDragBar(int w = 0);
 	int GetW() const override;
 	int GetH() const override;
 
@@ -33,7 +33,7 @@ struct DragbarX : Control {
 	void Discard(App& app) override;
 	void PreUpdate(App& app) override;
 };
-struct DbXLan : DragbarX {
+struct DbXLan : HorizontalDragBar {
 	wstring id_txt;
 	DbXLan() = default;
 	DbXLan(wstring const& id, int w);

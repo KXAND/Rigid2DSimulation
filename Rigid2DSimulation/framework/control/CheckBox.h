@@ -2,7 +2,7 @@
 #include "Tile.h"
 #include "Control.h"
 
-struct Checkbox : Control {
+struct CheckBox : Control {
 	int h = 0;
 	DVector2 gap;
 	double depth = 0;
@@ -15,7 +15,7 @@ struct Checkbox : Control {
 	bool enabled = true;
 	bool hovered = false;
 
-	Checkbox(bool big = false);
+	CheckBox(bool big = false);
 	int GetW() const override;
 	int GetH() const override;
 
@@ -28,7 +28,7 @@ struct Checkbox : Control {
 	void Discard(App& app) override;
 	void PreUpdate(App& app) override;
 };
-struct CbLan : Checkbox {
+struct CbLan : CheckBox {
 	wstring id_txt;
 	CbLan() = default;
 	CbLan(wstring const& id, bool big = false);

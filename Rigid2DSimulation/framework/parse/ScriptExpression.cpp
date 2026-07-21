@@ -1,25 +1,25 @@
 #include "ScriptExpression.h"
 #include "BracketGroup.h"
 
-ScriptExpr::ScriptExpr(wstring const& typ) : typ(typ) {}
-ScriptExpr::ScriptExpr(double num) : num(num) { typ = L"num"; }
-ScriptExpr::ScriptExpr(wstring const& fun, vector<ScriptExpr> const& pars) :
+ScriptExpression::ScriptExpression(wstring const& typ) : typ(typ) {}
+ScriptExpression::ScriptExpression(double num) : num(num) { typ = L"num"; }
+ScriptExpression::ScriptExpression(wstring const& fun, vector<ScriptExpression> const& pars) :
 	fun(fun), pars(pars) {
 	typ = L"call";
 }
-ScriptExpr ScriptExpr::mkstr(wstring const& str) {
-	auto ex = ScriptExpr(L"str");
+ScriptExpression ScriptExpression::mkstr(wstring const& str) {
+	auto ex = ScriptExpression(L"str");
 	ex.str = str;
 	return ex;
 }
-ScriptExpr ScriptExpr::mkvar(wstring const& Value, bool gl) {
-	auto ex = ScriptExpr(L"var");
+ScriptExpression ScriptExpression::mkvar(wstring const& Value, bool gl) {
+	auto ex = ScriptExpression(L"var");
 	ex.Value = Value;
 	ex.global = gl;
 	return ex;
 }
 
-wstring ToWString(ScriptExpr const& ex) {
+wstring ToWString(ScriptExpression const& ex) {
 	wstring tmp = L"[" + ex.typ;
 	if (ex.typ == L"var") { tmp += (ex.global ? L":&" : L":") + ex.Value; }
 	else if (ex.typ == L"num") { tmp += L":" + FormatFixed2(ex.num); }
@@ -40,7 +40,7 @@ wstring ToWString(ScriptExpr const& ex) {
 	return tmp;
 }
 
-PreExpression::PreExpression(ScriptExpr const& ex) : ex(ex) {}
+PreExpression::PreExpression(ScriptExpression const& ex) : ex(ex) {}
 PreExpression::PreExpression(Token const& tk) : tk(tk) { istk = true; }
 
 bool IsUnaryOperator(Token const& tk) {
@@ -54,7 +54,7 @@ bool IsBinaryOperator(Token const& tk) {
 	return !iswalnum(tk.typ[0]) && !IsUnaryOperator(tk);
 }
 
-bool ParseNegation(vector<PreExpression> const& in, ScriptExpr& out) {
+bool ParseNegation(vector<PreExpression> const& in, ScriptExpression& out) {
 	for (int i = (0), iEnd = int(in.size()); i < iEnd; ++i) {
 		auto const& pre = in[i];
 		if (!pre.istk) { continue; }
@@ -63,12 +63,12 @@ bool ParseNegation(vector<PreExpression> const& in, ScriptExpr& out) {
 		if ((s == L"+" || s == L"-") && (i == 0 || in[i - 1].istk)) {
 			bool bad = i == in.size() - 1 || in[i + 1].istk;
 			if (bad) {
-				out = ScriptExpr(L"error");
+				out = ScriptExpression(L"error");
 				return false;
 			}
 
 			auto tmp = vector<PreExpression>(in.begin(), in.begin() + i);
-			tmp.push_back(ScriptExpr(s + s, { in[i + 1].ex }));
+			tmp.push_back(ScriptExpression(s + s, { in[i + 1].ex }));
 			for (int j = (i + 2), jEnd = int(in.size()); j < jEnd; ++j) { tmp.push_back(in[j]); }
 			out = ParsePreExpression(tmp);
 			return true;
@@ -76,7 +76,7 @@ bool ParseNegation(vector<PreExpression> const& in, ScriptExpr& out) {
 	}
 	return false;
 }
-bool ParseBinary(vector<PreExpression> const& in, ScriptExpr& out, vector<wstring> const& mark) {
+bool ParseBinary(vector<PreExpression> const& in, ScriptExpression& out, vector<wstring> const& mark) {
 	for (int i = (0), iEnd = int(in.size()); i < iEnd; ++i) {
 		auto const& pre = in[i];
 		if (!pre.istk) { continue; }
@@ -87,12 +87,12 @@ bool ParseBinary(vector<PreExpression> const& in, ScriptExpr& out, vector<wstrin
 				i == 0 || i == in.size() - 1 ||
 				in[i - 1].istk || in[i + 1].istk;
 			if (bad) {
-				out = ScriptExpr(L"error");
+				out = ScriptExpression(L"error");
 				return false;
 			}
 
 			auto tmp = vector<PreExpression>(in.begin(), in.begin() + i - 1);
-			tmp.push_back(ScriptExpr(s, { in[i - 1].ex, in[i + 1].ex }));
+			tmp.push_back(ScriptExpression(s, { in[i - 1].ex, in[i + 1].ex }));
 			for (int j = (i + 2), jEnd = int(in.size()); j < jEnd; ++j) { tmp.push_back(in[j]); }
 			out = ParsePreExpression(tmp);
 			return true;
@@ -100,14 +100,14 @@ bool ParseBinary(vector<PreExpression> const& in, ScriptExpr& out, vector<wstrin
 	}
 	return false;
 }
-ScriptExpr ParsePreExpression(vector<PreExpression> const& in) {
-	if (in.empty()) { return ScriptExpr(L"error"); }
+ScriptExpression ParsePreExpression(vector<PreExpression> const& in) {
+	if (in.empty()) { return ScriptExpression(L"error"); }
 	if (in.size() == 1) {
-		if (in[0].istk) { return ScriptExpr(L"error"); }
+		if (in[0].istk) { return ScriptExpression(L"error"); }
 		return in[0].ex;
 	}
 
-	ScriptExpr out;
+	ScriptExpression out;
 	if (ParseNegation(in, out)) { return out; }
 	if (ParseBinary(in, out, { L"*", L"/" })) { return out; }
 	if (ParseBinary(in, out, { L"+", L"-" })) { return out; }
@@ -115,11 +115,11 @@ ScriptExpr ParsePreExpression(vector<PreExpression> const& in) {
 		{ L"==", L"!=", L"<=", L">=", L"<", L">" })) { return out; }
 	if (ParseBinary(in, out, { L"&&", L"||" })) { return out; }
 	if (ParseBinary(in, out, { L"." })) { return out; }
-	return ScriptExpr(L"error");
+	return ScriptExpression(L"error");
 }
 
-ScriptExpr ParseCall(vector<BracketGroup> const& in) {
-	ScriptExpr ex(L"call");
+ScriptExpression ParseCall(vector<BracketGroup> const& in) {
+	ScriptExpression ex(L"call");
 	ex.fun = in[0].tk.Value;
 	ex.global = in[0].tk.global;
 
@@ -136,7 +136,7 @@ ScriptExpr ParseCall(vector<BracketGroup> const& in) {
 	if (!tmp.empty()) { ex.pars.push_back(ParseExpression(tmp)); }
 	return ex;
 }
-ScriptExpr ParseBinaryExpressions(vector<BracketGroup> const& in) {
+ScriptExpression ParseBinaryExpressions(vector<BracketGroup> const& in) {
 	vector<BracketGroup> tmp;
 	vector<PreExpression> pres;
 	for (auto const& b : in) {
@@ -154,8 +154,8 @@ ScriptExpr ParseBinaryExpressions(vector<BracketGroup> const& in) {
 	if (!tmp.empty()) { pres.push_back(ParseExpression(tmp)); }
 	return ParsePreExpression(pres);
 }
-ScriptExpr ParseVector(vector<BracketGroup> const& in) {
-	ScriptExpr ex(L"vec");
+ScriptExpression ParseVector(vector<BracketGroup> const& in) {
+	ScriptExpression ex(L"vec");
 	vector<BracketGroup> tmp;
 	for (auto const& b : in[0].bras) {
 		if (b.tk.typ == L",") {
@@ -169,27 +169,27 @@ ScriptExpr ParseVector(vector<BracketGroup> const& in) {
 	if (!tmp.empty()) { ex.vec.push_back(ParseExpression(tmp)); }
 	return ex;
 }
-ScriptExpr ParseAccess(vector<BracketGroup> const& in) {
-	ScriptExpr ex(L"access");
+ScriptExpression ParseAccess(vector<BracketGroup> const& in) {
+	ScriptExpression ex(L"access");
 	ex.getLocalizedString = ParseExpression(vector<BracketGroup>(in.begin(), in.end() - 1));
 	ex.ind = ParseExpression(in.back().bras);
 	return ex;
 }
 
-ScriptExpr ParseExpression(vector<BracketGroup> const& in) {
-	if (in.empty()) { return ScriptExpr(L"error"); }
+ScriptExpression ParseExpression(vector<BracketGroup> const& in) {
+	if (in.empty()) { return ScriptExpression(L"error"); }
 	auto const& b = in[0];
 	if (in.size() == 1) {
 		if (b.typ == 0) {
-			if (b.tk.typ == L"var") { return ScriptExpr::mkvar(b.tk.Value, b.tk.global); }
-			else if (b.tk.typ == L"str") { return ScriptExpr::mkstr(b.tk.str); }
-			else if (b.tk.typ == L"num") { return ScriptExpr(b.tk.num); }
-			else if (b.tk.typ == L"null") { return ScriptExpr(L"null"); }
-			else { return ScriptExpr(L"error"); }
+			if (b.tk.typ == L"var") { return ScriptExpression::mkvar(b.tk.Value, b.tk.global); }
+			else if (b.tk.typ == L"str") { return ScriptExpression::mkstr(b.tk.str); }
+			else if (b.tk.typ == L"num") { return ScriptExpression(b.tk.num); }
+			else if (b.tk.typ == L"null") { return ScriptExpression(L"null"); }
+			else { return ScriptExpression(L"error"); }
 		}
 		else if (b.typ == 1) { return ParseExpression(b.bras); }
 		else if (b.typ == 3) { return ParseVector(in); }
-		else { return ScriptExpr(L"error"); }
+		else { return ScriptExpression(L"error"); }
 	}
 
 	bool call = in.size() == 2 &&
@@ -197,13 +197,13 @@ ScriptExpr ParseExpression(vector<BracketGroup> const& in) {
 	if (call) { return ParseCall(in); }
 
 	bool uni = in.size() == 2 && IsUnaryOperator(b.tk);
-	if (uni) { return ScriptExpr(b.tk.typ, { ParseExpression({ in[1] }) }); }
+	if (uni) { return ScriptExpression(b.tk.typ, { ParseExpression({ in[1] }) }); }
 
 	for (auto const& br : in) {
 		if (IsBinaryOperator(br.tk)) { return ParseBinaryExpressions(in); }
 	}
 
 	if (in.back().typ == 3) { return ParseAccess(in); }
-	return ScriptExpr(L"error");
+	return ScriptExpression(L"error");
 }
 

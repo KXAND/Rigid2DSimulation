@@ -6,7 +6,7 @@ struct Control;
 // 如果对象的高度超过了范围，Scrollbar 不会自动更正。
 // 这一权限留给 Panel 等对象的直接上级。
 // Scrollbar 不是控件，不继承 Control 类。
-struct ScrollbarY {
+struct VerticalScrollBar {
 	DVector2 tl;
 	double depth = 0;
 	Control* c = NULL;
@@ -21,7 +21,7 @@ struct ScrollbarY {
 	bool hovered = false;
 	bool hovered_node = false;
 
-	ScrollbarY();
+	VerticalScrollBar();
 	// 没有 set_c 不会 Discard 之前的对象。
 	void render(App& app);
 

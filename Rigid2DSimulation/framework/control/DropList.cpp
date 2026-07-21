@@ -6,7 +6,7 @@
 
 
 wstring nm_none(int id, App &app) { return L"空"; }
-Droplist::Droplist(int w, DpNm const& nm) : w(w), nm(nm) {
+DropList::DropList(int w, DpNm const& nm) : w(w), nm(nm) {
 	gap = { 10, 10 }; depth = 1000;
 	h_item = 25; h = 30;
 
@@ -23,14 +23,14 @@ Droplist::Droplist(int w, DpNm const& nm) : w(w), nm(nm) {
 	c_invalid = { 0, 0, 0 };
 	hoveredColor = { 60, 60, 150 };
 }
-int Droplist::GetW() const { return w + gap.x + w_txt; }
-int Droplist::GetH() const {
+int DropList::GetW() const { return w + gap.x + w_txt; }
+int DropList::GetH() const {
 	return h + gap.y + (edit ? n_item * h_item : 0);
 }
 
-DVector2 Droplist::tl_box() const { return tl + DVector2(w_txt, 0); }
-DVector2 Droplist::tl_item() const { return tl_box() + DVector2(0, h); }
-void Droplist::render_main(App& app) {
+DVector2 DropList::tl_box() const { return tl + DVector2(w_txt, 0); }
+DVector2 DropList::tl_item() const { return tl_box() + DVector2(0, h); }
+void DropList::render_main(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
@@ -46,7 +46,7 @@ void Droplist::render_main(App& app) {
 	DVector2 tl_item = tl + DVector2(x_txt_margin, (h - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, nm(picked, app), c_txt, app.ft, tl_txt, 0, vp);
 }
-void Droplist::render_items(App& app) {
+void DropList::render_items(App& app) {
 	if (edit) {
 		drawRectangleWithBorder(app.scr, app.dscr, depth, 
 			tl_item(), w, h_item * n_item, vp, c_normal, c_frame);
@@ -63,12 +63,12 @@ void Droplist::render_items(App& app) {
 		}
 	}
 }
-void Droplist::render(App& app) {
+void DropList::render(App& app) {
 	render_main(app); render_items(app);
 }
 
 // 在内容可变的情形下怎么处理我还没想清楚的。
-void Droplist::Update(App& app) {
+void DropList::Update(App& app) {
 	hovered = (app.own.hovered == this);
 	w_txt = str_wh(txt, app.ft, 0).x;
 	if (edit) {
@@ -86,19 +86,19 @@ void Droplist::Update(App& app) {
 		edit = enabled && hovered && app.input.isMouseClickedDown(0);
 	} render(app);
 }
-void Droplist::Discard(App& app) {
+void DropList::Discard(App& app) {
 	app.own.remove(this); w_txt = 0;
 	edit = hovered = false; item_hv = -1;
 }
-void Droplist::PreUpdate(App& app) {
+void DropList::PreUpdate(App& app) {
 	int real_h = h + (edit ? n_item * h_item : 0);
 	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl_box(), w, real_h}) && isInside(app.input.msp, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
-DpLan::DpLan(wstring const& id, int w, DpNm const& nm) : Droplist(w, nm), id_txt(id) {}
-void DpLan::Update(App& app) { txt = app.getLocalizedString(id_txt); Droplist::Update(app); }
+DpLan::DpLan(wstring const& id, int w, DpNm const& nm) : DropList(w, nm), id_txt(id) {}
+void DpLan::Update(App& app) { txt = app.getLocalizedString(id_txt); DropList::Update(app); }
 
 
 

@@ -3,7 +3,7 @@
 
 struct App;
 struct Control;
-struct ScrollbarY;
+struct VerticalScrollBar;
 struct FloatPanel {
 	DVector2 tl;
 	double depth = 0;
@@ -15,7 +15,7 @@ struct FloatPanel {
 	DRect vp_show_rel;
 
 	bool use_sb = false;
-	std::shared_ptr<ScrollbarY> sb;
+	std::shared_ptr<VerticalScrollBar> sb;
 
 	int h_bar = 0;
 	int s_close = 0;
