@@ -14,7 +14,7 @@ Creator::Creator()
 	thick = 10;
 	rad = 8;
 }
-Creator::Creator(Var const& v) : Creator()
+Creator::Creator(Value const& v) : Creator()
 {
 	if (auto md = FindConfigValue(v, L"mode"))
 	{
@@ -33,8 +33,8 @@ Creator::Creator(Var const& v) : Creator()
 	}
 	TryReadConfigNumber(v, L"thickness", thick);
 	TryReadConfigNumber(v, L"radius", rad);
-	if (auto value = FindConfigValue(v, L"bodyConfiguration")) { bodyConfiguration = std::make_shared<Var>(*value); }
-	if (auto value = FindConfigValue(v, L"connectionConfiguration")) { connectionConfiguration = std::make_shared<Var>(*value); }
+	if (auto value = FindConfigValue(v, L"bodyConfiguration")) { bodyConfiguration = std::make_shared<Value>(*value); }
+	if (auto value = FindConfigValue(v, L"connectionConfiguration")) { connectionConfiguration = std::make_shared<Value>(*value); }
 }
 
 double Creator::Depth() const

@@ -12,7 +12,7 @@ struct ScriptExpr {
 	bool global = false;
 	double num = 0;
 	wstring str;
-	wstring var;
+	wstring Value;
 	wstring fun;
 	vector<ScriptExpr> pars;
 	vector<ScriptExpr> vec;
@@ -23,7 +23,7 @@ struct ScriptExpr {
 	ScriptExpr(double num);
 	ScriptExpr(wstring const& fun, vector<ScriptExpr> const& pars);
 	static ScriptExpr mkstr(wstring const& str);
-	static ScriptExpr mkvar(wstring const& var, bool gl);
+	static ScriptExpr mkvar(wstring const& Value, bool gl);
 };
 wstring ToWString(ScriptExpr const& ex);
 

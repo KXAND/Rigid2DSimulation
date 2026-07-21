@@ -9,7 +9,7 @@ int constexpr CREATE_CONN = 4;
 int constexpr CREATE_POINT = 5;
 int constexpr CREATE_NAIL = 6;
 
-struct Var;
+struct Value;
 struct SimulationApp;
 struct Body;
 struct Connection;
@@ -23,7 +23,7 @@ struct Creator
 	DVector2 creationStartPoint;
 	Body* body0 = NULL;
 	Body* body1 = NULL;
-	std::shared_ptr<Var> bodyConfiguration, connectionConfiguration;
+	std::shared_ptr<Value> bodyConfiguration, connectionConfiguration;
 	Vector2 p0Relative, p1Relative;
 
 	std::shared_ptr<Body> body;
@@ -32,7 +32,7 @@ struct Creator
 	bool hovered = false;
 
 	Creator();
-	Creator(Var const& v);
+	Creator(Value const& v);
 	double Depth() const;
 	void Update(SimulationApp& cur);
 	void Discard(SimulationApp& cur);

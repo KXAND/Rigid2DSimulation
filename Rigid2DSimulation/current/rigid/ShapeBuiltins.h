@@ -1,12 +1,12 @@
 #pragma once
 #include "framework/basic/Utils.h"
 
-struct Var;
+struct Value;
 
-shared_ptr<Var> Ball(Var const& r);
-shared_ptr<Var> Box(Var const& w, Var const& h);
-shared_ptr<Var> RegularPoly(Var const& n, Var const& r);
-shared_ptr<Var> Parallelogram(Var const& w, Var const& h, Var const& s);
-shared_ptr<Var> Trapezoid(Var const& t, Var const& b, Var const& h);
-shared_ptr<Var> Cross(Var const& s, Var const& thk);
-shared_ptr<Var> FramedBox(Var const& w, Var const& h, Var const& thk);
+shared_ptr<Value> Ball(Value const& r);
+shared_ptr<Value> Box(Value const& w, Value const& h);
+shared_ptr<Value> RegularPoly(Value const& n, Value const& r);
+shared_ptr<Value> Parallelogram(Value const& w, Value const& h, Value const& s);
+shared_ptr<Value> Trapezoid(Value const& t, Value const& b, Value const& h);
+shared_ptr<Value> Cross(Value const& s, Value const& thk);
+shared_ptr<Value> FramedBox(Value const& w, Value const& h, Value const& thk);

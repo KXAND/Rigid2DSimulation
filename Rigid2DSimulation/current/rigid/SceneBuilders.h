@@ -1,13 +1,13 @@
 #pragma once
 
-struct Var;
+struct Value;
 struct SimulationApp;
 
-void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg);
-void CreateConnection(SimulationApp& cur, Var const& cfg);
-void Boundary(SimulationApp& cur, Var const& thk, Var const& cfg);
-void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var const& cfg);
-void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
-	Var const& _n, Var const& ratio, Var const& bodyConfiguration, Var const& cfg_conn);
-void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
-	Var const& _n, Var const& ratio, Var const& bodyConfiguration, Var const& cfg_conn);
+void CreateBody(SimulationApp& cur, Value const& shs_cfg, Value const& cfg);
+void CreateConnection(SimulationApp& cur, Value const& cfg);
+void Boundary(SimulationApp& cur, Value const& thk, Value const& cfg);
+void Gear(SimulationApp& cur, Value const& r, Value const& n, Value const& h, Value const& cfg);
+void Strand(SimulationApp& cur, Value const& _p0, Value const& _p1,
+	Value const& _n, Value const& ratio, Value const& bodyConfiguration, Value const& cfg_conn);
+void Necklace(SimulationApp& cur, Value const& _o, Value const& rad,
+	Value const& _n, Value const& ratio, Value const& bodyConfiguration, Value const& cfg_conn);

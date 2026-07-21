@@ -6,17 +6,17 @@
 // 每次都能找到新 bug，很可能还有一些 bug。
 // 同时速度上也有很多改进空间。
 
-Var::Var(double num) : num(num) { typ = L"num"; }
-Var::Var(wstring const& str) : str(str) { typ = L"ToString"; }
-Var::Var(decltype(fun) const& user) : fun(user) { typ = L"user"; }
-Var::Var(vector<std::shared_ptr<Var>> const& vec) : vec(vec) { typ = L"vec"; }
-Var::Var(Program const& ps, vector<wstring>const& pars) :
+Value::Value(double num) : num(num) { typ = L"num"; }
+Value::Value(wstring const& str) : str(str) { typ = L"ToString"; }
+Value::Value(decltype(fun) const& user) : fun(user) { typ = L"user"; }
+Value::Value(vector<std::shared_ptr<Value>> const& vec) : vec(vec) { typ = L"vec"; }
+Value::Value(Program const& ps, vector<wstring>const& pars) :
 	procs(ps), pars(pars)
 {
 	typ = L"fun";
 }
 
-Vector2 ToVector2(Var const& v)
+Vector2 ToVector2(Value const& v)
 {
 	Vector2 out;
 	if (v.vec.size() < 2) { return {}; }
@@ -24,7 +24,7 @@ Vector2 ToVector2(Var const& v)
 	out.y = v.vec[1]->num;
 	return out;
 }
-Vector3 ToVector3(Var const& v)
+Vector3 ToVector3(Value const& v)
 {
 	Vector3 out;
 	if (v.vec.size() < 3) { return {}; }
@@ -34,63 +34,63 @@ Vector3 ToVector3(Var const& v)
 	return out;
 }
 
-std::shared_ptr<Var> FindVariable(Scope& gl, Scope& sc, wstring nm, bool isgl)
+std::shared_ptr<Value> FindVariable(Scope& gl, Scope& sc, wstring nm, bool isgl)
 {
 	if (isgl)
 	{
-		if (gl.find(nm) == gl.end()) { gl[nm] = std::make_shared<Var>(); }
+		if (gl.find(nm) == gl.end()) { gl[nm] = std::make_shared<Value>(); }
 		return gl[nm];
 	}
 	else
 	{
-		if (sc.find(nm) == sc.end()) { sc[nm] = std::make_shared<Var>(); }
+		if (sc.find(nm) == sc.end()) { sc[nm] = std::make_shared<Value>(); }
 		return sc[nm];
 	}
 }
-bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpr const& ex, Var& out)
+bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpr const& ex, Value& out)
 {
 	auto const& f = ex.fun;
 	// 保持按需 Evaluate，避免在确定运算符前提前计算所有参数。
 	auto numArg = [&](int index) { return Evaluate(gl, sc, ex.pars[index])->num; };
 	auto strArg = [&](int index) -> wstring const& { return Evaluate(gl, sc, ex.pars[index])->str; };
 
-	if (f == L"!") { out = Var(!numArg(0)); return true; }
-	if (f == L"++") { out = Var(numArg(0)); return true; }
-	if (f == L"--") { out = Var(-numArg(0)); return true; }
-	if (f == L"Sin") { out = Var(sin(numArg(0)));  return true; }
-	if (f == L"Cos") { out = Var(cos(numArg(0)));  return true; }
-	if (f == L"Abs") { out = Var(abs(numArg(0)));  return true; }
-	if (f == L"+") { out = Var(numArg(0) + numArg(1)); return true; }
-	if (f == L"-") { out = Var(numArg(0) - numArg(1)); return true; }
-	if (f == L"*") { out = Var(numArg(0) * numArg(1)); return true; }
-	if (f == L"/") { out = Var(numArg(0) / numArg(1)); return true; }
-	if (f == L"<") { out = Var(numArg(0) < numArg(1)); return true; }
-	if (f == L">") { out = Var(numArg(0) > numArg(1)); return true; }
-	if (f == L"<=") { out = Var(numArg(0) <= numArg(1)); return true; }
-	if (f == L">=") { out = Var(numArg(0) >= numArg(1)); return true; }
-	if (f == L"==") { out = Var(numArg(0) == numArg(1)); return true; }
-	if (f == L"!=") { out = Var(numArg(0) != numArg(1)); return true; }
-	if (f == L"&&") { out = Var(numArg(0) && numArg(1)); return true; }
-	if (f == L"||") { out = Var(numArg(0) || numArg(1)); return true; }
-	if (f == L"Pow") { out = Var(pow(numArg(0), numArg(1))); return true; }
-	if (f == L"Random") { out = Var(GenerateRandomFloat(numArg(0), numArg(1))); return true; }
-	if (f == L"RandomInt") { out = Var(GenerateRandomInt(numArg(0), numArg(1))); return true; }
-	if (f == L"ToString") { out = Var(FormatFixed2(numArg(0))); return true; }
-	if (f == L".") { out = Var(strArg(0) + strArg(1)); return true; }
+	if (f == L"!") { out = Value(!numArg(0)); return true; }
+	if (f == L"++") { out = Value(numArg(0)); return true; }
+	if (f == L"--") { out = Value(-numArg(0)); return true; }
+	if (f == L"Sin") { out = Value(sin(numArg(0)));  return true; }
+	if (f == L"Cos") { out = Value(cos(numArg(0)));  return true; }
+	if (f == L"Abs") { out = Value(abs(numArg(0)));  return true; }
+	if (f == L"+") { out = Value(numArg(0) + numArg(1)); return true; }
+	if (f == L"-") { out = Value(numArg(0) - numArg(1)); return true; }
+	if (f == L"*") { out = Value(numArg(0) * numArg(1)); return true; }
+	if (f == L"/") { out = Value(numArg(0) / numArg(1)); return true; }
+	if (f == L"<") { out = Value(numArg(0) < numArg(1)); return true; }
+	if (f == L">") { out = Value(numArg(0) > numArg(1)); return true; }
+	if (f == L"<=") { out = Value(numArg(0) <= numArg(1)); return true; }
+	if (f == L">=") { out = Value(numArg(0) >= numArg(1)); return true; }
+	if (f == L"==") { out = Value(numArg(0) == numArg(1)); return true; }
+	if (f == L"!=") { out = Value(numArg(0) != numArg(1)); return true; }
+	if (f == L"&&") { out = Value(numArg(0) && numArg(1)); return true; }
+	if (f == L"||") { out = Value(numArg(0) || numArg(1)); return true; }
+	if (f == L"Pow") { out = Value(pow(numArg(0), numArg(1))); return true; }
+	if (f == L"Random") { out = Value(GenerateRandomFloat(numArg(0), numArg(1))); return true; }
+	if (f == L"RandomInt") { out = Value(GenerateRandomInt(numArg(0), numArg(1))); return true; }
+	if (f == L"ToString") { out = Value(FormatFixed2(numArg(0))); return true; }
+	if (f == L".") { out = Value(strArg(0) + strArg(1)); return true; }
 	return false;
 }
 
-std::shared_ptr<Var> EvaluateCall(Scope& gl, Scope& sc, ScriptExpr const& ex)
+std::shared_ptr<Value> EvaluateCall(Scope& gl, Scope& sc, ScriptExpr const& ex)
 {
-	Var tmp;
+	Value tmp;
 	Scope getLocalizedString;
-	if (TryEvaluateDefaultFunction(gl, sc, ex, tmp)) { return std::make_shared<Var>(tmp); }
+	if (TryEvaluateDefaultFunction(gl, sc, ex, tmp)) { return std::make_shared<Value>(tmp); }
 
 	// 下面必须是值复制，这是为了避免函数自己被抹去。
 	auto fun = FindVariable(gl, sc, ex.fun, ex.global);
 	if (fun->typ == L"user" && fun->fun)
 	{
-		vector<std::shared_ptr<Var>> tmp;
+		vector<std::shared_ptr<Value>> tmp;
 		for (auto const& p : ex.pars)
 		{
 			tmp.push_back(Evaluate(gl, sc, p));
@@ -105,9 +105,9 @@ std::shared_ptr<Var> EvaluateCall(Scope& gl, Scope& sc, ScriptExpr const& ex)
 	bool ret = false;
 	return Execute(ret, gl, getLocalizedString, fun->procs);
 }
-std::shared_ptr<Var> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex)
+std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex)
 {
-	if (!ex.getLocalizedString || !ex.ind) { return std::make_shared<Var>(); }
+	if (!ex.getLocalizedString || !ex.ind) { return std::make_shared<Value>(); }
 	auto getLocalizedString = Evaluate(gl, sc, *ex.getLocalizedString);
 	auto ind = Evaluate(gl, sc, *ex.ind);
 
@@ -119,7 +119,7 @@ std::shared_ptr<Var> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex)
 		}
 		for (int i = (getLocalizedString->vec.size() - 1), iEnd = int(ind->num); i < iEnd; ++i)
 		{
-			getLocalizedString->vec.push_back(std::make_shared<Var>());
+			getLocalizedString->vec.push_back(std::make_shared<Value>());
 		}
 		return getLocalizedString->vec[ind->num];
 	}
@@ -132,37 +132,37 @@ std::shared_ptr<Var> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpr const& ex)
 		}
 		if (getLocalizedString->dic.find(ind->str) == getLocalizedString->dic.end())
 		{
-			getLocalizedString->dic[ind->str] = std::make_shared<Var>();
+			getLocalizedString->dic[ind->str] = std::make_shared<Value>();
 		}
 		return getLocalizedString->dic[ind->str];
 	}
 
-	return std::make_shared<Var>();
+	return std::make_shared<Value>();
 }
-std::shared_ptr<Var> Evaluate(Scope& gl, Scope& sc, ScriptExpr const& ex)
+std::shared_ptr<Value> Evaluate(Scope& gl, Scope& sc, ScriptExpr const& ex)
 {
 	if (ex.typ == L"call") { return EvaluateCall(gl, sc, ex); }
 	else if (ex.typ == L"var")
 	{
-		if (ex.var == L"kPi") { return std::make_shared<Var>(PI); }
-		return FindVariable(gl, sc, ex.var, ex.global);
+		if (ex.Value == L"kPi") { return std::make_shared<Value>(PI); }
+		return FindVariable(gl, sc, ex.Value, ex.global);
 	}
-	else if (ex.typ == L"num") { return std::make_shared<Var>(ex.num); }
-	else if (ex.typ == L"ToString") { return std::make_shared<Var>(ex.str); }
+	else if (ex.typ == L"num") { return std::make_shared<Value>(ex.num); }
+	else if (ex.typ == L"ToString") { return std::make_shared<Value>(ex.str); }
 	else if (ex.typ == L"vec")
 	{
-		vector<std::shared_ptr<Var>> tmp;
+		vector<std::shared_ptr<Value>> tmp;
 		for (auto const& e : ex.vec)
 		{
-			tmp.push_back(std::make_shared<Var>(*Evaluate(gl, sc, e)));
+			tmp.push_back(std::make_shared<Value>(*Evaluate(gl, sc, e)));
 		}
-		return std::make_shared<Var>(tmp);
+		return std::make_shared<Value>(tmp);
 	}
 	else if (ex.typ == L"access") { return EvaluateAccess(gl, sc, ex); }
-	return std::make_shared<Var>();
+	return std::make_shared<Value>();
 }
 
-std::shared_ptr<Var> Execute(bool& ret, Scope& gl, Scope& sc, Program const& ps)
+std::shared_ptr<Value> Execute(bool& ret, Scope& gl, Scope& sc, Program const& ps)
 {
 	for (auto const& p : ps)
 	{
@@ -170,7 +170,7 @@ std::shared_ptr<Var> Execute(bool& ret, Scope& gl, Scope& sc, Program const& ps)
 		else if (p.typ == L"return") { ret = true; return Evaluate(gl, sc, p.ret); }
 		else if (p.typ == L"define")
 		{
-			*FindVariable(gl, sc, p.def_fun, false) = Var(p.procs, p.def_pars);
+			*FindVariable(gl, sc, p.def_fun, false) = Value(p.procs, p.def_pars);
 		}
 		else if (p.typ == L"assign") { *Evaluate(gl, sc, p.left) = *Evaluate(gl, sc, p.right); }
 		else if (p.typ == L"if")
@@ -188,9 +188,9 @@ std::shared_ptr<Var> Execute(bool& ret, Scope& gl, Scope& sc, Program const& ps)
 			}
 		}
 	}
-	return std::make_shared<Var>();
+	return std::make_shared<Value>();
 }
-std::shared_ptr<Var> Execute(Scope& gl, Program const& ps)
+std::shared_ptr<Value> Execute(Scope& gl, Program const& ps)
 {
 	bool ret = false;
 	return Execute(ret, gl, gl, ps);

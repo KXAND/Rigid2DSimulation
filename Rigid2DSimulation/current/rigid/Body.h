@@ -5,7 +5,7 @@
 struct ScriptStatement;
 typedef vector<ScriptStatement> Program;
 
-struct Var;
+struct Value;
 struct SimulationApp;
 struct Shape;
 struct Connection;
@@ -63,7 +63,7 @@ struct Body
 	Vector2 GenerateRandomPointInside() const;
 	bool IsInside(Vector2 p) const;
 	void RefreshFromScript(SimulationApp& cur);
-	void ReadCfg(Var const& cfg);
+	void ReadCfg(Value const& cfg);
 	void UpdateShapesPositionAndAABB();
 	void Warp(DRect rc);
 	void RegisterGrid(SimulationApp& cur);

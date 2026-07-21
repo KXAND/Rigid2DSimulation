@@ -6,7 +6,7 @@ int constexpr CON_LINK = 1;
 int constexpr CON_SPRING = 3;
 int constexpr CON_CORD = 4;
 
-struct Var;
+struct Value;
 struct SimulationApp;
 struct Body;
 /// <summary>
@@ -34,7 +34,7 @@ struct Connection {
 	Connection(SimulationApp& cur, FILE* file);
 	void Save(SimulationApp const& cur, FILE* file) const;
 
-	void ReadCfg(Var const& cfg);
+	void ReadCfg(Value const& cfg);
 	void SignUpToBodies();
 	void UpdatePosition();
 	void RefreshFromScript(SimulationApp& cur);

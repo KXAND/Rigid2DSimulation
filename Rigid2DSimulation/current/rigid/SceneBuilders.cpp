@@ -6,7 +6,7 @@
 #include "Shape.h"
 #include "Connection.h"
 
-void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
+void CreateBody(SimulationApp& cur, Value const& shs_cfg, Value const& cfg)
 {
 	bool point = false;
 	TryReadConfigNumber(cfg, L"point", point);
@@ -45,7 +45,7 @@ void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 	cur.bodies.push_back(bo);
 	cur.isSceneChanged = true;
 }
-void CreateConnection(SimulationApp& cur, Var const& cfg)
+void CreateConnection(SimulationApp& cur, Value const& cfg)
 {
 	auto& bodies = cur.bodies;
 	int idx0 = GenerateRandomInt(bodies.size());
@@ -88,7 +88,7 @@ void CreateConnection(SimulationApp& cur, Var const& cfg)
 	cur.isSceneChanged = true;
 }
 
-void Boundary(SimulationApp& cur, Var const& thk, Var const& cfg)
+void Boundary(SimulationApp& cur, Value const& thk, Value const& cfg)
 {
 	double bw = cur.background->width, bh = cur.background->height;
 	double bx0 = cur.background->topLeft.x, bx1 = bx0 + bw;
@@ -125,7 +125,7 @@ void Boundary(SimulationApp& cur, Var const& thk, Var const& cfg)
 	cur.bodies.push_back(body);
 	cur.isSceneChanged = true;
 }
-void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var const& cfg)
+void Gear(SimulationApp& cur, Value const& r, Value const& n, Value const& h, Value const& cfg)
 {
 	vector<std::shared_ptr<Shape>> shs;
 	shs.push_back(std::make_shared<Shape>(r.num));
@@ -157,8 +157,8 @@ void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var cons
 	cur.connections.push_back(connection);
 	cur.isSceneChanged = true;
 }
-void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
-	Var const& _n, Var const& ratio, Var const& bodyConfiguration, Var const& cfg_conn)
+void Strand(SimulationApp& cur, Value const& _p0, Value const& _p1,
+	Value const& _n, Value const& ratio, Value const& bodyConfiguration, Value const& cfg_conn)
 {
 	Vector2 p0 = ToVector2(_p0), p1 = ToVector2(_p1);
 	int n = _n.num;
@@ -196,8 +196,8 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	}
 	cur.isSceneChanged = true;
 }
-void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
-	Var const& _n, Var const& ratio, Var const& bodyConfiguration, Var const& cfg_conn)
+void Necklace(SimulationApp& cur, Value const& _o, Value const& rad,
+	Value const& _n, Value const& ratio, Value const& bodyConfiguration, Value const& cfg_conn)
 {
 	std::shared_ptr<Body> beg, b0, b1;
 	int n = _n.num;

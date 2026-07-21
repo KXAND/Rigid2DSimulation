@@ -12,16 +12,16 @@ ScriptExpr ScriptExpr::mkstr(wstring const& str) {
 	ex.str = str;
 	return ex;
 }
-ScriptExpr ScriptExpr::mkvar(wstring const& var, bool gl) {
+ScriptExpr ScriptExpr::mkvar(wstring const& Value, bool gl) {
 	auto ex = ScriptExpr(L"var");
-	ex.var = var;
+	ex.Value = Value;
 	ex.global = gl;
 	return ex;
 }
 
 wstring ToWString(ScriptExpr const& ex) {
 	wstring tmp = L"[" + ex.typ;
-	if (ex.typ == L"var") { tmp += (ex.global ? L":&" : L":") + ex.var; }
+	if (ex.typ == L"var") { tmp += (ex.global ? L":&" : L":") + ex.Value; }
 	else if (ex.typ == L"num") { tmp += L":" + FormatFixed2(ex.num); }
 	else if (ex.typ == L"str") { tmp += L":" + ex.str; }
 	else if (ex.typ == L"access") {
@@ -120,7 +120,7 @@ ScriptExpr ParsePreExpression(vector<pre_expr> const& in) {
 
 ScriptExpr ParseCall(vector<BracketGroup> const& in) {
 	ScriptExpr ex(L"call");
-	ex.fun = in[0].tk.var;
+	ex.fun = in[0].tk.Value;
 	ex.global = in[0].tk.global;
 
 	vector<BracketGroup> tmp;
@@ -181,7 +181,7 @@ ScriptExpr ParseExpression(vector<BracketGroup> const& in) {
 	auto const& b = in[0];
 	if (in.size() == 1) {
 		if (b.typ == 0) {
-			if (b.tk.typ == L"var") { return ScriptExpr::mkvar(b.tk.var, b.tk.global); }
+			if (b.tk.typ == L"var") { return ScriptExpr::mkvar(b.tk.Value, b.tk.global); }
 			else if (b.tk.typ == L"str") { return ScriptExpr::mkstr(b.tk.str); }
 			else if (b.tk.typ == L"num") { return ScriptExpr(b.tk.num); }
 			else if (b.tk.typ == L"null") { return ScriptExpr(L"null"); }

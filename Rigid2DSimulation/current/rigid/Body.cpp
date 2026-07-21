@@ -109,7 +109,7 @@ bool Body::IsInside(Vector2 p) const
 
 void Body::RefreshFromScript(SimulationApp& cur)
 {
-	cur.currentScope[L"body"] = std::make_shared<Var>();
+	cur.currentScope[L"body"] = std::make_shared<Value>();
 	Execute(cur.currentScope, Compile(scriptText));
 	if (cur.currentScope.find(L"body") == cur.currentScope.end()) { return; }
 	auto const& body_cfg = *cur.currentScope[L"body"];
@@ -125,7 +125,7 @@ void Body::RefreshFromScript(SimulationApp& cur)
 	Init();
 }
 
-void Body::ReadCfg(Var const& cfg)
+void Body::ReadCfg(Value const& cfg)
 {
 	if (auto value = FindConfigValue(cfg, L"position")) { position = ToVector2(*value); }
 	if (auto value = FindConfigValue(cfg, L"velocity")) { velocity = ToVector2(*value); }
@@ -385,9 +385,9 @@ void Body::FollowPresetPosition(SimulationApp& cur, double stepDt)
 	if (!positionProgram) { return; }
 	Scope scope;
 	bool ret = false;
-	scope[L"time"] = std::make_shared<Var>(cur.t);
+	scope[L"time"] = std::make_shared<Value>(cur.t);
 	auto positionOld = ToVector2(Execute(ret, cur.currentScope, scope, *positionProgram)->vec);
-	scope.clear(); scope[L"time"] = std::make_shared<Var>(cur.t + stepDt); ret = false;
+	scope.clear(); scope[L"time"] = std::make_shared<Value>(cur.t + stepDt); ret = false;
 	auto positionNew = ToVector2(Execute(ret, cur.currentScope, scope, *positionProgram)->vec);
 	auto velocityNew = (positionNew - positionOld) / stepDt;
 
@@ -402,10 +402,10 @@ void Body::FollowPresetAngle(SimulationApp& cur, double stepDt)
 
 	Scope scope;
 	bool ret = false;
-	scope[L"time"] = std::make_shared<Var>(cur.t);
+	scope[L"time"] = std::make_shared<Value>(cur.t);
 	auto radianOld = Execute(ret, cur.currentScope, scope, *angleProgram)->num;
 	scope.clear();
-	scope[L"time"] = std::make_shared<Var>(cur.t + stepDt);
+	scope[L"time"] = std::make_shared<Value>(cur.t + stepDt);
 	ret = false;
 	auto radianNew = Execute(ret, cur.currentScope, scope, *angleProgram)->num;
 	auto velocityAngularNew = (radianNew - radianOld) / stepDt;
@@ -420,7 +420,7 @@ void Body::FollowPresetAngularVelocity(SimulationApp& cur)
 
 	Scope sc;
 	bool ret = false;
-	sc[L"time"] = std::make_shared<Var>(cur.t);
+	sc[L"time"] = std::make_shared<Value>(cur.t);
 	auto velocityAngularNew = Execute(ret, cur.currentScope, sc, *angularVelocityProgram)->num;
 
 	velocityAngular = velocityAngularNew;

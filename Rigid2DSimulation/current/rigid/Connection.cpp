@@ -53,7 +53,7 @@ Connection::Connection(SimulationApp& cur, FILE* file) : Connection()
 	RefreshFromScript(cur); SignUpToBodies(); UpdatePosition();
 }
 
-void Connection::ReadCfg(Var const& cfg)
+void Connection::ReadCfg(Value const& cfg)
 {
 	TryReadConfigNumber(cfg, L"length", len);
 	TryReadConfigNumber(cfg, L"hooke", hooke);
@@ -84,7 +84,7 @@ void Connection::UpdatePosition()
 
 void Connection::RefreshFromScript(SimulationApp& cur)
 {
-	cur.currentScope[L"connection"] = std::make_shared<Var>();
+	cur.currentScope[L"connection"] = std::make_shared<Value>();
 	Execute(cur.currentScope, Compile(scriptText));
 	if (cur.currentScope.find(L"connection") == cur.currentScope.end()) { return; }
 	ReadCfg(*cur.currentScope[L"connection"]);

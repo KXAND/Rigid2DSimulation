@@ -82,10 +82,10 @@ void SimulationApp::Reset()
 	connections.clear();
 	debugString.clear();
 
-	currentScope[L"backgroundLeft"] = std::make_shared<Var>(background->topLeft.x);
-	currentScope[L"backgroundTop"] = std::make_shared<Var>(background->topLeft.y);
-	currentScope[L"backgroundWidth"] = std::make_shared<Var>(background->width);
-	currentScope[L"backgroundHeight"] = std::make_shared<Var>(background->height);
+	currentScope[L"backgroundLeft"] = std::make_shared<Value>(background->topLeft.x);
+	currentScope[L"backgroundTop"] = std::make_shared<Value>(background->topLeft.y);
+	currentScope[L"backgroundWidth"] = std::make_shared<Value>(background->width);
+	currentScope[L"backgroundHeight"] = std::make_shared<Value>(background->height);
 
 	bodySelecting = NULL;
 	connectionSelecting = NULL;
@@ -168,7 +168,7 @@ void SimulationApp::Update()
 	(*background).Update(*this);
 	(*background).Render(*this);
 	realDeltaTime = min(maxRealDeltaTime, fps.dt());
-	currentScope[L"cur.fps.dt()"] = std::make_shared<Var>(realDeltaTime);
+	currentScope[L"cur.fps.dt()"] = std::make_shared<Value>(realDeltaTime);
 	gridNumX = ceil(rectScene.w / gridSize);
 	gridNumY = ceil(rectScene.h / gridSize);
 	if (isSceneChanged) { isSceneChanged = false; groups = FormGroups(bodies); }
@@ -182,7 +182,7 @@ void SimulationApp::Update()
 
 		for (int i = (0), iEnd = int(stepNum); i < iEnd; ++i)
 		{
-			currentScope[L"time"] = std::make_shared<Var>(t);
+			currentScope[L"time"] = std::make_shared<Value>(t);
 			for (const auto& b : bodies) { b->Step(*this, sdt); }
 			// for (auto b : bodies) { b->warp(rectScene); }
 			for (auto& g : groups) { g->Warp(rectScene); }
@@ -232,7 +232,7 @@ void SimulationApp::Update()
 	ui->Update(*this);
 }
 
-void SimulationApp::SetCfg(Var const& v)
+void SimulationApp::SetCfg(Value const& v)
 {
 	TryReadConfigNumber(v, L"volume", vol);
 	TryReadConfigNumber(v, L"energyMultiplier", energyMultiplier);
@@ -318,122 +318,122 @@ void SimulationApp::LoadParameters(FILE* file)
 }
 void SimulationApp::InitializeDefaultFunctions()
 {
-	auto f0 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f0 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 1) { creator = std::make_shared<Creator>(*in[0]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"SetCreator"] = std::make_shared<Var>(f0);
+	currentScope[L"SetCreator"] = std::make_shared<Value>(f0);
 
-	auto f1 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f1 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 2) { CreateBody(*this, *in[0], *in[1]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"CreateBody"] = std::make_shared<Var>(f1);
+	currentScope[L"CreateBody"] = std::make_shared<Value>(f1);
 
-	auto f2 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f2 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 2) { return Box(*in[0], *in[1]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"Box"] = std::make_shared<Var>(f2);
+	currentScope[L"Box"] = std::make_shared<Value>(f2);
 
-	auto f3 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f3 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 1) { return Ball(*in[0]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"Ball"] = std::make_shared<Var>(f3);
+	currentScope[L"Ball"] = std::make_shared<Value>(f3);
 
-	auto f4 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f4 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 2) { return Parallelogram(*in[0], *in[1], *in[2]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"Parallelogram"] = std::make_shared<Var>(f4);
+	currentScope[L"Parallelogram"] = std::make_shared<Value>(f4);
 
-	auto f5 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f5 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 3) { return Trapezoid(*in[0], *in[1], *in[2]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"Trapezoid"] = std::make_shared<Var>(f5);
+	currentScope[L"Trapezoid"] = std::make_shared<Value>(f5);
 
-	auto f6 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f6 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 2) { return RegularPoly(*in[0], *in[1]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"RegularPolygon"] = std::make_shared<Var>(f6);
+	currentScope[L"RegularPolygon"] = std::make_shared<Value>(f6);
 
-	auto f7 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f7 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 2) { return Cross(*in[0], *in[1]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"Cross"] = std::make_shared<Var>(f7);
+	currentScope[L"Cross"] = std::make_shared<Value>(f7);
 
-	auto f8 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f8 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
-			return std::make_shared<Var>(bodies.size());
+			return std::make_shared<Value>(bodies.size());
 		};
-	currentScope[L"GetBodyCount"] = std::make_shared<Var>(f8);
+	currentScope[L"GetBodyCount"] = std::make_shared<Value>(f8);
 
-	auto f9 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f9 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 1) { CreateConnection(*this, *in[0]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"CreateConnection"] = std::make_shared<Var>(f9);
+	currentScope[L"CreateConnection"] = std::make_shared<Value>(f9);
 
-	auto f10 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f10 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 1) { SetCfg(*in[0]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"SetConfig"] = std::make_shared<Var>(f10);
+	currentScope[L"SetConfig"] = std::make_shared<Value>(f10);
 
-	auto f11 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f11 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 2) { Boundary(*this, *in[0], *in[1]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"Boundary"] = std::make_shared<Var>(f11);
+	currentScope[L"Boundary"] = std::make_shared<Value>(f11);
 
-	auto f12 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f12 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 3) { return FramedBox(*in[0], *in[1], *in[2]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"FramedBox"] = std::make_shared<Var>(f12);
+	currentScope[L"FramedBox"] = std::make_shared<Value>(f12);
 
-	auto f13 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f13 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 4) { Gear(*this, *in[0], *in[1], *in[2], *in[3]); }
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"Gear"] = std::make_shared<Var>(f13);
+	currentScope[L"Gear"] = std::make_shared<Value>(f13);
 
-	auto f14 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f14 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 6)
 			{
 				Strand(*this, *in[0], *in[1], *in[2], *in[3], *in[4], *in[5]);
 			}
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"Strand"] = std::make_shared<Var>(f14);
+	currentScope[L"Strand"] = std::make_shared<Value>(f14);
 
-	auto f15 = [this](vector<std::shared_ptr<Var>> const& in)
+	auto f15 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
 			if (in.size() >= 6)
 			{
 				Necklace(*this, *in[0], *in[1], *in[2], *in[3], *in[4], *in[5]);
 			}
-			return std::make_shared<Var>();
+			return std::make_shared<Value>();
 		};
-	currentScope[L"Necklace"] = std::make_shared<Var>(f15);
+	currentScope[L"Necklace"] = std::make_shared<Value>(f15);
 }
 void SimulationApp::UpdateBasicState()
 {
@@ -448,7 +448,7 @@ void SimulationApp::UpdateBasicState()
 		parameters.end());
 
 	//更新对应键的值
-	for (auto& p : parameters) { currentScope[p->name] = std::make_shared<Var>(p->value); }
+	for (auto& p : parameters) { currentScope[p->name] = std::make_shared<Value>(p->value); }
 }
 
 

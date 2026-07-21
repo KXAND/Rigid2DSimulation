@@ -5,14 +5,14 @@ struct token {
 	wstring typ;
 	double num = 0;
 	wstring str;
-	wstring var;
+	wstring Value;
 	bool global = false;
 
 	token() = default;
 	token(wstring const& typ);
 	token(double num);
 	static token mkstr(wstring const& str);
-	static token mkvar(wstring const& var, bool gl);
+	static token mkvar(wstring const& Value, bool gl);
 };
 wstring ToWString(token const& tk);
 
