@@ -64,7 +64,7 @@ void FloatPanel::SetControl(App& app, Control* _c) {
 		if (c = _c) {
 			c->tl = tl + tl_show_rel;
 			c->vp = GetVisibleViewport(app);
-		} sb->c = c;
+		} sb->contentControl = c;
 	}
 }
 void FloatPanel::SetTopLeft(App& app, DVector2 const& p) {
@@ -74,7 +74,7 @@ void FloatPanel::SetTopLeft(App& app, DVector2 const& p) {
 		tl = p; c->vp = GetVisibleViewport(app);
 	}
 	sb->tl = p + DVector2(w - sb->w, h_bar);
-	sb->top_show = p.y + tl_show_rel.y;
+	sb->visibleTop = p.y + tl_show_rel.y;
 }
 void FloatPanel::InitializeControl(App& app) {
 	if (c) {
@@ -84,11 +84,11 @@ void FloatPanel::InitializeControl(App& app) {
 }
 void FloatPanel::InitializeScrollBar() {
 	sb = std::make_shared<VerticalScrollBar>();
-	sb->c = c;
+	sb->contentControl = c;
 	sb->h = h - h_bar;
 	sb->tl = tl + DVector2(w - sb->w, h_bar);
-	sb->h_show = h_show;
-	sb->top_show = tl.y + tl_show_rel.y;
+	sb->visibleHeight = h_show;
+	sb->visibleTop = tl.y + tl_show_rel.y;
 }
 
 void FloatPanel::Hide(App& app) { shown = false; Discard(app); }

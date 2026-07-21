@@ -9,17 +9,17 @@ struct Control;
 struct VerticalScrollBar {
 	DVector2 tl;
 	double depth = 0;
-	Control* c = NULL;
+	Control* contentControl = NULL;
 	int w = 0, h = 0;
-	int h_show = 0, top_show = 0;
-	Color c_bar, c_frame, c_normal, draggedColor, hoveredColor, c_invalid;
+	int visibleHeight = 0, visibleTop = 0;
+	Color barColor, frameColor, normalColor, draggedColor, hoveredColor, invalidColor;
 
-	int ny_rel = 0, nh = 0;
-	bool full = false;
+	int thumbY = 0, thumbHeight = 0;
+	bool hasOverflow = false;
 	bool dragged = false;
 	bool enabled = true;
 	bool hovered = false;
-	bool hovered_node = false;
+	bool hoveredThumb = false;
 
 	VerticalScrollBar();
 	// 没有 set_c 不会 Discard 之前的对象。

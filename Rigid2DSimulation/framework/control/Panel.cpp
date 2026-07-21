@@ -53,7 +53,7 @@ void Panel::SetControl(App& app, Control* _c) {
 		if (c = _c) {
 			c->tl = tl + tl_show_rel;
 			c->vp = GetVisibleViewport(app);
-		} sb->c = c;
+		} sb->contentControl = c;
 	}
 }
 void Panel::InitializeControl(App& app) {
@@ -64,11 +64,11 @@ void Panel::InitializeControl(App& app) {
 }
 void Panel::InitializeScrollBar() {
 	sb = std::make_shared<VerticalScrollBar>();
-	sb->c = c;
+	sb->contentControl = c;
 	sb->h = h;
 	sb->tl = tl + DVector2(w - sb->w, 0);
-	sb->h_show = h_show;
-	sb->top_show = tl.y + tl_show_rel.y;
+	sb->visibleHeight = h_show;
+	sb->visibleTop = tl.y + tl_show_rel.y;
 }
 void Panel::Render(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), c_panel, c_frame);
