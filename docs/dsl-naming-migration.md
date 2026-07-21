@@ -44,7 +44,7 @@
 | `cross` | `Cross` | `Cross` | 待迁移 |
 | `n_bodies` | `GetBodyCount` | 返回 `bodies.size()` 的 lambda | 待迁移 |
 | `create_conn` | `CreateConnection` | `CreateConnection` | 待迁移 |
-| `set_cfg` | `SetConfig` | `SetCfg` | 待迁移 |
+| `set_cfg` | `SetConfig` | `SetConfig` | 已迁移 |
 | `boundary` | `Boundary` | `Boundary` | 待迁移 |
 | `framed_box` | `FramedBox` | `FramedBox` | 待迁移 |
 | `gear` | `Gear` | `Gear` | 待迁移 |

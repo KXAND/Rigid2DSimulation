@@ -243,7 +243,7 @@ void SimulationApp::Update()
 	userInterface->Update(*this);
 }
 
-void SimulationApp::SetCfg(Value const& v)
+void SimulationApp::SetConfig(Value const& v)
 {
 	TryReadConfigNumber(v, L"volume", volume);
 	TryReadConfigNumber(v, L"energyMultiplier", energyMultiplier);
@@ -400,7 +400,7 @@ void SimulationApp::InitializeDefaultFunctions()
 
 	auto f10 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
-			if (in.size() >= 1) { SetCfg(*in[0]); }
+			if (in.size() >= 1) { SetConfig(*in[0]); }
 			return std::make_shared<Value>();
 		};
 	currentScope[L"SetConfig"] = std::make_shared<Value>(f10);

@@ -74,7 +74,7 @@ struct SimulationApp : App
 	void Reset();
 	void Update() override;
 
-	void SetCfg(Value const& v);
+	void SetConfig(Value const& v);
 	void DetectCollisions();
 
 	void SaveParameters(FILE* file) const;
