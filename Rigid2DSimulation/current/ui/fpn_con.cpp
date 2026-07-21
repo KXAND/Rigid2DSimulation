@@ -1,6 +1,6 @@
 #include "fpn_con.h"
 #include "SimulationApp.h"
-#include "connection.h"
+#include "Connection.h"
 
 RTbCon::RTbCon() : RichTextbox(360, 400) {}
 void RTbCon::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.connectionSelecting->temporaryScriptText; }

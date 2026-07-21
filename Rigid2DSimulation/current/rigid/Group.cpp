@@ -1,6 +1,6 @@
-#include "group.h"
-#include "body.h"
-#include "connection.h"
+#include "Group.h"
+#include "Body.h"
+#include "Connection.h"
 #include "SimulationApp.h"
 
 void Group::Warp(DRect Rect)

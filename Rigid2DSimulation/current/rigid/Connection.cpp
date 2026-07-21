@@ -1,10 +1,10 @@
-#include "connection.h"
-#include "body.h"
+#include "Connection.h"
+#include "Body.h"
 #include "current/common/utils.h"
 #include "SimulationApp.h"
 #include "draw_px_seg.h"
 #include "Background.h"
-#include "connection.h"
+#include "Connection.h"
 
 Connection::Connection()
 {

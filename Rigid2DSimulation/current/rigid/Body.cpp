@@ -1,14 +1,14 @@
-#include "body.h"
+#include "Body.h"
 #include "current/common/utils.h"
 #include "SimulationApp.h"
 #include "Background.h"
-#include "creator.h"
-#include "shape.h"
+#include "Creator.h"
+#include "Shape.h"
 #include "draw_tri.h"
 #include "draw_geo.h"
 #include "draw_curve.h"
 #include "draw_px_seg.h"
-#include "connection.h"
+#include "Connection.h"
 
 // 这些构造函数真的很混乱。
 Body::Body()

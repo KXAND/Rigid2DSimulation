@@ -178,40 +178,40 @@
     <ClCompile Include="framework\draw\draw_tri.cpp">
       <Filter>framework\draw</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\body.cpp">
+    <ClCompile Include="current\rigid\Body.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\shape.cpp">
+    <ClCompile Include="current\rigid\Shape.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\creator.cpp">
+    <ClCompile Include="current\rigid\Creator.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\collision.cpp">
+    <ClCompile Include="current\rigid\Collision.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\aabb.cpp">
+    <ClCompile Include="current\rigid\Aabb.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
     <ClCompile Include="framework\draw\draw_curve.cpp">
       <Filter>framework\draw</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\scene_builders.cpp">
+    <ClCompile Include="current\rigid\SceneBuilders.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\shape_builtins.cpp">
+    <ClCompile Include="current\rigid\ShapeBuiltins.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
     <ClCompile Include="current\ui\fpn_body.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\connection.cpp">
+    <ClCompile Include="current\rigid\Connection.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
     <ClCompile Include="current\ui\fpn_con.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\group.cpp">
+    <ClCompile Include="current\rigid\Group.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
     <ClCompile Include="framework\media\AudioClip.cpp">
@@ -360,19 +360,19 @@
     <ClInclude Include="framework\draw\draw_tri.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
-    <ClInclude Include="current\rigid\body.h">
+    <ClInclude Include="current\rigid\Body.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="current\rigid\shape.h">
+    <ClInclude Include="current\rigid\Shape.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="current\rigid\collision.h">
+    <ClInclude Include="current\rigid\Collision.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="current\rigid\creator.h">
+    <ClInclude Include="current\rigid\Creator.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="current\rigid\aabb.h">
+    <ClInclude Include="current\rigid\Aabb.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
     <ClInclude Include="framework\draw\draw_curve.h">
@@ -381,22 +381,22 @@
     <ClInclude Include="current\common\Utils.h">
       <Filter>current\common</Filter>
     </ClInclude>
-    <ClInclude Include="current\rigid\scene_builders.h">
+    <ClInclude Include="current\rigid\SceneBuilders.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="current\rigid\shape_builtins.h">
+    <ClInclude Include="current\rigid\ShapeBuiltins.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
     <ClInclude Include="current\ui\fpn_body.h">
       <Filter>current\ui</Filter>
     </ClInclude>
-    <ClInclude Include="current\rigid\connection.h">
+    <ClInclude Include="current\rigid\Connection.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
     <ClInclude Include="current\ui\fpn_con.h">
       <Filter>current\ui</Filter>
     </ClInclude>
-    <ClInclude Include="current\rigid\group.h">
+    <ClInclude Include="current\rigid\Group.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
     <ClInclude Include="framework\media\AudioClip.h">

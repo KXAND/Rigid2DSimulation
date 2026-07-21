@@ -1,6 +1,6 @@
-#include "shape_builtins.h"
+#include "ShapeBuiltins.h"
 #include "Value.h"
-#include "shape.h"
+#include "Shape.h"
 
 shared_ptr<Var> Ball(Var const& r)
 {

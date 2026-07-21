@@ -3,15 +3,15 @@
 #include "ui.h"
 #include "Background.h"
 #include "SceneParameter.h"
-#include "shape.h"
-#include "body.h"
-#include "shape_builtins.h"
-#include "scene_builders.h"
+#include "Shape.h"
+#include "Body.h"
+#include "ShapeBuiltins.h"
+#include "SceneBuilders.h"
 #include "AudioClip.h"
-#include "group.h"
-#include "creator.h"
-#include "collision.h"
-#include "connection.h"
+#include "Group.h"
+#include "Creator.h"
+#include "Collision.h"
+#include "Connection.h"
 
 SimulationApp::SimulationApp()
 {

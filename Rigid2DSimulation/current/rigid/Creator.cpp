@@ -1,11 +1,11 @@
-#include "creator.h"
+#include "Creator.h"
 #include "current/common/utils.h"
 #include "SimulationApp.h"
 #include "Background.h"
 #include "Value.h"
-#include "body.h"
-#include "shape.h"
-#include "connection.h"
+#include "Body.h"
+#include "Shape.h"
+#include "Connection.h"
 
 Creator::Creator()
 {

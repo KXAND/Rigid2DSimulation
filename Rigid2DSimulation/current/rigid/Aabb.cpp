@@ -1,4 +1,4 @@
-#include "aabb.h"
+#include "Aabb.h"
 
 aabb::aabb(aabb const& b0, aabb const& b1) {
 	x0 = min(b0.x0, b1.x0);

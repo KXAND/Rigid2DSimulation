@@ -1,10 +1,10 @@
-#include "scene_builders.h"
+#include "SceneBuilders.h"
 #include "current/common/utils.h"
 #include "SimulationApp.h"
 #include "Background.h"
-#include "body.h"
-#include "shape.h"
-#include "connection.h"
+#include "Body.h"
+#include "Shape.h"
+#include "Connection.h"
 
 void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 {

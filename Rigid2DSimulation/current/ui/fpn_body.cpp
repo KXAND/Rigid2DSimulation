@@ -1,7 +1,7 @@
 #include "fpn_body.h"
 #include "SimulationApp.h"
-#include "body.h"
-#include "connection.h"
+#include "Body.h"
+#include "Connection.h"
 
 RTbBody::RTbBody() : RichTextbox(360, 400) {}
 void RTbBody::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.bodySelecting->temporaryScriptText; }

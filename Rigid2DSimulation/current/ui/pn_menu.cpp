@@ -8,7 +8,7 @@
 #include "fpn_par.h"
 #include "fpn_lang.h"
 #include "fpn_about.h"
-#include "creator.h"
+#include "Creator.h"
 
 
 BtPause::BtPause() : Button(150) {}

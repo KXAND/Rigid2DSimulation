@@ -1,7 +1,7 @@
 #include "fpn_global.h"
 #include "ui.h"
 #include "SimulationApp.h"
-#include "creator.h"
+#include "Creator.h"
 
 
 BtSave::BtSave() : BtLan(80, L"bt_save") {}
