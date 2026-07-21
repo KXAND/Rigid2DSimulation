@@ -36,14 +36,14 @@ struct App {
 	virtual void Update() {}
 	void Run(bool ShowConsole = false);
 
-	void reset_dscr();
-	void present_scr();
+	void ResetDepthBuffer();
+	void PresentScreen();
 	void addLog(wstring const& s);
 	wstring getLocalizedString(wstring const& id) const;
 
-	void init_bmi();
+	void InitializeBitmapInfo();
 	void loadLocalizationFile();
-	void register_window_class();
-	void create_window();
+	void RegisterWindowClass();
+	void CreateApplicationWindow();
 };
 

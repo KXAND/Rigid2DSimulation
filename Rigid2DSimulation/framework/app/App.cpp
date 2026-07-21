@@ -19,9 +19,9 @@ void App::Init()
 	hinst = GetModuleHandle(NULL);
 	addLog(hinst ? L"成功取得模块句柄.\n" : L"取得模块句柄失败.\n");
 
-	register_window_class(); create_window(); ret = wv.init();
+	RegisterWindowClass(); CreateApplicationWindow(); ret = wv.init();
 	addLog(ret ? L"成功加载声音模块.\n" : L"加载声音模块失败.\n");
-	input.init(hwnd); init_bmi(); loadLocalizationFile();
+	input.init(hwnd); InitializeBitmapInfo(); loadLocalizationFile();
 
 	hdc = GetDC(hwnd);
 	addLog(hdc ? L"成功取得设备环境句柄.\n" : L"取得设备环境句柄失败.\n");
@@ -45,23 +45,23 @@ void App::Run(bool console)
 		{
 			bool ret = SetWindowText(hwnd, title.c_str());
 			if (!ret) { addLog(L"设置标题失败.\n"); }
-			fps.update(); reset_dscr();
-			ret = input.sync_mouse(hwnd);
+			fps.update(); ResetDepthBuffer();
+			ret = input.SyncMouse(hwnd);
 			if (!ret) { addLog(L"同步鼠标位置失败.\n");
 			}
 			Update(); ret = wv.play();
 			if (!ret) { addLog(L"播放声音失败.\n"); }
-			present_scr(); input.reset(); own.reset();
+			PresentScreen(); input.reset(); own.reset();
 		}
 	} ReleaseDC(hwnd, hdc);
 	wv.exit(); addLog(L"退出程序.\n\n");
 }
 
-void App::reset_dscr()
+void App::ResetDepthBuffer()
 {
 	memcpy(dscr.data(), ini_dscr.data(), dscr.size() * sizeof(double));
 }
-void App::present_scr()
+void App::PresentScreen()
 {
 	int ret = SetDIBitsToDevice(hdc, 0, 0, w, h,
 		0, 0, 0, h, scr.colors.data(), &bmi, DIB_RGB_COLORS);
@@ -83,7 +83,7 @@ wstring App::getLocalizedString(wstring const& id) const
 	return languageIdx >= translations.size() ? L"" : translations[languageIdx];
 }
 
-void App::init_bmi()
+void App::InitializeBitmapInfo()
 {
 	BITMAPINFOHEADER hd{};
 	hd.biSize = sizeof(hd);
@@ -125,7 +125,7 @@ void App::loadLocalizationFile()
 	if (!strs.empty()) { localizationDict[id] = strs; }
 	fclose(f);
 }
-void App::register_window_class()
+void App::RegisterWindowClass()
 {
 	WNDCLASSEXW wc{};
 	wc.cbSize = sizeof(wc);
@@ -136,7 +136,7 @@ void App::register_window_class()
 	ATOM ret = RegisterClassExW(&wc);
 	addLog(ret ? L"成功注册窗口类.\n" : L"注册窗口类失败.\n");
 }
-void App::create_window()
+void App::CreateApplicationWindow()
 {
 	RECT cr{}; cr.right = w; cr.bottom = h;
 	DWORD sty = WS_SYSMENU | WS_CAPTION;

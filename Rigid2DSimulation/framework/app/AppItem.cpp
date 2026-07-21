@@ -1,12 +1,12 @@
 #include "AppItem.h"
 
-void AppInput::track_mouse() {
+void AppInput::TrackMouse() {
 	if (!mouse_tracked) {
 		mouse_tracked = true;
 		TrackMouseEvent(&mouse_track);
 	}
 }
-bool AppInput::sync_mouse(HWND hwnd) {
+bool AppInput::SyncMouse(HWND hwnd) {
 	POINT pnt{}; BOOL ret = GetCursorPos(&pnt);
 	if (!ret) { return false; }
 	ret = ScreenToClient(hwnd, &pnt);
@@ -57,7 +57,7 @@ void InputOwners::remove(void* o) {
 	if (hovered == o) { hovered = NULL; }
 	if (wheeled == o) { wheeled = NULL; }
 }
-void InputOwners::free_kb(void* o) {
+void InputOwners::ReleaseKeyboard(void* o) {
 	if (keyboardOwner == o) { keyboardOwner = NULL; }
 }
 

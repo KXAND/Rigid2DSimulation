@@ -64,7 +64,7 @@ int HandleLeftMouseUp(App* app, WPARAM wp, LPARAM lp) {
 int HandleLeftMouseDown(App* app, WPARAM wp, LPARAM lp) {
 	app->input.msd[0] = true;
 	app->input.mouse_owned = true;
-	app->input.track_mouse();
+	app->input.TrackMouse();
 	return 0;
 }
 int HandleMiddleMouseUp(App* app, WPARAM wp, LPARAM lp) {
@@ -75,7 +75,7 @@ int HandleMiddleMouseUp(App* app, WPARAM wp, LPARAM lp) {
 int HandleMiddleMouseDown(App* app, WPARAM wp, LPARAM lp) {
 	app->input.msd[1] = true;
 	app->input.mouse_owned = true;
-	app->input.track_mouse();
+	app->input.TrackMouse();
 	return 0;
 }
 int HandleRightMouseUp(App* app, WPARAM wp, LPARAM lp) {
@@ -86,7 +86,7 @@ int HandleRightMouseUp(App* app, WPARAM wp, LPARAM lp) {
 int HandleRightMouseDown(App* app, WPARAM wp, LPARAM lp) {
 	app->input.msd[2] = true;
 	app->input.mouse_owned = true;
-	app->input.track_mouse();
+	app->input.TrackMouse();
 	return 0;
 }
 

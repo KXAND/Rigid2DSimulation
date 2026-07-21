@@ -20,8 +20,8 @@ struct AppInput {
 	bool isMouseClickedDown(int m) { return msd[m] && !msd_old[m]; }
 	bool isKeyPressedDown(int k) { return kbd[k] && !kbd_old[k]; }
 
-	void track_mouse();
-	bool sync_mouse(HWND hwnd);
+	void TrackMouse();
+	bool SyncMouse(HWND hwnd);
 
 	void init(HWND hwnd);
 	void reset();
@@ -51,6 +51,6 @@ struct InputOwners {
 
 	void reset();
 	void remove(void* o);
-	void free_kb(void* o);
+	void ReleaseKeyboard(void* o);
 };
 

@@ -276,7 +276,7 @@ void RichTextBox::Update(App& app) {
 		if (enabled && !hovered && app.input.isMouseClickedDown(0)) { OnDone(app); }
 		if (!enabled || !hovered && app.input.isMouseClickedDown(0)) {
 			// 请注意 kb_owner 的登记在 PreUpdate 中进行。
-			app.own.free_kb(this); edit = selecting = false;
+			app.own.ReleaseKeyboard(this); edit = selecting = false;
 			edit_a = edit_b = 0; x_cs_rel_hist = 0;
 		}
 	} else {
@@ -291,7 +291,7 @@ void RichTextBox::Update(App& app) {
 	clamp_str(app); render(app);
 }
 void RichTextBox::Discard(App& app) {
-	app.own.remove(this); app.own.free_kb(this);
+	app.own.remove(this); app.own.ReleaseKeyboard(this);
 	edit = hovered = false; selecting = false;
 	edit_a = edit_b = 0; x_cs_rel_hist = 0;
 }
