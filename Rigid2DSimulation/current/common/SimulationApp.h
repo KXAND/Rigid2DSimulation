@@ -45,7 +45,7 @@ struct SimulationApp : App
 	bool isPaused = false;
 	bool isSceneChanged = false;
 	Vector2 gravity;
-	double coulomb = 0;
+	double coulombConstant = 0;
 	bool hasElectrostatic = false;
 	double maxRealDeltaTime = 0;
 	double realDeltaTime = 0, simulationTime = 0;

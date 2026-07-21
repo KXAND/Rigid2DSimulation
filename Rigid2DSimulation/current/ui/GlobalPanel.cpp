@@ -21,7 +21,7 @@ void GlobalDetailsLabel::Sync(App& app) {
 	text += simulationApp.GetLocalizedString(L"h_scene") + std::to_wstring(simulationApp.rectScene.h) + L"\n";
 	text += simulationApp.GetLocalizedString(L"gravity") + ToWString(simulationApp.gravity) + L"\n";
 	text += simulationApp.GetLocalizedString(L"electrostatic") + std::to_wstring(simulationApp.hasElectrostatic) + L"\n";
-	text += simulationApp.GetLocalizedString(L"coulomb") + FormatFixed2(simulationApp.coulomb) + L"\n";
+	text += simulationApp.GetLocalizedString(L"coulomb") + FormatFixed2(simulationApp.coulombConstant) + L"\n";
 
 	wstring s;
 	switch (simulationApp.creator->mode) {

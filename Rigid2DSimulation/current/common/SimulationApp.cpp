@@ -113,7 +113,7 @@ void SimulationApp::Reset()
 	isTrackShown = false;
 
 	hasElectrostatic = false;
-	coulomb = 1e5;
+	coulombConstant = 1e5;
 
 	parallelEpsilon = 1e-3;
 	useEqualPositionCorrection = false;
@@ -204,7 +204,7 @@ void SimulationApp::Update()
 				for (int i = (0), iEnd = int(bodies.size() - 1); i < iEnd; ++i)
 					for (int j = (i + 1), jEnd = int(bodies.size()); j < jEnd; ++j)
 				{
-					Electrostatic(*bodies[i], *bodies[j], sdt, coulomb);
+					Electrostatic(*bodies[i], *bodies[j], sdt, coulombConstant);
 				}
 			}
 
@@ -251,7 +251,7 @@ void SimulationApp::SetConfig(Value const& v)
 	TryReadConfigNumber(v, L"parallelEpsilon", parallelEpsilon);
 	TryReadConfigNumber(v, L"maxRealDeltaTime", maxRealDeltaTime);
 	TryReadConfigNumber(v, L"hasElectrostatic", hasElectrostatic);
-	TryReadConfigNumber(v, L"coulomb", coulomb);
+	TryReadConfigNumber(v, L"coulombConstant", coulombConstant);
 	TryReadConfigNumber(v, L"stepCount", stepNum);
 	stepNum = max(1, stepNum);
 	TryReadConfigNumber(v, L"gridSize", gridSize);

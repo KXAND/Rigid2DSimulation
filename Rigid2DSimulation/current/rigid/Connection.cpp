@@ -32,7 +32,7 @@ void Connection::Save(SimulationApp const& cur, FILE* file) const
 	fwrite(&(p0Relative), sizeof(p0Relative), 1, file);
 	fwrite(&(p1Relative), sizeof(p1Relative), 1, file);
 	fwrite(&(len), sizeof(len), 1, file);
-	fwrite(&(hooke), sizeof(hooke), 1, file);
+	fwrite(&(springConstant), sizeof(springConstant), 1, file);
 }
 Connection::Connection(SimulationApp& cur, FILE* file) : Connection()
 {
@@ -49,14 +49,14 @@ Connection::Connection(SimulationApp& cur, FILE* file) : Connection()
 	fread(&(p0Relative), sizeof(p0Relative), 1, file);
 	fread(&(p1Relative), sizeof(p1Relative), 1, file);
 	fread(&(len), sizeof(len), 1, file);
-	fread(&(hooke), sizeof(hooke), 1, file);
+	fread(&(springConstant), sizeof(springConstant), 1, file);
 	RefreshFromScript(cur); SignUpToBodies(); UpdatePosition();
 }
 
 void Connection::ReadCfg(Value const& cfg)
 {
 	TryReadConfigNumber(cfg, L"length", len);
-	TryReadConfigNumber(cfg, L"hooke", hooke);
+	TryReadConfigNumber(cfg, L"springConstant", springConstant);
 	if (auto md = FindConfigValue(cfg, L"type"))
 	{
 		if (md->typ == L"str")
@@ -171,7 +171,7 @@ void Connection::SimulateCordOrSpring(double deltaTime)
 	// @todo:关于力矩的公式我已经忘了，需要再推导
 	double torgue0 = Dot(r0, p0p1Vec);
 	double torgue1 = Dot(r1, p0p1Vec);
-	Vector2 springsForce = (currLenth - len) * hooke * deltaTime * p0p1Vec;
+	Vector2 springsForce = (currLenth - len) * springConstant * deltaTime * p0p1Vec;
 
 	// 每 dt内计算一次，可以直接加上加速度
 	body0->velocity += springsForce * body0->invMass;

@@ -39,9 +39,9 @@ void CreateBody(SimulationApp& cur, Value const& shs_cfg, Value const& cfg)
 	else { bo = std::make_shared<Body>(shs); }
 	bo->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	bo->ReadCfg(cfg);
-	bool repos_o = false;
-	TryReadConfigNumber(cfg, L"repos_o", repos_o);
-	bo->Init(repos_o);
+	bool resetPosition = false;
+	TryReadConfigNumber(cfg, L"resetPosition", resetPosition);
+	bo->Init(resetPosition);
 	cur.bodies.push_back(bo);
 	cur.isSceneChanged = true;
 }

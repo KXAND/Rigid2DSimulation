@@ -72,7 +72,7 @@ private:
 	void UpdateAABB();
 
 public:
-	void Init(bool repos_o = false);
+	void Init(bool resetPosition = false);
 	void Render(SimulationApp& cur) const;
 	void Step(SimulationApp& cur, double sdt);
 	void Update(SimulationApp& cur);
@@ -89,5 +89,5 @@ private:
 
 };
 
-void Electrostatic(Body& b0, Body& b1, double sdt, double coulomb);
+void Electrostatic(Body& b0, Body& b1, double sdt, double coulombConstant);
 

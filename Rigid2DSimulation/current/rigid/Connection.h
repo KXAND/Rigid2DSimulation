@@ -21,7 +21,7 @@ struct Connection {
 	Vector2 p0Relative, p1Relative;
 	Vector2 p0, p1;
 	double len = 0;
-	double hooke = 0;
+	double springConstant = 0;
 	bool isTight = false;
 
 	// @todo:应该根据变connection的类型决定这几个量的出现的

@@ -216,7 +216,7 @@ void Body::RegisterGrid(SimulationApp& cur)
 	cur.grid[y0 * cur.gridNumX + x0].push_back(this);
 }
 
-void Body::Init(bool repos_o)
+void Body::Init(bool resetPosition)
 {
 	// 这里假设是之前没有乱改成员。
 	if (point) { return; }
@@ -257,7 +257,7 @@ void Body::Init(bool repos_o)
 	charge = chargeDensity * area;
 	invMass = fixed ? 0 : 1 / (density * area);
 	invInertia = fixed ? 0 : 1 / (density * inertia);
-	if (repos_o) { position = center; }
+	if (resetPosition) { position = center; }
 	for (auto sh : shapes)
 	{
 		sh->relativePosition -= center;
@@ -564,11 +564,11 @@ void Body::PreUpdate(SimulationApp& cur)
 	if (ok) { cur.inputOwners.hoveredDepth = GetDepth(); cur.inputOwners.hovered = this; }
 }
 
-void Electrostatic(Body& b0, Body& b1, double sdt, double coulomb)
+void Electrostatic(Body& b0, Body& b1, double sdt, double coulombConstant)
 {
 	double dsqr = (b1.position - b0.position).GetLengthSquared();
 	Vector2 d = (b1.position - b0.position).GetNormalized();
-	Vector2 je = -b0.charge * b1.charge * d / dsqr * sdt * coulomb;
+	Vector2 je = -b0.charge * b1.charge * d / dsqr * sdt * coulombConstant;
 	b0.velocity += je * b0.invMass;
 	b1.velocity -= je * b1.invMass;
 }
