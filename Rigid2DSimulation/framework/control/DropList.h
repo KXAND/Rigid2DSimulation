@@ -8,29 +8,29 @@ wstring GetDefaultDropListItemName(int id, App &app);
 struct DropList : Control {
 	DVector2 gap;
 	double depth = 0;
-	wstring txt;
+	wstring text;
 	int w = 0, h = 0;
 
-	// 即使某些设计中 picked 可以取 -1，默认值还是设成 0 吧。
-	// 这里 picked 能取什么值还没想清楚的，能不能取 -1 之类，要实践中得到。
-	int picked = 0;
-	int h_item = 0;
-	int n_item = 0;
-	DropListItemNameProvider nm = GetDefaultDropListItemName;
+	// 即使某些设计中 selectedIndex 可以取 -1，默认值还是设成 0 吧。
+	// 这里 selectedIndex 能取什么值还没想清楚的，能不能取 -1 之类，要实践中得到。
+	int selectedIndex = 0;
+	int itemHeight = 0;
+	int itemCount = 0;
+	DropListItemNameProvider itemNameProvider = GetDefaultDropListItemName;
 
-	double sign_r = 0;
-	int sign_margin = 0;
-	int x_txt_margin = 0;
-	Color c_txt, c_mark, c_edit, c_frame, c_normal, c_invalid, hoveredColor;
+	double signRadius = 0;
+	int signMargin = 0;
+	int textMarginX = 0;
+	Color textColor, markColor, editColor, frameColor, normalColor, invalidColor, hoveredColor;
 
 	// -1 代表没有悬浮在任何选项上面。
-	int item_hv = -1;
-	int w_txt = 0;
+	int hoveredItemIndex = -1;
+	int textWidth = 0;
 	bool edit = false;
 	bool enabled = true;
 	bool hovered = false;
 
-	DropList(int w = 0, DropListItemNameProvider const &nm = GetDefaultDropListItemName);
+	DropList(int w = 0, DropListItemNameProvider const &itemNameProvider = GetDefaultDropListItemName);
 	int GetW() const override;
 	int GetH() const override;
 
@@ -48,9 +48,9 @@ struct DropList : Control {
 	void PreUpdate(App& app) override;
 };
 struct LocalizedDropList : DropList {
-	wstring id_txt;
+	wstring textId;
 	LocalizedDropList() = default;
-	LocalizedDropList(wstring const& id, int w, DropListItemNameProvider const& nm = GetDefaultDropListItemName);
+	LocalizedDropList(wstring const& id, int w, DropListItemNameProvider const& itemNameProvider = GetDefaultDropListItemName);
 	void Update(App& app) override;
 };
 

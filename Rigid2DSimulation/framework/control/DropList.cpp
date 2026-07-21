@@ -6,60 +6,60 @@
 
 
 wstring nm_none(int id, App &app) { return L"空"; }
-DropList::DropList(int w, DropListItemNameProvider const& nm) : w(w), nm(nm) {
+DropList::DropList(int w, DropListItemNameProvider const& itemNameProvider) : w(w), itemNameProvider(itemNameProvider) {
 	gap = { 10, 10 }; depth = 1000;
-	h_item = 25; h = 30;
+	itemHeight = 25; h = 30;
 
-	sign_r = 5;
-	sign_margin = 15;
-	x_txt_margin = 5;
+	signRadius = 5;
+	signMargin = 15;
+	textMarginX = 5;
 
 	// 懒得区分标签和内容的颜色了。
-	c_txt = { 255, 255, 255 };
-	c_mark = { 255, 255, 255 };
-	c_edit = { 150, 60, 60 };
-	c_frame = { 150, 150, 150 };
-	c_normal = { 40, 40, 40 };
-	c_invalid = { 0, 0, 0 };
+	textColor = { 255, 255, 255 };
+	markColor = { 255, 255, 255 };
+	editColor = { 150, 60, 60 };
+	frameColor = { 150, 150, 150 };
+	normalColor = { 40, 40, 40 };
+	invalidColor = { 0, 0, 0 };
 	hoveredColor = { 60, 60, 150 };
 }
-int DropList::GetW() const { return w + gap.x + w_txt; }
+int DropList::GetW() const { return w + gap.x + textWidth; }
 int DropList::GetH() const {
-	return h + gap.y + (edit ? n_item * h_item : 0);
+	return h + gap.y + (edit ? itemCount * itemHeight : 0);
 }
 
-DVector2 DropList::GetBoxTopLeft() const { return tl + DVector2(w_txt, 0); }
+DVector2 DropList::GetBoxTopLeft() const { return tl + DVector2(textWidth, 0); }
 DVector2 DropList::GetItemsTopLeft() const { return GetBoxTopLeft() + DVector2(0, h); }
 void DropList::RenderMain(App& app) {
-	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
-	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
+	DVector2 labelTextTopLeft = tl + DVector2(0, (h - app.ft.h) / 2);
+	DrawString(app.scr, app.dscr, depth, text, textColor, app.ft, labelTextTopLeft, 0, vp);
 
-	Color const& c =
-		!enabled ? c_invalid :
-		edit ? c_edit :
-		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
-	drawRectangleWithBorder(app.scr, app.dscr, depth, GetBoxTopLeft(), w, h, vp, c, c_frame);
+	Color const& color =
+		!enabled ? invalidColor :
+		edit ? editColor :
+		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : normalColor;
+	drawRectangleWithBorder(app.scr, app.dscr, depth, GetBoxTopLeft(), w, h, vp, color, frameColor);
 
-	Vector2 ct_sign = (Vector2)GetBoxTopLeft() + Vector2(w - sign_margin, h / 2);
-	drawEllipse(app.scr, app.dscr, depth, ct_sign, sign_r, sign_r, vp, c_mark);
+	Vector2 signCenter = (Vector2)GetBoxTopLeft() + Vector2(w - signMargin, h / 2);
+	drawEllipse(app.scr, app.dscr, depth, signCenter, signRadius, signRadius, vp, markColor);
 
-	DVector2 itemTextTopLeft = tl + DVector2(x_txt_margin, (h - app.ft.h) / 2);
-	DrawString(app.scr, app.dscr, depth, nm(picked, app), c_txt, app.ft, tl_txt, 0, vp);
+	DVector2 selectedItemTextTopLeft = tl + DVector2(textMarginX, (h - app.ft.h) / 2);
+	DrawString(app.scr, app.dscr, depth, itemNameProvider(selectedIndex, app), textColor, app.ft, labelTextTopLeft, 0, vp);
 }
 void DropList::RenderItems(App& app) {
 	if (edit) {
 		drawRectangleWithBorder(app.scr, app.dscr, depth, 
-			GetItemsTopLeft(), w, h_item * n_item, vp, c_normal, c_frame);
-		if (item_hv != -1) {
-			DVector2 tl_hovered = GetBoxTopLeft() + DVector2(0, h + h_item * item_hv);
+			GetItemsTopLeft(), w, itemHeight * itemCount, vp, normalColor, frameColor);
+		if (hoveredItemIndex != -1) {
+			DVector2 hoveredItemTopLeft = GetBoxTopLeft() + DVector2(0, h + itemHeight * hoveredItemIndex);
 			drawRectangleWithBorder(app.scr, app.dscr, depth,
-				tl_hovered, w, h_item, vp, hoveredColor, c_frame);
+				hoveredItemTopLeft, w, itemHeight, vp, hoveredColor, frameColor);
 		}
-		for (int i = (0), iEnd = int(n_item); i < iEnd; ++i) {
-			DVector2 tl_txt_item = GetBoxTopLeft() +
-				DVector2(0, h + h_item * i) +
-				DVector2(x_txt_margin, (h_item - app.ft.h) / 2);
-			DrawString(app.scr, app.dscr, depth, nm(i, app), c_txt, app.ft, tl_txt_item, 0, vp);
+		for (int i = (0), endIndex = int(itemCount); i < endIndex; ++i) {
+			DVector2 itemTextTopLeft = GetBoxTopLeft() +
+				DVector2(0, h + itemHeight * i) +
+				DVector2(textMarginX, (itemHeight - app.ft.h) / 2);
+			DrawString(app.scr, app.dscr, depth, itemNameProvider(i, app), textColor, app.ft, itemTextTopLeft, 0, vp);
 		}
 	}
 }
@@ -70,35 +70,35 @@ void DropList::Render(App& app) {
 // 在内容可变的情形下怎么处理我还没想清楚的。
 void DropList::Update(App& app) {
 	hovered = (app.own.hovered == this);
-	w_txt = GetStringSize(txt, app.ft, 0).x;
+	textWidth = GetStringSize(text, app.ft, 0).x;
 	if (edit) {
 		if (hovered) {
-			int tmp = app.input.msp.y - GetBoxTopLeft().y - h;
-			item_hv = tmp >= 0 ? tmp / h_item : -1;
+			int itemRelativeY = app.input.msp.y - GetBoxTopLeft().y - h;
+			hoveredItemIndex = itemRelativeY >= 0 ? itemRelativeY / itemHeight : -1;
 		}
 		if (enabled && hovered && app.input.isMouseClickedDown(0)) {
-			if (item_hv != -1) { picked = item_hv; }
+			if (hoveredItemIndex != -1) { selectedIndex = hoveredItemIndex; }
 			Upload(app);
 		}
-		if (!enabled || app.input.isMouseClickedDown(0)) { item_hv = -1; edit = false; }
+		if (!enabled || app.input.isMouseClickedDown(0)) { hoveredItemIndex = -1; edit = false; }
 	} else {
 		Sync(app);
 		edit = enabled && hovered && app.input.isMouseClickedDown(0);
 	} Render(app);
 }
 void DropList::Discard(App& app) {
-	app.own.remove(this); w_txt = 0;
-	edit = hovered = false; item_hv = -1;
+	app.own.remove(this); textWidth = 0;
+	edit = hovered = false; hoveredItemIndex = -1;
 }
 void DropList::PreUpdate(App& app) {
-	int real_h = h + (edit ? n_item * h_item : 0);
+	int visibleHeight = h + (edit ? itemCount * itemHeight : 0);
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { GetBoxTopLeft(), w, real_h}) && isInside(app.input.msp, vp);
+		isInside(app.input.msp, { GetBoxTopLeft(), w, visibleHeight}) && isInside(app.input.msp, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
-LocalizedDropList::LocalizedDropList(wstring const& id, int w, DropListItemNameProvider const& nm) : DropList(w, nm), id_txt(id) {}
-void LocalizedDropList::Update(App& app) { txt = app.getLocalizedString(id_txt); DropList::Update(app); }
+LocalizedDropList::LocalizedDropList(wstring const& id, int w, DropListItemNameProvider const& itemNameProvider) : DropList(w, itemNameProvider), textId(id) {}
+void LocalizedDropList::Update(App& app) { text = app.getLocalizedString(textId); DropList::Update(app); }
 
 
 
