@@ -40,8 +40,8 @@ wstring ToWString(ScriptExpression const& ex) {
 	return tmp;
 }
 
-PreExpression::PreExpression(ScriptExpression const& ex) : ex(ex) {}
-PreExpression::PreExpression(Token const& tk) : tk(tk) { istk = true; }
+PreExpression::PreExpression(ScriptExpression const& expression) : expression(expression) {}
+PreExpression::PreExpression(Token const& token) : token(token) { isToken = true; }
 
 bool IsUnaryOperator(Token const& tk) {
 	// 由于 +，- 的特殊性，它们都被当成二元运算符处理。
@@ -57,18 +57,18 @@ bool IsBinaryOperator(Token const& tk) {
 bool ParseNegation(vector<PreExpression> const& in, ScriptExpression& out) {
 	for (int i = (0), iEnd = int(in.size()); i < iEnd; ++i) {
 		auto const& pre = in[i];
-		if (!pre.istk) { continue; }
-		auto const& s = pre.tk.type;
+		if (!pre.isToken) { continue; }
+		auto const& s = pre.token.type;
 
-		if ((s == L"+" || s == L"-") && (i == 0 || in[i - 1].istk)) {
-			bool bad = i == in.size() - 1 || in[i + 1].istk;
+		if ((s == L"+" || s == L"-") && (i == 0 || in[i - 1].isToken)) {
+			bool bad = i == in.size() - 1 || in[i + 1].isToken;
 			if (bad) {
 				out = ScriptExpression(L"error");
 				return false;
 			}
 
 			auto tmp = vector<PreExpression>(in.begin(), in.begin() + i);
-			tmp.push_back(ScriptExpression(s + s, { in[i + 1].ex }));
+			tmp.push_back(ScriptExpression(s + s, { in[i + 1].expression }));
 			for (int j = (i + 2), jEnd = int(in.size()); j < jEnd; ++j) { tmp.push_back(in[j]); }
 			out = ParsePreExpression(tmp);
 			return true;
@@ -79,20 +79,20 @@ bool ParseNegation(vector<PreExpression> const& in, ScriptExpression& out) {
 bool ParseBinary(vector<PreExpression> const& in, ScriptExpression& out, vector<wstring> const& mark) {
 	for (int i = (0), iEnd = int(in.size()); i < iEnd; ++i) {
 		auto const& pre = in[i];
-		if (!pre.istk) { continue; }
-		auto const& s = pre.tk.type;
+		if (!pre.isToken) { continue; }
+		auto const& s = pre.token.type;
 
 		if (find(mark.begin(), mark.end(), s) != mark.end()) {
 			bool bad =
 				i == 0 || i == in.size() - 1 ||
-				in[i - 1].istk || in[i + 1].istk;
+				in[i - 1].isToken || in[i + 1].isToken;
 			if (bad) {
 				out = ScriptExpression(L"error");
 				return false;
 			}
 
 			auto tmp = vector<PreExpression>(in.begin(), in.begin() + i - 1);
-			tmp.push_back(ScriptExpression(s, { in[i - 1].ex, in[i + 1].ex }));
+			tmp.push_back(ScriptExpression(s, { in[i - 1].expression, in[i + 1].expression }));
 			for (int j = (i + 2), jEnd = int(in.size()); j < jEnd; ++j) { tmp.push_back(in[j]); }
 			out = ParsePreExpression(tmp);
 			return true;
@@ -103,8 +103,8 @@ bool ParseBinary(vector<PreExpression> const& in, ScriptExpression& out, vector<
 ScriptExpression ParsePreExpression(vector<PreExpression> const& in) {
 	if (in.empty()) { return ScriptExpression(L"error"); }
 	if (in.size() == 1) {
-		if (in[0].istk) { return ScriptExpression(L"error"); }
-		return in[0].ex;
+		if (in[0].isToken) { return ScriptExpression(L"error"); }
+		return in[0].expression;
 	}
 
 	ScriptExpression out;
@@ -120,12 +120,12 @@ ScriptExpression ParsePreExpression(vector<PreExpression> const& in) {
 
 ScriptExpression ParseCall(vector<BracketGroup> const& in) {
 	ScriptExpression ex(L"call");
-	ex.functionName = in[0].tk.variableName;
-	ex.isGlobal = in[0].tk.isGlobal;
+	ex.functionName = in[0].token.variableName;
+	ex.isGlobal = in[0].token.isGlobal;
 
 	vector<BracketGroup> tmp;
-	for (auto const& b : in[1].bras) {
-		if (b.tk.type == L",") {
+	for (auto const& b : in[1].children) {
+		if (b.token.type == L",") {
 			ex.arguments.push_back(ParseExpression(tmp));
 			tmp.clear();
 		}
@@ -140,12 +140,12 @@ ScriptExpression ParseBinaryExpressions(vector<BracketGroup> const& in) {
 	vector<BracketGroup> tmp;
 	vector<PreExpression> pres;
 	for (auto const& b : in) {
-		if (IsBinaryOperator(b.tk)) {
+		if (IsBinaryOperator(b.token)) {
 			if (!tmp.empty()) {
 				pres.push_back(ParseExpression(tmp));
 				tmp.clear();
 			}
-			pres.push_back(b.tk);
+			pres.push_back(b.token);
 		}
 		else {
 			tmp.push_back(b);
@@ -157,8 +157,8 @@ ScriptExpression ParseBinaryExpressions(vector<BracketGroup> const& in) {
 ScriptExpression ParseVector(vector<BracketGroup> const& in) {
 	ScriptExpression ex(L"vec");
 	vector<BracketGroup> tmp;
-	for (auto const& b : in[0].bras) {
-		if (b.tk.type == L",") {
+	for (auto const& b : in[0].children) {
+		if (b.token.type == L",") {
 			ex.elements.push_back(ParseExpression(tmp));
 			tmp.clear();
 		}
@@ -172,7 +172,7 @@ ScriptExpression ParseVector(vector<BracketGroup> const& in) {
 ScriptExpression ParseAccess(vector<BracketGroup> const& in) {
 	ScriptExpression ex(L"access");
 	ex.accessedExpression = ParseExpression(vector<BracketGroup>(in.begin(), in.end() - 1));
-	ex.indexExpression = ParseExpression(in.back().bras);
+	ex.indexExpression = ParseExpression(in.back().children);
 	return ex;
 }
 
@@ -181,26 +181,26 @@ ScriptExpression ParseExpression(vector<BracketGroup> const& in) {
 	auto const& b = in[0];
 	if (in.size() == 1) {
 		if (b.type == 0) {
-			if (b.tk.type == L"var") { return ScriptExpression::CreateVariable(b.tk.variableName, b.tk.isGlobal); }
-			else if (b.tk.type == L"str") { return ScriptExpression::CreateString(b.tk.stringValue); }
-			else if (b.tk.type == L"num") { return ScriptExpression(b.tk.number); }
-			else if (b.tk.type == L"null") { return ScriptExpression(L"null"); }
+			if (b.token.type == L"var") { return ScriptExpression::CreateVariable(b.token.variableName, b.token.isGlobal); }
+			else if (b.token.type == L"str") { return ScriptExpression::CreateString(b.token.stringValue); }
+			else if (b.token.type == L"num") { return ScriptExpression(b.token.number); }
+			else if (b.token.type == L"null") { return ScriptExpression(L"null"); }
 			else { return ScriptExpression(L"error"); }
 		}
-		else if (b.type == 1) { return ParseExpression(b.bras); }
+		else if (b.type == 1) { return ParseExpression(b.children); }
 		else if (b.type == 3) { return ParseVector(in); }
 		else { return ScriptExpression(L"error"); }
 	}
 
 	bool call = in.size() == 2 &&
-		in[0].tk.type == L"var" && in[1].type == 1;
+		in[0].token.type == L"var" && in[1].type == 1;
 	if (call) { return ParseCall(in); }
 
-	bool uni = in.size() == 2 && IsUnaryOperator(b.tk);
-	if (uni) { return ScriptExpression(b.tk.type, { ParseExpression({ in[1] }) }); }
+	bool uni = in.size() == 2 && IsUnaryOperator(b.token);
+	if (uni) { return ScriptExpression(b.token.type, { ParseExpression({ in[1] }) }); }
 
 	for (auto const& br : in) {
-		if (IsBinaryOperator(br.tk)) { return ParseBinaryExpressions(in); }
+		if (IsBinaryOperator(br.token)) { return ParseBinaryExpressions(in); }
 	}
 
 	if (in.back().type == 3) { return ParseAccess(in); }

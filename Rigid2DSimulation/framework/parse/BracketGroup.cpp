@@ -2,10 +2,10 @@
 
 wstring ToWString(BracketGroup const& b) {
 	wstring tmp;
-	if (b.type == 0) { tmp += ToWString(b.tk); }
+	if (b.type == 0) { tmp += ToWString(b.token); }
 	else {
 		tmp += std::to_wstring(b.type) + L" {";
-		for (auto const& bb : b.bras) { tmp += ToWString(bb) + L", "; }
+		for (auto const& bb : b.children) { tmp += ToWString(bb) + L", "; }
 		tmp += L"}";
 	}
 	return tmp;
@@ -44,11 +44,11 @@ vector<BracketGroup> AnalyzeBrackets(vector<Token> const& in) {
 		zero = bra1 == 0 && bra2 == 0 && bra3 == 0;
 		if (zero) {
 			if (b.type) {
-				b.bras = AnalyzeBrackets(tmp);
+				b.children = AnalyzeBrackets(tmp);
 				tmp.clear();
 			}
 			else {
-				b.tk = tk;
+				b.token = tk;
 			}
 			out.push_back(b);
 			b = {};

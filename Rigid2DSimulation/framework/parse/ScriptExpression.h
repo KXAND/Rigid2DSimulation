@@ -28,13 +28,13 @@ struct ScriptExpression {
 wstring ToWString(ScriptExpression const& ex);
 
 struct PreExpression {
-	bool istk = false;
-	ScriptExpression ex;
-	Token tk;
+	bool isToken = false;
+	ScriptExpression expression;
+	Token token;
 
 	PreExpression() = default;
-	PreExpression(ScriptExpression const& ex);
-	PreExpression(Token const& tk);
+	PreExpression(ScriptExpression const& expression);
+	PreExpression(Token const& token);
 };
 
 bool IsUnaryOperator(Token const& tk);
