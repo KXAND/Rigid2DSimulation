@@ -6,7 +6,7 @@
 int constexpr LAN_CHI = 0;
 int constexpr LAN_ENG = 1;
 
-LRESULT CALLBACK wnd_proc(HWND wnd, UINT msg, WPARAM wp, LPARAM lp);
+LRESULT CALLBACK WindowProcedure(HWND wnd, UINT msg, WPARAM wp, LPARAM lp);
 struct App {
 	int w = 0, h = 0;
 	Tile scr;

@@ -129,7 +129,7 @@ void App::register_window_class()
 {
 	WNDCLASSEXW wc{};
 	wc.cbSize = sizeof(wc);
-	wc.lpfnWndProc = wnd_proc;
+	wc.lpfnWndProc = WindowProcedure;
 	wc.hInstance = hinst;
 	wc.lpszClassName = class_name.c_str();
 
