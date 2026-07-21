@@ -32,6 +32,10 @@
 - `ConnectionPanel` 的选中连接、脚本编辑器、动作按钮、详情标签和布局成员已迁移为 lower camel 职责名称。
 - `GlobalPanel`、`MenuPanel` 及命令、语言、底部状态、关于面板的成员已迁移为 lower camel 职责名称。
 - Win32 消息分发函数和 `framework/basic` 项目工具函数已迁移为 PascalCase；标准库和 C 库接口保持原拼写。
+- `RichTextBox` 与 `TextBox` 的编辑、选区、光标和渲染辅助函数已迁移为表达职责的 PascalCase 名称。
+- `Delegate` 的受委派控件成员、参数和设置函数已迁移为完整 lower camel 与 PascalCase 名称。
+- `RichLabel` 的行宽和渲染辅助函数已迁移为 PascalCase。
+- `framework/control` 中剩余控件的渲染辅助函数已统一为 `Render`、`RenderMain` 或 `RenderItems`。
 - 已完成的提交保持文件改名、类型名改名、宏替换和纯排版互相分离。
 
 ## 3. 下一批
