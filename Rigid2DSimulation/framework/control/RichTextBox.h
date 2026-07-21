@@ -36,42 +36,42 @@ struct RichTextBox : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	DRect vp_show_txt() const;
-	wstring left() const;
-	wstring mid() const;
-	wstring right() const;
-	int edit_begin() const;
-	int edit_end() const;
-	bool selected() const;
-	int max_x_cs_rel() const;
-	int max_y_cs_rel() const;
-	DVector2 p_cs_rel(App& app) const;
+	DRect GetTextViewport() const;
+	wstring GetLeftText() const;
+	wstring GetSelectedText() const;
+	wstring GetRightText() const;
+	int GetEditBegin() const;
+	int GetEditEnd() const;
+	bool HasSelection() const;
+	int GetMaxCursorX() const;
+	int GetMaxCursorY() const;
+	DVector2 GetCursorPosition(App& app) const;
 
-	void select_a(App& app);
-	void select_b(App& app);
-	void update_x_cs_rel_hist(App& app);
+	void SelectStart(App& app);
+	void SelectEnd(App& app);
+	void UpdateCursorXHistory(App& app);
 
-	void add_chs(App& app);
-	void hdl_left(App& app);
-	void hdl_right(App& app);
-	void hdl_up(App& app);
-	void hdl_down(App& app);
-	void hdl_back(App& app);
-	void hdl_delete(App& app);
-	void hdl_clip(App& app);
-	void hdl_copy(App& app);
-	void hdl_paste(App& app);
-	void hdl_all(App& app);
-	void hdl_key(App& app);
+	void AddCharacters(App& app);
+	void HandleLeft(App& app);
+	void HandleRight(App& app);
+	void HandleUp(App& app);
+	void HandleDown(App& app);
+	void HandleBackspace(App& app);
+	void HandleDelete(App& app);
+	void HandleCut(App& app);
+	void HandleCopy(App& app);
+	void HandlePaste(App& app);
+	void HandleSelectAll(App& app);
+	void HandleKey(App& app);
 
-	void clamp_cs_selecting(App& app);
-	void clamp_cs_not_selecting(App& app);
-	void clamp_cursor(App& app);
-	void clamp_str(App& app);
+	void ClampCursorWhileSelecting(App& app);
+	void ClampCursorWithoutSelection(App& app);
+	void ClampCursor(App& app);
+	void ClampTextPosition(App& app);
 
-	void render_main(App& app);
-	void render_cursor(App& app);
-	void render(App& app);
+	void RenderMain(App& app);
+	void RenderCursor(App& app);
+	void Render(App& app);
 
 	virtual void Sync(App& app) {}
 	virtual void OnDone(App& app) const {}

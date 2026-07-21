@@ -30,91 +30,91 @@ RichTextBox::RichTextBox(int w, int h, bool newline) : w(w), h(h) {
 int RichTextBox::GetW() const { return w + gap.x; }
 int RichTextBox::GetH() const { return h + gap.y; }
 
-DRect RichTextBox::vp_show_txt() const {
+DRect RichTextBox::GetTextViewport() const {
 	DVector2 tl_show_txt = tl + show_txt_mg;
 	int w_show_txt = w - 2 * show_txt_mg.x;
 	int h_show_txt = h - 2 * show_txt_mg.y;
 	return getOverlapRect(vp, { tl_show_txt, w_show_txt, h_show_txt });
 }
-wstring RichTextBox::left() const {
+wstring RichTextBox::GetLeftText() const {
 	auto a = str.begin();
-	auto b = str.begin() + edit_begin();
+	auto b = str.begin() + GetEditBegin();
 	return wstring(a, b);
 }
-wstring RichTextBox::mid() const {
-	auto a = str.begin() + edit_begin();
-	auto b = str.begin() + edit_end();
+wstring RichTextBox::GetSelectedText() const {
+	auto a = str.begin() + GetEditBegin();
+	auto b = str.begin() + GetEditEnd();
 	return wstring(a, b);
 }
-wstring RichTextBox::right() const {
-	auto a = str.begin() + edit_end();
+wstring RichTextBox::GetRightText() const {
+	auto a = str.begin() + GetEditEnd();
 	auto b = str.end();
 	return wstring(a, b);
 }
-int RichTextBox::edit_begin() const { return min(edit_a, edit_b); }
-int RichTextBox::edit_end() const { return max(edit_a, edit_b); }
-bool RichTextBox::selected() const { return edit_a != edit_b; }
-int RichTextBox::max_x_cs_rel() const { return w - edit_mg.x; }
-int RichTextBox::max_y_cs_rel() const { return h - edit_mg.y; }
-DVector2 RichTextBox::p_cs_rel(App& app) const {
+int RichTextBox::GetEditBegin() const { return min(edit_a, edit_b); }
+int RichTextBox::GetEditEnd() const { return max(edit_a, edit_b); }
+bool RichTextBox::HasSelection() const { return edit_a != edit_b; }
+int RichTextBox::GetMaxCursorX() const { return w - edit_mg.x; }
+int RichTextBox::GetMaxCursorY() const { return h - edit_mg.y; }
+DVector2 RichTextBox::GetCursorPosition(App& app) const {
 	wstring tmp(str.begin(), str.begin() + edit_b);
 	int x = 0; DVector2 p = GetStringSize(tmp, app.ft, w_str, &x);
 	p.x = x; p.y -= app.ft.h;
 	return (DVector2)tl_str_rel + p;
 }
 
-void RichTextBox::select_a(App& app) {
+void RichTextBox::SelectStart(App& app) {
 	selecting = true;
 	DVector2 p = app.input.msp - (tl + (DVector2)tl_str_rel);
 	edit_a = edit_b = GetStringIndexAtPosition(str, app.ft, p, w_str);
-	update_x_cs_rel_hist(app);
+	UpdateCursorXHistory(app);
 }
-void RichTextBox::select_b(App& app) {
+void RichTextBox::SelectEnd(App& app) {
 	DVector2 p = app.input.msp - (tl + (DVector2)tl_str_rel);
 	edit_b = GetStringIndexAtPosition(str, app.ft, p, w_str);
-	update_x_cs_rel_hist(app);
+	UpdateCursorXHistory(app);
 }
-void RichTextBox::update_x_cs_rel_hist(App& app) {
+void RichTextBox::UpdateCursorXHistory(App& app) {
 	auto s = wstring(str.begin(), str.begin() + edit_b);
 	int tmp = 0; GetStringSize(s, app.ft, w_str, &tmp);
 	x_cs_rel_hist = tmp;
 }
 
-void RichTextBox::add_chs(App& app) {
+void RichTextBox::AddCharacters(App& app) {
 	wstring sifted = FilterCharacters(app.input.chs, false);
 	if (!sifted.empty()) {
 		selecting = false;
-		str = left() + sifted + right();
-		edit_a = edit_b = edit_begin() + sifted.size();
-		update_x_cs_rel_hist(app);
+		str = GetLeftText() + sifted + GetRightText();
+		edit_a = edit_b = GetEditBegin() + sifted.size();
+		UpdateCursorXHistory(app);
 	}
 }
-void RichTextBox::hdl_left(App& app) {
+void RichTextBox::HandleLeft(App& app) {
 	selecting = false;
 	cursor_change = true;
 
-	if (selected()) { edit_a = edit_b = edit_begin(); }
+	if (HasSelection()) { edit_a = edit_b = GetEditBegin(); }
 	else {
 		if (--edit_a < 0) { edit_a = 0; }
 		edit_b = edit_a;
-	} update_x_cs_rel_hist(app);
+	} UpdateCursorXHistory(app);
 }
-void RichTextBox::hdl_right(App& app) {
+void RichTextBox::HandleRight(App& app) {
 	selecting = false;
 	cursor_change = true;
 
-	if (selected()) { edit_a = edit_b = edit_end(); }
+	if (HasSelection()) { edit_a = edit_b = GetEditEnd(); }
 	else {
 		// 下面不要减一。
 		if (++edit_a > str.size()) { edit_a = str.size(); }
 		edit_b = edit_a;
-	} update_x_cs_rel_hist(app);
+	} UpdateCursorXHistory(app);
 }
-void RichTextBox::hdl_up(App& app) {
+void RichTextBox::HandleUp(App& app) {
 	selecting = false;
 	cursor_change = true;
 
-	if (selected()) { edit_a = edit_b = edit_begin(); }
+	if (HasSelection()) { edit_a = edit_b = GetEditBegin(); }
 	else {
 		wstring tmp(str.begin(), str.begin() + edit_b);
 		int y = GetStringSize(tmp, app.ft, w_str).y - 2 * app.ft.h;
@@ -122,11 +122,11 @@ void RichTextBox::hdl_up(App& app) {
 		edit_a = edit_b = GetStringIndexAtPosition(str, app.ft, p, w_str);
 	}
 }
-void RichTextBox::hdl_down(App& app) {
+void RichTextBox::HandleDown(App& app) {
 	selecting = false;
 	cursor_change = true;
 
-	if (selected()) { edit_a = edit_b = edit_end(); }
+	if (HasSelection()) { edit_a = edit_b = GetEditEnd(); }
 	else {
 		wstring tmp(str.begin(), str.begin() + edit_b);
 		int y = GetStringSize(tmp, app.ft, w_str).y;
@@ -134,110 +134,110 @@ void RichTextBox::hdl_down(App& app) {
 		edit_a = edit_b = GetStringIndexAtPosition(str, app.ft, p, w_str);
 	}
 }
-void RichTextBox::hdl_back(App& app) {
+void RichTextBox::HandleBackspace(App& app) {
 	selecting = false;
 	cursor_change = true;
 
-	if (selected()) {
-		str = left() + right();
-		edit_a = edit_b = edit_begin();
-	} else if (edit_begin() > 0) {
+	if (HasSelection()) {
+		str = GetLeftText() + GetRightText();
+		edit_a = edit_b = GetEditBegin();
+	} else if (GetEditBegin() > 0) {
 		auto a = str.begin();
 		auto b = str.begin() + edit_a - 1;
-		str = wstring(a, b) + right();
+		str = wstring(a, b) + GetRightText();
 		edit_b = --edit_a;
-	} update_x_cs_rel_hist(app);
+	} UpdateCursorXHistory(app);
 }
-void RichTextBox::hdl_delete(App& app) {
+void RichTextBox::HandleDelete(App& app) {
 	selecting = false;
 	cursor_change = true;
 
-	if (selected()) {
-		str = left() + right();
-		edit_a = edit_b = edit_begin();
-	} else if (edit_end() < str.size()) {
+	if (HasSelection()) {
+		str = GetLeftText() + GetRightText();
+		edit_a = edit_b = GetEditBegin();
+	} else if (GetEditEnd() < str.size()) {
 		auto a = str.begin() + edit_a + 1;
 		auto b = str.end();
-		str = left() + wstring(a, b);
+		str = GetLeftText() + wstring(a, b);
 	}
 	// 按道理 delete 不用更新的。
-	// update_x_cs_rel_hist(app);
+	// UpdateCursorXHistory(app);
 }
-void RichTextBox::hdl_clip(App& app) {
+void RichTextBox::HandleCut(App& app) {
 	selecting = false;
-	SetClipboard(mid());
-	str = left() + right();
-	edit_a = edit_b = edit_begin();
-	update_x_cs_rel_hist(app);
+	SetClipboard(GetSelectedText());
+	str = GetLeftText() + GetRightText();
+	edit_a = edit_b = GetEditBegin();
+	UpdateCursorXHistory(app);
 }
-void RichTextBox::hdl_copy(App& app) { SetClipboard(mid()); }
-void RichTextBox::hdl_paste(App& app) {
+void RichTextBox::HandleCopy(App& app) { SetClipboard(GetSelectedText()); }
+void RichTextBox::HandlePaste(App& app) {
 	selecting = false;
 	wstring sifted = FilterCharacters(GetClipboard(), false);
-	str = left() + sifted + right();
-	edit_a = edit_b = edit_begin() + sifted.size();
-	update_x_cs_rel_hist(app);
+	str = GetLeftText() + sifted + GetRightText();
+	edit_a = edit_b = GetEditBegin() + sifted.size();
+	UpdateCursorXHistory(app);
 }
-void RichTextBox::hdl_all(App& app) {
+void RichTextBox::HandleSelectAll(App& app) {
 	selecting = false;
 	edit_a = 0; edit_b = str.size();
-	update_x_cs_rel_hist(app);
+	UpdateCursorXHistory(app);
 }
-void RichTextBox::hdl_key(App& app) {
+void RichTextBox::HandleKey(App& app) {
 	cursor_change = false;
 
-	if (app.input.kbmsg[VK_LEFT]) { hdl_left(app); }
-	else if (app.input.kbmsg[VK_RIGHT]) { hdl_right(app); }
-	else if (app.input.kbmsg[VK_UP]) { hdl_up(app); }
-	else if (app.input.kbmsg[VK_DOWN]) { hdl_down(app); }
-	else if (app.input.kbmsg[VK_DELETE]) { hdl_delete(app); }
-	else if (app.input.kbmsg[VK_BACK]) { hdl_back(app); }
+	if (app.input.kbmsg[VK_LEFT]) { HandleLeft(app); }
+	else if (app.input.kbmsg[VK_RIGHT]) { HandleRight(app); }
+	else if (app.input.kbmsg[VK_UP]) { HandleUp(app); }
+	else if (app.input.kbmsg[VK_DOWN]) { HandleDown(app); }
+	else if (app.input.kbmsg[VK_DELETE]) { HandleDelete(app); }
+	else if (app.input.kbmsg[VK_BACK]) { HandleBackspace(app); }
 
 	if (app.input.kbd[VK_CONTROL]) {
-		if (app.input.isKeyPressedDown('C')) { hdl_copy(app); }
-		else if (app.input.isKeyPressedDown('X')) { hdl_clip(app); }
-		else if (app.input.isKeyPressedDown('V')) { hdl_paste(app); }
-		else if (app.input.isKeyPressedDown('A')) { hdl_all(app); }
+		if (app.input.isKeyPressedDown('C')) { HandleCopy(app); }
+		else if (app.input.isKeyPressedDown('X')) { HandleCut(app); }
+		else if (app.input.isKeyPressedDown('V')) { HandlePaste(app); }
+		else if (app.input.isKeyPressedDown('A')) { HandleSelectAll(app); }
 	}
 }
 
-void RichTextBox::clamp_cs_selecting(App& app) {
-	double val = (app.input.msp.x - tl.x) - max_x_cs_rel();
+void RichTextBox::ClampCursorWhileSelecting(App& app) {
+	double val = (app.input.msp.x - tl.x) - GetMaxCursorX();
 	if (val > 0) { tl_str_rel.x -= app.fps.dt() * slide_mtp * val; }
 	val = edit_mg.x - (app.input.msp.x - tl.x);
 	if (val > 0) { tl_str_rel.x += app.fps.dt() * slide_mtp * val; }
-	val = (app.input.msp.y - tl.y) - max_y_cs_rel();
+	val = (app.input.msp.y - tl.y) - GetMaxCursorY();
 	if (val > 0) { tl_str_rel.y -= app.fps.dt() * slide_mtp * val; }
 	val = edit_mg.y - (app.input.msp.y - tl.y);
 	if (val > 0) { tl_str_rel.y += app.fps.dt() * slide_mtp * val; }
 }
-void RichTextBox::clamp_cs_not_selecting(App& app) {
-	if (p_cs_rel(app).x > max_x_cs_rel()) {
-		tl_str_rel.x -= p_cs_rel(app).x - max_x_cs_rel();
-	} else if (p_cs_rel(app).x < edit_mg.x) {
-		tl_str_rel.x += edit_mg.x - p_cs_rel(app).x;
+void RichTextBox::ClampCursorWithoutSelection(App& app) {
+	if (GetCursorPosition(app).x > GetMaxCursorX()) {
+		tl_str_rel.x -= GetCursorPosition(app).x - GetMaxCursorX();
+	} else if (GetCursorPosition(app).x < edit_mg.x) {
+		tl_str_rel.x += edit_mg.x - GetCursorPosition(app).x;
 	}
 	// 我们不对 y 这么做，主要是为了让鼠标滚轮正常，其实细想挺奇怪的。
 }
-void RichTextBox::clamp_cursor(App& app) {
-	if (selecting) { clamp_cs_selecting(app); }
-	else { clamp_cs_not_selecting(app); }
+void RichTextBox::ClampCursor(App& app) {
+	if (selecting) { ClampCursorWhileSelecting(app); }
+	else { ClampCursorWithoutSelection(app); }
 }
-void RichTextBox::clamp_str(App& app) {
+void RichTextBox::ClampTextPosition(App& app) {
 	// 除了文字过少以外，clamp_selecting 和 wheel 后也需要这一步。
 	DVector2 p_end_rel = (DVector2)tl_str_rel + GetStringSize(str, app.ft, w_str);
-	if (p_end_rel.x < max_x_cs_rel()) {
-		tl_str_rel.x += max_x_cs_rel() - p_end_rel.x;
+	if (p_end_rel.x < GetMaxCursorX()) {
+		tl_str_rel.x += GetMaxCursorX() - p_end_rel.x;
 	}
-	if (p_end_rel.y < max_y_cs_rel()) {
-		tl_str_rel.y += max_y_cs_rel() - p_end_rel.y;
+	if (p_end_rel.y < GetMaxCursorY()) {
+		tl_str_rel.y += GetMaxCursorY() - p_end_rel.y;
 	}
 	// 下面两行是配合上面的。
 	if (tl_str_rel.x > edit_mg.x) { tl_str_rel.x = edit_mg.x; }
 	if (tl_str_rel.y > edit_mg.y) { tl_str_rel.y = edit_mg.y; }
 }
 
-void RichTextBox::render_main(App& app) {
+void RichTextBox::RenderMain(App& app) {
 	Color c =
 		!enabled ? c_invalid :
 		edit ? c_edit :
@@ -246,20 +246,20 @@ void RichTextBox::render_main(App& app) {
 
 	int x_cur = 0;
 	DVector2 tl_txt = tl + (DVector2)tl_str_rel;
-	DrawString(app.scr, app.dscr, depth, left(), c_str, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
-	DrawString(app.scr, app.dscr, depth, mid(), selectedColor, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
-	DrawString(app.scr, app.dscr, depth, right(), c_str, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
+	DrawString(app.scr, app.dscr, depth, GetLeftText(), c_str, app.ft, tl_txt, x_cur, w_str, GetTextViewport());
+	DrawString(app.scr, app.dscr, depth, GetSelectedText(), selectedColor, app.ft, tl_txt, x_cur, w_str, GetTextViewport());
+	DrawString(app.scr, app.dscr, depth, GetRightText(), c_str, app.ft, tl_txt, x_cur, w_str, GetTextViewport());
 }
-void RichTextBox::render_cursor(App& app) {
+void RichTextBox::RenderCursor(App& app) {
 	bool show_cursor = edit &&
 		(sin(app.fps.dur() * twinkle_mtp) > 0 || cursor_change);
 	if (show_cursor) {
-		DVector2 tl_cs = tl + p_cs_rel(app) + DVector2(-w_cursor, app.ft.h - h_cursor) / 2;
-		drawRectangleRaw(app.scr, tl_cs, w_cursor, h_cursor, vp_show_txt(), c_cursor);
+		DVector2 tl_cs = tl + GetCursorPosition(app) + DVector2(-w_cursor, app.ft.h - h_cursor) / 2;
+		drawRectangleRaw(app.scr, tl_cs, w_cursor, h_cursor, GetTextViewport(), c_cursor);
 	}
 }
-void RichTextBox::render(App& app) {
-	render_main(app); render_cursor(app);
+void RichTextBox::Render(App& app) {
+	RenderMain(app); RenderCursor(app);
 }
 
 void RichTextBox::Update(App& app) {
@@ -268,10 +268,10 @@ void RichTextBox::Update(App& app) {
 		// 我感觉 selecting 有关的逻辑也是有点乱的。
 		// 我感觉 selecting 有关的逻辑也是有点乱的。
 		// 怎么看待 UI 交互真的是个大问题。怎么清晰的表达需求。
-		if (selecting) { select_b(app); }
-		if (enabled && hovered && app.input.isMouseClickedDown(0)) { select_a(app); }
+		if (selecting) { SelectEnd(app); }
+		if (enabled && hovered && app.input.isMouseClickedDown(0)) { SelectStart(app); }
 		if (!app.input.msd[0]) { selecting = false; }
-		hdl_key(app); add_chs(app); clamp_cursor(app); Upload(app);
+		HandleKey(app); AddCharacters(app); ClampCursor(app); Upload(app);
 
 		if (enabled && !hovered && app.input.isMouseClickedDown(0)) { OnDone(app); }
 		if (!enabled || !hovered && app.input.isMouseClickedDown(0)) {
@@ -283,12 +283,12 @@ void RichTextBox::Update(App& app) {
 		Sync(app);
 		if (enabled && hovered && app.input.isMouseClickedDown(0)) {
 			if (clr_upon_edit) { str.clear(); }
-			select_a(app); edit = true;
+			SelectStart(app); edit = true;
 		}
 	} 
 
 	if (app.own.wheeled == this) { tl_str_rel.y += app.input.msw * wheel_mtp; }
-	clamp_str(app); render(app);
+	ClampTextPosition(app); Render(app);
 }
 void RichTextBox::Discard(App& app) {
 	app.own.remove(this); app.own.ReleaseKeyboard(this);
