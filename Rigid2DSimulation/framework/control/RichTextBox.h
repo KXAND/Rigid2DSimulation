@@ -5,7 +5,7 @@
 
 struct RichTextBox : Control {
 	DVector2 gap;
-	int w_str = 0;
+	int lineWidth = 0;
 	double depth = 0;
 	int w = 0, h = 0;
 	bool clr_upon_edit = false;
