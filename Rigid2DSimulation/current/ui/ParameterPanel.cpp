@@ -12,7 +12,7 @@ void ParameterValueDragBar::Sync(App& app) { auto& simulationApp = static_cast<S
 void ParameterValueDragBar::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = GetNormalizedValue(); }
 ParameterValueTextBox::ParameterValueTextBox(int id) : id(id), TextBox(80) {};
 void ParameterValueTextBox::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); value = FormatFixed2(simulationApp.parameters[id]->value); }
-void ParameterValueTextBox::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = wtof(value); }
+void ParameterValueTextBox::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = ParseDouble(value); }
 
 ParameterControlRow::ParameterControlRow(int id) {
 	vector<Control*> tmp;

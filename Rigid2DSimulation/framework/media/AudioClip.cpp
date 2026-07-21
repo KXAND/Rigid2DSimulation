@@ -1,7 +1,7 @@
 #include "AudioClip.h"
 
 AudioClip::AudioClip(wstring const& fileName, bool *loaded) {
-	FILE* file = wfopen(fileName, L"rb");
+	FILE* file = OpenFile(fileName, L"rb");
 	if (!file) {
 		if (loaded) { *loaded = false; }
 		return;
@@ -25,7 +25,7 @@ void AudioClip::Play(vector<double>& output, double volume) {
 }
 
 void AudioClip::Save(wstring const& fileName) const {
-	FILE* file = wfopen(fileName, L"wb");
+	FILE* file = OpenFile(fileName, L"wb");
 	if (!file) { return; }
 	int size = 0;
 	fwrite(&(sampleRate), sizeof(sampleRate), 1, file);

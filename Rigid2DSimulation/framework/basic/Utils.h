@@ -26,9 +26,9 @@ double GenerateNormalRandomFloat(double mean, double stddev);
 wstring FormatFixed2(double d);
 wstring ToWString(string const& s);
 string ToString(wstring const& s);
-double atof(string const& s);
-double wtof(wstring const& s);
-FILE* wfopen(wstring const& nm, wstring const& arg);
+double ParseDouble(string const& s);
+double ParseDouble(wstring const& s);
+FILE* OpenFile(wstring const& fileName, wstring const& mode);
 
 void HideConsole();
 void ShowConsole();
@@ -41,5 +41,5 @@ void SetClipboard(wstring const& s);
 
 double GetValue(double x, vector<double> const& ys);
 double FetchNumber(int& i, wstring const& s);
-wstring FilterCharacters(wstring const& chs, bool ignore_newline = false);
+wstring FilterCharacters(wstring const& chs, bool ignoreNewline = false);
 

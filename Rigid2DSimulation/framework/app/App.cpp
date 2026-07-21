@@ -69,7 +69,7 @@ void App::PresentScreen()
 }
 void App::AddLog(wstring const& s)
 {
-	FILE* f_log = wfopen(L"运行记录.log", L"a");
+	FILE* f_log = OpenFile(L"运行记录.log", L"a");
 	if (!f_log) { PrintConsole(L"运行记录打开失败。", true); }
 	else { fwprintf(f_log, s.c_str()); fclose(f_log); }
 }
@@ -96,7 +96,7 @@ void App::InitializeBitmapInfo()
 }
 void App::LoadLocalizationFile()
 {
-	FILE* f = wfopen(L"localization.txt", L"r");
+	FILE* f = OpenFile(L"localization.txt", L"r");
 	if (!f) { return; }
 
 	bool dollar = false;

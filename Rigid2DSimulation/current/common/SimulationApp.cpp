@@ -47,7 +47,7 @@ SimulationApp::SimulationApp()
 
 void SimulationApp::Save(wstring const& name) const
 {
-	FILE* file = wfopen(name, L"wb");
+	FILE* file = OpenFile(name, L"wb");
 	if (!file) { return; }
 	int size = 0;
 	size = (scriptText).size();
@@ -67,7 +67,7 @@ void SimulationApp::Save(wstring const& name) const
 }
 void SimulationApp::Load(wstring const& name)
 {
-	FILE* file = wfopen(name, L"rb");
+	FILE* file = OpenFile(name, L"rb");
 	if (!file) { return; } Reset();
 	int size = 0;
 	fread(&(size), sizeof(size), 1, file);

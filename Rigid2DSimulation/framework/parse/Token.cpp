@@ -32,7 +32,7 @@ Token ParseNumberToken(wstring const& in, int& id) {
 	}
 	auto c = in[id];
 	if (isalpha(c) || c == L'_') { return Token(L"error"); }
-	return Token(wtof(tmp));
+	return Token(ParseDouble(tmp));
 }
 Token ParseStringToken(wstring const& in, int& id) {
 	wstring tmp; bool ok = true;

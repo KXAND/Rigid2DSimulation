@@ -56,13 +56,13 @@ string ToString(wstring const& s)
 	sprintf_s(tmp.data(), tmp.size(), "%S", s.c_str());
 	return tmp.data();
 }
-double atof(string const& s) { return atof(s.c_str()); }
-double wtof(wstring const& s) { return atof(ToString(s)); }
+double ParseDouble(string const& s) { return std::atof(s.c_str()); }
+double ParseDouble(wstring const& s) { return ParseDouble(ToString(s)); }
 // 必须用 _wfopen，否则有编码问题。
-FILE* wfopen(wstring const& nm, wstring const& arg)
+FILE* OpenFile(wstring const& fileName, wstring const& mode)
 {
 	FILE* f = NULL;
-	_wfopen_s(&f, nm.c_str(), arg.c_str()); return f;
+	_wfopen_s(&f, fileName.c_str(), mode.c_str()); return f;
 }
 
 void HideConsole() { ShowWindow(GetConsoleWindow(), SW_HIDE); }
@@ -139,12 +139,12 @@ double FetchNumber(int& i, wstring const& s)
 		auto c = s[i++];
 		if (c != L'(' && c != L')')
 		{
-			if (c == L',') { return wtof(tmp); }
+			if (c == L',') { return ParseDouble(tmp); }
 			tmp += c;
 		}
-	} return wtof(tmp);
+	} return ParseDouble(tmp);
 }
-wstring FilterCharacters(wstring const& chs, bool ignore_newline)
+wstring FilterCharacters(wstring const& chs, bool ignoreNewline)
 {
 	wstringstream s; bool cr = false;
 	for (auto c : chs) if (c == L'\r') { cr = true; }
@@ -156,7 +156,7 @@ wstring FilterCharacters(wstring const& chs, bool ignore_newline)
 			bool newline =
 				c == L'\n' && !cr ||
 				c == L'\r' && cr;
-			if (newline && !ignore_newline) { s << L'\n'; }
+			if (newline && !ignoreNewline) { s << L'\n'; }
 			if (c == L'\t') { s << L"    "; }
 		}
 	} return s.str();

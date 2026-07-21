@@ -51,7 +51,7 @@ Tile::Tile(int w, int h, Tile const& src, DRect vp_src) : Tile(w, h)
 }
 void Tile::save(wstring const& fileName) const
 {
-	FILE* file = wfopen(fileName, L"wb");
+	FILE* file = OpenFile(fileName, L"wb");
 	if (!file) { return; }
 	fwrite(&(width), sizeof(width), 1, file);
 	fwrite(&(height), sizeof(height), 1, file);
@@ -61,7 +61,7 @@ void Tile::save(wstring const& fileName) const
 }
 Tile::Tile(wstring const& fileName, bool* ok)
 {
-	FILE* file = wfopen(fileName, L"rb");
+	FILE* file = OpenFile(fileName, L"rb");
 	if (ok) { *ok = file; }
 	if (!file) { return; }
 	fread(&(width), sizeof(width), 1, file);

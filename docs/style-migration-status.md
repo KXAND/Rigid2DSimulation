@@ -54,6 +54,7 @@
 - `DVector2`、`Vector2` 及其矩形类型的长度平方、边界、包含与重叠查询接口已迁移为 PascalCase，并同步更新绘制、控件和刚体调用点。
 - `Vector2` 与 `Vector3` 的长度、归一化和零值查询，以及二维、三维点积和叉积辅助函数，已迁移为 PascalCase；刚体和相机调用点已同步。
 - `Matrix2`、`Matrix3` 的构造、查询和变换接口，以及 `Vector3` 的颜色通道访问器，已迁移为表达职责的 PascalCase；绘制、刚体、相机和纹理调用点已同步。
+- 基础工具中的字符串数值解析与宽字符文件打开包装已迁移为 `ParseDouble` 和 `OpenFile`，不再与 C 运行库缩写混淆；文本过滤参数已统一为 lower camel。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。
