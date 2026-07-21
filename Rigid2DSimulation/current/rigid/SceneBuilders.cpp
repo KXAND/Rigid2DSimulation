@@ -12,22 +12,22 @@ void CreateBody(SimulationApp& cur, Value const& shs_cfg, Value const& cfg)
 	TryReadConfigNumber(cfg, L"point", point);
 	std::shared_ptr<Body> bo;
 	vector<std::shared_ptr<Shape>> shs;
-	for (auto v : shs_cfg.vec)
+	for (auto v : shs_cfg.elements)
 	{
-		if (v->vec.empty()) { continue; }
+		if (v->elements.empty()) { continue; }
 		std::shared_ptr<Shape> sh;
-		if (v->vec[0]->number)
+		if (v->elements[0]->number)
 		{
-			if (v->vec.size() < 2) { continue; }
+			if (v->elements.size() < 2) { continue; }
 			Vector2 o_rel;
-			if (v->vec.size() >= 3) { o_rel = ToVector2(*v->vec[2]); }
-			sh = std::make_shared<Shape>(v->vec[1]->number, o_rel);
+			if (v->elements.size() >= 3) { o_rel = ToVector2(*v->elements[2]); }
+			sh = std::make_shared<Shape>(v->elements[1]->number, o_rel);
 		}
 		else
 		{
-			if (v->vec.size() < 2) { continue; }
+			if (v->elements.size() < 2) { continue; }
 			vector<Vector2> vs;
-			for (auto w : v->vec[1]->vec)
+			for (auto w : v->elements[1]->elements)
 			{
 				vs.push_back(ToVector2(*w));
 			}

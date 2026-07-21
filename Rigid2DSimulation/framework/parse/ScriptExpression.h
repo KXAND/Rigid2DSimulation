@@ -15,7 +15,7 @@ struct ScriptExpression {
 	wstring variableName;
 	wstring functionName;
 	vector<ScriptExpression> arguments;
-	vector<ScriptExpression> vec;
+	vector<ScriptExpression> elements;
 	ValuePtr<ScriptExpression> getLocalizedString, ind;
 
 	ScriptExpression() = default;

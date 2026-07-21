@@ -14,14 +14,14 @@ struct Value {
 	Function nativeFunction;
 	Program procs;
 	vector<wstring> arguments;
-	vector<std::shared_ptr<Value>> vec;
+	vector<std::shared_ptr<Value>> elements;
 	map<wstring, std::shared_ptr<Value>> dic;
 
 	Value() = default;
 	Value(double number);
 	Value(wstring const& text);
 	Value(Function const& nativeFunction);
-	Value(vector<std::shared_ptr<Value>> const& vec);
+	Value(vector<std::shared_ptr<Value>> const& elements);
 	Value(Program const& ps, vector<wstring> const& arguments);
 };
 

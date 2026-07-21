@@ -9,7 +9,7 @@
 Value::Value(double number) : number(number) { type = L"num"; }
 Value::Value(wstring const& text) : stringValue(text) { type = L"ToString"; }
 Value::Value(Function const& nativeFunction) : nativeFunction(nativeFunction) { type = L"user"; }
-Value::Value(vector<std::shared_ptr<Value>> const& vec) : vec(vec) { type = L"vec"; }
+Value::Value(vector<std::shared_ptr<Value>> const& elements) : elements(elements) { type = L"vec"; }
 Value::Value(Program const& ps, vector<wstring>const& arguments) :
 	procs(ps), arguments(arguments)
 {
@@ -19,18 +19,18 @@ Value::Value(Program const& ps, vector<wstring>const& arguments) :
 Vector2 ToVector2(Value const& v)
 {
 	Vector2 out;
-	if (v.vec.size() < 2) { return {}; }
-	out.x = v.vec[0]->number;
-	out.y = v.vec[1]->number;
+	if (v.elements.size() < 2) { return {}; }
+	out.x = v.elements[0]->number;
+	out.y = v.elements[1]->number;
 	return out;
 }
 Vector3 ToVector3(Value const& v)
 {
 	Vector3 out;
-	if (v.vec.size() < 3) { return {}; }
-	out.x = v.vec[0]->number;
-	out.y = v.vec[1]->number;
-	out.z = v.vec[2]->number;
+	if (v.elements.size() < 3) { return {}; }
+	out.x = v.elements[0]->number;
+	out.y = v.elements[1]->number;
+	out.z = v.elements[2]->number;
 	return out;
 }
 
@@ -117,11 +117,11 @@ std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpression con
 			*getLocalizedString = {};
 			getLocalizedString->type = L"vec";
 		}
-		for (int i = (getLocalizedString->vec.size() - 1), iEnd = int(ind->number); i < iEnd; ++i)
+		for (int i = (getLocalizedString->elements.size() - 1), iEnd = int(ind->number); i < iEnd; ++i)
 		{
-			getLocalizedString->vec.push_back(std::make_shared<Value>());
+			getLocalizedString->elements.push_back(std::make_shared<Value>());
 		}
-		return getLocalizedString->vec[ind->number];
+		return getLocalizedString->elements[ind->number];
 	}
 
 	if (ind->type == L"ToString")
@@ -152,7 +152,7 @@ std::shared_ptr<Value> Evaluate(Scope& gl, Scope& sc, ScriptExpression const& ex
 	else if (ex.type == L"vec")
 	{
 		vector<std::shared_ptr<Value>> tmp;
-		for (auto const& e : ex.vec)
+		for (auto const& e : ex.elements)
 		{
 			tmp.push_back(std::make_shared<Value>(*Evaluate(gl, sc, e)));
 		}

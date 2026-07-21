@@ -30,7 +30,7 @@ wstring ToWString(ScriptExpression const& ex) {
 	}
 	else if (ex.type == L"vec") {
 		tmp += L":";
-		for (auto const& v : ex.vec) { tmp += ToWString(v) + L","; }
+		for (auto const& v : ex.elements) { tmp += ToWString(v) + L","; }
 	}
 	else if (ex.type == L"call") {
 		tmp += L":" + ex.functionName + L",";
@@ -159,14 +159,14 @@ ScriptExpression ParseVector(vector<BracketGroup> const& in) {
 	vector<BracketGroup> tmp;
 	for (auto const& b : in[0].bras) {
 		if (b.tk.type == L",") {
-			ex.vec.push_back(ParseExpression(tmp));
+			ex.elements.push_back(ParseExpression(tmp));
 			tmp.clear();
 		}
 		else {
 			tmp.push_back(b);
 		}
 	}
-	if (!tmp.empty()) { ex.vec.push_back(ParseExpression(tmp)); }
+	if (!tmp.empty()) { ex.elements.push_back(ParseExpression(tmp)); }
 	return ex;
 }
 ScriptExpression ParseAccess(vector<BracketGroup> const& in) {

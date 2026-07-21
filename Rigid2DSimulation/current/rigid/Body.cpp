@@ -386,9 +386,9 @@ void Body::FollowPresetPosition(SimulationApp& cur, double stepDt)
 	Scope scope;
 	bool ret = false;
 	scope[L"time"] = std::make_shared<Value>(cur.simulationTime);
-	auto positionOld = ToVector2(Execute(ret, cur.currentScope, scope, *positionProgram)->vec);
+	auto positionOld = ToVector2(Execute(ret, cur.currentScope, scope, *positionProgram)->elements);
 	scope.clear(); scope[L"time"] = std::make_shared<Value>(cur.simulationTime + stepDt); ret = false;
-	auto positionNew = ToVector2(Execute(ret, cur.currentScope, scope, *positionProgram)->vec);
+	auto positionNew = ToVector2(Execute(ret, cur.currentScope, scope, *positionProgram)->elements);
 	auto velocityNew = (positionNew - positionOld) / stepDt;
 
 	// 其实我觉得应当选用时间较小的值。
