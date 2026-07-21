@@ -1,4 +1,4 @@
-#include "fpn_par.h"
+#include "ParameterPanel.h"
 #include "SimulationApp.h"
 #include "SceneParameter.h"
 

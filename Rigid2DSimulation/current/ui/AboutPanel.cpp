@@ -1,4 +1,4 @@
-#include "fpn_about.h"
+#include "AboutPanel.h"
 #include "SimulationApp.h"
 
 

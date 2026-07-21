@@ -1,4 +1,4 @@
-#include "fpn_con.h"
+#include "ConnectionPanel.h"
 #include "SimulationApp.h"
 #include "Connection.h"
 

@@ -1,6 +1,6 @@
 #include "SimulationApp.h"
 #include "Utils.h"
-#include "ui.h"
+#include "UserInterface.h"
 #include "Background.h"
 #include "SceneParameter.h"
 #include "Shape.h"

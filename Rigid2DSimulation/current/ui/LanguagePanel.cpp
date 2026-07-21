@@ -1,5 +1,5 @@
-#include "fpn_lang.h"
-#include "ui.h"
+#include "LanguagePanel.h"
+#include "UserInterface.h"
 #include "SimulationApp.h"
 
 

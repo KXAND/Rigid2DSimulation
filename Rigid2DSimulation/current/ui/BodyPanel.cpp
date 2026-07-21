@@ -1,4 +1,4 @@
-#include "fpn_body.h"
+#include "BodyPanel.h"
 #include "SimulationApp.h"
 #include "Body.h"
 #include "Connection.h"

@@ -142,28 +142,28 @@
     <ClCompile Include="framework\control\TextBox.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\fpn_about.cpp">
+    <ClCompile Include="current\ui\AboutPanel.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\fpn_cmd.cpp">
+    <ClCompile Include="current\ui\CommandPanel.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\fpn_global.cpp">
+    <ClCompile Include="current\ui\GlobalPanel.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\fpn_lang.cpp">
+    <ClCompile Include="current\ui\LanguagePanel.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\fpn_par.cpp">
+    <ClCompile Include="current\ui\ParameterPanel.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\pn_bottom.cpp">
+    <ClCompile Include="current\ui\BottomPanel.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\pn_menu.cpp">
+    <ClCompile Include="current\ui\MenuPanel.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\ui.cpp">
+    <ClCompile Include="current\ui\UserInterface.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
     <ClCompile Include="current\common\Background.cpp">
@@ -202,13 +202,13 @@
     <ClCompile Include="current\rigid\ShapeBuiltins.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\fpn_body.cpp">
+    <ClCompile Include="current\ui\BodyPanel.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
     <ClCompile Include="current\rigid\Connection.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\fpn_con.cpp">
+    <ClCompile Include="current\ui\ConnectionPanel.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
     <ClCompile Include="current\rigid\Group.cpp">
@@ -324,28 +324,28 @@
     <ClInclude Include="framework\control\TextBox.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\fpn_about.h">
+    <ClInclude Include="current\ui\AboutPanel.h">
       <Filter>current\ui</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\fpn_cmd.h">
+    <ClInclude Include="current\ui\CommandPanel.h">
       <Filter>current\ui</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\fpn_global.h">
+    <ClInclude Include="current\ui\GlobalPanel.h">
       <Filter>current\ui</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\fpn_lang.h">
+    <ClInclude Include="current\ui\LanguagePanel.h">
       <Filter>current\ui</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\fpn_par.h">
+    <ClInclude Include="current\ui\ParameterPanel.h">
       <Filter>current\ui</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\pn_bottom.h">
+    <ClInclude Include="current\ui\BottomPanel.h">
       <Filter>current\ui</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\pn_menu.h">
+    <ClInclude Include="current\ui\MenuPanel.h">
       <Filter>current\ui</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\ui.h">
+    <ClInclude Include="current\ui\UserInterface.h">
       <Filter>current\ui</Filter>
     </ClInclude>
     <ClInclude Include="current\common\Background.h">
@@ -387,13 +387,13 @@
     <ClInclude Include="current\rigid\ShapeBuiltins.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\fpn_body.h">
+    <ClInclude Include="current\ui\BodyPanel.h">
       <Filter>current\ui</Filter>
     </ClInclude>
     <ClInclude Include="current\rigid\Connection.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\fpn_con.h">
+    <ClInclude Include="current\ui\ConnectionPanel.h">
       <Filter>current\ui</Filter>
     </ClInclude>
     <ClInclude Include="current\rigid\Group.h">

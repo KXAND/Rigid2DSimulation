@@ -1,5 +1,5 @@
-#include "fpn_global.h"
-#include "ui.h"
+#include "GlobalPanel.h"
+#include "UserInterface.h"
 #include "SimulationApp.h"
 #include "Creator.h"
 

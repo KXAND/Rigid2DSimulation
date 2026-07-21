@@ -1,4 +1,4 @@
-#include "pn_bottom.h"
+#include "BottomPanel.h"
 #include "SimulationApp.h"
 
 LbFPS::LbFPS() { w = 450; fixed_w = true; }

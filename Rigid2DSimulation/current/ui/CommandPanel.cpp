@@ -1,4 +1,4 @@
-#include "fpn_cmd.h"
+#include "CommandPanel.h"
 #include "SimulationApp.h"
 #include "Value.h"
 
