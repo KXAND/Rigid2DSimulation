@@ -43,6 +43,7 @@
 - `DropList`、`HorizontalSeparator`、`VerticalScrollBar` 与横纵控件列表的字段和局部变量已迁移为完整 lower camel 名称；滚动条和控件列表的直接面板调用点已同步。
 - `TextBox` 的编辑值、标签、选区、光标、边距、颜色及局部几何变量已迁移为完整 lower camel；`RichTextBox` 的独立字段保持待单独审计。
 - `RichTextBox` 的编辑值、行宽、选区端点和清空编辑值标志已迁移为完整 lower camel，并同步更新脚本编辑器调用点。
+- `RichTextBox` 的文本偏移、编辑与文本视区边距、光标横坐标历史及绘制颜色已迁移为完整 lower camel。
 - 已完成的提交保持文件改名、类型名改名、宏替换和纯排版互相分离。
 
 ## 3. 下一批
