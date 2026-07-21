@@ -41,7 +41,7 @@ Vector2 Shape::GenerateRandomPointInside() const
 {
 	if (isCircle)
 	{
-		double randomRadian = GenerateRandomFloat(2 * PI);
+		double randomRadian = GenerateRandomFloat(2 * kPi);
 		double randomRadius = sqrt(GenerateRandomFloat(1)) * r;
 		return Vector2(cos(randomRadian), sin(randomRadian)) * randomRadius;
 	}
@@ -114,9 +114,9 @@ bool Shape::IsInsideTriangle(Vector2 v, Vector2 v0, Vector2 v1, Vector2 v2) cons
 	Vector3 u2(v2.x, v2.y, 1);
 	Vector3 t = Matrix3(u0, u1, u2).inverse() * u;
 	return
-		isBetween(t.x, 0.0, 1.0) &&
-		isBetween(t.y, 0.0, 1.0) &&
-		isBetween(t.z, 0.0, 1.0);
+		IsBetween(t.x, 0.0, 1.0) &&
+		IsBetween(t.y, 0.0, 1.0) &&
+		IsBetween(t.z, 0.0, 1.0);
 }
 
 vector<Vector2> GetRectVerticesByCenter(double halfWidth, double halfHeight)

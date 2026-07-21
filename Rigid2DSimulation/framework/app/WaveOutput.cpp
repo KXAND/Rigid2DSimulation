@@ -50,7 +50,7 @@ bool WaveOutput::Play() {
 	int availableBlockCount = max(0, safeBlockCount - playingBlockCount);
 	for (auto sampleValue : inputSamples) {
 		blocks[playingBlockCount]->samples[blockSampleIndex++] =
-			clamp(int(sampleValue * 256 * 128), -128 * 256, 128 * 256 - 1);
+			Clamp(int(sampleValue * 256 * 128), -128 * 256, 128 * 256 - 1);
 		if (blockSampleIndex == GetBlockSampleCount()) {
 			bool played = blocks[playingBlockCount++]->Play(waveOutputHandle);
 			if (!played) { return false; } blockSampleIndex = 0;

@@ -144,7 +144,7 @@ std::shared_ptr<Value> Evaluate(Scope& gl, Scope& sc, ScriptExpression const& ex
 	if (ex.typ == L"call") { return EvaluateCall(gl, sc, ex); }
 	else if (ex.typ == L"var")
 	{
-		if (ex.Value == L"kPi") { return std::make_shared<Value>(PI); }
+		if (ex.Value == L"kPi") { return std::make_shared<Value>(kPi); }
 		return FindVariable(gl, sc, ex.Value, ex.global);
 	}
 	else if (ex.typ == L"num") { return std::make_shared<Value>(ex.num); }

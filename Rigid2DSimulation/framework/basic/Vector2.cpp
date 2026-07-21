@@ -14,8 +14,8 @@ wstring ToWString(Vector2 v)
 bool isInside(Vector2 v, Rect r)
 {
 	return
-		isBetween(v.x, r.left(), r.right()) &&
-		isBetween(v.y, r.top(), r.bottom());
+		IsBetween(v.x, r.left(), r.right()) &&
+		IsBetween(v.y, r.top(), r.bottom());
 }
 /// <summary>
 /// 递归计算获取任意次贝塞尔曲线上的点

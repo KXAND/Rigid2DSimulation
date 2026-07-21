@@ -1,20 +1,20 @@
 #pragma once
 #include "PlatformIncludes.h"
 
-double constexpr PI = 3.1415926535;
-double constexpr EU = 2.7182818284;
+double constexpr kPi = 3.1415926535;
+double constexpr kEulerNumber = 2.7182818284;
 
 
 
 // 注意 insd 是开区间，clmp 闭区间。
 template<class T>
-bool isBetween(T v, T low, T high) { return low <= v && v < high; }
+bool IsBetween(T v, T low, T high) { return low <= v && v < high; }
 template<class T>
-T const& clamp(T v, T a, T b) { return min(b, max(a, v)); }
+T const& Clamp(T v, T a, T b) { return min(b, max(a, v)); }
 
-inline int mod(int a, int b) { return (a % b + b) % b; }
-inline double modf(double a, double b) { return fmod(fmod(a, b) + b, b); }
-inline double modp(double an) { return modf(an + PI, 2 * PI) - PI; }
+inline int PositiveModulo(int a, int b) { return (a % b + b) % b; }
+inline double PositiveModulo(double a, double b) { return fmod(fmod(a, b) + b, b); }
+inline double WrapRadians(double an) { return PositiveModulo(an + kPi, 2 * kPi) - kPi; }
 
 // 注意 [a, b] 是闭区间，但 sz 是开的。
 int GenerateRandomInt(int a, int b);

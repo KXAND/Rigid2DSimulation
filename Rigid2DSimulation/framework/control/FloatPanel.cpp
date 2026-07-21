@@ -99,8 +99,8 @@ void FloatPanel::HandleCaption(App& app) {
 
 	if (titleBarDragged) {
 		DVector2 newTopLeft = tl + app.input.mousePosition - app.input.previousMousePosition;
-		newTopLeft.x = clamp(newTopLeft.x, 0, app.screen.width - w);
-		newTopLeft.y = clamp(newTopLeft.y, 0, app.screen.height - titleBarHeight); SetTopLeft(app, newTopLeft);
+		newTopLeft.x = Clamp(newTopLeft.x, 0, app.screen.width - w);
+		newTopLeft.y = Clamp(newTopLeft.y, 0, app.screen.height - titleBarHeight); SetTopLeft(app, newTopLeft);
 		titleBarDragged = app.input.mouseButtonDown[0];
 	}
 	else { titleBarDragged = titleBarHovered && app.input.IsMouseClickedDown(0); }
@@ -115,7 +115,7 @@ void FloatPanel::HandleWheelAndClampContent(App& app) {
 	if (hasOverflow) {
 		int contentY = contentControl->tl.y;
 		if (wheeled) { contentY += app.input.mouseWheelDelta * wheelMultiplier; }
-		contentControl->tl.y = clamp(contentY, GetMinY(), tl.y + contentOffset.y);
+		contentControl->tl.y = Clamp(contentY, GetMinY(), tl.y + contentOffset.y);
 	}
 	else if (contentControl) { contentControl->tl.y = tl.y + contentOffset.y; }
 }

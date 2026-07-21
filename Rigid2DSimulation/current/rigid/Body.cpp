@@ -203,10 +203,10 @@ void Body::RegisterGrid(SimulationApp& cur)
 	int y0 = floor((box.y0 - top_left.y) / cur.gridSize);
 	int x1 = floor((box.x1 - top_left.x) / cur.gridSize);
 	int y1 = floor((box.y1 - top_left.y) / cur.gridSize);
-	x0 = clamp(x0, 0, cur.gridNumX - 1);
-	x1 = clamp(x1, 0, cur.gridNumX - 1);
-	y0 = clamp(y0, 0, cur.gridNumY - 1);
-	y1 = clamp(y1, 0, cur.gridNumY - 1);
+	x0 = Clamp(x0, 0, cur.gridNumX - 1);
+	x1 = Clamp(x1, 0, cur.gridNumX - 1);
+	y0 = Clamp(y0, 0, cur.gridNumY - 1);
+	y1 = Clamp(y1, 0, cur.gridNumY - 1);
 	if (x1 > x0 + 1 || y1 > y0 + 1)
 	{
 		// 是多个跨越多个grid的物体
@@ -228,7 +228,7 @@ void Body::Init(bool repos_o)
 		shapes->area = 0; Vector2 sub_center;
 		if (shapes->isCircle)
 		{
-			shapes->area = PI * shapes->r * shapes->r;
+			shapes->area = kPi * shapes->r * shapes->r;
 			sub_center = shapes->area * shapes->relativePosition;
 			inertia += shapes->area * (shapes->r * shapes->r) / 2;
 		}

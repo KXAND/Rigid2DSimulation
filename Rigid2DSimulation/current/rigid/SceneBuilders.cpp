@@ -52,8 +52,8 @@ void CreateConnection(SimulationApp& cur, Value const& cfg)
 	int idx1 = GenerateRandomInt(bodies.size());
 	TryReadConfigNumber(cfg, L"index0", idx0);
 	TryReadConfigNumber(cfg, L"index1", idx1);
-	idx0 = clamp(idx0, 0, (int)bodies.size());
-	idx1 = clamp(idx1, 0, (int)bodies.size());
+	idx0 = Clamp(idx0, 0, (int)bodies.size());
+	idx1 = Clamp(idx1, 0, (int)bodies.size());
 	std::shared_ptr<Connection> connection;
 	connection = std::make_shared<Connection>();
 	connection->body0 = &*bodies[idx0];
@@ -131,8 +131,8 @@ void Gear(SimulationApp& cur, Value const& r, Value const& n, Value const& h, Va
 	shs.push_back(std::make_shared<Shape>(r.num));
 	for (int i = (0), iEnd = int(n.num); i < iEnd; ++i)
 	{
-		double phi0 = 2 * PI * i / (int)n.num;
-		double phi1 = 2 * PI * (i + 1) / (int)n.num;
+		double phi0 = 2 * kPi * i / (int)n.num;
+		double phi1 = 2 * kPi * (i + 1) / (int)n.num;
 		double phi = (phi0 + phi1) / 2;
 		Vector2 v = Vector2(cos(phi), sin(phi)) * (r.num + h.num);
 		Vector2 v0 = Vector2(cos(phi0), sin(phi0)) * r.num;
@@ -203,7 +203,7 @@ void Necklace(SimulationApp& cur, Value const& _o, Value const& rad,
 	int n = _n.num;
 	Vector2 o = ToVector2(_o);
 	std::shared_ptr<Connection> connection;
-	double len = 2 * PI * rad.num / n;
+	double len = 2 * kPi * rad.num / n;
 	double ball_rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * ball_rad);
 	Color col = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
@@ -216,7 +216,7 @@ void Necklace(SimulationApp& cur, Value const& _o, Value const& rad,
 	beg = b0;
 	for (int i = (1), iEnd = int(n); i < iEnd; ++i)
 	{
-		double phi = 2 * PI * i / n;
+		double phi = 2 * kPi * i / n;
 		b1 = std::make_shared<Body>(std::make_shared<Shape>(ball_rad));
 		b1->innerColor = col;
 		b1->position = o + Vector2(cos(phi), sin(phi)) * rad.num;
@@ -228,7 +228,7 @@ void Necklace(SimulationApp& cur, Value const& _o, Value const& rad,
 		connection->body1 = &*b1;
 		connection->len = gap;
 		connection->p1Relative = ball_rad * Vector2(+sin(phi), -cos(phi));
-		phi = 2 * PI * (i - 1) / n;
+		phi = 2 * kPi * (i - 1) / n;
 		connection->p0Relative = ball_rad * Vector2(-sin(phi), +cos(phi));
 		connection->ReadCfg(cfg_conn);
 		connection->SignUpToBodies();
@@ -236,14 +236,14 @@ void Necklace(SimulationApp& cur, Value const& _o, Value const& rad,
 		cur.connections.push_back(connection);
 		b0 = b1;
 	}
-	double phi = 2 * PI * n / n;
+	double phi = 2 * kPi * n / n;
 	b1 = beg;
 	connection = std::make_shared<Connection>();
 	connection->body0 = &*b0;
 	connection->body1 = &*b1;
 	connection->len = gap;
 	connection->p1Relative = ball_rad * Vector2(+sin(phi), -cos(phi));
-	phi = 2 * PI * (n - 1) / n;
+	phi = 2 * kPi * (n - 1) / n;
 	connection->p0Relative = ball_rad * Vector2(-sin(phi), +cos(phi));
 	connection->ReadCfg(cfg_conn);
 	connection->SignUpToBodies();

@@ -52,6 +52,7 @@
 - `Font` 的加载、初始化和随机文本生成接口已迁移为 `LoadFont`、`Initialize`、`GenerateRandomText`；应用初始化调用点已同步。
 - `Vector3::near_zero` 已迁移为 PascalCase 的 `IsNearZero`，不改变其数值判定逻辑。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
+- 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。
 - `AppInput` 的鼠标、键盘和文本输入状态字段，以及 `FrameRate` 的采样与时间统计字段，已迁移为表达职责的 lower camel 名称；输入事件和帧率计算逻辑保持不变。
 - `App` 的画布、深度缓冲、字体、帧率、输入所有者、窗口资源和窗口类配置字段已迁移为完整 lower camel；绘制、窗口和消息处理调用点已同步。

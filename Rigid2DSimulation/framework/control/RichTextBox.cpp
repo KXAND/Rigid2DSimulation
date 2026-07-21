@@ -224,7 +224,7 @@ void RichTextBox::ClampCursor(App& app) {
 	else { ClampCursorWithoutSelection(app); }
 }
 void RichTextBox::ClampTextPosition(App& app) {
-	// 除了文字过少以外，clamp_selecting 和 wheel 后也需要这一步。
+	// 除了文字过少以外，Clamp_selecting 和 wheel 后也需要这一步。
 	DVector2 textEndPosition = (DVector2)valueOffset + GetStringSize(value, app.font, lineWidth);
 	if (textEndPosition.x < GetMaxCursorX()) {
 		valueOffset.x += GetMaxCursorX() - textEndPosition.x;

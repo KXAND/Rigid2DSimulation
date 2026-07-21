@@ -35,12 +35,12 @@ void VerticalScrollBar::Update(App& app) {
 		thumbHeight = visibleHeight * h / contentControl->GetH();
 		if (dragged) {
 			thumbY += app.input.mousePosition.y - app.input.previousMousePosition.y;
-			thumbY = clamp(thumbY, 0, h - thumbHeight);
+			thumbY = Clamp(thumbY, 0, h - thumbHeight);
 			contentControl->tl.y = visibleTop - thumbY * contentControl->GetH() / h;
 			dragged = hasOverflow && enabled && app.input.mouseButtonDown[0];
 		} else {
 			thumbY = (visibleTop - contentControl->tl.y) * h / contentControl->GetH();
-			thumbY = clamp(thumbY, 0, h - thumbHeight);
+			thumbY = Clamp(thumbY, 0, h - thumbHeight);
 			dragged = hasOverflow && enabled && hovered && app.input.IsMouseClickedDown(0);
 		}
 	} else { dragged = false; } Render(app);

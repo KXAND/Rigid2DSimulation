@@ -20,9 +20,9 @@ struct Color
 	explicit Color(wstring const& s);
 	explicit Color(Vector3 c)
 	{
-		r = clamp<int>(0, 255, (int) c.r() * 255);
-		g = clamp<int>(0, 255, (int) c.g() * 255);
-		b = clamp<int>(0, 255, (int) c.b() * 255);
+		r = Clamp<int>(0, 255, (int) c.r() * 255);
+		g = Clamp<int>(0, 255, (int) c.g() * 255);
+		b = Clamp<int>(0, 255, (int) c.b() * 255);
 	}
 	// 允许转换为 Vector3，禁止显式操作
 	explicit operator Vector3() const { return Vector3(r, g, b) / 255; }

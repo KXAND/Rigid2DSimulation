@@ -34,7 +34,7 @@ std::shared_ptr<Value> RegularPolygon(Value const& n, Value const& r)
 	auto m = max(3, (int)n.num);
 	for (int i = (0), iEnd = int(m); i < iEnd; ++i)
 	{
-		double phi = 2 * PI * i / m;
+		double phi = 2 * kPi * i / m;
 		tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(r.num * cos(phi)), std::make_shared<Value>(r.num * sin(phi)) }));
 	}
 	v.push_back(std::make_shared<Value>(tmp));

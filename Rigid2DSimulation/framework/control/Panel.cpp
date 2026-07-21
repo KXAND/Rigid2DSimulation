@@ -83,7 +83,7 @@ void Panel::Update(App& app) {
 	if (hasOverflow) {
 		int contentY = contentControl->tl.y;
 		if (wheeled) { contentY += app.input.mouseWheelDelta * wheelMultiplier; }
-		contentControl->tl.y = clamp(contentY, GetMinY(), tl.y + contentOffset.y);
+		contentControl->tl.y = Clamp(contentY, GetMinY(), tl.y + contentOffset.y);
 	}
 	else if (contentControl) { contentControl->tl.y = tl.y + contentOffset.y; }
 

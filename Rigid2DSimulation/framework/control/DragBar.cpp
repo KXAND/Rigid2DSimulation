@@ -22,7 +22,7 @@ int HorizontalDragBar::GetH() const { return nodeHeight + gap.y; }
 double HorizontalDragBar::GetNormalizedValue() const { return (double)nodeX / (barWidth - nodeWidth); }
 void HorizontalDragBar::SetNormalizedNodePosition(double normalizedValue) {
 	int newNodeX = normalizedValue * (barWidth - nodeWidth);
-	nodeX = clamp(newNodeX, 0, barWidth - nodeWidth);
+	nodeX = Clamp(newNodeX, 0, barWidth - nodeWidth);
 }
 DVector2 HorizontalDragBar::GetNodeTopLeft() const { return tl + DVector2(textWidth + nodeX, 0); }
 void HorizontalDragBar::Render(App& app) {
@@ -42,7 +42,7 @@ void HorizontalDragBar::Update(App& app) {
 	hovered = (app.inputOwners.hovered == this);
 	textWidth = GetStringSize(text, app.font, 0).x;
 	if (dragged) {
-		nodeX = clamp(app.input.mousePosition.x - (tl.x + textWidth + nodeWidth / 2), 0, barWidth - nodeWidth);
+		nodeX = Clamp(app.input.mousePosition.x - (tl.x + textWidth + nodeWidth / 2), 0, barWidth - nodeWidth);
 		// 在刚刚抓住的那一帧没有更新，在放下的那一帧还在更新。省事。
 		Upload(app);
 		if (enabled && !app.input.mouseButtonDown[0]) { OnDone(app); }

@@ -11,8 +11,8 @@ wstring ToWString(DVector2 v) {
 
 bool isInside(DVector2 v, DRect r) {
 	return
-		isBetween(v.x, r.left(), r.right()) &&
-		isBetween(v.y, r.top(), r.bottom());
+		IsBetween(v.x, r.left(), r.right()) &&
+		IsBetween(v.y, r.top(), r.bottom());
 }
 DRect getOverlapRect(DRect a, DRect b) {
 	int left = max(a.left(), b.left());
