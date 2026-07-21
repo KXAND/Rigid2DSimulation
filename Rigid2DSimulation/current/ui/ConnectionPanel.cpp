@@ -3,8 +3,8 @@
 #include "Connection.h"
 
 ConnectionScriptEditor::ConnectionScriptEditor() : RichTextBox(360, 400) {}
-void ConnectionScriptEditor::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.connectionSelecting->temporaryScriptText; }
-void ConnectionScriptEditor::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->temporaryScriptText = str; }
+void ConnectionScriptEditor::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); value = simulationApp.connectionSelecting->temporaryScriptText; }
+void ConnectionScriptEditor::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->temporaryScriptText = value; }
 
 ApplyConnectionButton::ApplyConnectionButton() : LocalizedButton(70, L"bt_con_ok") {}
 void ApplyConnectionButton::OnClick(App& app) {

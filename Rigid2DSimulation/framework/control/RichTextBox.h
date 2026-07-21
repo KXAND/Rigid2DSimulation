@@ -19,7 +19,7 @@ struct RichTextBox : Control {
 	double twinkle_mtp = 0;
 	int w_cursor = 0, h_cursor = 0;
 
-	wstring str;
+	wstring value;
 	Vector2 tl_str_rel;
 	int edit_a = 0, edit_b = 0;
 	// 下面的 rel 是相对于 tl_str_rel 的。

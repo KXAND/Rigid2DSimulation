@@ -4,8 +4,8 @@
 #include "Connection.h"
 
 BodyScriptEditor::BodyScriptEditor() : RichTextBox(360, 400) {}
-void BodyScriptEditor::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.bodySelecting->temporaryScriptText; }
-void BodyScriptEditor::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->temporaryScriptText = str; }
+void BodyScriptEditor::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); value = simulationApp.bodySelecting->temporaryScriptText; }
+void BodyScriptEditor::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->temporaryScriptText = value; }
 
 ApplyBodyButton::ApplyBodyButton() : LocalizedButton(70, L"bt_body_ok") {}
 void ApplyBodyButton::OnClick(App& app) {
