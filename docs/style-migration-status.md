@@ -41,6 +41,7 @@
 - `Button` 的文本、颜色、资源键、几何局部变量和浮动面板指针已迁移为表达职责的 lower camel 名称。
 - `Label`、`RichLabel`、`CheckBox` 和 `HorizontalDragBar` 的文本、颜色、尺寸、资源键及相关局部变量已迁移为完整 lower camel 名称，并同步更新 UI 派生类。
 - `DropList`、`HorizontalSeparator`、`VerticalScrollBar` 与横纵控件列表的字段和局部变量已迁移为完整 lower camel 名称；滚动条和控件列表的直接面板调用点已同步。
+- `TextBox` 的编辑值、标签、选区、光标、边距、颜色及局部几何变量已迁移为完整 lower camel；`RichTextBox` 的独立字段保持待单独审计。
 - 已完成的提交保持文件改名、类型名改名、宏替换和纯排版互相分离。
 
 ## 3. 下一批
