@@ -40,7 +40,7 @@
 | `ball` | `Ball` | `Ball` | 待迁移 |
 | `parallelogram` | `Parallelogram` | `Parallelogram` | 待迁移 |
 | `trapezoid` | `Trapezoid` | `Trapezoid` | 待迁移 |
-| `regular_poly` | `RegularPolygon` | `RegularPoly` | 待迁移 |
+| `regular_poly` | `RegularPolygon` | `RegularPolygon` | 已迁移 |
 | `cross` | `Cross` | `Cross` | 待迁移 |
 | `n_bodies` | `GetBodyCount` | 返回 `bodies.size()` 的 lambda | 待迁移 |
 | `create_conn` | `CreateConnection` | `CreateConnection` | 待迁移 |

@@ -25,7 +25,7 @@ shared_ptr<Value> Box(Value const& w, Value const& h)
 	vs.push_back(std::make_shared<Value>(v));
 	return std::make_shared<Value>(vs);
 }
-std::shared_ptr<Value> RegularPoly(Value const& n, Value const& r)
+std::shared_ptr<Value> RegularPolygon(Value const& n, Value const& r)
 {
 	vector<std::shared_ptr<Value>> vs;
 	vector<std::shared_ptr<Value>> v;

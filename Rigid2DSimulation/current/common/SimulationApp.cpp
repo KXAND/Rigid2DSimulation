@@ -373,10 +373,10 @@ void SimulationApp::InitializeDefaultFunctions()
 
 	auto f6 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
-			if (in.size() >= 2) { return RegularPoly(*in[0], *in[1]); }
+			if (in.size() >= 2) { return RegularPolygon(*in[0], *in[1]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"RegularPolygon"] = std::make_shared<Value>(f6);
+	currentScope[L"RegularPolygongon"] = std::make_shared<Value>(f6);
 
 	auto f7 = [this](vector<std::shared_ptr<Value>> const& in)
 		{
