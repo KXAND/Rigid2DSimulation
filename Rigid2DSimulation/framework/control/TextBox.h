@@ -34,38 +34,38 @@ struct TextBox : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	DVector2 tl_box() const;
-	DRect vp_show_txt() const;
-	wstring left() const;
-	wstring mid() const;
-	wstring right() const;
-	int edit_begin() const;
-	int edit_end() const;
-	bool selected() const;
-	int max_x_cs_rel() const;
-	int x_cs_rel(App& app) const;
+	DVector2 GetBoxTopLeft() const;
+	DRect GetTextViewport() const;
+	wstring GetLeftText() const;
+	wstring GetSelectedText() const;
+	wstring GetRightText() const;
+	int GetEditBegin() const;
+	int GetEditEnd() const;
+	bool HasSelection() const;
+	int GetMaxCursorX() const;
+	int GetCursorX(App& app) const;
 
-	void select_a(App& app);
-	void select_b(App& app);
+	void SelectStart(App& app);
+	void SelectEnd(App& app);
 
-	void add_chs(App& app);
-	void hdl_left(App& app);
-	void hdl_right(App& app);
-	void hdl_back(App& app);
-	void hdl_delete(App& app);
-	void hdl_clip(App& app);
-	void hdl_copy(App& app);
-	void hdl_paste(App& app);
-	void hdl_all(App& app);
-	void hdl_key(App& app);
+	void AddCharacters(App& app);
+	void HandleLeft(App& app);
+	void HandleRight(App& app);
+	void HandleBackspace(App& app);
+	void HandleDelete(App& app);
+	void HandleCut(App& app);
+	void HandleCopy(App& app);
+	void HandlePaste(App& app);
+	void HandleSelectAll(App& app);
+	void HandleKey(App& app);
 
-	void clamp_cs_selecting(App& app);
-	void clamp_cs_not_selecting(App& app);
-	void clamp_cursor(App& app);
-	void clamp_str(App& app);
+	void ClampSelectingCursor(App& app);
+	void ClampCursor(App& app);
+	void ClampCursorPosition(App& app);
+	void ClampTextPosition(App& app);
 
-	void render_main(App& app);
-	void render_cursor(App& app);
+	void RenderMain(App& app);
+	void RenderCursor(App& app);
 	void render(App& app);
 
 	virtual void Sync(App& app) {}
