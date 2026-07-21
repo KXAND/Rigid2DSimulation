@@ -1,63 +1,63 @@
 #include "BracketGroup.h"
 
-wstring ToWString(BracketGroup const& b) {
-	wstring tmp;
-	if (b.type == 0) { tmp += ToWString(b.token); }
+wstring ToWString(BracketGroup const& group) {
+	wstring serializedText;
+	if (group.type == 0) { serializedText += ToWString(group.token); }
 	else {
-		tmp += std::to_wstring(b.type) + L" {";
-		for (auto const& bb : b.children) { tmp += ToWString(bb) + L", "; }
-		tmp += L"}";
+		serializedText += std::to_wstring(group.type) + L" {";
+		for (auto const& childGroup : group.children) { serializedText += ToWString(childGroup) + L", "; }
+		serializedText += L"}";
 	}
-	return tmp;
+	return serializedText;
 }
 
-vector<BracketGroup> AnalyzeBrackets(vector<Token> const& in) {
-	vector<BracketGroup> out;
-	int bra1 = 0, bra2 = 0, bra3 = 0;
-	BracketGroup b;
-	vector<Token> tmp;
-	bool zero = true;
-	for (auto const& tk : in) {
-		if (tk.type == L"(") {
-			++bra1;
-			if (!zero) { tmp.push_back(tk); }
-			zero = false;
+vector<BracketGroup> AnalyzeBrackets(vector<Token> const& tokens) {
+	vector<BracketGroup> groups;
+	int parenthesisDepth = 0, braceDepth = 0, bracketDepth = 0;
+	BracketGroup group;
+	vector<Token> pendingTokens;
+	bool isBalanced = true;
+	for (auto const& token : tokens) {
+		if (token.type == L"(") {
+			++parenthesisDepth;
+			if (!isBalanced) { pendingTokens.push_back(token); }
+			isBalanced = false;
 			continue;
 		}
-		else if (tk.type == L"{") {
-			++bra2;
-			if (!zero) { tmp.push_back(tk); }
-			zero = false;
+		else if (token.type == L"{") {
+			++braceDepth;
+			if (!isBalanced) { pendingTokens.push_back(token); }
+			isBalanced = false;
 			continue;
 		}
-		else if (tk.type == L"[") {
-			++bra3;
-			if (!zero) { tmp.push_back(tk); }
-			zero = false;
+		else if (token.type == L"[") {
+			++bracketDepth;
+			if (!isBalanced) { pendingTokens.push_back(token); }
+			isBalanced = false;
 			continue;
 		}
-		else if (tk.type == L")") { --bra1; b.type = 1; }
-		else if (tk.type == L"}") { --bra2; b.type = 2; }
-		else if (tk.type == L"]") { --bra3; b.type = 3; }
-		else { b.type = 0; }
+		else if (token.type == L")") { --parenthesisDepth; group.type = 1; }
+		else if (token.type == L"}") { --braceDepth; group.type = 2; }
+		else if (token.type == L"]") { --bracketDepth; group.type = 3; }
+		else { group.type = 0; }
 
-		zero = bra1 == 0 && bra2 == 0 && bra3 == 0;
-		if (zero) {
-			if (b.type) {
-				b.children = AnalyzeBrackets(tmp);
-				tmp.clear();
+		isBalanced = parenthesisDepth == 0 && braceDepth == 0 && bracketDepth == 0;
+		if (isBalanced) {
+			if (group.type) {
+				group.children = AnalyzeBrackets(pendingTokens);
+				pendingTokens.clear();
 			}
 			else {
-				b.token = tk;
+				group.token = token;
 			}
-			out.push_back(b);
-			b = {};
+			groups.push_back(group);
+			group = {};
 			// 其它不相关的地方需要是零值，后面为了省事有时会利用这一点。
 		}
 		else {
-			tmp.push_back(tk);
+			pendingTokens.push_back(token);
 		}
 	}
-	return zero ? out : vector<BracketGroup>();
+	return isBalanced ? groups : vector<BracketGroup>();
 }
 
