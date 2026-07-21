@@ -5,7 +5,7 @@
 #include "DrawBorderedRectangle.h"
 
 
-wstring nm_none(int id, App &app) { return L"Пе"; }
+wstring GetNoneItemName(int id, App &app) { return L"Пе"; }
 DropList::DropList(int w, DropListItemNameProvider const& itemNameProvider) : w(w), itemNameProvider(itemNameProvider) {
 	gap = { 10, 10 }; depth = 1000;
 	itemHeight = 25; h = 30;
