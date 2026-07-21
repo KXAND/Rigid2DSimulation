@@ -6,23 +6,23 @@ struct Value;
 typedef function<std::shared_ptr<Value>(vector<std::shared_ptr<Value>> const&)> Function;
 typedef vector<ScriptStatement> Program;
 struct Value {
-	// 其实还不是很确定 type 有没有用，这里会有些乱掉。
-	wstring type = L"null";
-	// null, num, str, fun, vec, user, dic
-	double number = 0;
-	wstring stringValue;
-	Function nativeFunction;
-	Program bodyStatements;
-	vector<wstring> arguments;
-	vector<std::shared_ptr<Value>> elements;
-	map<wstring, std::shared_ptr<Value>> dictionary;
+    // 其实还不是很确定 type 有没有用，这里会有些乱掉。
+    wstring type = L"null";
+    // null, num, str, fun, vec, user, dic
+    double number = 0;
+    wstring stringValue;
+    Function nativeFunction;
+    Program bodyStatements;
+    vector<wstring> arguments;
+    vector<std::shared_ptr<Value>> elements;
+    map<wstring, std::shared_ptr<Value>> dictionary;
 
-	Value() = default;
-	Value(double number);
-	Value(wstring const& text);
-	Value(Function const& nativeFunction);
-	Value(vector<std::shared_ptr<Value>> const& elements);
-	Value(Program const& statements, vector<wstring> const& arguments);
+    Value() = default;
+    Value(double number);
+    Value(wstring const& text);
+    Value(Function const& nativeFunction);
+    Value(vector<std::shared_ptr<Value>> const& elements);
+    Value(Program const& statements, vector<wstring> const& arguments);
 };
 
 struct Vector2;
