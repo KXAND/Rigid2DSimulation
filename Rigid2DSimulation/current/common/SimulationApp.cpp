@@ -449,7 +449,7 @@ void SimulationApp::InitializeDefaultFunctions()
 void SimulationApp::UpdateBasicState()
 {
 	title = GetLocalizedString(L"title");
-	if (currentScope.find(L"cur.debugString") != currentScope.end()) { debugString = currentScope[L"cur.debugString"]->str; }
+	if (currentScope.find(L"cur.debugString") != currentScope.end()) { debugString = currentScope[L"cur.debugString"]->stringValue; }
 	if (currentScope.find(L"Update") != currentScope.end()) { auto file = currentScope[L"Update"];  Execute(currentScope, file->procs); }
 
 	// 删除标记为删除的键

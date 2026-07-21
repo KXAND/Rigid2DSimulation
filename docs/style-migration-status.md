@@ -61,6 +61,7 @@
 - 解析器令牌、表达式和运行时值的数值字段已统一为 `number`，并同步更新配置、刚体和形状构建调用点。
 - 解析器令牌和表达式的全局作用域标志已迁移为 `isGlobal`，不改变作用域解析逻辑。
 - 解析器令牌和表达式的变量标识符字段已迁移为 `variableName`，避免与运行时 `Value` 类型混淆。
+- 解析器令牌、表达式和运行时值的字符串字段已迁移为 `stringValue`，并同步更新配置、刚体和调试字符串读取点。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。

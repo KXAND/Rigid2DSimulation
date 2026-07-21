@@ -61,7 +61,7 @@ void Connection::ReadCfg(Value const& cfg)
 	{
 		if (md->type == L"str")
 		{
-			auto s = md->str;
+			auto s = md->stringValue;
 			if (s == L"rope") { type = CON_ROPE; }
 			else if (s == L"link") { type = CON_LINK; }
 			else if (s == L"spring") { type = CON_SPRING; }

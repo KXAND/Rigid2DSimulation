@@ -4,7 +4,7 @@
 struct Token {
 	wstring type;
 	double number = 0;
-	wstring str;
+	wstring stringValue;
 	wstring variableName;
 	bool isGlobal = false;
 

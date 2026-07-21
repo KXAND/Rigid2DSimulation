@@ -20,7 +20,7 @@ Creator::Creator(Value const& v) : Creator()
 	{
 		if (md->type == L"str")
 		{
-			auto s = md->str;
+			auto s = md->stringValue;
 			if (s == L"box") { mode = CREATE_BOX; }
 			else if (s == L"ball") { mode = CREATE_BALL; }
 			else if (s == L"plate") { mode = CREATE_PLATE; }

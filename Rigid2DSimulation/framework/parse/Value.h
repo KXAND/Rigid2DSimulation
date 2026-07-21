@@ -10,7 +10,7 @@ struct Value {
 	wstring type = L"null";
 	// null, num, str, fun, vec, user, dic
 	double number = 0;
-	wstring str;
+	wstring stringValue;
 	Function fun;
 	Program procs;
 	vector<wstring> pars;
@@ -19,7 +19,7 @@ struct Value {
 
 	Value() = default;
 	Value(double number);
-	Value(wstring const& str);
+	Value(wstring const& text);
 	Value(Function const& fun);
 	Value(vector<std::shared_ptr<Value>> const& vec);
 	Value(Program const& ps, vector<wstring> const& pars);

@@ -7,7 +7,7 @@
 // 同时速度上也有很多改进空间。
 
 Value::Value(double number) : number(number) { type = L"num"; }
-Value::Value(wstring const& str) : str(str) { type = L"ToString"; }
+Value::Value(wstring const& text) : stringValue(text) { type = L"ToString"; }
 Value::Value(decltype(fun) const& user) : fun(user) { type = L"user"; }
 Value::Value(vector<std::shared_ptr<Value>> const& vec) : vec(vec) { type = L"vec"; }
 Value::Value(Program const& ps, vector<wstring>const& pars) :
@@ -52,7 +52,7 @@ bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpression const& ex
 	auto const& f = ex.fun;
 	// 保持按需 Evaluate，避免在确定运算符前提前计算所有参数。
 	auto numArg = [&](int index) { return Evaluate(gl, sc, ex.pars[index])->number; };
-	auto strArg = [&](int index) -> wstring const& { return Evaluate(gl, sc, ex.pars[index])->str; };
+	auto stringArg = [&](int index) -> wstring const& { return Evaluate(gl, sc, ex.pars[index])->stringValue; };
 
 	if (f == L"!") { out = Value(!numArg(0)); return true; }
 	if (f == L"++") { out = Value(numArg(0)); return true; }
@@ -76,7 +76,7 @@ bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpression const& ex
 	if (f == L"Random") { out = Value(GenerateRandomFloat(numArg(0), numArg(1))); return true; }
 	if (f == L"RandomInt") { out = Value(GenerateRandomInt(numArg(0), numArg(1))); return true; }
 	if (f == L"ToString") { out = Value(FormatFixed2(numArg(0))); return true; }
-	if (f == L".") { out = Value(strArg(0) + strArg(1)); return true; }
+	if (f == L".") { out = Value(stringArg(0) + stringArg(1)); return true; }
 	return false;
 }
 
@@ -130,11 +130,11 @@ std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpression con
 			*getLocalizedString = {};
 			getLocalizedString->type = L"dic";
 		}
-		if (getLocalizedString->dic.find(ind->str) == getLocalizedString->dic.end())
+		if (getLocalizedString->dic.find(ind->stringValue) == getLocalizedString->dic.end())
 		{
-			getLocalizedString->dic[ind->str] = std::make_shared<Value>();
+			getLocalizedString->dic[ind->stringValue] = std::make_shared<Value>();
 		}
-		return getLocalizedString->dic[ind->str];
+		return getLocalizedString->dic[ind->stringValue];
 	}
 
 	return std::make_shared<Value>();
@@ -148,7 +148,7 @@ std::shared_ptr<Value> Evaluate(Scope& gl, Scope& sc, ScriptExpression const& ex
 		return FindVariable(gl, sc, ex.variableName, ex.isGlobal);
 	}
 	else if (ex.type == L"num") { return std::make_shared<Value>(ex.number); }
-	else if (ex.type == L"ToString") { return std::make_shared<Value>(ex.str); }
+	else if (ex.type == L"ToString") { return std::make_shared<Value>(ex.stringValue); }
 	else if (ex.type == L"vec")
 	{
 		vector<std::shared_ptr<Value>> tmp;

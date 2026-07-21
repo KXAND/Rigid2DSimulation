@@ -11,7 +11,7 @@ struct ScriptExpression {
 
 	bool isGlobal = false;
 	double number = 0;
-	wstring str;
+	wstring stringValue;
 	wstring variableName;
 	wstring fun;
 	vector<ScriptExpression> pars;
