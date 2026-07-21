@@ -1,6 +1,6 @@
 #pragma once
 #include "Utils.h"
-#include "script_statement.h"
+#include "ScriptStatement.h"
 
 struct Var;
 typedef function<std::shared_ptr<Var>(vector<std::shared_ptr<Var>> const&)> Function;

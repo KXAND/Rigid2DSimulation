@@ -1,6 +1,6 @@
 #include "fpn_cmd.h"
 #include "simulation_app.h"
-#include "var.h"
+#include "Value.h"
 
 RTbCmd::RTbCmd() : RichTextbox(560, 500) {}
 void RTbCmd::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.temporaryScriptText; }

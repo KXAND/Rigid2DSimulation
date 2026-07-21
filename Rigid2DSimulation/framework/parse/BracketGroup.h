@@ -1,5 +1,5 @@
 #pragma once
-#include "token.h"
+#include "Token.h"
 
 struct BracketGroup {
 	int typ = 0;

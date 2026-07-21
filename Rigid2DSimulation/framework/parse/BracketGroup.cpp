@@ -1,4 +1,4 @@
-#include "bracket_group.h"
+#include "BracketGroup.h"
 
 wstring ToWString(BracketGroup const& b) {
 	wstring tmp;

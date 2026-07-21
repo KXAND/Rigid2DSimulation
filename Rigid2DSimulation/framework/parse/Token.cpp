@@ -1,4 +1,4 @@
-#include "token.h"
+#include "Token.h"
 
 token::token(wstring const& typ) : typ(typ) {}
 token::token(double num) : num(num) { typ = L"num"; }

@@ -1,6 +1,6 @@
 #pragma once
 #include "ValuePtr.h"
-#include "bracket_group.h"
+#include "BracketGroup.h"
 
 // 这里空间可能占的太大了，运行时多态可以解决。但是懒得麻烦了。
 struct ScriptExpr {

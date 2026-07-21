@@ -1,5 +1,5 @@
 #pragma once
-#include "var.h"
+#include "Value.h"
 
 inline std::shared_ptr<Var> FindConfigValue(Var const& cfg, wchar_t const* key)
 {

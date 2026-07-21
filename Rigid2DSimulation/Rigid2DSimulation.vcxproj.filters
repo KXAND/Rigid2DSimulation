@@ -70,19 +70,19 @@
     <ClCompile Include="framework\app\WaveOutput.cpp">
       <Filter>framework\app</Filter>
     </ClCompile>
-    <ClCompile Include="framework\parse\script_expr.cpp">
+    <ClCompile Include="framework\parse\ScriptExpression.cpp">
       <Filter>framework\parse</Filter>
     </ClCompile>
-    <ClCompile Include="framework\parse\bracket_group.cpp">
+    <ClCompile Include="framework\parse\BracketGroup.cpp">
       <Filter>framework\parse</Filter>
     </ClCompile>
-    <ClCompile Include="framework\parse\script_statement.cpp">
+    <ClCompile Include="framework\parse\ScriptStatement.cpp">
       <Filter>framework\parse</Filter>
     </ClCompile>
-    <ClCompile Include="framework\parse\token.cpp">
+    <ClCompile Include="framework\parse\Token.cpp">
       <Filter>framework\parse</Filter>
     </ClCompile>
-    <ClCompile Include="framework\parse\var.cpp">
+    <ClCompile Include="framework\parse\Value.cpp">
       <Filter>framework\parse</Filter>
     </ClCompile>
     <ClCompile Include="framework\draw\draw_str.cpp">
@@ -252,19 +252,19 @@
     <ClInclude Include="framework\app\WaveOutput.h">
       <Filter>framework\app</Filter>
     </ClInclude>
-    <ClInclude Include="framework\parse\bracket_group.h">
+    <ClInclude Include="framework\parse\BracketGroup.h">
       <Filter>framework\parse</Filter>
     </ClInclude>
-    <ClInclude Include="framework\parse\script_expr.h">
+    <ClInclude Include="framework\parse\ScriptExpression.h">
       <Filter>framework\parse</Filter>
     </ClInclude>
-    <ClInclude Include="framework\parse\script_statement.h">
+    <ClInclude Include="framework\parse\ScriptStatement.h">
       <Filter>framework\parse</Filter>
     </ClInclude>
-    <ClInclude Include="framework\parse\token.h">
+    <ClInclude Include="framework\parse\Token.h">
       <Filter>framework\parse</Filter>
     </ClInclude>
-    <ClInclude Include="framework\parse\var.h">
+    <ClInclude Include="framework\parse\Value.h">
       <Filter>framework\parse</Filter>
     </ClInclude>
     <ClInclude Include="framework\draw\draw_tile.h">

@@ -1,5 +1,5 @@
 #pragma once
-#include "script_expr.h"
+#include "ScriptExpression.h"
 
 struct ScriptStatement {
 	wstring typ = L"empty";

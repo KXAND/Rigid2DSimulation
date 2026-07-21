@@ -1,5 +1,5 @@
-#include "script_statement.h"
-#include "bracket_group.h"
+#include "ScriptStatement.h"
+#include "BracketGroup.h"
 
 ScriptStatement::ScriptStatement(wstring const& typ) : typ(typ) {}
 wstring ToWString(ScriptStatement const& p) {

@@ -140,7 +140,7 @@
     <ClCompile Include="framework\app\WaveOutput.cpp" />
     <ClCompile Include="current\common\background.cpp" />
     <ClCompile Include="current\rigid\body.cpp" />
-    <ClCompile Include="framework\parse\bracket_group.cpp" />
+    <ClCompile Include="framework\parse\BracketGroup.cpp" />
     <ClCompile Include="framework\control\button.cpp" />
     <ClCompile Include="framework\control\checkbox.cpp" />
     <ClCompile Include="framework\media\AudioClip.cpp" />
@@ -162,7 +162,7 @@
     <ClCompile Include="framework\draw\draw_tri.cpp" />
     <ClCompile Include="framework\control\droplist.cpp" />
     <ClCompile Include="framework\basic\DVector2.cpp" />
-    <ClCompile Include="framework\parse\script_expr.cpp" />
+    <ClCompile Include="framework\parse\ScriptExpression.cpp" />
     <ClCompile Include="framework\control\float_panel.cpp" />
     <ClCompile Include="framework\media\Font.cpp" />
     <ClCompile Include="current\ui\fpn_about.cpp" />
@@ -180,7 +180,7 @@
     <ClCompile Include="current\common\scene_parameter.cpp" />
     <ClCompile Include="current\ui\pn_bottom.cpp" />
     <ClCompile Include="current\ui\pn_menu.cpp" />
-    <ClCompile Include="framework\parse\script_statement.cpp" />
+    <ClCompile Include="framework\parse\ScriptStatement.cpp" />
     <ClCompile Include="framework\control\rich_label.cpp" />
     <ClCompile Include="framework\control\rich_textbox.cpp" />
     <ClCompile Include="framework\control\scrollbar.cpp" />
@@ -188,10 +188,10 @@
     <ClCompile Include="current\rigid\shape.cpp" />
     <ClCompile Include="framework\control\textbox.cpp" />
     <ClCompile Include="framework\media\Tile.cpp" />
-    <ClCompile Include="framework\parse\token.cpp" />
+    <ClCompile Include="framework\parse\Token.cpp" />
     <ClCompile Include="current\ui\ui.cpp" />
     <ClCompile Include="framework\basic\Utils.cpp" />
-    <ClCompile Include="framework\parse\var.cpp" />
+    <ClCompile Include="framework\parse\Value.cpp" />
     <ClCompile Include="framework\basic\Vector2.cpp" />
     <ClCompile Include="framework\basic\Vector3.cpp" />
   </ItemGroup>
@@ -202,7 +202,7 @@
     <ClInclude Include="framework\app\WaveOutput.h" />
     <ClInclude Include="current\common\background.h" />
     <ClInclude Include="current\rigid\body.h" />
-    <ClInclude Include="framework\parse\bracket_group.h" />
+    <ClInclude Include="framework\parse\BracketGroup.h" />
     <ClInclude Include="framework\control\button.h" />
     <ClInclude Include="framework\control\checkbox.h" />
     <ClInclude Include="framework\media\AudioClip.h" />
@@ -225,7 +225,7 @@
     <ClInclude Include="framework\draw\draw_tri.h" />
     <ClInclude Include="framework\control\droplist.h" />
     <ClInclude Include="framework\basic\DVector2.h" />
-    <ClInclude Include="framework\parse\script_expr.h" />
+    <ClInclude Include="framework\parse\ScriptExpression.h" />
     <ClInclude Include="framework\control\float_panel.h" />
     <ClInclude Include="framework\media\Font.h" />
     <ClInclude Include="current\ui\fpn_about.h" />
@@ -242,7 +242,7 @@
     <ClInclude Include="current\common\scene_parameter.h" />
     <ClInclude Include="current\ui\pn_bottom.h" />
     <ClInclude Include="current\ui\pn_menu.h" />
-    <ClInclude Include="framework\parse\script_statement.h" />
+    <ClInclude Include="framework\parse\ScriptStatement.h" />
     <ClInclude Include="framework\control\rich_label.h" />
     <ClInclude Include="framework\control\rich_textbox.h" />
     <ClInclude Include="framework\control\scrollbar.h" />
@@ -250,10 +250,10 @@
     <ClInclude Include="current\rigid\shape.h" />
     <ClInclude Include="framework\control\textbox.h" />
     <ClInclude Include="framework\media\Tile.h" />
-    <ClInclude Include="framework\parse\token.h" />
+    <ClInclude Include="framework\parse\Token.h" />
     <ClInclude Include="current\ui\ui.h" />
     <ClInclude Include="framework\basic\Utils.h" />
-    <ClInclude Include="framework\parse\var.h" />
+    <ClInclude Include="framework\parse\Value.h" />
     <ClInclude Include="framework\basic\Vector2.h" />
     <ClInclude Include="framework\basic\Vector3.h" />
     <ClInclude Include="framework\basic\ValuePtr.h" />

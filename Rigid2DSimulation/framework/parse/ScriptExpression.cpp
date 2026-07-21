@@ -1,5 +1,5 @@
-#include "script_expr.h"
-#include "bracket_group.h"
+#include "ScriptExpression.h"
+#include "BracketGroup.h"
 
 ScriptExpr::ScriptExpr(wstring const& typ) : typ(typ) {}
 ScriptExpr::ScriptExpr(double num) : num(num) { typ = L"num"; }

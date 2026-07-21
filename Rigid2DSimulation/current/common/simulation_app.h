@@ -1,6 +1,6 @@
 #pragma once
 #include "App.h"
-#include "var.h"
+#include "Value.h"
 
 int constexpr MODE_DRAG = 0;
 int constexpr MODE_SEL = 1;

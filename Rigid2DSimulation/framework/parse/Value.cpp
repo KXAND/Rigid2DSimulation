@@ -1,7 +1,7 @@
-#include "var.h"
-#include "bracket_group.h"
+#include "Value.h"
+#include "BracketGroup.h"
 #include "Vector3.h"
-#include "script_statement.h"
+#include "ScriptStatement.h"
 
 // 每次都能找到新 bug，很可能还有一些 bug。
 // 同时速度上也有很多改进空间。
