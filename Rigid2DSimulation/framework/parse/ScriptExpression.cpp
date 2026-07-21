@@ -54,67 +54,67 @@ bool IsBinaryOperator(Token const& token) {
 	return !iswalnum(token.type[0]) && !IsUnaryOperator(token);
 }
 
-bool ParseNegation(vector<PreExpression> const& in, ScriptExpression& out) {
-	for (int i = (0), iEnd = int(in.size()); i < iEnd; ++i) {
-		auto const& pre = in[i];
-		if (!pre.isToken) { continue; }
-		auto const& s = pre.token.type;
+bool ParseNegation(vector<PreExpression> const& preExpressions, ScriptExpression& result) {
+	for (int operatorIndex = (0), expressionCount = int(preExpressions.size()); operatorIndex < expressionCount; ++operatorIndex) {
+		auto const& currentItem = preExpressions[operatorIndex];
+		if (!currentItem.isToken) { continue; }
+		auto const& operatorType = currentItem.token.type;
 
-		if ((s == L"+" || s == L"-") && (i == 0 || in[i - 1].isToken)) {
-			bool bad = i == in.size() - 1 || in[i + 1].isToken;
-			if (bad) {
-				out = ScriptExpression(L"error");
+		if ((operatorType == L"+" || operatorType == L"-") && (operatorIndex == 0 || preExpressions[operatorIndex - 1].isToken)) {
+			bool isInvalid = operatorIndex == preExpressions.size() - 1 || preExpressions[operatorIndex + 1].isToken;
+			if (isInvalid) {
+				result = ScriptExpression(L"error");
 				return false;
 			}
 
-			auto tmp = vector<PreExpression>(in.begin(), in.begin() + i);
-			tmp.push_back(ScriptExpression(s + s, { in[i + 1].expression }));
-			for (int j = (i + 2), jEnd = int(in.size()); j < jEnd; ++j) { tmp.push_back(in[j]); }
-			out = ParsePreExpression(tmp);
+			auto reducedExpressions = vector<PreExpression>(preExpressions.begin(), preExpressions.begin() + operatorIndex);
+			reducedExpressions.push_back(ScriptExpression(operatorType + operatorType, { preExpressions[operatorIndex + 1].expression }));
+			for (int copyIndex = (operatorIndex + 2), tailCount = int(preExpressions.size()); copyIndex < tailCount; ++copyIndex) { reducedExpressions.push_back(preExpressions[copyIndex]); }
+			result = ParsePreExpression(reducedExpressions);
 			return true;
 		}
 	}
 	return false;
 }
-bool ParseBinary(vector<PreExpression> const& in, ScriptExpression& out, vector<wstring> const& mark) {
-	for (int i = (0), iEnd = int(in.size()); i < iEnd; ++i) {
-		auto const& pre = in[i];
-		if (!pre.isToken) { continue; }
-		auto const& s = pre.token.type;
+bool ParseBinary(vector<PreExpression> const& preExpressions, ScriptExpression& result, vector<wstring> const& operatorTypes) {
+	for (int operatorIndex = (0), expressionCount = int(preExpressions.size()); operatorIndex < expressionCount; ++operatorIndex) {
+		auto const& currentItem = preExpressions[operatorIndex];
+		if (!currentItem.isToken) { continue; }
+		auto const& operatorType = currentItem.token.type;
 
-		if (find(mark.begin(), mark.end(), s) != mark.end()) {
-			bool bad =
-				i == 0 || i == in.size() - 1 ||
-				in[i - 1].isToken || in[i + 1].isToken;
-			if (bad) {
-				out = ScriptExpression(L"error");
+		if (find(operatorTypes.begin(), operatorTypes.end(), operatorType) != operatorTypes.end()) {
+			bool isInvalid =
+				operatorIndex == 0 || operatorIndex == preExpressions.size() - 1 ||
+				preExpressions[operatorIndex - 1].isToken || preExpressions[operatorIndex + 1].isToken;
+			if (isInvalid) {
+				result = ScriptExpression(L"error");
 				return false;
 			}
 
-			auto tmp = vector<PreExpression>(in.begin(), in.begin() + i - 1);
-			tmp.push_back(ScriptExpression(s, { in[i - 1].expression, in[i + 1].expression }));
-			for (int j = (i + 2), jEnd = int(in.size()); j < jEnd; ++j) { tmp.push_back(in[j]); }
-			out = ParsePreExpression(tmp);
+			auto reducedExpressions = vector<PreExpression>(preExpressions.begin(), preExpressions.begin() + operatorIndex - 1);
+			reducedExpressions.push_back(ScriptExpression(operatorType, { preExpressions[operatorIndex - 1].expression, preExpressions[operatorIndex + 1].expression }));
+			for (int copyIndex = (operatorIndex + 2), tailCount = int(preExpressions.size()); copyIndex < tailCount; ++copyIndex) { reducedExpressions.push_back(preExpressions[copyIndex]); }
+			result = ParsePreExpression(reducedExpressions);
 			return true;
 		}
 	}
 	return false;
 }
-ScriptExpression ParsePreExpression(vector<PreExpression> const& in) {
-	if (in.empty()) { return ScriptExpression(L"error"); }
-	if (in.size() == 1) {
-		if (in[0].isToken) { return ScriptExpression(L"error"); }
-		return in[0].expression;
+ScriptExpression ParsePreExpression(vector<PreExpression> const& preExpressions) {
+	if (preExpressions.empty()) { return ScriptExpression(L"error"); }
+	if (preExpressions.size() == 1) {
+		if (preExpressions[0].isToken) { return ScriptExpression(L"error"); }
+		return preExpressions[0].expression;
 	}
 
-	ScriptExpression out;
-	if (ParseNegation(in, out)) { return out; }
-	if (ParseBinary(in, out, { L"*", L"/" })) { return out; }
-	if (ParseBinary(in, out, { L"+", L"-" })) { return out; }
-	if (ParseBinary(in, out,
-		{ L"==", L"!=", L"<=", L">=", L"<", L">" })) { return out; }
-	if (ParseBinary(in, out, { L"&&", L"||" })) { return out; }
-	if (ParseBinary(in, out, { L"." })) { return out; }
+	ScriptExpression result;
+	if (ParseNegation(preExpressions, result)) { return result; }
+	if (ParseBinary(preExpressions, result, { L"*", L"/" })) { return result; }
+	if (ParseBinary(preExpressions, result, { L"+", L"-" })) { return result; }
+	if (ParseBinary(preExpressions, result,
+		{ L"==", L"!=", L"<=", L">=", L"<", L">" })) { return result; }
+	if (ParseBinary(preExpressions, result, { L"&&", L"||" })) { return result; }
+	if (ParseBinary(preExpressions, result, { L"." })) { return result; }
 	return ScriptExpression(L"error");
 }
 
