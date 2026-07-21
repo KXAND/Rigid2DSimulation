@@ -24,6 +24,7 @@
 - `framework/basic`、`framework/app`、`framework/media`、`framework/parse` 与核心模拟类型已完成第一批类型名迁移。
 - 控件与界面类型已完成 `Checkbox`、`RichTextbox`、`Textbox`、`ScrollbarY`、`DragbarX`、`Droplist`、`ScriptExpr` 和 `UI` 到完整 PascalCase 名称的迁移；`SimulationApp` 的界面成员已命名为 `userInterface`。
 - 本地化控件、横纵向控件容器、显示浮动面板按钮、下拉项名称回调和分隔线类型已迁移为表达职责的完整名称。
+- 全局、刚体、连接、命令、参数、语言、关于、菜单和底部面板类型已迁移为与其职责和文件名一致的完整名称。
 - 已完成的提交保持文件改名、类型名改名、宏替换和纯排版互相分离。
 
 ## 3. 下一批
