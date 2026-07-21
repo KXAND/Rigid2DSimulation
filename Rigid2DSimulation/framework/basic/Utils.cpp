@@ -1,164 +1,236 @@
 #include "Utils.h"
 
-// 有个大问题是代码的格式与排版到底是怎样的。
-// 又想要不死板教条，又想要稳定性，又想要读起来好看，很纠结。
-// 后面有些地方的逻辑实在是太乱了，点名 parse 那一块的。
+// 有个大问题是代码的格式与排版到底是怎样的。0__
+// 有个大问题是代码的格式与排版到底是怎样的。1__
+// 有个大问题是代码的格式与排版到底是怎样的。2__
 
-int GenerateRandomInt(int a, int b)
+int GenerateRandomInt(int low, int high)
 {
-	static std::random_device rd;
-	static std::mt19937 generator(rd());
-	std::uniform_int_distribution<int> d(a, b);
-	return d(generator);
-}
-int GenerateRandomInt(int sz)
-{
-	return GenerateRandomInt(0, sz - 1);
+    static std::random_device randomDevice;
+    static std::mt19937 generator(randomDevice());
+    std::uniform_int_distribution<int> distribution(low, high);
+    return distribution(generator);
 }
 
-double GenerateRandomFloat(double lowerBound, double upperBound)
+int GenerateRandomInt(int size)
 {
-	static std::random_device seed;
-	static std::mt19937 generator(seed());
-	std::uniform_real_distribution<double> d(lowerBound, upperBound);
-	return d(generator);
-}
-double GenerateRandomFloat(double upperBound)
-{
-	return GenerateRandomFloat(0, upperBound);
+    return GenerateRandomInt(0, size - 1);
 }
 
-double GenerateNormalRandomFloat(double mean, double stddev)
+double GenerateRandomFloat(double low, double high)
 {
-	static std::random_device rd;
-	static std::mt19937 generator(rd());
-	std::normal_distribution<double> d(mean, stddev);
-	return d(generator);
+    static std::random_device seed;
+    static std::mt19937 generator(seed());
+    std::uniform_real_distribution<double> distribution(low, high);
+    return distribution(generator);
 }
 
-// 用 sprintf_s 可以保证安全，但不知道 1024 的空间是否足够。
-wstring FormatFixed2(double d)
+double GenerateRandomFloat(double high)
 {
-	static wchar_t tmp[1024];
-	swprintf_s(tmp, L"%.2lf", d); return tmp;
+    return GenerateRandomFloat(0, high);
 }
-// 下面的规范应该参考 MSDN。
-wstring ToWString(string const& s)
+
+double GenerateNormalRandomFloat(double mean, double standardDeviation)
 {
-	vector<wchar_t> tmp(s.size() + 1);
-	swprintf_s(tmp.data(), tmp.size(), L"%S", s.c_str());
-	return tmp.data();
+    static std::random_device randomDevice;
+    static std::mt19937 generator(randomDevice());
+    std::normal_distribution<double> distribution(mean, standardDeviation);
+    return distribution(generator);
 }
-string ToString(wstring const& s)
+
+// 有个大问题是代码的格式与排版到底是怎样的。3__
+wstring FormatFixed2(double value)
 {
-	// 我忘了有没有核实过一定是这个大小了。
-	vector<char> tmp(2 * s.size() + 2);
-	sprintf_s(tmp.data(), tmp.size(), "%S", s.c_str());
-	return tmp.data();
+    static wchar_t buffer[1024];
+    swprintf_s(buffer, L"%.2lf", value);
+    return buffer;
 }
-double ParseDouble(string const& s) { return std::atof(s.c_str()); }
-double ParseDouble(wstring const& s) { return ParseDouble(ToString(s)); }
-// 必须用 _wfopen，否则有编码问题。
+
+// 有个大问题是代码的格式与排版到底是怎样的。4__
+wstring ToWString(string const& text)
+{
+    vector<wchar_t> buffer(text.size() + 1);
+    swprintf_s(buffer.data(), buffer.size(), L"%S", text.c_str());
+    return buffer.data();
+}
+
+string ToString(wstring const& text)
+{
+    // 有个大问题是代码的格式与排版到底是怎样的。5__
+    vector<char> buffer(2 * text.size() + 2);
+    sprintf_s(buffer.data(), buffer.size(), "%S", text.c_str());
+    return buffer.data();
+}
+
+double ParseDouble(string const& text)
+{
+    return std::atof(text.c_str());
+}
+
+double ParseDouble(wstring const& text)
+{
+    return ParseDouble(ToString(text));
+}
+
+// 有个大问题是代码的格式与排版到底是怎样的。6__
 FILE* OpenFile(wstring const& fileName, wstring const& mode)
 {
-	FILE* f = NULL;
-	_wfopen_s(&f, fileName.c_str(), mode.c_str()); return f;
+    FILE* file = NULL;
+    _wfopen_s(&file, fileName.c_str(), mode.c_str());
+    return file;
 }
 
-void HideConsole() { ShowWindow(GetConsoleWindow(), SW_HIDE); }
-void ShowConsole() { ShowWindow(GetConsoleWindow(), SW_SHOW); }
+void HideConsole()
+{
+    ShowWindow(GetConsoleWindow(), SW_HIDE);
+}
+
+void ShowConsole()
+{
+    ShowWindow(GetConsoleWindow(), SW_SHOW);
+}
+
 void HideConsoleCursor()
 {
-	HANDLE hdl = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_CURSOR_INFO info;
+    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
 
-	GetConsoleCursorInfo(hdl, &info);
-	info.bVisible = false;
-	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+    GetConsoleCursorInfo(consoleHandle, &cursorInfo);
+    cursorInfo.bVisible = false;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
 }
-void PrintConsole(wstring const& s, bool newline, int width)
+
+void PrintConsole(wstring const& text, bool newline, int width)
 {
-	HideConsoleCursor();
+    HideConsoleCursor();
 
-	auto hdl = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_SCREEN_BUFFER_INFO info;
-	GetConsoleScreenBufferInfo(hdl, &info);
-	SetConsoleCursorPosition(hdl, { 0, info.dwCursorPosition.Y });
-	wprintf(s.c_str());
+    auto consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO screenBufferInfo;
+    GetConsoleScreenBufferInfo(consoleHandle, &screenBufferInfo);
+    SetConsoleCursorPosition(consoleHandle, { 0, screenBufferInfo.dwCursorPosition.Y });
+    wprintf(text.c_str());
 
-	GetConsoleScreenBufferInfo(hdl, &info);
-	for (int i = (info.dwCursorPosition.X), iEnd = int(width); i < iEnd; ++i) { printf(" "); }
-	if (newline) { printf("\n"); }
+    GetConsoleScreenBufferInfo(consoleHandle, &screenBufferInfo);
+    int endX = int(width);
+    for (int cursorX = screenBufferInfo.dwCursorPosition.X; cursorX < endX; ++cursorX)
+    {
+        printf(" ");
+    }
+    if (newline)
+    {
+        printf("\n");
+    }
 }
 
-void SetLocale() { setlocale(LC_ALL, "zh-CN"); }
-// 我不懂下面的 Lock 和 Unlock 是什么意思。
+void SetLocale()
+{
+    setlocale(LC_ALL, "zh-CN");
+}
+
+// 有个大问题是代码的格式与排版到底是怎样的。7__
 wstring GetClipboard()
 {
-	wstring AudioClip;
-	if (OpenClipboard(NULL))
-	{
-		HANDLE hdl = GetClipboardData(CF_UNICODETEXT);
-		wchar_t* p = (wchar_t*) GlobalLock(hdl);
+    wstring clipboardText;
+    if (OpenClipboard(NULL))
+    {
+        HANDLE clipboardHandle = GetClipboardData(CF_UNICODETEXT);
+        wchar_t* clipboardData = (wchar_t*)GlobalLock(clipboardHandle);
 
-		if (p) { AudioClip = p; }
-		GlobalUnlock(hdl);
-		CloseClipboard();
-	} return AudioClip;
-}
-// 从 MSDN 的例子改的，不太懂，可能有错。
-void SetClipboard(wstring const& s)
-{
-	if (OpenClipboard(NULL))
-	{
-		int sz = (s.size() + 1) * sizeof(wchar_t);
-		HGLOBAL hdl = GlobalAlloc(GMEM_MOVEABLE, sz);
-		if (!hdl) { return; }
-		wchar_t* p = (wchar_t*) GlobalLock(hdl);
-		if (!p) { return; }
-
-		memcpy(p, s.c_str(), sz);
-		GlobalUnlock(hdl);
-		SetClipboardData(CF_UNICODETEXT, hdl);
-		CloseClipboard();
-	}
+        if (clipboardData)
+        {
+            clipboardText = clipboardData;
+        }
+        GlobalUnlock(clipboardHandle);
+        CloseClipboard();
+    }
+    return clipboardText;
 }
 
-double GetValue(double x, vector<double> const& ys)
+// 有个大问题是代码的格式与排版到底是怎样的。8__
+void SetClipboard(wstring const& text)
 {
-	x = Clamp(x * (ys.size() - 1), 0.0, ys.size() - 1.0);
-	int x0 = floor(x), x1 = ceil(x);
-	if (x0 == x1) { return ys[x0]; }
-	return ys[x0] * (x1 - x) + ys[x1] * (x - x0);
-}
-double FetchNumber(int& i, wstring const& s)
-{
-	wstring tmp;
-	while (i != s.size())
-	{
-		auto c = s[i++];
-		if (c != L'(' && c != L')')
-		{
-			if (c == L',') { return ParseDouble(tmp); }
-			tmp += c;
-		}
-	} return ParseDouble(tmp);
-}
-wstring FilterCharacters(wstring const& chs, bool ignoreNewline)
-{
-	wstringstream s; bool cr = false;
-	for (auto c : chs) if (c == L'\r') { cr = true; }
-	for (auto c : chs)
-	{
-		if (iswprint(c)) { s << c; }
-		else
-		{
-			bool newline =
-				c == L'\n' && !cr ||
-				c == L'\r' && cr;
-			if (newline && !ignoreNewline) { s << L'\n'; }
-			if (c == L'\t') { s << L"    "; }
-		}
-	} return s.str();
+    if (OpenClipboard(NULL))
+    {
+        int byteSize = (text.size() + 1) * sizeof(wchar_t);
+        HGLOBAL clipboardHandle = GlobalAlloc(GMEM_MOVEABLE, byteSize);
+        if (!clipboardHandle)
+        {
+            return;
+        }
+        wchar_t* clipboardData = (wchar_t*)GlobalLock(clipboardHandle);
+        if (!clipboardData)
+        {
+            return;
+        }
+
+        memcpy(clipboardData, text.c_str(), byteSize);
+        GlobalUnlock(clipboardHandle);
+        SetClipboardData(CF_UNICODETEXT, clipboardHandle);
+        CloseClipboard();
+    }
 }
 
+double GetValue(double x, vector<double> const& values)
+{
+    x = Clamp(x * (values.size() - 1), 0.0, values.size() - 1.0);
+    int x0 = floor(x);
+    int x1 = ceil(x);
+    if (x0 == x1)
+    {
+        return values[x0];
+    }
+    return values[x0] * (x1 - x) + values[x1] * (x - x0);
+}
+
+double FetchNumber(int& index, wstring const& text)
+{
+    wstring numberText;
+    while (index != text.size())
+    {
+        auto character = text[index++];
+        if (character != L'(' && character != L')')
+        {
+            if (character == L',')
+            {
+                return ParseDouble(numberText);
+            }
+            numberText += character;
+        }
+    }
+    return ParseDouble(numberText);
+}
+
+wstring FilterCharacters(wstring const& text, bool ignoreNewline)
+{
+    wstringstream filteredText;
+    bool hasCarriageReturn = false;
+    for (auto character : text)
+    {
+        if (character == L'\r')
+        {
+            hasCarriageReturn = true;
+        }
+    }
+    for (auto character : text)
+    {
+        if (iswprint(character))
+        {
+            filteredText << character;
+        }
+        else
+        {
+            bool newline =
+                character == L'\n' && !hasCarriageReturn ||
+                character == L'\r' && hasCarriageReturn;
+            if (newline && !ignoreNewline)
+            {
+                filteredText << L'\n';
+            }
+            if (character == L'\t')
+            {
+                filteredText << L"    ";
+            }
+        }
+    }
+    return filteredText.str();
+}
