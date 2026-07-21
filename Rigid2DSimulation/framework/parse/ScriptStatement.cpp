@@ -36,12 +36,12 @@ ScriptStatement ParseDefinition(vector<BracketGroup> const& in) {
 	// 不想让这里的函数和参数也牵扯到 global 里面去，感觉完全不必要。
 	if (in[1].tk.type != L"var" || in[1].tk.isGlobal) { return ScriptStatement(L"error"); }
 	ScriptStatement p(L"define");
-	p.def_fun = in[1].tk.Value;
+	p.def_fun = in[1].tk.variableName;
 	bool comma = true;
 
 	for (auto const& b : in[2].bras) {
 		if (comma) {
-			p.def_pars.push_back(b.tk.Value);
+			p.def_pars.push_back(b.tk.variableName);
 			if (b.tk.type != L"var" || b.tk.isGlobal) { return ScriptStatement(L"error"); }
 		}
 		else if (b.tk.type != L",") { return ScriptStatement(L"error"); }

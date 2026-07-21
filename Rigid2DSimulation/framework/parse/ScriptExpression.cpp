@@ -14,14 +14,14 @@ ScriptExpression ScriptExpression::CreateString(wstring const& text) {
 }
 ScriptExpression ScriptExpression::CreateVariable(wstring const& value, bool isGlobal) {
 	auto ex = ScriptExpression(L"var");
-	ex.Value = value;
+	ex.variableName = value;
 	ex.isGlobal = isGlobal;
 	return ex;
 }
 
 wstring ToWString(ScriptExpression const& ex) {
 	wstring tmp = L"[" + ex.type;
-	if (ex.type == L"var") { tmp += (ex.isGlobal ? L":&" : L":") + ex.Value; }
+	if (ex.type == L"var") { tmp += (ex.isGlobal ? L":&" : L":") + ex.variableName; }
 	else if (ex.type == L"num") { tmp += L":" + FormatFixed2(ex.number); }
 	else if (ex.type == L"str") { tmp += L":" + ex.str; }
 	else if (ex.type == L"access") {
@@ -120,7 +120,7 @@ ScriptExpression ParsePreExpression(vector<PreExpression> const& in) {
 
 ScriptExpression ParseCall(vector<BracketGroup> const& in) {
 	ScriptExpression ex(L"call");
-	ex.fun = in[0].tk.Value;
+	ex.fun = in[0].tk.variableName;
 	ex.isGlobal = in[0].tk.isGlobal;
 
 	vector<BracketGroup> tmp;
@@ -181,7 +181,7 @@ ScriptExpression ParseExpression(vector<BracketGroup> const& in) {
 	auto const& b = in[0];
 	if (in.size() == 1) {
 		if (b.type == 0) {
-			if (b.tk.type == L"var") { return ScriptExpression::CreateVariable(b.tk.Value, b.tk.isGlobal); }
+			if (b.tk.type == L"var") { return ScriptExpression::CreateVariable(b.tk.variableName, b.tk.isGlobal); }
 			else if (b.tk.type == L"str") { return ScriptExpression::CreateString(b.tk.str); }
 			else if (b.tk.type == L"num") { return ScriptExpression(b.tk.number); }
 			else if (b.tk.type == L"null") { return ScriptExpression(L"null"); }

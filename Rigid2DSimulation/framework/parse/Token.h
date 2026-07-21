@@ -5,7 +5,7 @@ struct Token {
 	wstring type;
 	double number = 0;
 	wstring str;
-	wstring Value;
+	wstring variableName;
 	bool isGlobal = false;
 
 	Token() = default;
