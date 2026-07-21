@@ -6,11 +6,11 @@ struct CheckBox : Control {
 	int h = 0;
 	DVector2 gap;
 	double depth = 0;
-	wstring txt;
-	int s_box = 0, s_box_in = 0;
-	Color c_txt, c_frame, innerColor, c_normal, c_invalid, hoveredColor;
+	wstring text;
+	int boxSize = 0, innerBoxSize = 0;
+	Color textColor, frameColor, innerColor, normalColor, invalidColor, hoveredColor;
 
-	int w_txt = 0;
+	int textWidth = 0;
 	bool checked = false;
 	bool enabled = true;
 	bool hovered = false;
@@ -29,7 +29,7 @@ struct CheckBox : Control {
 	void PreUpdate(App& app) override;
 };
 struct LocalizedCheckBox : CheckBox {
-	wstring id_txt;
+	wstring textId;
 	LocalizedCheckBox() = default;
 	LocalizedCheckBox(wstring const& id, bool big = false);
 	void Update(App& app) override;

@@ -7,55 +7,55 @@
 CheckBox::CheckBox(bool big) {
 	h = big ? 30 : 20;
 	gap = { 10, 10 }; depth = 1000;
-	s_box = 20; s_box_in = 10;
+	boxSize = 20; innerBoxSize = 10;
 
-	c_txt = { 255, 255, 255 };
-	c_frame = { 150, 150, 150 };
+	textColor = { 255, 255, 255 };
+	frameColor = { 150, 150, 150 };
 	innerColor = { 0, 255, 0 };
-	c_normal = { 80, 80, 80 };
-	c_invalid = { 0, 0, 0 };
+	normalColor = { 80, 80, 80 };
+	invalidColor = { 0, 0, 0 };
 	hoveredColor = { 20, 20, 255 };
 }
 // 这里会利用到空格的宽度刚好等于 gap.x。
 // 这里会利用到空格的宽度刚好等于 gap.x。
-int CheckBox::GetW() const { return s_box + gap.x + w_txt; }
+int CheckBox::GetW() const { return boxSize + gap.x + textWidth; }
 int CheckBox::GetH() const { return h + gap.y; }
 
-DVector2 CheckBox::GetBoxTopLeft() const { return tl + DVector2(w_txt, (h - s_box) / 2); }
+DVector2 CheckBox::GetBoxTopLeft() const { return tl + DVector2(textWidth, (h - boxSize) / 2); }
 void CheckBox::Render(App& app) {
-	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
-	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
+	DVector2 textTopLeft = tl + DVector2(0, (h - app.ft.h) / 2);
+	DrawString(app.scr, app.dscr, depth, text, textColor, app.ft, textTopLeft, 0, vp);
 
-	Color const& c =
-		!enabled ? c_invalid :
-		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
-	drawRectangleRaw(app.scr, GetBoxTopLeft(), s_box, s_box, vp, c);
+	Color const& color =
+		!enabled ? invalidColor :
+		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : normalColor;
+	drawRectangleRaw(app.scr, GetBoxTopLeft(), boxSize, boxSize, vp, color);
 	if (checked) {
-		int hs = (s_box - s_box_in) / 2;
-		DVector2 tl_box_in = GetBoxTopLeft() + DVector2(hs, hs);
-		drawRectangleRaw(app.scr, tl_box_in, s_box_in, s_box_in, vp, innerColor);
+		int innerOffset = (boxSize - innerBoxSize) / 2;
+		DVector2 innerBoxTopLeft = GetBoxTopLeft() + DVector2(innerOffset, innerOffset);
+		drawRectangleRaw(app.scr, innerBoxTopLeft, innerBoxSize, innerBoxSize, vp, innerColor);
 	}
 }
 
 void CheckBox::Update(App& app) {
 	hovered = (app.own.hovered == this);
-	w_txt = GetStringSize(txt, app.ft, 0).x;
+	textWidth = GetStringSize(text, app.ft, 0).x;
 	bool click = enabled && hovered && app.input.isMouseClickedDown(0);
 	if (click) { checked = !checked; Upload(app); }
 	else { Sync(app); } Render(app);
 }
 void CheckBox::Discard(App& app) {
-	app.own.remove(this); w_txt = 0;
+	app.own.remove(this); textWidth = 0;
 	hovered = false;
 }
 void CheckBox::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { GetBoxTopLeft(), s_box, s_box }) && isInside(app.input.msp, vp);
+		isInside(app.input.msp, { GetBoxTopLeft(), boxSize, boxSize }) && isInside(app.input.msp, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
-LocalizedCheckBox::LocalizedCheckBox(wstring const& id, bool big) : CheckBox(big), id_txt(id) {}
-void LocalizedCheckBox::Update(App& app) { txt = app.getLocalizedString(id_txt); CheckBox::Update(app); }
+LocalizedCheckBox::LocalizedCheckBox(wstring const& id, bool big) : CheckBox(big), textId(id) {}
+void LocalizedCheckBox::Update(App& app) { text = app.getLocalizedString(textId); CheckBox::Update(app); }
 
 
 
