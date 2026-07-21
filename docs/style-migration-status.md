@@ -76,6 +76,7 @@
 - 解析器表达式的前缀与二元规约辅助函数已迁移为完整的预表达式、规约结果和运算符名称，规约顺序保持不变。
 - 解析器调用与向量表达式的逗号分段组、构建表达式和当前括号组已迁移为完整 lower camel 名称。
 - 解析器二元、访问及总表达式构造路径的分组、表达式、首组和分支标志已迁移为完整 lower camel 名称。
+- 解析器语句的调试序列化函数已迁移为完整的语句、序列化文本、参数名和子语句名称。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。

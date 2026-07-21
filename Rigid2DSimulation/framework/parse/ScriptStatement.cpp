@@ -2,33 +2,33 @@
 #include "BracketGroup.h"
 
 ScriptStatement::ScriptStatement(wstring const& type) : type(type) {}
-wstring ToWString(ScriptStatement const& p) {
-	wstring tmp = p.type;
-	if (p.type == L"define") {
-		tmp += L":" + p.functionName + L",(";
-		for (auto& s : p.parameterNames) { tmp += s + L","; }
-		tmp += L"),{";
-		for (auto& pp : p.bodyStatements) { tmp += L"\n" + ToWString(pp) + L","; }
-		tmp += L"}";
+wstring ToWString(ScriptStatement const& statement) {
+	wstring serializedText = statement.type;
+	if (statement.type == L"define") {
+		serializedText += L":" + statement.functionName + L",(";
+		for (auto& parameterName : statement.parameterNames) { serializedText += parameterName + L","; }
+		serializedText += L"),{";
+		for (auto& childStatement : statement.bodyStatements) { serializedText += L"\n" + ToWString(childStatement) + L","; }
+		serializedText += L"}";
 	}
-	else if (p.type == L"if") {
-		tmp += L":" + ToWString(p.condition) + L",{";
-		for (auto& pp : p.thenStatements) { tmp += L"\n" + ToWString(pp) + L","; }
-		tmp += L"}{";
-		for (auto& pp : p.elseStatements) { tmp += L"\n" + ToWString(pp) + L","; }
-		tmp += L"}";
+	else if (statement.type == L"if") {
+		serializedText += L":" + ToWString(statement.condition) + L",{";
+		for (auto& childStatement : statement.thenStatements) { serializedText += L"\n" + ToWString(childStatement) + L","; }
+		serializedText += L"}{";
+		for (auto& childStatement : statement.elseStatements) { serializedText += L"\n" + ToWString(childStatement) + L","; }
+		serializedText += L"}";
 	}
-	else if (p.type == L"while") {
-		tmp += L":" + ToWString(p.loopCondition) + L",{";
-		for (auto& pp : p.loopStatements) { tmp += L"\n" + ToWString(pp) + L","; }
-		tmp += L"}";
+	else if (statement.type == L"while") {
+		serializedText += L":" + ToWString(statement.loopCondition) + L",{";
+		for (auto& childStatement : statement.loopStatements) { serializedText += L"\n" + ToWString(childStatement) + L","; }
+		serializedText += L"}";
 	}
-	else if (p.type == L"return") { tmp += L":" + ToWString(p.returnExpression); }
-	else if (p.type == L"single") { tmp += L":" + ToWString(p.expression); }
-	else if (p.type == L"assign") {
-		tmp += L":" + ToWString(p.leftExpression) + L"," + ToWString(p.rightExpression);
+	else if (statement.type == L"return") { serializedText += L":" + ToWString(statement.returnExpression); }
+	else if (statement.type == L"single") { serializedText += L":" + ToWString(statement.expression); }
+	else if (statement.type == L"assign") {
+		serializedText += L":" + ToWString(statement.leftExpression) + L"," + ToWString(statement.rightExpression);
 	}
-	return tmp;
+	return serializedText;
 }
 
 ScriptStatement ParseDefinition(vector<BracketGroup> const& in) {

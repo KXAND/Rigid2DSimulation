@@ -20,7 +20,7 @@ struct ScriptStatement {
 	ScriptStatement() = default;
 	ScriptStatement(wstring const& type);
 };
-wstring ToWString(ScriptStatement const& p);
+wstring ToWString(ScriptStatement const& statement);
 
 ScriptStatement ParseDefinition(vector<BracketGroup> const& in);
 ScriptStatement ParseReturn(vector<BracketGroup> const& in);
