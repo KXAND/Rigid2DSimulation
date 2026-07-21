@@ -12,9 +12,9 @@ wstring FormatFixed2(Vector3 v) {
 
 Camera::Camera(DRect vp) : vp(vp) {
 	r = 1000; scl = 500;
-	max_d = 1e6; min_d = 1; calc();
+	max_d = 1e6; min_d = 1; Calculate();
 }
-void Camera::save(FILE* file) {
+void Camera::Save(FILE* file) {
 	fwrite(&(vp), sizeof(vp), 1, file);
 	fwrite(&(p), sizeof(p), 1, file);
 	fwrite(&(look), sizeof(look), 1, file);
@@ -37,10 +37,10 @@ Camera::Camera(FILE* file) {
 	fread(&(theta), sizeof(theta), 1, file);
 	fread(&(phi), sizeof(phi), 1, file);
 	fread(&(psi), sizeof(psi), 1, file);
-	calc();
+	Calculate();
 }
 
-void Camera::calc() {
+void Camera::Calculate() {
 	p.y = -cos(theta) * cos(phi);
 	p.x = sin(theta) * cos(phi);
 	p.z = sin(phi);
@@ -54,7 +54,7 @@ void Camera::calc() {
 	mt = Matrix3::rotate(Vector3(0, 1, 0), psi) * mt;
 	ct = vp.topLeftPosition + DVector2(vp.w, vp.h) / 2;
 }
-void Camera::calcFirstPerson() {
+void Camera::CalculateFirstPerson() {
 	// 第一人称模式，舍弃了 look, r。
 	Vector3 vy;
 	vy.z = sin(phi);

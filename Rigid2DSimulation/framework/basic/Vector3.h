@@ -214,10 +214,10 @@ struct Camera {
 	Matrix3 mt;
 
 	explicit Camera(DRect vp = {});
-	void save(FILE* file);
+	void Save(FILE* file);
 	explicit Camera(FILE* file);
 
-	void calc();
-	void calcFirstPerson();
+	void Calculate();
+	void CalculateFirstPerson();
 };
 
