@@ -4,9 +4,9 @@
 
 
 ChineseLanguageButton::ChineseLanguageButton() : Button(150) { txt = L"ÖÐÎÄ"; }
-void ChineseLanguageButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.languageIdx = LAN_CHI; simulationApp.userInterface->fpn_lang->hide(app); }
+void ChineseLanguageButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.languageIdx = LAN_CHI; simulationApp.userInterface->languagePanel->hide(app); }
 EnglishLanguageButton::EnglishLanguageButton() : Button(150) { txt = L"English"; }
-void EnglishLanguageButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.languageIdx = LAN_ENG; simulationApp.userInterface->fpn_lang->hide(app); }
+void EnglishLanguageButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.languageIdx = LAN_ENG; simulationApp.userInterface->languagePanel->hide(app); }
 
 LanguagePanel::LanguagePanel(App& app) : LocalizedFloatPanel(app, 200, 200, L"fpn_lang") {
 	vector<Control*> tmp; shown = true;

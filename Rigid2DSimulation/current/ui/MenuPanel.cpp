@@ -67,14 +67,14 @@ MenuPanel::MenuPanel(App& app) : Panel(Panel::menu(app)) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	vector<Control*> tmp;
 	bt_pause = std::make_shared<PauseButton>(); bt_reset = std::make_shared<ResetButton>(); bt_mute = std::make_shared<MuteButton>();
-	bt_global = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_global);
-	bt_body = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_body);
-	bt_con = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_con);
+	bt_global = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->globalPanel);
+	bt_body = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->bodyPanel);
+	bt_con = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->connectionPanel);
 	bt_mode = std::make_shared<ModeButton>(); bt_display = std::make_shared<DisplayButton>();
-	bt_cmd = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_cmd);
-	bt_par = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_par);
-	bt_lang = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_lang);
-	bt_about = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_about);
+	bt_cmd = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->commandPanel);
+	bt_par = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->parameterPanel);
+	bt_lang = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->languagePanel);
+	bt_about = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->aboutPanel);
 	tmp = { &*bt_pause, &*bt_reset, &*bt_mute, &*bt_global, 
 		&*bt_body, &*bt_con, &*bt_mode, &*bt_display,
 		&*bt_cmd, &*bt_par, &*bt_lang, &*bt_about };
