@@ -16,8 +16,8 @@ struct RichLabel : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	int w_line() const;
-	void render(App& app);
+	int GetLineWidth() const;
+	void Render(App& app);
 	virtual void Sync(App& app) {}
 	void Update(App& app);
 };

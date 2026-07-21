@@ -11,16 +11,16 @@ RichLabel::RichLabel(int w) : w(w) {
 int RichLabel::GetW() const { return w + gap.x; }
 int RichLabel::GetH() const { return h + gap.y; }
 
-int RichLabel::w_line() const { return fixed_w ? w : 0; }
-void RichLabel::render(App& app) {
-	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl, w_line(), vp);
+int RichLabel::GetLineWidth() const { return fixed_w ? w : 0; }
+void RichLabel::Render(App& app) {
+	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl, GetLineWidth(), vp);
 }
 void RichLabel::Update(App& app) {
 	Sync(app);
-	DVector2 wh = GetStringSize(txt, app.ft, w_line());
+	DVector2 wh = GetStringSize(txt, app.ft, GetLineWidth());
 	if (!fixed_w) { w = wh.x; }
 	if (!fixed_h) { h = wh.y; }
-	render(app);
+	Render(app);
 }
 
 LocalizedRichLabel::LocalizedRichLabel(int w, wstring const& id) : id_txt(id), RichLabel(w) {}
