@@ -58,7 +58,7 @@ int RichTextBox::max_x_cs_rel() const { return w - edit_mg.x; }
 int RichTextBox::max_y_cs_rel() const { return h - edit_mg.y; }
 DVector2 RichTextBox::p_cs_rel(App& app) const {
 	wstring tmp(str.begin(), str.begin() + edit_b);
-	int x = 0; DVector2 p = str_wh(tmp, app.ft, w_str, &x);
+	int x = 0; DVector2 p = GetStringSize(tmp, app.ft, w_str, &x);
 	p.x = x; p.y -= app.ft.h;
 	return (DVector2)tl_str_rel + p;
 }
@@ -66,17 +66,17 @@ DVector2 RichTextBox::p_cs_rel(App& app) const {
 void RichTextBox::select_a(App& app) {
 	selecting = true;
 	DVector2 p = app.input.msp - (tl + (DVector2)tl_str_rel);
-	edit_a = edit_b = str_index_at_pos(str, app.ft, p, w_str);
+	edit_a = edit_b = GetStringIndexAtPosition(str, app.ft, p, w_str);
 	update_x_cs_rel_hist(app);
 }
 void RichTextBox::select_b(App& app) {
 	DVector2 p = app.input.msp - (tl + (DVector2)tl_str_rel);
-	edit_b = str_index_at_pos(str, app.ft, p, w_str);
+	edit_b = GetStringIndexAtPosition(str, app.ft, p, w_str);
 	update_x_cs_rel_hist(app);
 }
 void RichTextBox::update_x_cs_rel_hist(App& app) {
 	auto s = wstring(str.begin(), str.begin() + edit_b);
-	int tmp = 0; str_wh(s, app.ft, w_str, &tmp);
+	int tmp = 0; GetStringSize(s, app.ft, w_str, &tmp);
 	x_cs_rel_hist = tmp;
 }
 
@@ -117,9 +117,9 @@ void RichTextBox::hdl_up(App& app) {
 	if (selected()) { edit_a = edit_b = edit_begin(); }
 	else {
 		wstring tmp(str.begin(), str.begin() + edit_b);
-		int y = str_wh(tmp, app.ft, w_str).y - 2 * app.ft.h;
+		int y = GetStringSize(tmp, app.ft, w_str).y - 2 * app.ft.h;
 		DVector2 p(x_cs_rel_hist, y);
-		edit_a = edit_b = str_index_at_pos(str, app.ft, p, w_str);
+		edit_a = edit_b = GetStringIndexAtPosition(str, app.ft, p, w_str);
 	}
 }
 void RichTextBox::hdl_down(App& app) {
@@ -129,9 +129,9 @@ void RichTextBox::hdl_down(App& app) {
 	if (selected()) { edit_a = edit_b = edit_end(); }
 	else {
 		wstring tmp(str.begin(), str.begin() + edit_b);
-		int y = str_wh(tmp, app.ft, w_str).y;
+		int y = GetStringSize(tmp, app.ft, w_str).y;
 		DVector2 p(x_cs_rel_hist, y);
-		edit_a = edit_b = str_index_at_pos(str, app.ft, p, w_str);
+		edit_a = edit_b = GetStringIndexAtPosition(str, app.ft, p, w_str);
 	}
 }
 void RichTextBox::hdl_back(App& app) {
@@ -225,7 +225,7 @@ void RichTextBox::clamp_cursor(App& app) {
 }
 void RichTextBox::clamp_str(App& app) {
 	// 除了文字过少以外，clamp_selecting 和 wheel 后也需要这一步。
-	DVector2 p_end_rel = (DVector2)tl_str_rel + str_wh(str, app.ft, w_str);
+	DVector2 p_end_rel = (DVector2)tl_str_rel + GetStringSize(str, app.ft, w_str);
 	if (p_end_rel.x < max_x_cs_rel()) {
 		tl_str_rel.x += max_x_cs_rel() - p_end_rel.x;
 	}

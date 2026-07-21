@@ -17,7 +17,7 @@ void Label::render(App& app) {
 }
 void Label::Update(App& app) {
 	Sync(app);
-	if (!fixed_w) { w = str_wh(txt, app.ft, 0).x; }
+	if (!fixed_w) { w = GetStringSize(txt, app.ft, 0).x; }
 	render(app);
 }
 

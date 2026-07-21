@@ -39,7 +39,7 @@ void CheckBox::render(App& app) {
 
 void CheckBox::Update(App& app) {
 	hovered = (app.own.hovered == this);
-	w_txt = str_wh(txt, app.ft, 0).x;
+	w_txt = GetStringSize(txt, app.ft, 0).x;
 	bool click = enabled && hovered && app.input.isMouseClickedDown(0);
 	if (click) { checked = !checked; Upload(app); }
 	else { Sync(app); } render(app);

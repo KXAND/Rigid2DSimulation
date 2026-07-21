@@ -40,7 +40,7 @@ void HorizontalDragBar::render(App& app) {
 
 void HorizontalDragBar::Update(App& app) {
 	hovered = (app.own.hovered == this);
-	w_txt = str_wh(txt, app.ft, 0).x;
+	w_txt = GetStringSize(txt, app.ft, 0).x;
 	if (dragged) {
 		nx_rel = clamp(app.input.msp.x - (tl.x + w_txt + nw / 2), 0, bw - nw);
 		// 在刚刚抓住的那一帧没有更新，在放下的那一帧还在更新。省事。

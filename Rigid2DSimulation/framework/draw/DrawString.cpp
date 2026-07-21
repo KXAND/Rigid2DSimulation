@@ -1,7 +1,7 @@
 #include "DrawString.h"
 #include "Font.h"
 
-void draw_char(Tile& dest, DepthBuffer& ds, double depth,
+void DrawCharacter(Tile& dest, DepthBuffer& ds, double depth,
 	DVector2 tl, DRect vp_dest, Tile const& src, Color col) {
 	int a = max(vp_dest.left(), tl.x);
 	int b = min(vp_dest.right(), tl.x + src.width);
@@ -29,7 +29,7 @@ void DrawString(Tile& dest, DepthBuffer& ds, double d, wstring const& s,
 				tl_cur.y += ft.h; x_cur = 0;
 			} 
 			DVector2 tmp = tl_cur + DVector2(x_cur, 0);
-			draw_char(dest, ds, d, tmp, vp, t, col); x_cur += t.width;
+			DrawCharacter(dest, ds, d, tmp, vp, t, col); x_cur += t.width;
 		}
 	}
 }
@@ -39,7 +39,7 @@ void DrawString(Tile& dest, DepthBuffer& ds, double d, wstring const& s,
 	DrawString(dest, ds, d, s, c, ft, tl, x_cur, w, vp);
 }
 
-DVector2 str_wh(wstring const& s, Font const& ft, int w, int* x_last) {
+DVector2 GetStringSize(wstring const& s, Font const& ft, int w, int* x_last) {
 	int x_cur = 0, w_out = 0, h_out = ft.h;
 	for (auto c : s) {
 		if (c == L'\n') {
@@ -58,7 +58,7 @@ DVector2 str_wh(wstring const& s, Font const& ft, int w, int* x_last) {
 	if (x_last) { *x_last = x_cur; } 
 	return { w_out, h_out };
 }
-int str_index_at_pos(wstring const& s, Font const& ft, DVector2 p, int w) {
+int GetStringIndexAtPosition(wstring const& s, Font const& ft, DVector2 p, int w) {
 	int x_cur = 0, y_cur = 0;
 	if (0 > p.y) { return 0; }
 

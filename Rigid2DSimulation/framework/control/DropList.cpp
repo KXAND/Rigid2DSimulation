@@ -70,7 +70,7 @@ void DropList::render(App& app) {
 // 在内容可变的情形下怎么处理我还没想清楚的。
 void DropList::Update(App& app) {
 	hovered = (app.own.hovered == this);
-	w_txt = str_wh(txt, app.ft, 0).x;
+	w_txt = GetStringSize(txt, app.ft, 0).x;
 	if (edit) {
 		if (hovered) {
 			int tmp = app.input.msp.y - tl_box().y - h;

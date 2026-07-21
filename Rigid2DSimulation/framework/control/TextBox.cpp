@@ -57,17 +57,17 @@ bool TextBox::selected() const { return edit_a != edit_b; }
 int TextBox::max_x_cs_rel() const { return w - w_edit_mg; }
 int TextBox::x_cs_rel(App& app) const {
 	wstring tmp(str.begin(), str.begin() + edit_b);
-	return x_str_rel + str_wh(tmp, app.ft, 0).x;
+	return x_str_rel + GetStringSize(tmp, app.ft, 0).x;
 }
 
 void TextBox::select_a(App& app) {
 	selecting = true;
 	int x = app.input.msp.x - (tl_box().x + x_str_rel);
-	edit_a = edit_b = str_index_at_pos(str, app.ft, { x, 0 }, 0);
+	edit_a = edit_b = GetStringIndexAtPosition(str, app.ft, { x, 0 }, 0);
 }
 void TextBox::select_b(App& app) {
 	int x = app.input.msp.x - (tl_box().x + x_str_rel);
-	edit_b = str_index_at_pos(str, app.ft, { x, 0 }, 0);
+	edit_b = GetStringIndexAtPosition(str, app.ft, { x, 0 }, 0);
 }
 
 void TextBox::add_chs(App& app) {
@@ -179,7 +179,7 @@ void TextBox::clamp_cursor(App& app) {
 	else { clamp_cs_not_selecting(app); }
 }
 void TextBox::clamp_str(App& app) {
-	int x_end_rel = x_str_rel + str_wh(str, app.ft, 0).x;
+	int x_end_rel = x_str_rel + GetStringSize(str, app.ft, 0).x;
 	if (x_end_rel < max_x_cs_rel()) {
 		x_str_rel += max_x_cs_rel() - x_end_rel;
 	}
@@ -217,7 +217,7 @@ void TextBox::render(App& app) {
 
 void TextBox::Update(App& app) {
 	hovered = (app.own.hovered == this);
-	w_txt = str_wh(txt, app.ft, 0).x;
+	w_txt = GetStringSize(txt, app.ft, 0).x;
 	if (edit) {
 		if (selecting) { select_b(app); }
 		if (enabled && hovered && app.input.isMouseClickedDown(0)) { select_a(app); }
