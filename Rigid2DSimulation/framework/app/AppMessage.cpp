@@ -1,11 +1,11 @@
 #include "App.h"
 
-int created(App*& app, WPARAM wp, LPARAM lp) {
+int HandleCreate(App*& app, WPARAM wp, LPARAM lp) {
 	auto pcs = (CREATESTRUCT*)lp;
 	app = (App*)pcs->lpCreateParams;
 	return 0;
 }
-int destroyed(App* app, WPARAM wp, LPARAM lp) {
+int HandleDestroy(App* app, WPARAM wp, LPARAM lp) {
 	PostQuitMessage(0);
 	return 0;
 }
@@ -95,8 +95,8 @@ int HandleRightMouseDown(App* app, WPARAM wp, LPARAM lp) {
 LRESULT CALLBACK WindowProcedure(HWND wnd, UINT msg, WPARAM wp, LPARAM lp) {
 	static App* app = NULL;
 	switch (msg) {
-	case WM_CREATE: return created(app, wp, lp);
-	case WM_DESTROY: return destroyed(app, wp, lp);
+	case WM_CREATE: return HandleCreate(app, wp, lp);
+	case WM_DESTROY: return HandleDestroy(app, wp, lp);
 	case WM_KILLFOCUS: return HandleKillFocus(app, wp, lp);
 	case WM_SETCURSOR: return HandleSetCursor(app, wp, lp);
 	case WM_CAPTURECHANGED: return HandleCaptureChanged(app, wp, lp);
