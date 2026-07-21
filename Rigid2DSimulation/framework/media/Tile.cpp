@@ -37,16 +37,16 @@ Tile::Tile(int w, int h, Color color, BYTE a) :
 	width(w), height(h), colors(GetArea(), color), as(GetArea(), a)
 {
 }
-Tile::Tile(int w, int h, Tile const& src, DRect vp_src) : Tile(w, h)
+Tile::Tile(int w, int h, Tile const& src, DRect sourceViewport) : Tile(w, h)
 {
 	for (int i = (0), iEnd = int(w); i < iEnd; ++i) for (int j = (0), jEnd = int(h); j < jEnd; ++j)
 	{
-		DVector2 d_pnt(i, j);
-		DVector2 s_pnt = d_pnt * DVector2(vp_src.w, vp_src.h) / DVector2(w, h);
+		DVector2 targetPoint(i, j);
+		DVector2 sourcePoint = targetPoint * DVector2(sourceViewport.w, sourceViewport.h) / DVector2(w, h);
 
-		int dp = d_pnt.y * w + d_pnt.x;
-		int sp = (s_pnt.y + vp_src.GetTop()) * src.width + s_pnt.x + vp_src.GetLeft();
-		colors[dp] = src.colors[sp]; as[dp] = src.as[sp];
+		int targetPixelIndex = targetPoint.y * w + targetPoint.x;
+		int sourcePixelIndex = (sourcePoint.y + sourceViewport.GetTop()) * src.width + sourcePoint.x + sourceViewport.GetLeft();
+		colors[targetPixelIndex] = src.colors[sourcePixelIndex]; as[targetPixelIndex] = src.as[sourcePixelIndex];
 	}
 }
 void Tile::Save(wstring const& fileName) const
