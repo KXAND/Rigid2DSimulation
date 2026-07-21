@@ -59,7 +59,7 @@ void Connection::ReadCfg(Value const& cfg)
 	TryReadConfigNumber(cfg, L"springConstant", springConstant);
 	if (auto md = FindConfigValue(cfg, L"type"))
 	{
-		if (md->typ == L"str")
+		if (md->type == L"str")
 		{
 			auto s = md->str;
 			if (s == L"rope") { type = CON_ROPE; }

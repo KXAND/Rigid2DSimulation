@@ -2,7 +2,7 @@
 #include "ScriptExpression.h"
 
 struct ScriptStatement {
-	wstring typ = L"empty";
+	wstring type = L"empty";
 	// assign, single, define, return, if, while
 	ScriptExpression ret;
 	ScriptExpression single;
@@ -18,7 +18,7 @@ struct ScriptStatement {
 	vector<ScriptStatement> if_procs, else_procs;
 
 	ScriptStatement() = default;
-	ScriptStatement(wstring const& typ);
+	ScriptStatement(wstring const& type);
 };
 wstring ToWString(ScriptStatement const& p);
 

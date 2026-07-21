@@ -1,11 +1,11 @@
 #include "ScriptExpression.h"
 #include "BracketGroup.h"
 
-ScriptExpression::ScriptExpression(wstring const& typ) : typ(typ) {}
-ScriptExpression::ScriptExpression(double num) : num(num) { typ = L"num"; }
+ScriptExpression::ScriptExpression(wstring const& type) : type(type) {}
+ScriptExpression::ScriptExpression(double num) : num(num) { type = L"num"; }
 ScriptExpression::ScriptExpression(wstring const& fun, vector<ScriptExpression> const& pars) :
 	fun(fun), pars(pars) {
-	typ = L"call";
+	type = L"call";
 }
 ScriptExpression ScriptExpression::CreateString(wstring const& text) {
 	auto ex = ScriptExpression(L"str");
@@ -20,19 +20,19 @@ ScriptExpression ScriptExpression::CreateVariable(wstring const& value, bool isG
 }
 
 wstring ToWString(ScriptExpression const& ex) {
-	wstring tmp = L"[" + ex.typ;
-	if (ex.typ == L"var") { tmp += (ex.global ? L":&" : L":") + ex.Value; }
-	else if (ex.typ == L"num") { tmp += L":" + FormatFixed2(ex.num); }
-	else if (ex.typ == L"str") { tmp += L":" + ex.str; }
-	else if (ex.typ == L"access") {
+	wstring tmp = L"[" + ex.type;
+	if (ex.type == L"var") { tmp += (ex.global ? L":&" : L":") + ex.Value; }
+	else if (ex.type == L"num") { tmp += L":" + FormatFixed2(ex.num); }
+	else if (ex.type == L"str") { tmp += L":" + ex.str; }
+	else if (ex.type == L"access") {
 		if (!ex.getLocalizedString || !ex.ind) { return {}; }
 		tmp += L":" + ToWString(*ex.getLocalizedString) + L"," + ToWString(*ex.ind);
 	}
-	else if (ex.typ == L"vec") {
+	else if (ex.type == L"vec") {
 		tmp += L":";
 		for (auto const& v : ex.vec) { tmp += ToWString(v) + L","; }
 	}
-	else if (ex.typ == L"call") {
+	else if (ex.type == L"call") {
 		tmp += L":" + ex.fun + L",";
 		for (auto const& par : ex.pars) { tmp += ToWString(par) + L","; }
 	}
@@ -45,20 +45,20 @@ PreExpression::PreExpression(Token const& tk) : tk(tk) { istk = true; }
 
 bool IsUnaryOperator(Token const& tk) {
 	// 由于 +，- 的特殊性，它们都被当成二元运算符处理。
-	if (tk.typ.empty()) { return false; }
-	auto const& s = tk.typ;
+	if (tk.type.empty()) { return false; }
+	auto const& s = tk.type;
 	return s == L"!";
 }
 bool IsBinaryOperator(Token const& tk) {
-	if (tk.typ.empty()) { return false; }
-	return !iswalnum(tk.typ[0]) && !IsUnaryOperator(tk);
+	if (tk.type.empty()) { return false; }
+	return !iswalnum(tk.type[0]) && !IsUnaryOperator(tk);
 }
 
 bool ParseNegation(vector<PreExpression> const& in, ScriptExpression& out) {
 	for (int i = (0), iEnd = int(in.size()); i < iEnd; ++i) {
 		auto const& pre = in[i];
 		if (!pre.istk) { continue; }
-		auto const& s = pre.tk.typ;
+		auto const& s = pre.tk.type;
 
 		if ((s == L"+" || s == L"-") && (i == 0 || in[i - 1].istk)) {
 			bool bad = i == in.size() - 1 || in[i + 1].istk;
@@ -80,7 +80,7 @@ bool ParseBinary(vector<PreExpression> const& in, ScriptExpression& out, vector<
 	for (int i = (0), iEnd = int(in.size()); i < iEnd; ++i) {
 		auto const& pre = in[i];
 		if (!pre.istk) { continue; }
-		auto const& s = pre.tk.typ;
+		auto const& s = pre.tk.type;
 
 		if (find(mark.begin(), mark.end(), s) != mark.end()) {
 			bool bad =
@@ -125,7 +125,7 @@ ScriptExpression ParseCall(vector<BracketGroup> const& in) {
 
 	vector<BracketGroup> tmp;
 	for (auto const& b : in[1].bras) {
-		if (b.tk.typ == L",") {
+		if (b.tk.type == L",") {
 			ex.pars.push_back(ParseExpression(tmp));
 			tmp.clear();
 		}
@@ -158,7 +158,7 @@ ScriptExpression ParseVector(vector<BracketGroup> const& in) {
 	ScriptExpression ex(L"vec");
 	vector<BracketGroup> tmp;
 	for (auto const& b : in[0].bras) {
-		if (b.tk.typ == L",") {
+		if (b.tk.type == L",") {
 			ex.vec.push_back(ParseExpression(tmp));
 			tmp.clear();
 		}
@@ -180,30 +180,30 @@ ScriptExpression ParseExpression(vector<BracketGroup> const& in) {
 	if (in.empty()) { return ScriptExpression(L"error"); }
 	auto const& b = in[0];
 	if (in.size() == 1) {
-		if (b.typ == 0) {
-			if (b.tk.typ == L"var") { return ScriptExpression::CreateVariable(b.tk.Value, b.tk.global); }
-			else if (b.tk.typ == L"str") { return ScriptExpression::CreateString(b.tk.str); }
-			else if (b.tk.typ == L"num") { return ScriptExpression(b.tk.num); }
-			else if (b.tk.typ == L"null") { return ScriptExpression(L"null"); }
+		if (b.type == 0) {
+			if (b.tk.type == L"var") { return ScriptExpression::CreateVariable(b.tk.Value, b.tk.global); }
+			else if (b.tk.type == L"str") { return ScriptExpression::CreateString(b.tk.str); }
+			else if (b.tk.type == L"num") { return ScriptExpression(b.tk.num); }
+			else if (b.tk.type == L"null") { return ScriptExpression(L"null"); }
 			else { return ScriptExpression(L"error"); }
 		}
-		else if (b.typ == 1) { return ParseExpression(b.bras); }
-		else if (b.typ == 3) { return ParseVector(in); }
+		else if (b.type == 1) { return ParseExpression(b.bras); }
+		else if (b.type == 3) { return ParseVector(in); }
 		else { return ScriptExpression(L"error"); }
 	}
 
 	bool call = in.size() == 2 &&
-		in[0].tk.typ == L"var" && in[1].typ == 1;
+		in[0].tk.type == L"var" && in[1].type == 1;
 	if (call) { return ParseCall(in); }
 
 	bool uni = in.size() == 2 && IsUnaryOperator(b.tk);
-	if (uni) { return ScriptExpression(b.tk.typ, { ParseExpression({ in[1] }) }); }
+	if (uni) { return ScriptExpression(b.tk.type, { ParseExpression({ in[1] }) }); }
 
 	for (auto const& br : in) {
 		if (IsBinaryOperator(br.tk)) { return ParseBinaryExpressions(in); }
 	}
 
-	if (in.back().typ == 3) { return ParseAccess(in); }
+	if (in.back().type == 3) { return ParseAccess(in); }
 	return ScriptExpression(L"error");
 }
 

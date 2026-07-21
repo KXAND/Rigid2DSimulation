@@ -4,7 +4,7 @@
 
 // 这里空间可能占的太大了，运行时多态可以解决。但是懒得麻烦了。
 struct ScriptExpression {
-	wstring typ = L"null";
+	wstring type = L"null";
 	// vec 和 access 其实都可以放到 call 的框架里。
 	// 但是实现的时候我还是希望分开来，虽然也没啥理由就是了。
 	// num, var, str, call, null, vec, access
@@ -19,7 +19,7 @@ struct ScriptExpression {
 	ValuePtr<ScriptExpression> getLocalizedString, ind;
 
 	ScriptExpression() = default;
-	ScriptExpression(wstring const& typ);
+	ScriptExpression(wstring const& type);
 	ScriptExpression(double num);
 	ScriptExpression(wstring const& fun, vector<ScriptExpression> const& pars);
 	static ScriptExpression CreateString(wstring const& text);

@@ -6,14 +6,14 @@
 // 每次都能找到新 bug，很可能还有一些 bug。
 // 同时速度上也有很多改进空间。
 
-Value::Value(double num) : num(num) { typ = L"num"; }
-Value::Value(wstring const& str) : str(str) { typ = L"ToString"; }
-Value::Value(decltype(fun) const& user) : fun(user) { typ = L"user"; }
-Value::Value(vector<std::shared_ptr<Value>> const& vec) : vec(vec) { typ = L"vec"; }
+Value::Value(double num) : num(num) { type = L"num"; }
+Value::Value(wstring const& str) : str(str) { type = L"ToString"; }
+Value::Value(decltype(fun) const& user) : fun(user) { type = L"user"; }
+Value::Value(vector<std::shared_ptr<Value>> const& vec) : vec(vec) { type = L"vec"; }
 Value::Value(Program const& ps, vector<wstring>const& pars) :
 	procs(ps), pars(pars)
 {
-	typ = L"fun";
+	type = L"fun";
 }
 
 Vector2 ToVector2(Value const& v)
@@ -88,7 +88,7 @@ std::shared_ptr<Value> EvaluateCall(Scope& gl, Scope& sc, ScriptExpression const
 
 	// 下面必须是值复制，这是为了避免函数自己被抹去。
 	auto fun = FindVariable(gl, sc, ex.fun, ex.global);
-	if (fun->typ == L"user" && fun->fun)
+	if (fun->type == L"user" && fun->fun)
 	{
 		vector<std::shared_ptr<Value>> tmp;
 		for (auto const& p : ex.pars)
@@ -111,11 +111,11 @@ std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpression con
 	auto getLocalizedString = Evaluate(gl, sc, *ex.getLocalizedString);
 	auto ind = Evaluate(gl, sc, *ex.ind);
 
-	if (ind->typ == L"num")
+	if (ind->type == L"num")
 	{
-		if (getLocalizedString->typ != L"vec") {
+		if (getLocalizedString->type != L"vec") {
 			*getLocalizedString = {};
-			getLocalizedString->typ = L"vec";
+			getLocalizedString->type = L"vec";
 		}
 		for (int i = (getLocalizedString->vec.size() - 1), iEnd = int(ind->num); i < iEnd; ++i)
 		{
@@ -124,11 +124,11 @@ std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpression con
 		return getLocalizedString->vec[ind->num];
 	}
 
-	if (ind->typ == L"ToString")
+	if (ind->type == L"ToString")
 	{
-		if (getLocalizedString->typ != L"dic") {
+		if (getLocalizedString->type != L"dic") {
 			*getLocalizedString = {};
-			getLocalizedString->typ = L"dic";
+			getLocalizedString->type = L"dic";
 		}
 		if (getLocalizedString->dic.find(ind->str) == getLocalizedString->dic.end())
 		{
@@ -141,15 +141,15 @@ std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpression con
 }
 std::shared_ptr<Value> Evaluate(Scope& gl, Scope& sc, ScriptExpression const& ex)
 {
-	if (ex.typ == L"call") { return EvaluateCall(gl, sc, ex); }
-	else if (ex.typ == L"var")
+	if (ex.type == L"call") { return EvaluateCall(gl, sc, ex); }
+	else if (ex.type == L"var")
 	{
 		if (ex.Value == L"kPi") { return std::make_shared<Value>(kPi); }
 		return FindVariable(gl, sc, ex.Value, ex.global);
 	}
-	else if (ex.typ == L"num") { return std::make_shared<Value>(ex.num); }
-	else if (ex.typ == L"ToString") { return std::make_shared<Value>(ex.str); }
-	else if (ex.typ == L"vec")
+	else if (ex.type == L"num") { return std::make_shared<Value>(ex.num); }
+	else if (ex.type == L"ToString") { return std::make_shared<Value>(ex.str); }
+	else if (ex.type == L"vec")
 	{
 		vector<std::shared_ptr<Value>> tmp;
 		for (auto const& e : ex.vec)
@@ -158,7 +158,7 @@ std::shared_ptr<Value> Evaluate(Scope& gl, Scope& sc, ScriptExpression const& ex
 		}
 		return std::make_shared<Value>(tmp);
 	}
-	else if (ex.typ == L"access") { return EvaluateAccess(gl, sc, ex); }
+	else if (ex.type == L"access") { return EvaluateAccess(gl, sc, ex); }
 	return std::make_shared<Value>();
 }
 
@@ -166,20 +166,20 @@ std::shared_ptr<Value> Execute(bool& ret, Scope& gl, Scope& sc, Program const& p
 {
 	for (auto const& p : ps)
 	{
-		if (p.typ == L"single") { Evaluate(gl, sc, p.single); }
-		else if (p.typ == L"return") { ret = true; return Evaluate(gl, sc, p.ret); }
-		else if (p.typ == L"define")
+		if (p.type == L"single") { Evaluate(gl, sc, p.single); }
+		else if (p.type == L"return") { ret = true; return Evaluate(gl, sc, p.ret); }
+		else if (p.type == L"define")
 		{
 			*FindVariable(gl, sc, p.def_fun, false) = Value(p.procs, p.def_pars);
 		}
-		else if (p.typ == L"assign") { *Evaluate(gl, sc, p.left) = *Evaluate(gl, sc, p.right); }
-		else if (p.typ == L"if")
+		else if (p.type == L"assign") { *Evaluate(gl, sc, p.left) = *Evaluate(gl, sc, p.right); }
+		else if (p.type == L"if")
 		{
 			auto& ps = Evaluate(gl, sc, p.if_con)->num ? p.if_procs : p.else_procs;
 			auto v = Execute(ret, gl, sc, ps);
 			if (ret) { return v; }
 		}
-		else if (p.typ == L"while")
+		else if (p.type == L"while")
 		{
 			while (Evaluate(gl, sc, p.lp_con)->num)
 			{

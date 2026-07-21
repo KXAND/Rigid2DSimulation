@@ -18,7 +18,7 @@ Creator::Creator(Value const& v) : Creator()
 {
 	if (auto md = FindConfigValue(v, L"mode"))
 	{
-		if (md->typ == L"str")
+		if (md->type == L"str")
 		{
 			auto s = md->str;
 			if (s == L"box") { mode = CREATE_BOX; }

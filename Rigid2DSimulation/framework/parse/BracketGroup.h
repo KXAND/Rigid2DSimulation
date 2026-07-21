@@ -2,7 +2,7 @@
 #include "Token.h"
 
 struct BracketGroup {
-	int typ = 0;
+	int type = 0;
 	// 1 代表 ()，2 代表 {}, 3 代表 []。
 	Token tk;
 	vector<BracketGroup> bras;

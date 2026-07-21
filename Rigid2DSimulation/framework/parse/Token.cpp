@@ -1,7 +1,7 @@
 #include "Token.h"
 
-Token::Token(wstring const& typ) : typ(typ) {}
-Token::Token(double num) : num(num) { typ = L"num"; }
+Token::Token(wstring const& type) : type(type) {}
+Token::Token(double num) : num(num) { type = L"num"; }
 Token Token::CreateString(wstring const& text) {
 	Token tk(L"str");
 	tk.str = text; return tk;
@@ -11,10 +11,10 @@ Token Token::CreateVariable(wstring const& value, bool isGlobal) {
 	tk.Value = value; tk.global = isGlobal; return tk;
 }
 wstring ToWString(Token const& tk) {
-	wstring tmp = L"[" + tk.typ;
-	if (tk.typ == L"var") { tmp += (tk.global ? L":&" : L":") + tk.Value; }
-	if (tk.typ == L"num") { tmp += L":" + FormatFixed2(tk.num); }
-	if (tk.typ == L"str") { tmp += L":" + tk.str; }
+	wstring tmp = L"[" + tk.type;
+	if (tk.type == L"var") { tmp += (tk.global ? L":&" : L":") + tk.Value; }
+	if (tk.type == L"num") { tmp += L":" + FormatFixed2(tk.num); }
+	if (tk.type == L"str") { tmp += L":" + tk.str; }
 	tmp += L"]"; return tmp;
 }
 
@@ -99,10 +99,10 @@ vector<Token> NormalizeSigns(vector<Token> const& in) {
 
 	for (auto const& tk : in) {
 		bool old_add = add;
-		add = tk.typ == L"+" || tk.typ == L"-";
+		add = tk.type == L"+" || tk.type == L"-";
 		if (add) {
-			if (old_add) { sgn *= tk.typ == L"+" ? 1 : -1; }
-			else { sgn = tk.typ == L"+" ? 1 : -1; } continue;
+			if (old_add) { sgn *= tk.type == L"+" ? 1 : -1; }
+			else { sgn = tk.type == L"+" ? 1 : -1; } continue;
 		} else if (old_add) {
 			out.push_back(Token(sgn == 1 ? L"+" : L"-"));
 		} out.push_back(tk);
@@ -116,11 +116,11 @@ vector<Token> Tokenize(wstring const& in) {
 		// 你之前在 tk 前面加了 const &，千万不要在这样了。
 		auto tk = ParseToken(in, id);
 		bool blank =
-			tk.typ == L" " || tk.typ == L"\n";
-		if (tk.typ == L"//") {
+			tk.type == L" " || tk.type == L"\n";
+		if (tk.type == L"//") {
 			while (id != in.size() && in[id++] != L'\n');
 		}
-		else if (tk.typ == L"error") { return {}; }
+		else if (tk.type == L"error") { return {}; }
 		else if (!blank) { tmp.push_back(tk); }
 	} return NormalizeSigns(tmp);
 }

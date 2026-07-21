@@ -2,9 +2,9 @@
 
 wstring ToWString(BracketGroup const& b) {
 	wstring tmp;
-	if (b.typ == 0) { tmp += ToWString(b.tk); }
+	if (b.type == 0) { tmp += ToWString(b.tk); }
 	else {
-		tmp += std::to_wstring(b.typ) + L" {";
+		tmp += std::to_wstring(b.type) + L" {";
 		for (auto const& bb : b.bras) { tmp += ToWString(bb) + L", "; }
 		tmp += L"}";
 	}
@@ -18,32 +18,32 @@ vector<BracketGroup> AnalyzeBrackets(vector<Token> const& in) {
 	vector<Token> tmp;
 	bool zero = true;
 	for (auto const& tk : in) {
-		if (tk.typ == L"(") {
+		if (tk.type == L"(") {
 			++bra1;
 			if (!zero) { tmp.push_back(tk); }
 			zero = false;
 			continue;
 		}
-		else if (tk.typ == L"{") {
+		else if (tk.type == L"{") {
 			++bra2;
 			if (!zero) { tmp.push_back(tk); }
 			zero = false;
 			continue;
 		}
-		else if (tk.typ == L"[") {
+		else if (tk.type == L"[") {
 			++bra3;
 			if (!zero) { tmp.push_back(tk); }
 			zero = false;
 			continue;
 		}
-		else if (tk.typ == L")") { --bra1; b.typ = 1; }
-		else if (tk.typ == L"}") { --bra2; b.typ = 2; }
-		else if (tk.typ == L"]") { --bra3; b.typ = 3; }
-		else { b.typ = 0; }
+		else if (tk.type == L")") { --bra1; b.type = 1; }
+		else if (tk.type == L"}") { --bra2; b.type = 2; }
+		else if (tk.type == L"]") { --bra3; b.type = 3; }
+		else { b.type = 0; }
 
 		zero = bra1 == 0 && bra2 == 0 && bra3 == 0;
 		if (zero) {
-			if (b.typ) {
+			if (b.type) {
 				b.bras = AnalyzeBrackets(tmp);
 				tmp.clear();
 			}
