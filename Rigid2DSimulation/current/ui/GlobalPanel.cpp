@@ -12,7 +12,7 @@ void LoadButton::OnClick(App& app) { auto& simulationApp = static_cast<Simulatio
 void GlobalDetailsLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	text = L"";
-	text += simulationApp.getLocalizedString(L"vol") + FormatFixed2(simulationApp.vol) + L"\n";
+	text += simulationApp.getLocalizedString(L"vol") + FormatFixed2(simulationApp.volume) + L"\n";
 	text += simulationApp.getLocalizedString(L"n_step") + std::to_wstring(simulationApp.stepNum) + L"\n";
 	text += simulationApp.getLocalizedString(L"s_grid") + FormatFixed2(simulationApp.gridSize) + L"\n";
 	text += simulationApp.getLocalizedString(L"max_real_dt") + FormatFixed2(simulationApp.maxRealDeltaTime) + L"\n";

@@ -34,7 +34,7 @@ struct SimulationApp : App
 
 	std::shared_ptr<AudioClip> musicClip0, musicClip1;
 	AudioClip* currentMusicClip = NULL;
-	double vol = 0;
+	double volume = 0;
 
 	int mode = 0;
 	int display = 0;

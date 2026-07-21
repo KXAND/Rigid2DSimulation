@@ -41,7 +41,7 @@ SimulationApp::SimulationApp()
     if (!ok) { musicClip1 = NULL; }
     PrintConsole(L"“Ù¿÷º”‘ÿÕÍ≥….", true);
 
-    vol = 1;
+    volume = 1;
     currentMusicClip = GenerateRandomFloat(1) < 0.5 ? &*musicClip0 : &*musicClip1;
 }
 
@@ -245,7 +245,7 @@ void SimulationApp::Update()
 
 void SimulationApp::SetCfg(Value const& v)
 {
-	TryReadConfigNumber(v, L"volume", vol);
+	TryReadConfigNumber(v, L"volume", volume);
 	TryReadConfigNumber(v, L"energyMultiplier", energyMultiplier);
 	TryReadConfigNumber(v, L"chargeMultiplier", chargeMultiplier);
 	TryReadConfigNumber(v, L"parallelEpsilon", parallelEpsilon);
