@@ -182,7 +182,7 @@
 | 3 | `refactor(app): clarify application names` | 已完成 | `App` 状态、本地化局部变量和 Win32 消息分发参数 | 消息流程、窗口创建逻辑 |
 | 4 | `refactor(draw): clarify primitive geometry names` | 已完成 | 矩形、椭圆、三角形绘制接口与非数学局部变量 | 绘制算法和扫描线计算 |
 | 5 | `refactor(media): clarify media resource names` | 已完成 | 字符集、`Color`、`Tile`、`Font` 与音频输出局部变量 | 图块/音频二进制布局和资源加载顺序 |
-| 6 | `refactor(common): clarify scene state names` | 待执行 | `Background`、配置读取工具和 `SimulationApp` 的集合局部变量 | 场景逻辑、网格算法和 DSL 键 |
+| 6 | `refactor(common): clarify scene state names` | 已完成 | `Background`、配置读取工具和 `SimulationApp` 的集合局部变量 | 场景逻辑、网格算法和 DSL 键 |
 | 7 | `refactor(rigid): clarify physics data names` | 待执行 | `Body`、`Shape`、`Connection`、`Collision`、`Group` 的字段、接口、常量和直接调用点 | 物理公式、序列化布局和碰撞流程 |
 | 8 | `refactor(rigid): clarify scene builder names` | 待执行 | `Creator`、`SceneBuilders`、`ShapeBuiltins` 的参数、局部变量和直接调用点 | 创建流程、DSL 语法和配置键 |
 | 9 | `refactor(ui): clarify panel local names` | 待执行 | `UserInterface` 应用参数和各面板控件列表局部变量 | 面板业务逻辑、资源字符串键和排版 |

@@ -264,7 +264,7 @@ void Creator::Discard(SimulationApp& cur)
 }
 void Creator::PreUpdate(SimulationApp& cur)
 {
-	if (cur.inputOwners.hoveredDepth <= Depth() && IsInside(cur.input.mousePosition, cur.background->ViewPort()))
+	if (cur.inputOwners.hoveredDepth <= Depth() && IsInside(cur.input.mousePosition, cur.background->GetViewport()))
 	{
 		cur.inputOwners.hoveredDepth = Depth();
 		cur.inputOwners.hovered = this;

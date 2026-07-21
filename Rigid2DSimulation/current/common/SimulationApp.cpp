@@ -58,10 +58,10 @@ void SimulationApp::Save(wstring const& name) const
 	// 可能会保存一些即将被删除的元素，但是也无所谓。
 	size = bodies.size();
 	fwrite(&(size), sizeof(size), 1, file);
-	for (auto b : bodies) { b->Save(file); }
+	for (auto body : bodies) { body->Save(file); }
 	size = connections.size();
 	fwrite(&(size), sizeof(size), 1, file);
-	for (auto c : connections) { c->Save(*this, file); }
+	for (auto connection : connections) { connection->Save(*this, file); }
 
 	fclose(file);
 }
@@ -132,8 +132,8 @@ void SimulationApp::Update()
 
 	if (currentScope.find(L"Update") != currentScope.end())
 	{
-		auto tmp = *currentScope[L"Update"];
-		Execute(currentScope, tmp.bodyStatements);
+		auto updateFunction = *currentScope[L"Update"];
+		Execute(currentScope, updateFunction.bodyStatements);
 	}
 	
 	// 音乐
@@ -161,18 +161,18 @@ void SimulationApp::Update()
 	for (auto& c : connections) if (c->isMarkedForDeletion)
 	{
 		//将该连接从其两端的物体的连接列表中移除。
-		auto& cons0 = c->body0->connections;
-		cons0.erase(remove(cons0.begin(), cons0.end(), &*c), cons0.end());
-		auto& cons1 = c->body1->connections;
-		cons1.erase(remove(cons1.begin(), cons1.end(), &*c), cons1.end());
+		auto& firstBodyConnections = c->body0->connections;
+		firstBodyConnections.erase(remove(firstBodyConnections.begin(), firstBodyConnections.end(), &*c), firstBodyConnections.end());
+		auto& secondBodyConnections = c->body1->connections;
+		secondBodyConnections.erase(remove(secondBodyConnections.begin(), secondBodyConnections.end(), &*c), secondBodyConnections.end());
 	}
 	connections.erase(
 		remove_if(connections.begin(), connections.end(),
-			[](std::shared_ptr<Connection> c) { return c->isMarkedForDeletion; }),
+			[](std::shared_ptr<Connection> connection) { return connection->isMarkedForDeletion; }),
 		connections.end());
 	bodies.erase(
 		remove_if(bodies.begin(), bodies.end(),
-			[](std::shared_ptr<Body> b) { return b->isMarkedForDeletion; }),
+			[](std::shared_ptr<Body> body) { return body->isMarkedForDeletion; }),
 		bodies.end());
 	
 	// 更新运行信息
@@ -319,7 +319,7 @@ void SimulationApp::SaveParameters(FILE* file) const
 {
 	int size = parameters.size();
 	fwrite(&(size), sizeof(size), 1, file);
-	for (auto p : parameters) { p->Save(file); }
+	for (auto parameter : parameters) { parameter->Save(file); }
 }
 void SimulationApp::LoadParameters(FILE* file)
 {
@@ -455,11 +455,11 @@ void SimulationApp::UpdateBasicState()
 	// 删除标记为删除的键
 	parameters.erase(
 		remove_if(parameters.begin(), parameters.end(),
-			[](std::shared_ptr<SceneParameter> p) { return p->isMarkedForDeletion; }),
+			[](std::shared_ptr<SceneParameter> parameter) { return parameter->isMarkedForDeletion; }),
 		parameters.end());
 
 	//更新对应键的值
-	for (auto& p : parameters) { currentScope[p->name] = std::make_shared<Value>(p->value); }
+	for (auto& parameter : parameters) { currentScope[parameter->name] = std::make_shared<Value>(parameter->value); }
 }
 
 

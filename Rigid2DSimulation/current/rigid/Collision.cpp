@@ -8,7 +8,7 @@
 //	ÒÉËÆ·ÏÆú
 void Collision::Render(SimulationApp& cur) const
 {
-	DrawEllipse(cur.screen, cur.depthBuffer, 100, c, 5, 5, cur.background->ViewPort(), Color::YELLOW);
+	DrawEllipse(cur.screen, cur.depthBuffer, 100, c, 5, 5, cur.background->GetViewport(), Color::YELLOW);
 }
 void Collision::Simulate(bool equalResponse)
 {

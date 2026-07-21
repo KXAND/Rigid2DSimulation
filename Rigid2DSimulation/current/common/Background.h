@@ -16,24 +16,24 @@ struct Background
 	bool hovered = false;
 	bool wheeled = false;
 
-	Background(SimulationApp& cur);
-	DRect ViewPort() const { return { topLeft, width, height }; }
+	Background(SimulationApp& simulationApp);
+	DRect GetViewport() const { return { topLeft, width, height }; }
 	
 	/// <summary>
-	/// @todo:将该函数的调用从update中移动到了cur中，执行的顺序依然远在其他render函数之前，理由有待明确
+	/// @todo:将该函数的调用从update中移动到了simulationApp中，执行的顺序依然远在其他render函数之前，理由有待明确
 	/// @todo:考虑去掉这个无谓的传参
 	/// </summary>
-	/// <param name="cur"></param>
-	void Render(SimulationApp& cur);
+	/// <param name="simulationApp"></param>
+	void Render(SimulationApp& simulationApp);
 	/// <summary>
 	/// 更新owner深度
 	/// </summary>
-	/// <param name="cur"></param>
-	void PreUpdate(SimulationApp& cur);
+	/// <param name="simulationApp"></param>
+	void PreUpdate(SimulationApp& simulationApp);
 	/// <summary>
 	/// 检查是否点击了背景
 	/// </summary>
-	/// <param name="cur"></param>
-	void Update(SimulationApp& cur);
+	/// <param name="simulationApp"></param>
+	void Update(SimulationApp& simulationApp);
 };
 
