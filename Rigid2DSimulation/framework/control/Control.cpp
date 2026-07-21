@@ -1,15 +1,15 @@
 #include "Control.h"
 
-void Delegate::set_c(App& app, Control* _c) {
-	if (c && c != _c) { c->Discard(app); }
-	c = _c;
+void Delegate::SetControl(App& app, Control* newControl) {
+	if (control && control != newControl) { control->Discard(app); }
+	control = newControl;
 }
-int Delegate::GetW() const { return c ? c->GetW() : 0; }
-int Delegate::GetH() const { return c ? c->GetH() : 0; }
+int Delegate::GetW() const { return control ? control->GetW() : 0; }
+int Delegate::GetH() const { return control ? control->GetH() : 0; }
 
 void Delegate::Update(App& app) {
-	if (c) { c->tl = tl; c->vp = vp; c->Update(app); }
+	if (control) { control->tl = tl; control->vp = vp; control->Update(app); }
 }
-void Delegate::Discard(App& app) { if (c) { c->Discard(app); } }
-void Delegate::PreUpdate(App& app) { if (c) { c->PreUpdate(app); } }
+void Delegate::Discard(App& app) { if (control) { control->Discard(app); } }
+void Delegate::PreUpdate(App& app) { if (control) { control->PreUpdate(app); } }
 

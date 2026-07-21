@@ -16,10 +16,10 @@ struct Control {
 	virtual int GetH() const { return 0; }
 };
 // Delegate 会自动 Discard 它的成员，这是它与 CtrlList 不同的一点。
-// Delegate 要求 c 一直是有效的，即使是在 c 被覆盖的那一帧。
+// Delegate 要求 control 一直是有效的，即使是在 control 被覆盖的那一帧。
 struct Delegate : Control {
-	Control* c = NULL;
-	void set_c(App& app, Control* _c);
+	Control* control = NULL;
+	void SetControl(App& app, Control* newControl);
 	int GetW() const override;
 	int GetH() const override;
 
