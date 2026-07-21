@@ -80,6 +80,7 @@
 - 解析器语句的定义、返回、赋值、条件和循环构造函数已迁移为完整的分组、语句、括号组与表达式分组名称。
 - 解析器语句的单条语句和语句列表入口已迁移为完整的分组、当前分组、结果语句、当前语句与花括号状态名称。
 - 解析器括号分组的序列化、括号深度、待处理令牌、分组结果和完整性状态已迁移为完整 lower camel 名称。
+- `BracketGroup.h/.cpp` 已完成 4 空格缩进迁移，作为独立纯排版提交。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。
