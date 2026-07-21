@@ -329,122 +329,122 @@ void SimulationApp::LoadParameters(FILE* file)
 }
 void SimulationApp::InitializeDefaultFunctions()
 {
-	auto f0 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto setCreatorFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 1) { creator = std::make_shared<Creator>(*in[0]); }
+			if (arguments.size() >= 1) { creator = std::make_shared<Creator>(*arguments[0]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"SetCreator"] = std::make_shared<Value>(f0);
+	currentScope[L"SetCreator"] = std::make_shared<Value>(setCreatorFunction);
 
-	auto f1 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto createBodyFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 2) { CreateBody(*this, *in[0], *in[1]); }
+			if (arguments.size() >= 2) { CreateBody(*this, *arguments[0], *arguments[1]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"CreateBody"] = std::make_shared<Value>(f1);
+	currentScope[L"CreateBody"] = std::make_shared<Value>(createBodyFunction);
 
-	auto f2 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto boxFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 2) { return Box(*in[0], *in[1]); }
+			if (arguments.size() >= 2) { return Box(*arguments[0], *arguments[1]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"Box"] = std::make_shared<Value>(f2);
+	currentScope[L"Box"] = std::make_shared<Value>(boxFunction);
 
-	auto f3 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto ballFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 1) { return Ball(*in[0]); }
+			if (arguments.size() >= 1) { return Ball(*arguments[0]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"Ball"] = std::make_shared<Value>(f3);
+	currentScope[L"Ball"] = std::make_shared<Value>(ballFunction);
 
-	auto f4 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto parallelogramFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 2) { return Parallelogram(*in[0], *in[1], *in[2]); }
+			if (arguments.size() >= 2) { return Parallelogram(*arguments[0], *arguments[1], *arguments[2]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"Parallelogram"] = std::make_shared<Value>(f4);
+	currentScope[L"Parallelogram"] = std::make_shared<Value>(parallelogramFunction);
 
-	auto f5 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto trapezoidFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 3) { return Trapezoid(*in[0], *in[1], *in[2]); }
+			if (arguments.size() >= 3) { return Trapezoid(*arguments[0], *arguments[1], *arguments[2]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"Trapezoid"] = std::make_shared<Value>(f5);
+	currentScope[L"Trapezoid"] = std::make_shared<Value>(trapezoidFunction);
 
-	auto f6 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto regularPolygonFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 2) { return RegularPolygon(*in[0], *in[1]); }
+			if (arguments.size() >= 2) { return RegularPolygon(*arguments[0], *arguments[1]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"RegularPolygon"] = std::make_shared<Value>(f6);
+	currentScope[L"RegularPolygon"] = std::make_shared<Value>(regularPolygonFunction);
 
-	auto f7 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto crossFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 2) { return Cross(*in[0], *in[1]); }
+			if (arguments.size() >= 2) { return Cross(*arguments[0], *arguments[1]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"Cross"] = std::make_shared<Value>(f7);
+	currentScope[L"Cross"] = std::make_shared<Value>(crossFunction);
 
-	auto f8 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto getBodyCountFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
 			return std::make_shared<Value>(bodies.size());
 		};
-	currentScope[L"GetBodyCount"] = std::make_shared<Value>(f8);
+	currentScope[L"GetBodyCount"] = std::make_shared<Value>(getBodyCountFunction);
 
-	auto f9 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto createConnectionFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 1) { CreateConnection(*this, *in[0]); }
+			if (arguments.size() >= 1) { CreateConnection(*this, *arguments[0]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"CreateConnection"] = std::make_shared<Value>(f9);
+	currentScope[L"CreateConnection"] = std::make_shared<Value>(createConnectionFunction);
 
-	auto f10 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto setConfigFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 1) { SetConfig(*in[0]); }
+			if (arguments.size() >= 1) { SetConfig(*arguments[0]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"SetConfig"] = std::make_shared<Value>(f10);
+	currentScope[L"SetConfig"] = std::make_shared<Value>(setConfigFunction);
 
-	auto f11 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto boundaryFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 2) { Boundary(*this, *in[0], *in[1]); }
+			if (arguments.size() >= 2) { Boundary(*this, *arguments[0], *arguments[1]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"Boundary"] = std::make_shared<Value>(f11);
+	currentScope[L"Boundary"] = std::make_shared<Value>(boundaryFunction);
 
-	auto f12 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto framedBoxFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 3) { return FramedBox(*in[0], *in[1], *in[2]); }
+			if (arguments.size() >= 3) { return FramedBox(*arguments[0], *arguments[1], *arguments[2]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"FramedBox"] = std::make_shared<Value>(f12);
+	currentScope[L"FramedBox"] = std::make_shared<Value>(framedBoxFunction);
 
-	auto f13 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto gearFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 4) { Gear(*this, *in[0], *in[1], *in[2], *in[3]); }
+			if (arguments.size() >= 4) { Gear(*this, *arguments[0], *arguments[1], *arguments[2], *arguments[3]); }
 			return std::make_shared<Value>();
 		};
-	currentScope[L"Gear"] = std::make_shared<Value>(f13);
+	currentScope[L"Gear"] = std::make_shared<Value>(gearFunction);
 
-	auto f14 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto strandFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 6)
+			if (arguments.size() >= 6)
 			{
-				Strand(*this, *in[0], *in[1], *in[2], *in[3], *in[4], *in[5]);
+				Strand(*this, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
 			}
 			return std::make_shared<Value>();
 		};
-	currentScope[L"Strand"] = std::make_shared<Value>(f14);
+	currentScope[L"Strand"] = std::make_shared<Value>(strandFunction);
 
-	auto f15 = [this](vector<std::shared_ptr<Value>> const& in)
+	auto necklaceFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
 		{
-			if (in.size() >= 6)
+			if (arguments.size() >= 6)
 			{
-				Necklace(*this, *in[0], *in[1], *in[2], *in[3], *in[4], *in[5]);
+				Necklace(*this, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
 			}
 			return std::make_shared<Value>();
 		};
-	currentScope[L"Necklace"] = std::make_shared<Value>(f15);
+	currentScope[L"Necklace"] = std::make_shared<Value>(necklaceFunction);
 }
 void SimulationApp::UpdateBasicState()
 {
