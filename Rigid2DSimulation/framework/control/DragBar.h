@@ -16,9 +16,9 @@ struct HorizontalDragBar : Control {
 	bool enabled = true;
 	bool hovered = false;
 
-	HorizontalDragBar(int w = 0);
-	int GetW() const override;
-	int GetH() const override;
+	HorizontalDragBar(int width = 0);
+	int GetWidth() const override;
+	int GetHeight() const override;
 
 	double GetNormalizedValue() const;
 	void SetNormalizedNodePosition(double normalizedValue);
@@ -36,7 +36,7 @@ struct HorizontalDragBar : Control {
 struct LocalizedHorizontalDragBar : HorizontalDragBar {
 	wstring textId;
 	LocalizedHorizontalDragBar() = default;
-	LocalizedHorizontalDragBar(wstring const& id, int w);
+	LocalizedHorizontalDragBar(wstring const& id, int width);
 	void Update(App& app) override;
 };
 

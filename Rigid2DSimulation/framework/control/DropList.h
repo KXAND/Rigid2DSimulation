@@ -9,7 +9,7 @@ struct DropList : Control {
 	DVector2 gap;
 	double depth = 0;
 	wstring text;
-	int w = 0, h = 0;
+	int width = 0, height = 0;
 
 	// 即使某些设计中 selectedIndex 可以取 -1，默认值还是设成 0 吧。
 	// 这里 selectedIndex 能取什么值还没想清楚的，能不能取 -1 之类，要实践中得到。
@@ -30,9 +30,9 @@ struct DropList : Control {
 	bool enabled = true;
 	bool hovered = false;
 
-	DropList(int w = 0, DropListItemNameProvider const &itemNameProvider = GetDefaultDropListItemName);
-	int GetW() const override;
-	int GetH() const override;
+	DropList(int width = 0, DropListItemNameProvider const &itemNameProvider = GetDefaultDropListItemName);
+	int GetWidth() const override;
+	int GetHeight() const override;
 
 	DVector2 GetBoxTopLeft() const;
 	DVector2 GetItemsTopLeft() const;
@@ -50,7 +50,7 @@ struct DropList : Control {
 struct LocalizedDropList : DropList {
 	wstring textId;
 	LocalizedDropList() = default;
-	LocalizedDropList(wstring const& id, int w, DropListItemNameProvider const& itemNameProvider = GetDefaultDropListItemName);
+	LocalizedDropList(wstring const& id, int width, DropListItemNameProvider const& itemNameProvider = GetDefaultDropListItemName);
 	void Update(App& app) override;
 };
 

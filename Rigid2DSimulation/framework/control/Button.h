@@ -6,16 +6,16 @@ struct Button : Control {
 	DVector2 gap;
 	double depth = 0;
 	wstring text;
-	int w = 0, h = 0;
+	int width = 0, height = 0;
 	Color textColor, frameColor, normalColor, chosenColor, hoveredColor, invalidColor;
 
 	bool chosen = false;
 	bool enabled = true;
 	bool hovered = false;
 
-	Button(int w = 0);
-	int GetW() const override;
-	int GetH() const override;
+	Button(int width = 0);
+	int GetWidth() const override;
+	int GetHeight() const override;
 
 	void Render(App& app);
 	virtual void OnClick(App& app) {}
@@ -27,7 +27,7 @@ struct Button : Control {
 struct LocalizedButton : Button {
 	wstring textId;
 	LocalizedButton() = default;
-	LocalizedButton(int w, wstring const& id);
+	LocalizedButton(int width, wstring const& id);
 	void Update(App& app) override;
 };
 

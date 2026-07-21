@@ -6,9 +6,9 @@
 #include "RichTextBox.h"
 
 
-TextBox::TextBox(int w) : w(w) {
+TextBox::TextBox(int width) : width(width) {
 	gap = { 10, 10 }; 
-	depth = 1000; h = 30;
+	depth = 1000; height = 30;
 
 	labelTextColor = { 255, 255, 255 };
 	valueColor = { 255, 255, 255 };
@@ -26,14 +26,14 @@ TextBox::TextBox(int w) : w(w) {
 	blinkMultiplier = 8;
 	cursorWidth = 2; cursorHeight = 20;
 }
-int TextBox::GetW() const { return w + gap.x + labelTextWidth; }
-int TextBox::GetH() const { return h + gap.y; }
+int TextBox::GetWidth() const { return width + gap.x + labelTextWidth; }
+int TextBox::GetHeight() const { return height + gap.y; }
 
-DVector2 TextBox::GetBoxTopLeft() const { return tl + DVector2(labelTextWidth, 0); }
+DVector2 TextBox::GetBoxTopLeft() const { return topLeft + DVector2(labelTextWidth, 0); }
 DRect TextBox::GetTextViewport() const {
 	DVector2 textViewportTopLeft = GetBoxTopLeft() + DVector2(textViewportMarginWidth, 0);
-	int textViewportWidth = w - 2 * textViewportMarginWidth;
-	return GetOverlapRect(vp, { textViewportTopLeft, textViewportWidth, h });
+	int textViewportWidth = width - 2 * textViewportMarginWidth;
+	return GetOverlapRect(viewport, { textViewportTopLeft, textViewportWidth, height });
 }
 wstring TextBox::GetLeftText() const {
 	auto a = value.begin();
@@ -54,7 +54,7 @@ int TextBox::GetEditBegin() const { return min(selectionStart, selectionEnd); }
 int TextBox::GetEditEnd() const { return max(selectionStart, selectionEnd); }
 bool TextBox::HasSelection() const { return selectionStart != selectionEnd; }
 // 下面是对的，不需要加一减一什么的。
-int TextBox::GetMaxCursorX() const { return w - editMarginWidth; }
+int TextBox::GetMaxCursorX() const { return width - editMarginWidth; }
 int TextBox::GetCursorX(App& app) const {
 	wstring tmp(value.begin(), value.begin() + selectionEnd);
 	return valueOffsetX + GetStringSize(tmp, app.font, 0).x;
@@ -187,17 +187,17 @@ void TextBox::ClampTextPosition(App& app) {
 }
 
 void TextBox::RenderMain(App& app) {
-	DVector2 labelTextTopLeft = tl + DVector2(0, (h - app.font.h) / 2);
-	DrawString(app.screen, app.depthBuffer, depth, labelText, labelTextColor, app.font, labelTextTopLeft, 0, vp);
+	DVector2 labelTextTopLeft = topLeft + DVector2(0, (height - app.font.h) / 2);
+	DrawString(app.screen, app.depthBuffer, depth, labelText, labelTextColor, app.font, labelTextTopLeft, 0, viewport);
 
 	Color const& color =
 		!enabled ? invalidColor :
 		edit ? editColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-	DrawRectangleWithBorderRaw(app.screen, GetBoxTopLeft(), w, h, vp, color, frameColor);
+	DrawRectangleWithBorderRaw(app.screen, GetBoxTopLeft(), width, height, viewport, color, frameColor);
 
 	int cursorX = 0;
-	DVector2 valueTopLeft = GetBoxTopLeft() + DVector2(valueOffsetX, (h - app.font.h) / 2);
+	DVector2 valueTopLeft = GetBoxTopLeft() + DVector2(valueOffsetX, (height - app.font.h) / 2);
 	DrawString(app.screen, app.depthBuffer, depth, GetLeftText(), valueColor, app.font, valueTopLeft, cursorX, 0, GetTextViewport());
 	DrawString(app.screen, app.depthBuffer, depth, GetSelectedText(), selectedColor, app.font, valueTopLeft, cursorX, 0, GetTextViewport());
 	DrawString(app.screen, app.depthBuffer, depth, GetRightText(), valueColor, app.font, valueTopLeft, cursorX, 0, GetTextViewport());
@@ -207,7 +207,7 @@ void TextBox::RenderCursor(App& app) {
 		(sin(app.frameRate.GetElapsedTime() * blinkMultiplier) > 0 || cursor_change);
 	if (show_cursor) {
 		int cursorScreenX = GetBoxTopLeft().x + GetCursorX(app) - cursorWidth / 2;
-		int cursorScreenY = GetBoxTopLeft().y + (h - cursorHeight) / 2;
+		int cursorScreenY = GetBoxTopLeft().y + (height - cursorHeight) / 2;
 		DrawRectangleRaw(app.screen, { cursorScreenX, cursorScreenY }, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
 	}
 }
@@ -248,11 +248,11 @@ void TextBox::PreUpdate(App& app) {
 	if (edit) { app.inputOwners.keyboardOwner = this; }
 
 	bool ok = app.inputOwners.hoveredDepth <= depth &&
-		IsInside(app.input.mousePosition, { GetBoxTopLeft(), w, h }) && IsInside(app.input.mousePosition, vp);
+		IsInside(app.input.mousePosition, { GetBoxTopLeft(), width, height }) && IsInside(app.input.mousePosition, viewport);
 	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
-LocalizedTextBox::LocalizedTextBox(wstring const& id, int w) : TextBox(w), labelTextId(id) {}
+LocalizedTextBox::LocalizedTextBox(wstring const& id, int width) : TextBox(width), labelTextId(id) {}
 void LocalizedTextBox::Update(App& app) { labelText = app.GetLocalizedString(labelTextId); TextBox::Update(app); }
 
 

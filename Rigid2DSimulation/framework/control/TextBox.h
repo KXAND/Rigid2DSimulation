@@ -6,7 +6,7 @@ struct TextBox : Control {
 	DVector2 gap;
 	double depth = 0;
 	wstring labelText;
-	int w = 0, h = 0;
+	int width = 0, height = 0;
 	bool clearUponEdit = false;
 	Color labelTextColor, valueColor, editColor, frameColor, normalColor,
 		cursorColor, hoveredColor, invalidColor, selectedColor;
@@ -30,9 +30,9 @@ struct TextBox : Control {
 	bool selecting = false;
 	bool cursor_change = false;
 
-	TextBox(int w = 0);
-	int GetW() const override;
-	int GetH() const override;
+	TextBox(int width = 0);
+	int GetWidth() const override;
+	int GetHeight() const override;
 
 	DVector2 GetBoxTopLeft() const;
 	DRect GetTextViewport() const;
@@ -79,7 +79,7 @@ struct TextBox : Control {
 struct LocalizedTextBox : TextBox {
 	wstring labelTextId;
 	LocalizedTextBox() = default;
-	LocalizedTextBox(wstring const& id, int w);
+	LocalizedTextBox(wstring const& id, int width);
 	void Update(App& app) override;
 };
 

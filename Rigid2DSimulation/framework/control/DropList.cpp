@@ -6,9 +6,9 @@
 
 
 wstring GetNoneItemName(int id, App &app) { return L"Пе"; }
-DropList::DropList(int w, DropListItemNameProvider const& itemNameProvider) : w(w), itemNameProvider(itemNameProvider) {
+DropList::DropList(int width, DropListItemNameProvider const& itemNameProvider) : width(width), itemNameProvider(itemNameProvider) {
 	gap = { 10, 10 }; depth = 1000;
-	itemHeight = 25; h = 30;
+	itemHeight = 25; height = 30;
 
 	signRadius = 5;
 	signMargin = 15;
@@ -23,43 +23,43 @@ DropList::DropList(int w, DropListItemNameProvider const& itemNameProvider) : w(
 	invalidColor = { 0, 0, 0 };
 	hoveredColor = { 60, 60, 150 };
 }
-int DropList::GetW() const { return w + gap.x + textWidth; }
-int DropList::GetH() const {
-	return h + gap.y + (edit ? itemCount * itemHeight : 0);
+int DropList::GetWidth() const { return width + gap.x + textWidth; }
+int DropList::GetHeight() const {
+	return height + gap.y + (edit ? itemCount * itemHeight : 0);
 }
 
-DVector2 DropList::GetBoxTopLeft() const { return tl + DVector2(textWidth, 0); }
-DVector2 DropList::GetItemsTopLeft() const { return GetBoxTopLeft() + DVector2(0, h); }
+DVector2 DropList::GetBoxTopLeft() const { return topLeft + DVector2(textWidth, 0); }
+DVector2 DropList::GetItemsTopLeft() const { return GetBoxTopLeft() + DVector2(0, height); }
 void DropList::RenderMain(App& app) {
-	DVector2 labelTextTopLeft = tl + DVector2(0, (h - app.font.h) / 2);
-	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, labelTextTopLeft, 0, vp);
+	DVector2 labelTextTopLeft = topLeft + DVector2(0, (height - app.font.h) / 2);
+	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, labelTextTopLeft, 0, viewport);
 
 	Color const& color =
 		!enabled ? invalidColor :
 		edit ? editColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-	DrawRectangleWithBorder(app.screen, app.depthBuffer, depth, GetBoxTopLeft(), w, h, vp, color, frameColor);
+	DrawRectangleWithBorder(app.screen, app.depthBuffer, depth, GetBoxTopLeft(), width, height, viewport, color, frameColor);
 
-	Vector2 signCenter = (Vector2)GetBoxTopLeft() + Vector2(w - signMargin, h / 2);
-	DrawEllipse(app.screen, app.depthBuffer, depth, signCenter, signRadius, signRadius, vp, markColor);
+	Vector2 signCenter = (Vector2)GetBoxTopLeft() + Vector2(width - signMargin, height / 2);
+	DrawEllipse(app.screen, app.depthBuffer, depth, signCenter, signRadius, signRadius, viewport, markColor);
 
-	DVector2 selectedItemTextTopLeft = tl + DVector2(textMarginX, (h - app.font.h) / 2);
-	DrawString(app.screen, app.depthBuffer, depth, itemNameProvider(selectedIndex, app), textColor, app.font, labelTextTopLeft, 0, vp);
+	DVector2 selectedItemTextTopLeft = topLeft + DVector2(textMarginX, (height - app.font.h) / 2);
+	DrawString(app.screen, app.depthBuffer, depth, itemNameProvider(selectedIndex, app), textColor, app.font, labelTextTopLeft, 0, viewport);
 }
 void DropList::RenderItems(App& app) {
 	if (edit) {
 		DrawRectangleWithBorder(app.screen, app.depthBuffer, depth,
-			GetItemsTopLeft(), w, itemHeight * itemCount, vp, normalColor, frameColor);
+			GetItemsTopLeft(), width, itemHeight * itemCount, viewport, normalColor, frameColor);
 		if (hoveredItemIndex != -1) {
-			DVector2 hoveredItemTopLeft = GetBoxTopLeft() + DVector2(0, h + itemHeight * hoveredItemIndex);
+			DVector2 hoveredItemTopLeft = GetBoxTopLeft() + DVector2(0, height + itemHeight * hoveredItemIndex);
 			DrawRectangleWithBorder(app.screen, app.depthBuffer, depth,
-				hoveredItemTopLeft, w, itemHeight, vp, hoveredColor, frameColor);
+				hoveredItemTopLeft, width, itemHeight, viewport, hoveredColor, frameColor);
 		}
 		for (int i = (0), endIndex = int(itemCount); i < endIndex; ++i) {
 			DVector2 itemTextTopLeft = GetBoxTopLeft() +
-				DVector2(0, h + itemHeight * i) +
+				DVector2(0, height + itemHeight * i) +
 				DVector2(textMarginX, (itemHeight - app.font.h) / 2);
-			DrawString(app.screen, app.depthBuffer, depth, itemNameProvider(i, app), textColor, app.font, itemTextTopLeft, 0, vp);
+			DrawString(app.screen, app.depthBuffer, depth, itemNameProvider(i, app), textColor, app.font, itemTextTopLeft, 0, viewport);
 		}
 	}
 }
@@ -73,7 +73,7 @@ void DropList::Update(App& app) {
 	textWidth = GetStringSize(text, app.font, 0).x;
 	if (edit) {
 		if (hovered) {
-			int itemRelativeY = app.input.mousePosition.y - GetBoxTopLeft().y - h;
+			int itemRelativeY = app.input.mousePosition.y - GetBoxTopLeft().y - height;
 			hoveredItemIndex = itemRelativeY >= 0 ? itemRelativeY / itemHeight : -1;
 		}
 		if (enabled && hovered && app.input.IsMouseClickedDown(0)) {
@@ -91,13 +91,13 @@ void DropList::Discard(App& app) {
 	edit = hovered = false; hoveredItemIndex = -1;
 }
 void DropList::PreUpdate(App& app) {
-	int visibleHeight = h + (edit ? itemCount * itemHeight : 0);
+	int visibleHeight = height + (edit ? itemCount * itemHeight : 0);
 	bool ok = app.inputOwners.hoveredDepth <= depth &&
-		IsInside(app.input.mousePosition, { GetBoxTopLeft(), w, visibleHeight}) && IsInside(app.input.mousePosition, vp);
+		IsInside(app.input.mousePosition, { GetBoxTopLeft(), width, visibleHeight}) && IsInside(app.input.mousePosition, viewport);
 	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
-LocalizedDropList::LocalizedDropList(wstring const& id, int w, DropListItemNameProvider const& itemNameProvider) : DropList(w, itemNameProvider), textId(id) {}
+LocalizedDropList::LocalizedDropList(wstring const& id, int width, DropListItemNameProvider const& itemNameProvider) : DropList(width, itemNameProvider), textId(id) {}
 void LocalizedDropList::Update(App& app) { text = app.GetLocalizedString(textId); DropList::Update(app); }
 
 

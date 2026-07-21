@@ -5,15 +5,15 @@
 struct Label : Control {
 	DVector2 gap;
 	double depth = 0;
-	int w = 0, h = 0;
+	int width = 0, height = 0;
 	bool fixedWidth = false;
 
 	Color textColor;
 	wstring text;
 
 	Label(bool big = false);
-	int GetW() const override;
-	int GetH() const override;
+	int GetWidth() const override;
+	int GetHeight() const override;
 
 	void Render(App& app);
 	virtual void Sync(App& app) {}

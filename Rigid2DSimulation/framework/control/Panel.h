@@ -5,10 +5,10 @@ struct App;
 struct Control;
 struct VerticalScrollBar;
 struct Panel {
-	DVector2 tl;
+	DVector2 topLeft;
 	double depth = 0;
 	Control* contentControl = NULL;
-	int w = 0, h = 0;
+	int width = 0, height = 0;
 	double wheelMultiplier = 0;
 	DVector2 contentOffset;
 	DRect contentViewport;

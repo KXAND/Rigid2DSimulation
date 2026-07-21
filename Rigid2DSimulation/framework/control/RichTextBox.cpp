@@ -6,7 +6,7 @@
 
 
 RichTextBox::RichTextBox() : RichTextBox(0, 0) {}
-RichTextBox::RichTextBox(int w, int h, bool newline) : w(w), h(h) {
+RichTextBox::RichTextBox(int width, int height, bool newline) : width(width), height(height) {
 	gap = { 10, 10 }; depth = 1000;
 
 	valueColor = { 255, 255, 255 };
@@ -25,16 +25,16 @@ RichTextBox::RichTextBox(int w, int h, bool newline) : w(w), h(h) {
 	blinkMultiplier = 8;
 	cursorWidth = 2; cursorHeight = 20;
 
-	if (newline) { lineWidth = w - 2 * editMargin.x; }
+	if (newline) { lineWidth = width - 2 * editMargin.x; }
 }
-int RichTextBox::GetW() const { return w + gap.x; }
-int RichTextBox::GetH() const { return h + gap.y; }
+int RichTextBox::GetWidth() const { return width + gap.x; }
+int RichTextBox::GetHeight() const { return height + gap.y; }
 
 DRect RichTextBox::GetTextViewport() const {
-	DVector2 textViewportTopLeft = tl + textViewportMargin;
-	int textViewportWidth = w - 2 * textViewportMargin.x;
-	int textViewportHeight = h - 2 * textViewportMargin.y;
-	return GetOverlapRect(vp, { textViewportTopLeft, textViewportWidth, textViewportHeight });
+	DVector2 textViewportTopLeft = topLeft + textViewportMargin;
+	int textViewportWidth = width - 2 * textViewportMargin.x;
+	int textViewportHeight = height - 2 * textViewportMargin.y;
+	return GetOverlapRect(viewport, { textViewportTopLeft, textViewportWidth, textViewportHeight });
 }
 wstring RichTextBox::GetLeftText() const {
 	auto valueBegin = value.begin();
@@ -54,8 +54,8 @@ wstring RichTextBox::GetRightText() const {
 int RichTextBox::GetEditBegin() const { return min(selectionStart, selectionEnd); }
 int RichTextBox::GetEditEnd() const { return max(selectionStart, selectionEnd); }
 bool RichTextBox::HasSelection() const { return selectionStart != selectionEnd; }
-int RichTextBox::GetMaxCursorX() const { return w - editMargin.x; }
-int RichTextBox::GetMaxCursorY() const { return h - editMargin.y; }
+int RichTextBox::GetMaxCursorX() const { return width - editMargin.x; }
+int RichTextBox::GetMaxCursorY() const { return height - editMargin.y; }
 DVector2 RichTextBox::GetCursorPosition(App& app) const {
 	wstring selectedText(value.begin(), value.begin() + selectionEnd);
 	int cursorX = 0; DVector2 cursorPosition = GetStringSize(selectedText, app.font, lineWidth, &cursorX);
@@ -65,12 +65,12 @@ DVector2 RichTextBox::GetCursorPosition(App& app) const {
 
 void RichTextBox::SelectStart(App& app) {
 	selecting = true;
-	DVector2 mousePosition = app.input.mousePosition - (tl + (DVector2)valueOffset);
+	DVector2 mousePosition = app.input.mousePosition - (topLeft + (DVector2)valueOffset);
 	selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.font, mousePosition, lineWidth);
 	UpdateCursorXHistory(app);
 }
 void RichTextBox::SelectEnd(App& app) {
-	DVector2 mousePosition = app.input.mousePosition - (tl + (DVector2)valueOffset);
+	DVector2 mousePosition = app.input.mousePosition - (topLeft + (DVector2)valueOffset);
 	selectionEnd = GetStringIndexAtPosition(value, app.font, mousePosition, lineWidth);
 	UpdateCursorXHistory(app);
 }
@@ -202,13 +202,13 @@ void RichTextBox::HandleKey(App& app) {
 }
 
 void RichTextBox::ClampCursorWhileSelecting(App& app) {
-	double overflowDistance = (app.input.mousePosition.x - tl.x) - GetMaxCursorX();
+	double overflowDistance = (app.input.mousePosition.x - topLeft.x) - GetMaxCursorX();
 	if (overflowDistance > 0) { valueOffset.x -= app.frameRate.GetDeltaTime() * slideMultiplier * overflowDistance; }
-	overflowDistance = editMargin.x - (app.input.mousePosition.x - tl.x);
+	overflowDistance = editMargin.x - (app.input.mousePosition.x - topLeft.x);
 	if (overflowDistance > 0) { valueOffset.x += app.frameRate.GetDeltaTime() * slideMultiplier * overflowDistance; }
-	overflowDistance = (app.input.mousePosition.y - tl.y) - GetMaxCursorY();
+	overflowDistance = (app.input.mousePosition.y - topLeft.y) - GetMaxCursorY();
 	if (overflowDistance > 0) { valueOffset.y -= app.frameRate.GetDeltaTime() * slideMultiplier * overflowDistance; }
-	overflowDistance = editMargin.y - (app.input.mousePosition.y - tl.y);
+	overflowDistance = editMargin.y - (app.input.mousePosition.y - topLeft.y);
 	if (overflowDistance > 0) { valueOffset.y += app.frameRate.GetDeltaTime() * slideMultiplier * overflowDistance; }
 }
 void RichTextBox::ClampCursorWithoutSelection(App& app) {
@@ -242,10 +242,10 @@ void RichTextBox::RenderMain(App& app) {
 		!enabled ? invalidColor :
 		edit ? editColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-	DrawRectangleWithBorderRaw(app.screen, tl, w, h, vp, color, frameColor);
+	DrawRectangleWithBorderRaw(app.screen, topLeft, width, height, viewport, color, frameColor);
 
 	int textCursorX = 0;
-	DVector2 textTopLeft = tl + (DVector2)valueOffset;
+	DVector2 textTopLeft = topLeft + (DVector2)valueOffset;
 	DrawString(app.screen, app.depthBuffer, depth, GetLeftText(), valueColor, app.font, textTopLeft, textCursorX, lineWidth, GetTextViewport());
 	DrawString(app.screen, app.depthBuffer, depth, GetSelectedText(), selectedColor, app.font, textTopLeft, textCursorX, lineWidth, GetTextViewport());
 	DrawString(app.screen, app.depthBuffer, depth, GetRightText(), valueColor, app.font, textTopLeft, textCursorX, lineWidth, GetTextViewport());
@@ -254,7 +254,7 @@ void RichTextBox::RenderCursor(App& app) {
 	bool showCursor = edit &&
 		(sin(app.frameRate.GetElapsedTime() * blinkMultiplier) > 0 || cursorChanged);
 	if (showCursor) {
-		DVector2 cursorTopLeft = tl + GetCursorPosition(app) + DVector2(-cursorWidth, app.font.h - cursorHeight) / 2;
+		DVector2 cursorTopLeft = topLeft + GetCursorPosition(app) + DVector2(-cursorWidth, app.font.h - cursorHeight) / 2;
 		DrawRectangleRaw(app.screen, cursorTopLeft, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
 	}
 }
@@ -299,11 +299,11 @@ void RichTextBox::PreUpdate(App& app) {
 	if (edit) { app.inputOwners.keyboardOwner = this; }
 
 	bool ok = app.inputOwners.hoveredDepth <= depth &&
-		IsInside(app.input.mousePosition, { tl, w, h }) && IsInside(app.input.mousePosition, vp);
+		IsInside(app.input.mousePosition, { topLeft, width, height }) && IsInside(app.input.mousePosition, viewport);
 	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 
 	ok = app.inputOwners.wheeledDepth <= depth &&
-		IsInside(app.input.mousePosition, { tl, w, h }) && IsInside(app.input.mousePosition, vp);
+		IsInside(app.input.mousePosition, { topLeft, width, height }) && IsInside(app.input.mousePosition, viewport);
 	if (ok) { app.inputOwners.wheeledDepth = depth; app.inputOwners.wheeled = this; }
 }
 

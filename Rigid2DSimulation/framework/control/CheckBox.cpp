@@ -5,7 +5,7 @@
 
 
 CheckBox::CheckBox(bool big) {
-	h = big ? 30 : 20;
+	height = big ? 30 : 20;
 	gap = { 10, 10 }; depth = 1000;
 	boxSize = 20; innerBoxSize = 10;
 
@@ -18,22 +18,22 @@ CheckBox::CheckBox(bool big) {
 }
 // 这里会利用到空格的宽度刚好等于 gap.x。
 // 这里会利用到空格的宽度刚好等于 gap.x。
-int CheckBox::GetW() const { return boxSize + gap.x + textWidth; }
-int CheckBox::GetH() const { return h + gap.y; }
+int CheckBox::GetWidth() const { return boxSize + gap.x + textWidth; }
+int CheckBox::GetHeight() const { return height + gap.y; }
 
-DVector2 CheckBox::GetBoxTopLeft() const { return tl + DVector2(textWidth, (h - boxSize) / 2); }
+DVector2 CheckBox::GetBoxTopLeft() const { return topLeft + DVector2(textWidth, (height - boxSize) / 2); }
 void CheckBox::Render(App& app) {
-	DVector2 textTopLeft = tl + DVector2(0, (h - app.font.h) / 2);
-	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, vp);
+	DVector2 textTopLeft = topLeft + DVector2(0, (height - app.font.h) / 2);
+	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, viewport);
 
 	Color const& color =
 		!enabled ? invalidColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-	DrawRectangleRaw(app.screen, GetBoxTopLeft(), boxSize, boxSize, vp, color);
+	DrawRectangleRaw(app.screen, GetBoxTopLeft(), boxSize, boxSize, viewport, color);
 	if (checked) {
 		int innerOffset = (boxSize - innerBoxSize) / 2;
 		DVector2 innerBoxTopLeft = GetBoxTopLeft() + DVector2(innerOffset, innerOffset);
-		DrawRectangleRaw(app.screen, innerBoxTopLeft, innerBoxSize, innerBoxSize, vp, innerColor);
+		DrawRectangleRaw(app.screen, innerBoxTopLeft, innerBoxSize, innerBoxSize, viewport, innerColor);
 	}
 }
 
@@ -50,7 +50,7 @@ void CheckBox::Discard(App& app) {
 }
 void CheckBox::PreUpdate(App& app) {
 	bool ok = app.inputOwners.hoveredDepth <= depth &&
-		IsInside(app.input.mousePosition, { GetBoxTopLeft(), boxSize, boxSize }) && IsInside(app.input.mousePosition, vp);
+		IsInside(app.input.mousePosition, { GetBoxTopLeft(), boxSize, boxSize }) && IsInside(app.input.mousePosition, viewport);
 	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 

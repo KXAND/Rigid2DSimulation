@@ -3,7 +3,7 @@
 #include "Control.h"
 
 struct CheckBox : Control {
-	int h = 0;
+	int height = 0;
 	DVector2 gap;
 	double depth = 0;
 	wstring text;
@@ -16,8 +16,8 @@ struct CheckBox : Control {
 	bool hovered = false;
 
 	CheckBox(bool big = false);
-	int GetW() const override;
-	int GetH() const override;
+	int GetWidth() const override;
+	int GetHeight() const override;
 
 	DVector2 GetBoxTopLeft() const;
 	void Render(App& app);

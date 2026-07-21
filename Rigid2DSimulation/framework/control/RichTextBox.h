@@ -7,7 +7,7 @@ struct RichTextBox : Control {
 	DVector2 gap;
 	int lineWidth = 0;
 	double depth = 0;
-	int w = 0, h = 0;
+	int width = 0, height = 0;
 	bool clearUponEdit = false;
 	Color valueColor, editColor, frameColor, normalColor,
 		cursorColor, hoveredColor, invalidColor, selectedColor;
@@ -32,9 +32,9 @@ struct RichTextBox : Control {
 	bool cursorChanged = false;
 
 	RichTextBox();
-	RichTextBox(int w, int h, bool newline = true);
-	int GetW() const override;
-	int GetH() const override;
+	RichTextBox(int width, int height, bool newline = true);
+	int GetWidth() const override;
+	int GetHeight() const override;
 
 	DRect GetTextViewport() const;
 	wstring GetLeftText() const;

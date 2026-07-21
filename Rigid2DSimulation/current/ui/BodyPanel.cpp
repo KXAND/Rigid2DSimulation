@@ -19,7 +19,7 @@ void DeleteBodyButton::OnClick(App& app) { auto& simulationApp = static_cast<Sim
 
 
 BodyConnectionLabel::BodyConnectionLabel(int id) : id(id), Label() {
-	fixedWidth = true; w = 270;
+	fixedWidth = true; width = 270;
 }
 void BodyConnectionLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
