@@ -19,7 +19,7 @@ void PauseButton::Update(App& app) {
 }
 void PauseButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.isPaused = !simulationApp.isPaused; }
 
-ResetButton::ResetButton() : LocalizedButton(150, L"bt_reset") {}
+ResetButton::ResetButton() : LocalizedButton(150, L"resetButton") {}
 void ResetButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Reset(); }
 
 MuteButton::MuteButton() : Button(150) {}
@@ -43,7 +43,7 @@ void ModeButton::Update(App& app) {
 }
 void ModeButton::OnClick(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	simulationApp.creator->Discard(simulationApp); 
+	simulationApp.creator->Discard(simulationApp);
 	simulationApp.mode = (simulationApp.mode + 1) % 4;
 }
 
@@ -66,20 +66,20 @@ void DisplayButton::OnClick(App& app) {
 MenuPanel::MenuPanel(App& app) : Panel(Panel::menu(app)) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	vector<Control*> tmp;
-	bt_pause = std::make_shared<PauseButton>(); bt_reset = std::make_shared<ResetButton>(); bt_mute = std::make_shared<MuteButton>();
-	bt_global = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->globalPanel);
-	bt_body = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->bodyPanel);
-	bt_con = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->connectionPanel);
-	bt_mode = std::make_shared<ModeButton>(); bt_display = std::make_shared<DisplayButton>();
-	bt_cmd = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->commandPanel);
-	bt_par = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->parameterPanel);
-	bt_lang = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->languagePanel);
-	bt_about = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->aboutPanel);
-	tmp = { &*bt_pause, &*bt_reset, &*bt_mute, &*bt_global, 
-		&*bt_body, &*bt_con, &*bt_mode, &*bt_display,
-		&*bt_cmd, &*bt_par, &*bt_lang, &*bt_about };
-	cly = std::make_shared<VerticalControlList>(tmp);
-	c = &*cly;
+	pauseButton = std::make_shared<PauseButton>(); resetButton = std::make_shared<ResetButton>(); muteButton = std::make_shared<MuteButton>();
+	globalPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->globalPanel);
+	bodyPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->bodyPanel);
+	connectionPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->connectionPanel);
+	modeButton = std::make_shared<ModeButton>(); displayButton = std::make_shared<DisplayButton>();
+	commandPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->commandPanel);
+	parameterPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->parameterPanel);
+	languagePanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->languagePanel);
+	aboutPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->aboutPanel);
+	tmp = { &*pauseButton, &*resetButton, &*muteButton, &*globalPanelButton,
+		&*bodyPanelButton, &*connectionPanelButton, &*modeButton, &*displayButton,
+		&*commandPanelButton, &*parameterPanelButton, &*languagePanelButton, &*aboutPanelButton };
+	controls = std::make_shared<VerticalControlList>(tmp);
+	c = &*controls;
 	Init(app);
 }
 

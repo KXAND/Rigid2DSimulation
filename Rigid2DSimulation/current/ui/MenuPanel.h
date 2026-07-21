@@ -29,19 +29,19 @@ struct DisplayButton : Button {
 };
 
 struct MenuPanel : Panel {
-	std::shared_ptr<PauseButton> bt_pause;
-	std::shared_ptr<ResetButton> bt_reset;
-	std::shared_ptr<MuteButton> bt_mute;
-	std::shared_ptr<ShowFloatPanelButton> bt_global;
-	std::shared_ptr<ShowFloatPanelButton> bt_body;
-	std::shared_ptr<ShowFloatPanelButton> bt_con;
-	std::shared_ptr<ModeButton> bt_mode;
-	std::shared_ptr<DisplayButton> bt_display;
-	std::shared_ptr<ShowFloatPanelButton> bt_cmd;
-	std::shared_ptr<ShowFloatPanelButton> bt_par;
-	std::shared_ptr<ShowFloatPanelButton> bt_lang;
-	std::shared_ptr<ShowFloatPanelButton> bt_about;
-	std::shared_ptr<VerticalControlList> cly;
+	std::shared_ptr<PauseButton> pauseButton;
+	std::shared_ptr<ResetButton> resetButton;
+	std::shared_ptr<MuteButton> muteButton;
+	std::shared_ptr<ShowFloatPanelButton> globalPanelButton;
+	std::shared_ptr<ShowFloatPanelButton> bodyPanelButton;
+	std::shared_ptr<ShowFloatPanelButton> connectionPanelButton;
+	std::shared_ptr<ModeButton> modeButton;
+	std::shared_ptr<DisplayButton> displayButton;
+	std::shared_ptr<ShowFloatPanelButton> commandPanelButton;
+	std::shared_ptr<ShowFloatPanelButton> parameterPanelButton;
+	std::shared_ptr<ShowFloatPanelButton> languagePanelButton;
+	std::shared_ptr<ShowFloatPanelButton> aboutPanelButton;
+	std::shared_ptr<VerticalControlList> controls;
 	MenuPanel(App& app);
 };
 
