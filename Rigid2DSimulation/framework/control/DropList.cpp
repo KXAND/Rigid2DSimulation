@@ -28,8 +28,8 @@ int DropList::GetH() const {
 	return h + gap.y + (edit ? n_item * h_item : 0);
 }
 
-DVector2 DropList::tl_box() const { return tl + DVector2(w_txt, 0); }
-DVector2 DropList::tl_item() const { return tl_box() + DVector2(0, h); }
+DVector2 DropList::GetBoxTopLeft() const { return tl + DVector2(w_txt, 0); }
+DVector2 DropList::GetItemsTopLeft() const { return GetBoxTopLeft() + DVector2(0, h); }
 void DropList::RenderMain(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
@@ -38,25 +38,25 @@ void DropList::RenderMain(App& app) {
 		!enabled ? c_invalid :
 		edit ? c_edit :
 		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
-	drawRectangleWithBorder(app.scr, app.dscr, depth, tl_box(), w, h, vp, c, c_frame);
+	drawRectangleWithBorder(app.scr, app.dscr, depth, GetBoxTopLeft(), w, h, vp, c, c_frame);
 
-	Vector2 ct_sign = (Vector2)tl_box() + Vector2(w - sign_margin, h / 2);
+	Vector2 ct_sign = (Vector2)GetBoxTopLeft() + Vector2(w - sign_margin, h / 2);
 	drawEllipse(app.scr, app.dscr, depth, ct_sign, sign_r, sign_r, vp, c_mark);
 
-	DVector2 tl_item = tl + DVector2(x_txt_margin, (h - app.ft.h) / 2);
+	DVector2 itemTextTopLeft = tl + DVector2(x_txt_margin, (h - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, nm(picked, app), c_txt, app.ft, tl_txt, 0, vp);
 }
 void DropList::RenderItems(App& app) {
 	if (edit) {
 		drawRectangleWithBorder(app.scr, app.dscr, depth, 
-			tl_item(), w, h_item * n_item, vp, c_normal, c_frame);
+			GetItemsTopLeft(), w, h_item * n_item, vp, c_normal, c_frame);
 		if (item_hv != -1) {
-			DVector2 tl_hovered = tl_box() + DVector2(0, h + h_item * item_hv);
+			DVector2 tl_hovered = GetBoxTopLeft() + DVector2(0, h + h_item * item_hv);
 			drawRectangleWithBorder(app.scr, app.dscr, depth,
 				tl_hovered, w, h_item, vp, hoveredColor, c_frame);
 		}
 		for (int i = (0), iEnd = int(n_item); i < iEnd; ++i) {
-			DVector2 tl_txt_item = tl_box() +
+			DVector2 tl_txt_item = GetBoxTopLeft() +
 				DVector2(0, h + h_item * i) +
 				DVector2(x_txt_margin, (h_item - app.ft.h) / 2);
 			DrawString(app.scr, app.dscr, depth, nm(i, app), c_txt, app.ft, tl_txt_item, 0, vp);
@@ -73,7 +73,7 @@ void DropList::Update(App& app) {
 	w_txt = GetStringSize(txt, app.ft, 0).x;
 	if (edit) {
 		if (hovered) {
-			int tmp = app.input.msp.y - tl_box().y - h;
+			int tmp = app.input.msp.y - GetBoxTopLeft().y - h;
 			item_hv = tmp >= 0 ? tmp / h_item : -1;
 		}
 		if (enabled && hovered && app.input.isMouseClickedDown(0)) {
@@ -93,7 +93,7 @@ void DropList::Discard(App& app) {
 void DropList::PreUpdate(App& app) {
 	int real_h = h + (edit ? n_item * h_item : 0);
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { tl_box(), w, real_h}) && isInside(app.input.msp, vp);
+		isInside(app.input.msp, { GetBoxTopLeft(), w, real_h}) && isInside(app.input.msp, vp);
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 

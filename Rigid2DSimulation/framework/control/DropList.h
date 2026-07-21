@@ -34,8 +34,8 @@ struct DropList : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	DVector2 tl_box() const;
-	DVector2 tl_item() const;
+	DVector2 GetBoxTopLeft() const;
+	DVector2 GetItemsTopLeft() const;
 	void RenderMain(App& app);
 	void RenderItems(App& app);
 	void Render(App& app);
