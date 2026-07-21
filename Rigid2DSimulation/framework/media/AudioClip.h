@@ -2,15 +2,15 @@
 #include "Utils.h"
 
 struct AudioClip {
-	int sp = 0;
-	int csp = 0;
-	bool replay = false;
-	vector<double> vs;
+	int sampleRate = 0;
+	int sampleIndex = 0;
+	bool repeat = false;
+	vector<double> samples;
 
-	AudioClip(wstring const& nm, bool* ok = NULL);
-	AudioClip(int sp = 0);
-	int n() const { return vs.size(); }
-	void play(vector<double>& in, double vol = 1);
-	void save(wstring const& nm) const;
+	AudioClip(wstring const& fileName, bool* loaded = NULL);
+	AudioClip(int sampleRate = 0);
+	int GetSampleCount() const { return samples.size(); }
+	void Play(vector<double>& output, double volume = 1);
+	void Save(wstring const& fileName) const;
 };
 

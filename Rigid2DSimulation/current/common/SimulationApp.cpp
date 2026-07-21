@@ -34,15 +34,15 @@ SimulationApp::SimulationApp()
     PrintConsole(L"控件加载完成.", true);
 
     PrintConsole(L"正在加载音乐...");
-    bool ok = false;
-    musicClip0 = std::make_shared<AudioClip>(L"sound/bgm0.clip", &ok);
-    if (!ok) { musicClip0 = NULL; }
-    musicClip1 = std::make_shared<AudioClip>(L"sound/bgm1.clip", &ok);
-    if (!ok) { musicClip1 = NULL; }
+    bool audioLoaded = false;
+    firstMusicClip = std::make_shared<AudioClip>(L"sound/bgm0.clip", &audioLoaded);
+    if (!audioLoaded) { firstMusicClip = NULL; }
+    secondMusicClip = std::make_shared<AudioClip>(L"sound/bgm1.clip", &audioLoaded);
+    if (!audioLoaded) { secondMusicClip = NULL; }
     PrintConsole(L"音乐加载完成.", true);
 
     volume = 1;
-    currentMusicClip = GenerateRandomFloat(1) < 0.5 ? &*musicClip0 : &*musicClip1;
+    currentMusicClip = GenerateRandomFloat(1) < 0.5 ? &*firstMusicClip : &*secondMusicClip;
 }
 
 void SimulationApp::Save(wstring const& name) const
@@ -137,14 +137,14 @@ void SimulationApp::Update()
 	}
 	
 	// 音乐
-	if (musicClip0 && musicClip1)
+	if (firstMusicClip && secondMusicClip)
 	{
-		if (currentMusicClip->csp >= currentMusicClip->n())
+		if (currentMusicClip->sampleIndex >= currentMusicClip->GetSampleCount())
 		{
-			currentMusicClip->csp = 0;
-			currentMusicClip = (currentMusicClip == &*musicClip0) ? &*musicClip1 : &*musicClip0;
+			currentMusicClip->sampleIndex = 0;
+			currentMusicClip = (currentMusicClip == &*firstMusicClip) ? &*secondMusicClip : &*firstMusicClip;
 		}
-		if (!isMuted) { currentMusicClip->play(wv.wvin); }
+		if (!isMuted) { currentMusicClip->Play(wv.wvin); }
 	}
 
 	// 检查暂停

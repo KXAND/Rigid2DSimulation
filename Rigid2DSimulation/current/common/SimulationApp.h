@@ -32,7 +32,7 @@ struct SimulationApp : App
 	wstring debugString, scriptText, temporaryScriptText;
 	vector<std::shared_ptr<SceneParameter>> parameters;
 
-	std::shared_ptr<AudioClip> musicClip0, musicClip1;
+	std::shared_ptr<AudioClip> firstMusicClip, secondMusicClip;
 	AudioClip* currentMusicClip = NULL;
 	double volume = 0;
 
