@@ -27,7 +27,7 @@ struct AppInput {
 	void reset();
 };
 
-struct app_fps {
+struct FrameRate {
 	int frm_cnt = 0;
 	int frm_cnt_max = 0;
 	long long ns_cnt = 0;
@@ -35,7 +35,7 @@ struct app_fps {
 	long long real_dt = 0, real_dur = 0;
 	std::chrono::high_resolution_clock::time_point tm;
 
-	app_fps();
+	FrameRate();
 	void run();
 	void update();
 
@@ -43,7 +43,7 @@ struct app_fps {
 	double dur() const { return real_dur / 1e9; }
 };
 
-struct app_owners {
+struct InputOwners {
 	void* keyboardOwner = NULL;
 	void* hovered = NULL;
 	void* wheeled = NULL;

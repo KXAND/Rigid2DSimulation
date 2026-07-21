@@ -1,29 +1,29 @@
 #include "WaveOutput.h"
 
-wvblk::wvblk(int n) : dat(n) {
+WaveBlock::WaveBlock(int n) : dat(n) {
 	hdr.lpData = (LPSTR)dat.data();
 	hdr.dwBufferLength = 2 * n;
 }
-int wvblk::n() const { return dat.size(); }
-bool wvblk::done() const { return hdr.dwFlags & WHDR_DONE; }
-bool wvblk::play(HWAVEOUT hwo) {
+int WaveBlock::n() const { return dat.size(); }
+bool WaveBlock::done() const { return hdr.dwFlags & WHDR_DONE; }
+bool WaveBlock::play(HWAVEOUT hwo) {
 	auto ret0 = waveOutPrepareHeader(hwo, &hdr, sizeof(hdr));
 	auto ret1 = waveOutWrite(hwo, &hdr, sizeof(hdr));
 	return
 		ret0 == MMSYSERR_NOERROR &&
 		ret1 == MMSYSERR_NOERROR;
 }
-bool wvblk::finish(HWAVEOUT hwo) {
+bool WaveBlock::finish(HWAVEOUT hwo) {
 	return waveOutUnprepareHeader(hwo, &hdr, sizeof(hdr)) == MMSYSERR_NOERROR;
 }
 
-app_wv::app_wv() {
+WaveOutput::WaveOutput() {
 	// 这里实时播放的处理我还不知道怎么做的更好。
 	sp = 44100; len_block = 5e-4;
 	n_safe = 120; n_blocks = 512;
 }
-int app_wv::len_block_n() const { return len_block * sp; }
-bool app_wv::init() {
+int WaveOutput::len_block_n() const { return len_block * sp; }
+bool WaveOutput::init() {
 	wofm.wFormatTag = WAVE_FORMAT_PCM;
 	wofm.nChannels = 1;
 	wofm.nSamplesPerSec = sp;
@@ -35,10 +35,10 @@ bool app_wv::init() {
 	auto ret = waveOutOpen(&hwo, WAVE_MAPPER, &wofm, NULL, 0, CALLBACK_NULL);
 	if (ret != MMSYSERR_NOERROR) { return false; }
 	for (int i = (0), iEnd = int(n_blocks); i < iEnd; ++i) {
-		wvblks.push_back(std::make_shared<wvblk>(len_block_n()));
+		wvblks.push_back(std::make_shared<WaveBlock>(len_block_n()));
 	} return true;
 }
-bool app_wv::play() {
+bool WaveOutput::play() {
 	while (n_play > 0 && wvblks.front()->done()) {
 		bool ret = wvblks.front()->finish(hwo);
 		if (!ret) { return false; } n_play--;
@@ -58,7 +58,7 @@ bool app_wv::play() {
 	} wvin = vector<double>(n_in * len_block_n());
 	return true;
 }
-void app_wv::exit() {
+void WaveOutput::exit() {
 	while (n_play > 0) {
 		while (!wvblks.front()->done()) { Sleep(0); }
 		wvblks.front()->finish(hwo);

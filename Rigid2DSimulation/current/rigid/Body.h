@@ -26,7 +26,7 @@ struct Body
 	vector<std::shared_ptr<Shape>> shapes;
 	vector<Connection*> connections;
 	Vector2 position, velocity;
-	aabb box;
+	Aabb box;
 	Matrix2 transform = Matrix2::I();
 	wstring scriptText, temporaryScriptText;
 	double radian = 0, velocityAngular = 0;

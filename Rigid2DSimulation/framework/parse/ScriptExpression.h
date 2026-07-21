@@ -27,22 +27,22 @@ struct ScriptExpr {
 };
 wstring ToWString(ScriptExpr const& ex);
 
-struct pre_expr {
+struct PreExpression {
 	bool istk = false;
 	ScriptExpr ex;
-	token tk;
+	Token tk;
 
-	pre_expr() = default;
-	pre_expr(ScriptExpr const& ex);
-	pre_expr(token const& tk);
+	PreExpression() = default;
+	PreExpression(ScriptExpr const& ex);
+	PreExpression(Token const& tk);
 };
 
-bool IsUnaryOperator(token const& tk);
-bool IsBinaryOperator(token const& tk);
+bool IsUnaryOperator(Token const& tk);
+bool IsBinaryOperator(Token const& tk);
 
-bool ParseNegation(vector<pre_expr> const& in, ScriptExpr& out);
-bool ParseBinary(vector<pre_expr> const& in, ScriptExpr& out, vector<wstring> const& mark);
-ScriptExpr ParsePreExpression(vector<pre_expr> const& in);
+bool ParseNegation(vector<PreExpression> const& in, ScriptExpr& out);
+bool ParseBinary(vector<PreExpression> const& in, ScriptExpr& out, vector<wstring> const& mark);
+ScriptExpr ParsePreExpression(vector<PreExpression> const& in);
 
 ScriptExpr ParseCall(vector<BracketGroup> const& in);
 ScriptExpr ParseBinaryExpressions(vector<BracketGroup> const& in);

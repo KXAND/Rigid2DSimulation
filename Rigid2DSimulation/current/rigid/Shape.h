@@ -28,7 +28,7 @@ public:
 
 	Vector2 GenerateRandomPointInside() const;
 	bool IsInside(Vector2 p) const;
-	aabb GetBoundingBox() const;
+	Aabb GetBoundingBox() const;
 };
 
 vector<Vector2> GetRectVerticesByCenter(double w, double h);

@@ -35,9 +35,9 @@ void AppInput::reset() {
 	kbmsg.fill(0); isBbarClicked = false;
 }
 
-app_fps::app_fps() { frm_cnt_max = 10; }
-void app_fps::run() { tm = std::chrono::high_resolution_clock::now(); }
-void app_fps::update() {
+FrameRate::FrameRate() { frm_cnt_max = 10; }
+void FrameRate::run() { tm = std::chrono::high_resolution_clock::now(); }
+void FrameRate::update() {
 	auto now = std::chrono::high_resolution_clock::now();
 	real_dur += real_dt = (now - tm).count();
 	tm = now; frm_cnt++; ns_cnt += real_dt;
@@ -49,15 +49,15 @@ void app_fps::update() {
 	}
 }
 
-void app_owners::reset() {
+void InputOwners::reset() {
 	hoveredDepth = wheeledDepth = -DBL_MAX; keyboardOwner = hovered = wheeled = NULL;
 }
-void app_owners::remove(void* o) {
+void InputOwners::remove(void* o) {
 	if (keyboardOwner == o) { keyboardOwner = NULL; }
 	if (hovered == o) { hovered = NULL; }
 	if (wheeled == o) { wheeled = NULL; }
 }
-void app_owners::free_kb(void* o) {
+void InputOwners::free_kb(void* o) {
 	if (keyboardOwner == o) { keyboardOwner = NULL; }
 }
 

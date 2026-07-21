@@ -40,21 +40,21 @@ wstring ToWString(ScriptExpr const& ex) {
 	return tmp;
 }
 
-pre_expr::pre_expr(ScriptExpr const& ex) : ex(ex) {}
-pre_expr::pre_expr(token const& tk) : tk(tk) { istk = true; }
+PreExpression::PreExpression(ScriptExpr const& ex) : ex(ex) {}
+PreExpression::PreExpression(Token const& tk) : tk(tk) { istk = true; }
 
-bool IsUnaryOperator(token const& tk) {
+bool IsUnaryOperator(Token const& tk) {
 	// 由于 +，- 的特殊性，它们都被当成二元运算符处理。
 	if (tk.typ.empty()) { return false; }
 	auto const& s = tk.typ;
 	return s == L"!";
 }
-bool IsBinaryOperator(token const& tk) {
+bool IsBinaryOperator(Token const& tk) {
 	if (tk.typ.empty()) { return false; }
 	return !iswalnum(tk.typ[0]) && !IsUnaryOperator(tk);
 }
 
-bool ParseNegation(vector<pre_expr> const& in, ScriptExpr& out) {
+bool ParseNegation(vector<PreExpression> const& in, ScriptExpr& out) {
 	for (int i = (0), iEnd = int(in.size()); i < iEnd; ++i) {
 		auto const& pre = in[i];
 		if (!pre.istk) { continue; }
@@ -67,7 +67,7 @@ bool ParseNegation(vector<pre_expr> const& in, ScriptExpr& out) {
 				return false;
 			}
 
-			auto tmp = vector<pre_expr>(in.begin(), in.begin() + i);
+			auto tmp = vector<PreExpression>(in.begin(), in.begin() + i);
 			tmp.push_back(ScriptExpr(s + s, { in[i + 1].ex }));
 			for (int j = (i + 2), jEnd = int(in.size()); j < jEnd; ++j) { tmp.push_back(in[j]); }
 			out = ParsePreExpression(tmp);
@@ -76,7 +76,7 @@ bool ParseNegation(vector<pre_expr> const& in, ScriptExpr& out) {
 	}
 	return false;
 }
-bool ParseBinary(vector<pre_expr> const& in, ScriptExpr& out, vector<wstring> const& mark) {
+bool ParseBinary(vector<PreExpression> const& in, ScriptExpr& out, vector<wstring> const& mark) {
 	for (int i = (0), iEnd = int(in.size()); i < iEnd; ++i) {
 		auto const& pre = in[i];
 		if (!pre.istk) { continue; }
@@ -91,7 +91,7 @@ bool ParseBinary(vector<pre_expr> const& in, ScriptExpr& out, vector<wstring> co
 				return false;
 			}
 
-			auto tmp = vector<pre_expr>(in.begin(), in.begin() + i - 1);
+			auto tmp = vector<PreExpression>(in.begin(), in.begin() + i - 1);
 			tmp.push_back(ScriptExpr(s, { in[i - 1].ex, in[i + 1].ex }));
 			for (int j = (i + 2), jEnd = int(in.size()); j < jEnd; ++j) { tmp.push_back(in[j]); }
 			out = ParsePreExpression(tmp);
@@ -100,7 +100,7 @@ bool ParseBinary(vector<pre_expr> const& in, ScriptExpr& out, vector<wstring> co
 	}
 	return false;
 }
-ScriptExpr ParsePreExpression(vector<pre_expr> const& in) {
+ScriptExpr ParsePreExpression(vector<PreExpression> const& in) {
 	if (in.empty()) { return ScriptExpr(L"error"); }
 	if (in.size() == 1) {
 		if (in[0].istk) { return ScriptExpr(L"error"); }
@@ -138,7 +138,7 @@ ScriptExpr ParseCall(vector<BracketGroup> const& in) {
 }
 ScriptExpr ParseBinaryExpressions(vector<BracketGroup> const& in) {
 	vector<BracketGroup> tmp;
-	vector<pre_expr> pres;
+	vector<PreExpression> pres;
 	for (auto const& b : in) {
 		if (IsBinaryOperator(b.tk)) {
 			if (!tmp.empty()) {

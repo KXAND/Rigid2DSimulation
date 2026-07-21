@@ -11,11 +11,11 @@ wstring ToWString(BracketGroup const& b) {
 	return tmp;
 }
 
-vector<BracketGroup> AnalyzeBrackets(vector<token> const& in) {
+vector<BracketGroup> AnalyzeBrackets(vector<Token> const& in) {
 	vector<BracketGroup> out;
 	int bra1 = 0, bra2 = 0, bra3 = 0;
 	BracketGroup b;
-	vector<token> tmp;
+	vector<Token> tmp;
 	bool zero = true;
 	for (auto const& tk : in) {
 		if (tk.typ == L"(") {

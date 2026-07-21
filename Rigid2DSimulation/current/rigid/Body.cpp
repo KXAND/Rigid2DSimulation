@@ -176,10 +176,10 @@ void Body::UpdateShapesPositionAndAABB()
 void Body::UpdateAABB()
 {
 	// @todo：考虑设计一个expand函数
-	box = aabb();
+	box = Aabb();
 	for (const auto& shape : shapes)
 	{
-		box = aabb(box, shape->GetBoundingBox());
+		box = Aabb(box, shape->GetBoundingBox());
 	}
 }
 

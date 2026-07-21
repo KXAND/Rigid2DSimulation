@@ -78,12 +78,12 @@ bool Shape::IsInside(Vector2 p) const
 	return false;
 }
 
-aabb Shape::GetBoundingBox() const
+Aabb Shape::GetBoundingBox() const
 {
 	if (isCircle)
-		return aabb(position.x - r, position.x + r, position.y - r, position.y + r);
+		return Aabb(position.x - r, position.x + r, position.y - r, position.y + r);
 
-	aabb box;
+	Aabb box;
 	for (auto v : vertices)
 	{
 		box.Expand(v);
