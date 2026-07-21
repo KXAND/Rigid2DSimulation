@@ -8,13 +8,13 @@
 
 Connection::Connection()
 {
-	colorRope = dColor::WHITE;
-	colorRopeTight = dColor::RED;
-	colorLink = dColor::BLUE;
-	colorSpringCompress = dColor::GREEN;
-	colorSpringStretch = dColor::YELLOW;
-	colorCord = dColor::CYAN;
-	colorCordTight = dColor::MAGENTA;
+	colorRope = Color::WHITE;
+	colorRopeTight = Color::RED;
+	colorLink = Color::BLUE;
+	colorSpringCompress = Color::GREEN;
+	colorSpringStretch = Color::YELLOW;
+	colorCord = Color::CYAN;
+	colorCordTight = Color::MAGENTA;
 }
 void Connection::Save(SimulationApp const& cur, FILE* file) const
 {
@@ -197,7 +197,7 @@ void Connection::Simulate(double deltaTime, bool useEqualPositionCorrection)
 
 void Connection::Render(SimulationApp& cur) const
 {
-	dColor color;
+	Color color;
 	switch (type)
 	{
 		case CON_ROPE: color = isTight ? colorRopeTight : colorRope; break;

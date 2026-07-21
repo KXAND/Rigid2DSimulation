@@ -61,7 +61,7 @@ void Creator::UpdateBox(SimulationApp& cur)
 		{
 			body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(x1 - x0, y1 - y0)));
 			body->position = Vector2(x0 + x1, y0 + y1) / 2;
-			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+			body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 			body->Init();
 		}
@@ -94,7 +94,7 @@ void Creator::UpdateBall(SimulationApp& cur)
 		{
 			body = std::make_shared<Body>(std::make_shared<Shape>(r));
 			body->position = Vector2(creationStartPoint);
-			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+			body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 			body->Init();
 		}
@@ -130,7 +130,7 @@ void Creator::UpdatePlate(SimulationApp& cur)
 			body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(len + thk, thk)));
 			body->position = Vector2(creationStartPoint + cur.input.msp) / 2;
 			body->radian = atan2(v.y, v.x);
-			body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+			body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 			body->Init();
 		}
@@ -190,7 +190,7 @@ void Creator::UpdatePoint(SimulationApp& cur)
 	if (hovered && cur.input.isMouseClickedDown(0))
 	{
 		body = std::make_shared<Body>((Vector2) cur.input.msp);
-		body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+		body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 		if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 		body->Init();
 		cur.bodies.push_back(body);
@@ -224,7 +224,7 @@ void Creator::UpdateParticle(SimulationApp& cur)
 	{
 		body = std::make_shared<Body>(std::make_shared<Shape>(rad));
 		body->position = (Vector2) cur.input.msp;
-		body->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+		body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 		if (bodyConfiguration) { body->ReadCfg(*bodyConfiguration); }
 		body->Init();
 		cur.bodies.push_back(body);

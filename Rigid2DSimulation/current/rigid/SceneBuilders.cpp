@@ -37,7 +37,7 @@ void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 	}
 	if (point) { bo = std::make_shared<Body>(Vector2()); }
 	else { bo = std::make_shared<Body>(shs); }
-	bo->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+	bo->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	bo->ReadCfg(cfg);
 	bool repos_o = false;
 	TryReadConfigNumber(cfg, L"repos_o", repos_o);
@@ -94,7 +94,7 @@ void Boundary(SimulationApp& cur, Var const& thk, Var const& cfg)
 	double bx0 = cur.background->topLeft.x, bx1 = bx0 + bw;
 	double by0 = cur.background->topLeft.y, by1 = by0 + bh;
 	std::shared_ptr<Body> body;
-	dColor color = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+	Color color = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thk.num, bh)));
 	body->position = Vector2(bx0, (by0 + by1) / 2);
 	body->fixed = true;
@@ -140,7 +140,7 @@ void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var cons
 		shs.push_back(std::make_shared<Shape>(vector<Vector2>{ v0, v, v1 }));
 	}
 	auto wheel = std::make_shared<Body>(shs);
-	wheel->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+	wheel->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	wheel->ReadCfg(cfg);
 	wheel->Init();
 	cur.bodies.push_back(wheel);
@@ -167,7 +167,7 @@ void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	double len = (p1 - p0).len() / n;
 	double rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * rad);
-	dColor col = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+	Color col = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	b0 = std::make_shared<Body>(std::make_shared<Shape>(rad));
 	b0->innerColor = col;
 	b0->position = p0;
@@ -206,7 +206,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 	double len = 2 * PI * rad.num / n;
 	double ball_rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * ball_rad);
-	dColor col = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+	Color col = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	b0 = std::make_shared<Body>(std::make_shared<Shape>(ball_rad));
 	b0->innerColor = col;
 	b0->position = o + Vector2(rad.num, 0);

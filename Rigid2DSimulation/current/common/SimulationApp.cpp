@@ -25,9 +25,9 @@ SimulationApp::SimulationApp()
 	print_console(L"控件加载完成.", true);
 	print_console(L"正在加载音乐...");
 	bool ok = false;
-	musicClip0 = std::make_shared<clip>(L"sound/bgm0.clip", &ok);
+	musicClip0 = std::make_shared<AudioClip>(L"sound/bgm0.clip", &ok);
 	if (!ok) { musicClip0 = NULL; }
-	musicClip1 = std::make_shared<clip>(L"sound/bgm1.clip", &ok);
+	musicClip1 = std::make_shared<AudioClip>(L"sound/bgm1.clip", &ok);
 	if (!ok) { musicClip1 = NULL; }
 	print_console(L"音乐加载完成.", true);
 	vol = 1;

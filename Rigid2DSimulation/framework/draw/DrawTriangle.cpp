@@ -16,10 +16,10 @@ bool IsOutsideBoundary(DVector2 const& point, long long boundary,
         : point.y > boundary;
 }
 
-bool ClipTriangleAtHorizontalBoundary(tile& targetTile, dbuf& zBuffer,
+bool ClipTriangleAtHorizontalBoundary(Tile& targetTile, DepthBuffer& zBuffer,
     DRect const& viewPort, DVector2 const& firstPoint,
     DVector2 const& middlePoint, DVector2 const& lastPoint, double depth,
-    dColor color, long long boundary, BoundarySide boundarySide)
+    Color color, long long boundary, BoundarySide boundarySide)
 {
     if (IsOutsideBoundary(lastPoint, boundary, boundarySide))
     {
@@ -59,8 +59,8 @@ bool ClipTriangleAtHorizontalBoundary(tile& targetTile, dbuf& zBuffer,
 }
 }
 
-void subDrawTriangle(tile& dest, dbuf& zBuffer,
-	DVector2 pa, DVector2 pb, DVector2 pc, double depth, dColor color, bool same_y)
+void subDrawTriangle(Tile& dest, DepthBuffer& zBuffer,
+	DVector2 pa, DVector2 pb, DVector2 pc, double depth, Color color, bool same_y)
 {
 	// 假设 pa, pb, pc  已经交换过了。
 	// 用它画斜的长方形有的时候会出现裂痕，不知道能不能修复。
@@ -78,8 +78,8 @@ void subDrawTriangle(tile& dest, dbuf& zBuffer,
 		}
 	}
 }
-void drawTriangle(tile& targetTile, dbuf& zBuffer, DRect const& viewPort,
-	DVector2 pa, DVector2 pb, DVector2 pc, double depth, dColor color)
+void drawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
+	DVector2 pa, DVector2 pb, DVector2 pc, double depth, Color color)
 {
 	// 如果可以让这里写得好看有条理，容易修改且不容易出 bug 就好了。
 	// @todo:考虑笔记中的 SH 算法
@@ -138,8 +138,8 @@ void drawTriangle(tile& targetTile, dbuf& zBuffer, DRect const& viewPort,
 	subDrawTriangle(targetTile, zBuffer, pa, pb, pd, depth, color, y_big);
 	subDrawTriangle(targetTile, zBuffer, pc, pb, pd, depth, color, y_big);
 }
-void drawTriangle(tile& targetTile, dbuf& zBuffer, DRect const& viewPort,
-	Vector2 pa, Vector2 pb, Vector2 pc, double depth, dColor color)
+void drawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
+	Vector2 pa, Vector2 pb, Vector2 pc, double depth, Color color)
 {
 	drawTriangle(targetTile, zBuffer, viewPort, (DVector2) pa, (DVector2) pb, (DVector2) pc, depth, color);
 }

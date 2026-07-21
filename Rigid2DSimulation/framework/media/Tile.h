@@ -1,24 +1,24 @@
 #pragma once
 #include "Vector3.h"
-struct dColor
+struct Color
 {
 	BYTE b = 0, g = 0, r = 0;
 
-	static const dColor RED;
-	static const dColor GREEN;
-	static const dColor BLUE;
-	static const dColor CYAN;
-	static const dColor YELLOW;
-	static const dColor MAGENTA;
-	static const dColor WHITE;
-	static const dColor BLACK;
+	static const Color RED;
+	static const Color GREEN;
+	static const Color BLUE;
+	static const Color CYAN;
+	static const Color YELLOW;
+	static const Color MAGENTA;
+	static const Color WHITE;
+	static const Color BLACK;
 
 
-	dColor() = default;
-	dColor(BYTE r, BYTE g, BYTE b) : r(r), g(g), b(b) { }
-	explicit dColor(BYTE a) : dColor(a, a, a) { }
-	explicit dColor(wstring const& s);
-	explicit dColor(Vector3 c)
+	Color() = default;
+	Color(BYTE r, BYTE g, BYTE b) : r(r), g(g), b(b) { }
+	explicit Color(BYTE a) : Color(a, a, a) { }
+	explicit Color(wstring const& s);
+	explicit Color(Vector3 c)
 	{
 		r = clamp<int>(0, 255, (int) c.r() * 255);
 		g = clamp<int>(0, 255, (int) c.g() * 255);
@@ -27,29 +27,29 @@ struct dColor
 	// 允许转换为 Vector3，禁止显式操作
 	explicit operator Vector3() const { return Vector3(r, g, b) / 255; }
 };
-inline bool operator==(dColor a, dColor b)
+inline bool operator==(Color a, Color b)
 {
-	return memcmp(&a, &b, sizeof(dColor)) == 0;
+	return memcmp(&a, &b, sizeof(Color)) == 0;
 }
-inline bool operator!=(dColor a, dColor b) { return !(a == b); }
-wstring ToWString(dColor c);
-void cover(dColor& bc, BYTE& ba, dColor fc, BYTE fa);
+inline bool operator!=(Color a, Color b) { return !(a == b); }
+wstring ToWString(Color c);
+void cover(Color& bc, BYTE& ba, Color fc, BYTE fa);
 
-struct tile
+struct Tile
 {
 	int width = 0, height = 0;
-	vector<dColor> colors;
+	vector<Color> colors;
 	vector<BYTE> as;
 
-	tile() = default;
-	tile(int w, int h, dColor c = {}, BYTE a = 0);
-	tile(int w, int h, tile const& src, DRect vp_src);// src 不能为空。
-	tile(wstring const& fileName, bool* ok = NULL);
+	Tile() = default;
+	Tile(int w, int h, Color c = {}, BYTE a = 0);
+	Tile(int w, int h, Tile const& src, DRect vp_src);// src 不能为空。
+	Tile(wstring const& fileName, bool* ok = NULL);
 	void save(wstring const& fileName) const;
 
 	int area() const;
 	DRect Rect() const;
-	void fill(dColor color, BYTE a = 255);
+	void fill(Color color, BYTE a = 255);
 };
-typedef vector<double> dbuf;
+typedef vector<double> DepthBuffer;
 

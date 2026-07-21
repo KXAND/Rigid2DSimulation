@@ -5,7 +5,7 @@
 struct SeparatorY : Control {
 	int w = 0;
 	DVector2 gap;
-	dColor c_mark;
+	Color c_mark;
 
 	SeparatorY(int w = 0);
 	int GetW() const override;

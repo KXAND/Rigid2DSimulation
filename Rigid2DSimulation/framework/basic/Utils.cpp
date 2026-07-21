@@ -95,16 +95,16 @@ void set_locale() { setlocale(LC_ALL, "zh-CN"); }
 // 我不懂下面的 Lock 和 Unlock 是什么意思。
 wstring get_clipboard()
 {
-	wstring clip;
+	wstring AudioClip;
 	if (OpenClipboard(NULL))
 	{
 		HANDLE hdl = GetClipboardData(CF_UNICODETEXT);
 		wchar_t* p = (wchar_t*) GlobalLock(hdl);
 
-		if (p) { clip = p; }
+		if (p) { AudioClip = p; }
 		GlobalUnlock(hdl);
 		CloseClipboard();
-	} return clip;
+	} return AudioClip;
 }
 // 从 MSDN 的例子改的，不太懂，可能有错。
 void set_clipboard(wstring const& s)

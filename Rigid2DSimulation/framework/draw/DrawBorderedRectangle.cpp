@@ -1,8 +1,8 @@
 #include "DrawBorderedRectangle.h"
 #include "DrawGeometry.h"
 
-void drawRectangleWithBorderRaw(tile& targetTile, 
-	DVector2 topLeft, int width, int height, DRect viewPort, dColor color, dColor borderColor)
+void drawRectangleWithBorderRaw(Tile& targetTile,
+	DVector2 topLeft, int width, int height, DRect viewPort, Color color, Color borderColor)
 {
 	// 左上为原点，向下向左
 
@@ -20,8 +20,8 @@ void drawRectangleWithBorderRaw(tile& targetTile,
 }
 
 // 含深度的矩形
-void drawRectangleWithBorder(tile& targetTile, dbuf& zBuffer, double depth,
-	DVector2 topLeft, int width, int height, DRect viewPort, dColor color, dColor borderColor)
+void drawRectangleWithBorder(Tile& targetTile, DepthBuffer& zBuffer, double depth,
+	DVector2 topLeft, int width, int height, DRect viewPort, Color color, Color borderColor)
 {
 	// 矩形内部绘制
 	drawRectangle(targetTile, zBuffer, depth, topLeft, width, height, viewPort, color);

@@ -8,7 +8,7 @@ struct Label : Control {
 	int w = 0, h = 0;
 	bool fixed_w = false;
 
-	dColor c_txt;
+	Color c_txt;
 	wstring txt;
 
 	Label(bool big = false);

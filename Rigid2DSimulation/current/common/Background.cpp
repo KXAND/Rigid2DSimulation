@@ -8,14 +8,14 @@ Background::Background(SimulationApp& cur)
 	width = 1630; height = 860;
 	topLeft = { 170, 0 }; // tile的原点坐标位置，170的余量用于左侧UI显示
 	depth = -100000;
-	backgroundTile = tile(width, height, dColor::BLACK, 255);
+	backgroundTile = Tile(width, height, Color::BLACK, 255);
 }
 
 void Background::Render(SimulationApp& cur)
 {
 	drawBasedTile((cur.scr), topLeft,  backgroundTile);
 	DrawString((cur.scr), (cur.dscr), 999, (cur.debugString),
-		dColor(110), (cur.ft), topLeft + DVector2(10, 10), width - 20, cur.background->ViewPort());
+		Color(110), (cur.ft), topLeft + DVector2(10, 10), width - 20, cur.background->ViewPort());
 }
 
 void Background::Update(SimulationApp& cur)

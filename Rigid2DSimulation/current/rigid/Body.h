@@ -46,12 +46,12 @@ struct Body
 	double depthShape = 0, depthPoint = 0;
 	double pointRadius = 0;
 
-	dColor innerColor;
-	dColor borderColor;
-	dColor hoveredColor;
-	dColor draggedColor;
-	dColor selectedColor;
-	dColor selectedConColor;
+	Color innerColor;
+	Color borderColor;
+	Color hoveredColor;
+	Color draggedColor;
+	Color selectedColor;
+	Color selectedConColor;
 
 	Body();
 	Body(Vector2 const& _o);

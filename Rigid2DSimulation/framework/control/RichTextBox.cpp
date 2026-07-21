@@ -238,7 +238,7 @@ void RichTextbox::clamp_str(App& app) {
 }
 
 void RichTextbox::render_main(App& app) {
-	dColor c =
+	Color c =
 		!enabled ? c_invalid :
 		edit ? c_edit :
 		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;

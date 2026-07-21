@@ -1,8 +1,8 @@
 #include "DrawCurve.h"
 #include "DrawLineSegment.h"
 
-void drawEllipseBorder(tile& targetTile, dbuf& zBuffer, double depth,
-	Vector2 center, double a, double b, DRect viewPort, dColor color, int n)
+void drawEllipseBorder(Tile& targetTile, DepthBuffer& zBuffer, double depth,
+	Vector2 center, double a, double b, DRect viewPort, Color color, int n)
 {
 	// 参数方程 （x，y）=(h + a cos t,k + b sin t)
 	auto p0 = center + Vector2(a, 0);

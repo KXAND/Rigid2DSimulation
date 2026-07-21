@@ -1,6 +1,6 @@
 #include "DrawTile.h"
 
-void drawBasedTile(tile& dest, DVector2 tl, tile const& src)
+void drawBasedTile(Tile& dest, DVector2 tl, Tile const& src)
 {
 	auto viewportDest = dest.Rect();
 	auto viewportSrc = src.Rect();
@@ -16,13 +16,13 @@ void drawBasedTile(tile& dest, DVector2 tl, tile const& src)
 		int destP = j * dest.width + l;
 		int srcP = (j - tl.y + viewportSrc.top()) * src.width +
 			(l - tl.x + viewportSrc.left());//将点/像素从世界坐标系转换到scrtile的内部坐标系
-		int rowSize = sizeof(dColor) * (r - l);
+		int rowSize = sizeof(Color) * (r - l);
 		memcpy(dest.colors.data() + destP, src.colors.data() + srcP, rowSize);
 	}
 }
 
-void drawTile(tile& dest, dbuf& zBuffer, double depth, DVector2 tl,
-	DRect vp_dest, tile const& src, DRect viewportSrc)
+void drawTile(Tile& dest, DepthBuffer& zBuffer, double depth, DVector2 tl,
+	DRect vp_dest, Tile const& src, DRect viewportSrc)
 {
 	int l = max(vp_dest.left(), tl.x);
 	int r = min(vp_dest.right(), tl.x + viewportSrc.w);
@@ -48,7 +48,7 @@ void drawTile(tile& dest, dbuf& zBuffer, double depth, DVector2 tl,
 }
 
 // 疑似弃用
-bool hitTile(DVector2 p, DVector2 tl, tile const& tileSrc, DRect viewportSrc)
+bool hitTile(DVector2 p, DVector2 tl, Tile const& tileSrc, DRect viewportSrc)
 {
 	// 假设了vpsrc和 tilesrc 左上角对齐
 	DVector2 pSrc = viewportSrc.topLeftPosition + p - tl;

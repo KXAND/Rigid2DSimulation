@@ -1,8 +1,8 @@
 #include "DrawString.h"
 #include "Font.h"
 
-void draw_char(tile& dest, dbuf& ds, double depth,
-	DVector2 tl, DRect vp_dest, tile const& src, dColor col) {
+void draw_char(Tile& dest, DepthBuffer& ds, double depth,
+	DVector2 tl, DRect vp_dest, Tile const& src, Color col) {
 	int a = max(vp_dest.left(), tl.x);
 	int b = min(vp_dest.right(), tl.x + src.width);
 	int c = max(vp_dest.top(), tl.y);
@@ -19,12 +19,12 @@ void draw_char(tile& dest, dbuf& ds, double depth,
 		}
 	}
 }
-void DrawString(tile& dest, dbuf& ds, double d, wstring const& s,
-	dColor col, font const& ft, DVector2& tl_cur, int& x_cur, int w, DRect vp) {
+void DrawString(Tile& dest, DepthBuffer& ds, double d, wstring const& s,
+	Color col, Font const& ft, DVector2& tl_cur, int& x_cur, int w, DRect vp) {
 	for (auto c : s) {
 		if (c == '\n') { tl_cur.y += ft.h; x_cur = 0; }
 		else {
-			tile const& t = ft[c];
+			Tile const& t = ft[c];
 			if (w != 0 && x_cur > 0 && x_cur + t.width > w) {
 				tl_cur.y += ft.h; x_cur = 0;
 			} 
@@ -33,20 +33,20 @@ void DrawString(tile& dest, dbuf& ds, double d, wstring const& s,
 		}
 	}
 }
-void DrawString(tile& dest, dbuf& ds, double d, wstring const& s,
-	dColor c, font const& ft, DVector2 tl, int w, DRect vp) {
+void DrawString(Tile& dest, DepthBuffer& ds, double d, wstring const& s,
+	Color c, Font const& ft, DVector2 tl, int w, DRect vp) {
 	int x_cur = 0;
 	DrawString(dest, ds, d, s, c, ft, tl, x_cur, w, vp);
 }
 
-DVector2 str_wh(wstring const& s, font const& ft, int w, int* x_last) {
+DVector2 str_wh(wstring const& s, Font const& ft, int w, int* x_last) {
 	int x_cur = 0, w_out = 0, h_out = ft.h;
 	for (auto c : s) {
 		if (c == L'\n') {
 			w_out = max(w_out, x_cur);
 			h_out += ft.h; x_cur = 0;
 		} else {
-			tile const& t = ft[c];
+			Tile const& t = ft[c];
 			if (w != 0 && x_cur > 0 && x_cur + t.width > w) {
 				w_out = max(w_out, x_cur);
 				h_out += ft.h; x_cur = 0;
@@ -58,7 +58,7 @@ DVector2 str_wh(wstring const& s, font const& ft, int w, int* x_last) {
 	if (x_last) { *x_last = x_cur; } 
 	return { w_out, h_out };
 }
-int str_index_at_pos(wstring const& s, font const& ft, DVector2 p, int w) {
+int str_index_at_pos(wstring const& s, Font const& ft, DVector2 p, int w) {
 	int x_cur = 0, y_cur = 0;
 	if (0 > p.y) { return 0; }
 
@@ -68,7 +68,7 @@ int str_index_at_pos(wstring const& s, font const& ft, DVector2 p, int w) {
 			y_cur += ft.h; x_cur = 0;
 			if (y_cur > p.y) { return ind; }
 		} else {
-			tile const& t = ft[c];
+			Tile const& t = ft[c];
 			if (w != 0 && x_cur > 0 && x_cur + t.width > w) {
 				y_cur += ft.h; x_cur = 0;
 				if (y_cur > p.y) { return ind; }

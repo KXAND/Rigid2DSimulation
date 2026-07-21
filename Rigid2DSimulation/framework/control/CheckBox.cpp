@@ -26,7 +26,7 @@ void Checkbox::render(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
-	dColor const& c =
+	Color const& c =
 		!enabled ? c_invalid :
 		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
 	drawRectangleRaw(app.scr, tl_box(), s_box, s_box, vp, c);

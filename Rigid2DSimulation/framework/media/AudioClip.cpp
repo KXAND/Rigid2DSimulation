@@ -1,6 +1,6 @@
 #include "AudioClip.h"
 
-clip::clip(wstring const& nm, bool *ok) {
+AudioClip::AudioClip(wstring const& nm, bool *ok) {
 	FILE* file = wfopen(nm, L"rb");
 	if (!file) {
 		if (ok) { *ok = false; }
@@ -15,8 +15,8 @@ clip::clip(wstring const& nm, bool *ok) {
 	fclose(file);
 	if (ok) { *ok = true; }
 }
-clip::clip(int sp) : sp(sp) {}
-void clip::play(vector<double>& in, double vol) {
+AudioClip::AudioClip(int sp) : sp(sp) {}
+void AudioClip::play(vector<double>& in, double vol) {
 	for (auto& v : in) {
 		if (csp >= n()) { return; }
 		v += vs[csp] * vol;
@@ -24,7 +24,7 @@ void clip::play(vector<double>& in, double vol) {
 	}
 }
 
-void clip::save(wstring const& nm) const {
+void AudioClip::save(wstring const& nm) const {
 	FILE* file = wfopen(nm, L"wb");
 	if (!file) { return; }
 	int size = 0;

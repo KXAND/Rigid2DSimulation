@@ -129,7 +129,7 @@ void Body::ReadCfg(Var const& cfg)
 {
 	if (auto value = FindConfigValue(cfg, L"position")) { position = ToVector2(*value); }
 	if (auto value = FindConfigValue(cfg, L"velocity")) { velocity = ToVector2(*value); }
-	if (auto value = FindConfigValue(cfg, L"innerColor")) { innerColor = (dColor)ToVector3(*value); }
+	if (auto value = FindConfigValue(cfg, L"innerColor")) { innerColor = (Color)ToVector3(*value); }
 	TryReadConfigNumber(cfg, L"radian", radian);
 	TryReadConfigNumber(cfg, L"velocityAngular", velocityAngular);
 	TryReadConfigNumber(cfg, L"elasticity", elasticity);
@@ -269,7 +269,7 @@ void Body::Render(SimulationApp& cur) const
 {
 	bool isSelectedConnection = cur.connectionSelecting &&
 		(cur.connectionSelecting->body0 == this || cur.connectionSelecting->body1 == this);
-	dColor normalColor;
+	Color normalColor;
 	switch (cur.display)
 	{
 		case DISPLAY_COLOR:
@@ -279,21 +279,21 @@ void Body::Render(SimulationApp& cur) const
 		case DISPLAY_ENERGY:
 		{
 			double energy = velocity.lensqr() + velocityAngular * velocityAngular * inertia / area;
-			normalColor = (dColor) Vector3(energy * cur.energyMultiplier, 0, 0);
+			normalColor = (Color) Vector3(energy * cur.energyMultiplier, 0, 0);
 			break;
 		}
 		case DISPLAY_CHARGES:
 		{
 			normalColor = chargeDensity > 0 ?
-				(dColor) Vector3(chargeDensity * cur.chargeMultiplier, 0, 0) :
-				(dColor) Vector3(0, 0, -chargeDensity * cur.chargeMultiplier);
+				(Color) Vector3(chargeDensity * cur.chargeMultiplier, 0, 0) :
+				(Color) Vector3(0, 0, -chargeDensity * cur.chargeMultiplier);
 			break;
 		}
 		default:
 			break;
 	}
 
-	dColor color =
+	Color color =
 		dragged ? draggedColor :
 		(cur.bodySelecting == this) ? selectedColor :
 		hovered ? hoveredColor :
@@ -336,7 +336,7 @@ void Body::Render(SimulationApp& cur) const
 	{
 		Vector2 p1 = Vector2(cur.input.msp);
 		Vector2 p0 = position + transform * relativeDragPoint;
-		drawLineSegment(cur.scr, cur.dscr, p0, p1, GetDepth(), cur.background->ViewPort(), dColor(0, 255, 255));
+		drawLineSegment(cur.scr, cur.dscr, p0, p1, GetDepth(), cur.background->ViewPort(), Color(0, 255, 255));
 	}
 
 	if (!track.empty())
@@ -344,7 +344,7 @@ void Body::Render(SimulationApp& cur) const
 		Vector2 p0 = track.front();
 		for (auto p1 : track)
 		{
-			drawLineSegment(cur.scr, cur.dscr, p0, p1, 10, cur.background->ViewPort(), dColor(255, 0, 255));
+			drawLineSegment(cur.scr, cur.dscr, p0, p1, 10, cur.background->ViewPort(), Color(255, 0, 255));
 			p0 = p1;
 		}
 	}

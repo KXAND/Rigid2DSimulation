@@ -20,7 +20,7 @@ int Button::GetW() const { return w + gap.x; }
 int Button::GetH() const { return h + gap.y; }
 
 void Button::render(App& app) {
-	dColor const& c =
+	Color const& c =
 		!enabled ? c_invalid :
 		chosen ? c_chosen :
 		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;

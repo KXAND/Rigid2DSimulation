@@ -1,7 +1,7 @@
 #include "DrawGeometry.h"
 #include "DrawLineSegment.h"
 
-void drawRectangleRaw(tile& targetTile, DVector2 topLeft, int w, int h, DRect viewPort, dColor color)
+void drawRectangleRaw(Tile& targetTile, DVector2 topLeft, int w, int h, DRect viewPort, Color color)
 {
 	int a = max(viewPort.left(), topLeft.x);
 	int b = min(viewPort.right(), topLeft.x + w);
@@ -9,7 +9,7 @@ void drawRectangleRaw(tile& targetTile, DVector2 topLeft, int w, int h, DRect vi
 	int d = min(viewPort.bottom(), topLeft.y + h);
 	if (a >= b || c >= d) { return; }
 
-	vector<dColor> tmp(b - a, color);
+	vector<Color> tmp(b - a, color);
 	for (int j = (c), jEnd = int(d); j < jEnd; ++j)
 	{
 		int position = j * targetTile.width + a;
@@ -17,8 +17,8 @@ void drawRectangleRaw(tile& targetTile, DVector2 topLeft, int w, int h, DRect vi
 	}
 }
 
-void drawRectangle(tile& targetTile, dbuf& zBuffer, double depth,
-	DVector2 topLeft, int width, int height, DRect viewPort, dColor color)
+void drawRectangle(Tile& targetTile, DepthBuffer& zBuffer, double depth,
+	DVector2 topLeft, int width, int height, DRect viewPort, Color color)
 {
 	int a = max(viewPort.left(), topLeft.x);
 	int b = min(viewPort.right(), topLeft.x + width);
@@ -37,8 +37,8 @@ void drawRectangle(tile& targetTile, dbuf& zBuffer, double depth,
 	}
 }
 
-void drawRectangleWithTransform(tile& targetTile, dbuf& zBuffer, double depth,
-	Vector2 center, double width, double height, Matrix2 transformMatrix, DRect viewPort, dColor color)
+void drawRectangleWithTransform(Tile& targetTile, DepthBuffer& zBuffer, double depth,
+	Vector2 center, double width, double height, Matrix2 transformMatrix, DRect viewPort, Color color)
 {
 	Matrix2 transformInverse = transformMatrix.inverse();
 	Vector2 transformHalfWidthHeight = transformMatrix.abs() * Vector2(width, height) / 2;
@@ -67,8 +67,8 @@ void drawRectangleWithTransform(tile& targetTile, dbuf& zBuffer, double depth,
 	}
 }
 
-void drawEllipse(tile& targetTile, dbuf& zBuffer, double depth,
-	Vector2 center, double a, double b, DRect viewPort, dColor color)
+void drawEllipse(Tile& targetTile, DepthBuffer& zBuffer, double depth,
+	Vector2 center, double a, double b, DRect viewPort, Color color)
 {
 	int left = max(viewPort.left(), int(center.x - a) - 1);
 	int right = min(viewPort.right(), int(center.x + a) + 1);

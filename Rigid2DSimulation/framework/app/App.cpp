@@ -9,8 +9,8 @@ App::App()
 void App::Init()
 {
 	addLog(L"开始加载程序.\n");
-	set_locale(); scr = tile(w, h);
-	dscr = ini_dscr = dbuf(w * h, -DBL_MAX);
+	set_locale(); scr = Tile(w, h);
+	dscr = ini_dscr = DepthBuffer(w * h, -DBL_MAX);
 	bool ret = ft.init();
 	addLog(ret ? L"成功加载字体模块.\n" : L"加载字体模块失败.\n");
 

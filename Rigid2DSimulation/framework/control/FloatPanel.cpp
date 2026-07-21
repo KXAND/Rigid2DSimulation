@@ -122,7 +122,7 @@ void FloatPanel::wheel_and_clamp_cy(App& app) {
 
 void FloatPanel::render_main(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), c_panel, c_frame);
-	dColor const& c_bar =
+	Color const& c_bar =
 		dragged_bar ? c_bar_dragged :
 		hovered_bar && (!app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? c_bar_hovered : c_bar_normal;
 	drawRectangleWithBorderRaw(app.scr, tl, w, h_bar, app.scr.Rect(), c_bar, c_frame);
@@ -131,7 +131,7 @@ void FloatPanel::render_main(App& app) {
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_title, 0, app.scr.Rect());
 }
 void FloatPanel::render_close(App& app) {
-	dColor const& c_close =
+	Color const& c_close =
 		!enabled_close ? c_close_invalid :
 		chosen_close ? c_close_chosen :
 		hovered_close && (!app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? c_close_hovered : c_close_normal;

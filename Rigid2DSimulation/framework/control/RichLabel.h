@@ -9,7 +9,7 @@ struct RichLabel : Control {
 	bool fixed_w = false;
 	bool fixed_h = false;
 
-	dColor c_txt;
+	Color c_txt;
 	wstring txt;
 
 	RichLabel(int w = 0);

@@ -25,10 +25,10 @@ struct Connection {
 	bool isTight = false;
 
 	// @todo:应该根据变connection的类型决定这几个量的出现的
-	dColor colorRopeTight, colorRope;
-	dColor colorLink;
-	dColor colorCordTight, colorCord;
-	dColor colorSpringStretch, colorSpringCompress;
+	Color colorRopeTight, colorRope;
+	Color colorLink;
+	Color colorCordTight, colorCord;
+	Color colorSpringStretch, colorSpringCompress;
 
 	Connection();
 	Connection(SimulationApp& cur, FILE* file);

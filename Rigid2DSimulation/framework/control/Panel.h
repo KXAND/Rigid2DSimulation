@@ -12,7 +12,7 @@ struct Panel {
 	double wheel_mtp = 0;
 	DVector2 tl_show_rel;
 	DRect vp_show_rel;
-	dColor c_frame, c_panel;
+	Color c_frame, c_panel;
 
 	bool use_sb = false;
 	// 我也不清楚为啥要用指针。有点惯性的感觉了。

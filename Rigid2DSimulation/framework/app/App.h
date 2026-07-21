@@ -9,10 +9,10 @@ int constexpr LAN_ENG = 1;
 LRESULT CALLBACK wnd_proc(HWND wnd, UINT msg, WPARAM wp, LPARAM lp);
 struct App {
 	int w = 0, h = 0;
-	tile scr;
-	dbuf dscr, ini_dscr;
+	Tile scr;
+	DepthBuffer dscr, ini_dscr;
 
-	font ft;
+	Font ft;
 	int languageIdx = 0;
 	map<wstring, vector<wstring>> localizationDict;
 

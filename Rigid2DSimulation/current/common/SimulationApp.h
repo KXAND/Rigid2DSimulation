@@ -21,7 +21,7 @@ struct Connection;
 
 struct UI;
 struct Background;
-struct clip;
+struct AudioClip;
 struct SceneParameter;
 struct SimulationApp : App
 {
@@ -32,8 +32,8 @@ struct SimulationApp : App
 	wstring debugString, scriptText, temporaryScriptText;
 	vector<std::shared_ptr<SceneParameter>> parameters;
 
-	std::shared_ptr<clip> musicClip0, musicClip1;
-	clip* currentMusicClip = NULL;
+	std::shared_ptr<AudioClip> musicClip0, musicClip1;
+	AudioClip* currentMusicClip = NULL;
 	double vol = 0;
 
 	int mode = 0;

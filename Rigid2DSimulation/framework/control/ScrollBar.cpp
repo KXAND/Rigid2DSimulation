@@ -17,7 +17,7 @@ ScrollbarY::ScrollbarY() {
 void ScrollbarY::render(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), c_bar, c_frame);
 	if (full) {
-		dColor const& c =
+		Color const& c =
 			!enabled ? c_invalid :
 			dragged ? draggedColor :
 			(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;

@@ -22,9 +22,9 @@ struct FloatPanel {
 	int half_s_mark = 0;
 	int margin_close = 0;
 	int margin_title = 0;
-	dColor c_txt, c_mark, c_frame, c_panel;
-	dColor c_bar_normal, c_bar_dragged, c_bar_hovered;
-	dColor c_close_normal, c_close_chosen, c_close_hovered, c_close_invalid;
+	Color c_txt, c_mark, c_frame, c_panel;
+	Color c_bar_normal, c_bar_dragged, c_bar_hovered;
+	Color c_close_normal, c_close_chosen, c_close_hovered, c_close_invalid;
 
 	int h_show = 0;
 	double t_click = 0;

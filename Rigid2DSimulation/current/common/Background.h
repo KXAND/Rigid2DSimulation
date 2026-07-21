@@ -10,7 +10,7 @@ struct Background
 {
 	DVector2 topLeft;
 	double depth = 0;
-	tile backgroundTile;
+	Tile backgroundTile;
 	int width = 0, height = 0;
 
 	bool hovered = false;

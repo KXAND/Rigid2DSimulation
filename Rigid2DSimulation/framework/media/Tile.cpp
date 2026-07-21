@@ -1,26 +1,26 @@
 #include "Tile.h"
 
-const dColor dColor::RED = dColor(255, 0, 0);
-const dColor dColor::GREEN = dColor(0, 255, 0);
-const dColor dColor::BLUE = dColor(0, 0, 255);
-const dColor dColor::CYAN = dColor(0, 255, 255);
-const dColor dColor::MAGENTA = dColor(255, 0, 255);
-const dColor dColor::YELLOW = dColor(255, 255, 0);
-const dColor dColor::WHITE = dColor(255, 255, 255);
-const dColor dColor::BLACK = dColor(0, 0, 0);
+const Color Color::RED = Color(255, 0, 0);
+const Color Color::GREEN = Color(0, 255, 0);
+const Color Color::BLUE = Color(0, 0, 255);
+const Color Color::CYAN = Color(0, 255, 255);
+const Color Color::MAGENTA = Color(255, 0, 255);
+const Color Color::YELLOW = Color(255, 255, 0);
+const Color Color::WHITE = Color(255, 255, 255);
+const Color Color::BLACK = Color(0, 0, 0);
 
-dColor::dColor(wstring const& s)
+Color::Color(wstring const& s)
 {
 	int i = 0;
 	r = fetch_num(i, s);
 	g = fetch_num(i, s);
 	b = fetch_num(i, s);
 }
-wstring ToWString(dColor c)
+wstring ToWString(Color c)
 {
 	return L"(" + std::to_wstring(c.r) + L"," + std::to_wstring(c.g) + L"," + std::to_wstring(c.b) + L")";
 }
-void cover(dColor& bc, BYTE& ba, dColor fc, BYTE fa)
+void cover(Color& bc, BYTE& ba, Color fc, BYTE fa)
 {
 	// 目前还不会推导公式，应该有简化的空间。
 	if (fa == 0) { return; }
@@ -30,14 +30,14 @@ void cover(dColor& bc, BYTE& ba, dColor fc, BYTE fa)
 	int r = (bc.r * ba * (255 - fa) + fc.r * fa * 255) / a;
 	int g = (bc.g * ba * (255 - fa) + fc.g * fa * 255) / a;
 	int b = (bc.b * ba * (255 - fa) + fc.b * fa * 255) / a; a /= 255;
-	bc = dColor(r, g, b); ba = a;
+	bc = Color(r, g, b); ba = a;
 }
 
-tile::tile(int w, int h, dColor color, BYTE a) :
+Tile::Tile(int w, int h, Color color, BYTE a) :
 	width(w), height(h), colors(area(), color), as(area(), a)
 {
 }
-tile::tile(int w, int h, tile const& src, DRect vp_src) : tile(w, h)
+Tile::Tile(int w, int h, Tile const& src, DRect vp_src) : Tile(w, h)
 {
 	for (int i = (0), iEnd = int(w); i < iEnd; ++i) for (int j = (0), jEnd = int(h); j < jEnd; ++j)
 	{
@@ -49,7 +49,7 @@ tile::tile(int w, int h, tile const& src, DRect vp_src) : tile(w, h)
 		colors[dp] = src.colors[sp]; as[dp] = src.as[sp];
 	}
 }
-void tile::save(wstring const& fileName) const
+void Tile::save(wstring const& fileName) const
 {
 	FILE* file = wfopen(fileName, L"wb");
 	if (!file) { return; }
@@ -59,7 +59,7 @@ void tile::save(wstring const& fileName) const
 	fwrite(&as[0], sizeof(*(&as[0])), area(), file);
 	fclose(file);
 }
-tile::tile(wstring const& fileName, bool* ok)
+Tile::Tile(wstring const& fileName, bool* ok)
 {
 	FILE* file = wfopen(fileName, L"rb");
 	if (ok) { *ok = file; }
@@ -72,9 +72,9 @@ tile::tile(wstring const& fileName, bool* ok)
 	fclose(file);
 }
 
-int tile::area() const { return width * height; }
-DRect tile::Rect() const { return { width, height }; }
-void tile::fill(dColor color, BYTE a)
+int Tile::area() const { return width * height; }
+DRect Tile::Rect() const { return { width, height }; }
+void Tile::fill(Color color, BYTE a)
 {
 	for (int i = (0), iEnd = int(area()); i < iEnd; ++i) { colors[i] = color; }
 	memset(as.data(), a, area());
