@@ -7,28 +7,28 @@
 
 Button::Button(int w) : w(w) {
 	gap = { 10, 10 }; depth = 1000;
-	txt = L"°´Å¥"; h = 30;
+	text = L"°´Å¥"; h = 30;
 
-	c_txt = { 255, 255, 255 };
-	c_frame = { 150, 150, 150 };
-	c_normal = { 80, 80, 80 };
-	c_chosen = { 150, 60, 60 };
+	textColor = { 255, 255, 255 };
+	frameColor = { 150, 150, 150 };
+	normalColor = { 80, 80, 80 };
+	chosenColor = { 150, 60, 60 };
 	hoveredColor = { 60, 60, 150 };
-	c_invalid = { 0, 0, 0 };
+	invalidColor = { 0, 0, 0 };
 }
 int Button::GetW() const { return w + gap.x; }
 int Button::GetH() const { return h + gap.y; }
 
 void Button::Render(App& app) {
-	Color const& c =
-		!enabled ? c_invalid :
-		chosen ? c_chosen :
-		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
-	DVector2 wh = GetStringSize(txt, app.ft, 0);
-	DVector2 tl_txt = tl + DVector2(w, h) / 2 - wh / 2;
+	Color const& color =
+		!enabled ? invalidColor :
+		chosen ? chosenColor :
+		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : normalColor;
+	DVector2 textSize = GetStringSize(text, app.ft, 0);
+	DVector2 textTopLeft = tl + DVector2(w, h) / 2 - textSize / 2;
 
-	drawRectangleWithBorderRaw(app.scr, tl, w, h, vp, c, c_frame);
-	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
+	drawRectangleWithBorderRaw(app.scr, tl, w, h, vp, color, frameColor);
+	DrawString(app.scr, app.dscr, depth, text, textColor, app.ft, textTopLeft, 0, vp);
 }
 
 void Button::Update(App& app) {
@@ -47,14 +47,14 @@ void Button::PreUpdate(App& app) {
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
-LocalizedButton::LocalizedButton(int w, wstring const& id) : Button(w), id_txt(id) {}
-void LocalizedButton::Update(App& app) { txt = app.getLocalizedString(id_txt); Button::Update(app); }
+LocalizedButton::LocalizedButton(int w, wstring const& id) : Button(w), textId(id) {}
+void LocalizedButton::Update(App& app) { text = app.getLocalizedString(textId); Button::Update(app); }
 
-ShowFloatPanelButton::ShowFloatPanelButton(FloatPanel* fpn) : Button(150), fpn(fpn) {}
-void ShowFloatPanelButton::OnClick(App& app) { fpn->Show(app); }
+ShowFloatPanelButton::ShowFloatPanelButton(FloatPanel* floatPanel) : Button(150), floatPanel(floatPanel) {}
+void ShowFloatPanelButton::OnClick(App& app) { floatPanel->Show(app); }
 void ShowFloatPanelButton::Update(App& app) {
-	enabled = !fpn->shown;
-	txt = fpn->txt; Button::Update(app);
+	enabled = !floatPanel->shown;
+	text = floatPanel->txt; Button::Update(app);
 }
 
 

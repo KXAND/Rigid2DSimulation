@@ -14,7 +14,7 @@
 PauseButton::PauseButton() : Button(150) {}
 void PauseButton::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	txt = simulationApp.isPaused ? simulationApp.getLocalizedString(L"start") : simulationApp.getLocalizedString(L"pause");
+	text = simulationApp.isPaused ? simulationApp.getLocalizedString(L"start") : simulationApp.getLocalizedString(L"pause");
 	Button::Update(app);
 }
 void PauseButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.isPaused = !simulationApp.isPaused; }
@@ -25,7 +25,7 @@ void ResetButton::OnClick(App& app) { auto& simulationApp = static_cast<Simulati
 MuteButton::MuteButton() : Button(150) {}
 void MuteButton::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	txt = simulationApp.isMuted ? simulationApp.getLocalizedString(L"unmute") : simulationApp.getLocalizedString(L"mute");
+	text = simulationApp.isMuted ? simulationApp.getLocalizedString(L"unmute") : simulationApp.getLocalizedString(L"mute");
 	Button::Update(app);
 }
 void MuteButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.isMuted = !simulationApp.isMuted; }
@@ -34,10 +34,10 @@ ModeButton::ModeButton() : Button(150) {}
 void ModeButton::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	switch (simulationApp.mode) {
-	case MODE_DRAG: txt = simulationApp.getLocalizedString(L"mode_drag"); break;
-	case MODE_SEL: txt = simulationApp.getLocalizedString(L"mode_sel"); break;
-	case MODE_CREATE: txt = simulationApp.getLocalizedString(L"mode_create"); break;
-	case MODE_DEL: txt = simulationApp.getLocalizedString(L"mode_del"); break;
+	case MODE_DRAG: text = simulationApp.getLocalizedString(L"mode_drag"); break;
+	case MODE_SEL: text = simulationApp.getLocalizedString(L"mode_sel"); break;
+	case MODE_CREATE: text = simulationApp.getLocalizedString(L"mode_create"); break;
+	case MODE_DEL: text = simulationApp.getLocalizedString(L"mode_del"); break;
 	}
 	Button::Update(app);
 }
@@ -51,10 +51,10 @@ DisplayButton::DisplayButton() : Button(150) {}
 void DisplayButton::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	switch (simulationApp.display) {
-	case DISPLAY_COLOR: txt = simulationApp.getLocalizedString(L"disp_col"); break;
-	case DISPLAY_ENERGY: txt = simulationApp.getLocalizedString(L"disp_energy"); break;
-	case DISPLAY_CHARGES: txt = simulationApp.getLocalizedString(L"disp_charge"); break;
-	case DISPLAY_NONE: txt = simulationApp.getLocalizedString(L"disp_none"); break;
+	case DISPLAY_COLOR: text = simulationApp.getLocalizedString(L"disp_col"); break;
+	case DISPLAY_ENERGY: text = simulationApp.getLocalizedString(L"disp_energy"); break;
+	case DISPLAY_CHARGES: text = simulationApp.getLocalizedString(L"disp_charge"); break;
+	case DISPLAY_NONE: text = simulationApp.getLocalizedString(L"disp_none"); break;
 	}
 	Button::Update(app);
 }

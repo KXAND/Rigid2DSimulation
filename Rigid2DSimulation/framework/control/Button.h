@@ -5,9 +5,9 @@
 struct Button : Control {
 	DVector2 gap;
 	double depth = 0;
-	wstring txt;
+	wstring text;
 	int w = 0, h = 0;
-	Color c_txt, c_frame, c_normal, c_chosen, hoveredColor, c_invalid;
+	Color textColor, frameColor, normalColor, chosenColor, hoveredColor, invalidColor;
 
 	bool chosen = false;
 	bool enabled = true;
@@ -25,7 +25,7 @@ struct Button : Control {
 	void PreUpdate(App& app) override;
 };
 struct LocalizedButton : Button {
-	wstring id_txt;
+	wstring textId;
 	LocalizedButton() = default;
 	LocalizedButton(int w, wstring const& id);
 	void Update(App& app) override;
@@ -33,9 +33,9 @@ struct LocalizedButton : Button {
 
 struct FloatPanel;
 struct ShowFloatPanelButton : Button {
-	FloatPanel* fpn = NULL;
+	FloatPanel* floatPanel = NULL;
 	ShowFloatPanelButton() = default;
-	ShowFloatPanelButton(FloatPanel* fpn);
+	ShowFloatPanelButton(FloatPanel* floatPanel);
 	void OnClick(App& app) override;
 	void Update(App& app) override;
 };
