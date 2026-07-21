@@ -63,10 +63,10 @@ struct ClyBody : VerticalControlList {
 	void Discard(App& app) override;
 };
 
-struct FPnBody : LocalizedFloatPanel {
+struct BodyPanel : LocalizedFloatPanel {
 	std::shared_ptr<ClyBody> cly_body;
 	std::shared_ptr<RLbBody> rlb_body;
 	std::shared_ptr<VerticalControlList> cly;
-	FPnBody(App& app);
+	BodyPanel(App& app);
 };
 

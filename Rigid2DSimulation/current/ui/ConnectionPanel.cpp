@@ -60,7 +60,7 @@ void RLbCon::Sync(App& app) {
 	txt += simulationApp.getLocalizedString(L"conn_hooke") + FormatFixed2(connection.hooke) + L"\n";
 }
 
-FPnCon::FPnCon(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_con") {
+ConnectionPanel::ConnectionPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_con") {
 	vector<Control*> tmp;
 	cly_con = std::make_shared<ClyCon>(); rlb_con = std::make_shared<RLbCon>();
 	tmp = { &*cly_con, &*rlb_con };

@@ -17,11 +17,11 @@ struct LbMouse : Label {
 	void Sync(App& app) override;
 };
 
-struct PnBottom : Panel {
+struct BottomPanel : Panel {
 	std::shared_ptr<LbFPS> lb_fps;
 	std::shared_ptr<LbTime> lb_time;
 	std::shared_ptr<LbMouse> lb_mouse;
 	std::shared_ptr<HorizontalControlList> clx;
-	PnBottom(App& app);
+	BottomPanel(App& app);
 };
 

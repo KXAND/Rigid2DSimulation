@@ -14,10 +14,10 @@ struct BtCompile : LocalizedButton {
 	void OnClick(App& app) override;
 };
 
-struct FPnCmd : LocalizedFloatPanel {
+struct CommandPanel : LocalizedFloatPanel {
 	std::shared_ptr<RTbCmd> rtb;
 	std::shared_ptr<BtCompile> bt_compile;
 	std::shared_ptr<VerticalControlList> cly;
-	FPnCmd(App& app);
+	CommandPanel(App& app);
 };
 

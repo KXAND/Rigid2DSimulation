@@ -49,10 +49,10 @@ struct BtAddPar : LocalizedButton {
 	void OnClick(App& app) override;
 };
 
-struct FPnPar : LocalizedFloatPanel {
+struct ParameterPanel : LocalizedFloatPanel {
 	std::shared_ptr<ClyPars> cly_pars;
 	std::shared_ptr<BtAddPar> bt_add_par;
 	std::shared_ptr<VerticalControlList> cly;
-	FPnPar(App& app);
+	ParameterPanel(App& app);
 };
 

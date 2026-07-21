@@ -8,7 +8,7 @@ void BtChi::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&
 BtEng::BtEng() : Button(150) { txt = L"English"; }
 void BtEng::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.languageIdx = LAN_ENG; simulationApp.userInterface->fpn_lang->hide(app); }
 
-FPnLang::FPnLang(App& app) : LocalizedFloatPanel(app, 200, 200, L"fpn_lang") {
+LanguagePanel::LanguagePanel(App& app) : LocalizedFloatPanel(app, 200, 200, L"fpn_lang") {
 	vector<Control*> tmp; shown = true;
 	bt_chi = std::make_shared<BtChi>();
 	bt_eng = std::make_shared<BtEng>();

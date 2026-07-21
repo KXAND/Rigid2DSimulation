@@ -28,7 +28,7 @@ struct BtDisplay : Button {
 	void OnClick(App& app) override;
 };
 
-struct PnMenu : Panel {
+struct MenuPanel : Panel {
 	std::shared_ptr<BtPause> bt_pause;
 	std::shared_ptr<BtReset> bt_reset;
 	std::shared_ptr<BtMute> bt_mute;
@@ -42,6 +42,6 @@ struct PnMenu : Panel {
 	std::shared_ptr<ShowFloatPanelButton> bt_lang;
 	std::shared_ptr<ShowFloatPanelButton> bt_about;
 	std::shared_ptr<VerticalControlList> cly;
-	PnMenu(App& app);
+	MenuPanel(App& app);
 };
 

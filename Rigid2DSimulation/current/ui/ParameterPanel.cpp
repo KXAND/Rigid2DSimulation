@@ -39,7 +39,7 @@ void ClyPars::Update(App& app) {
 BtAddPar::BtAddPar() : LocalizedButton(160, L"bt_add_par") {}
 void BtAddPar::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters.push_back(std::make_shared<SceneParameter>(simulationApp.getLocalizedString(L"unnamed_par"))); }
 
-FPnPar::FPnPar(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_par") {
+ParameterPanel::ParameterPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_par") {
 	vector<Control*> tmp;
 	cly_pars = std::make_shared<ClyPars>();
 	bt_add_par = std::make_shared<BtAddPar>();

@@ -13,7 +13,7 @@ void BtCompile::OnClick(App& app) {
 	Execute(simulationApp.currentScope, Compile(simulationApp.scriptText));
 }
 
-FPnCmd::FPnCmd(App& app) : LocalizedFloatPanel(app, 600, 600, L"fpn_cmd") {
+CommandPanel::CommandPanel(App& app) : LocalizedFloatPanel(app, 600, 600, L"fpn_cmd") {
 	vector<Control*> tmp;
 	rtb = std::make_shared<RTbCmd>();
 	bt_compile = std::make_shared<BtCompile>();

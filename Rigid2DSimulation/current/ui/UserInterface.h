@@ -3,26 +3,26 @@
 
 struct SimulationApp;
 struct FloatPanel;
-struct FPnGlobal;
-struct FPnBody;
-struct FPnCon;
-struct FPnCmd;
-struct FPnPar;
-struct FPnLang;
-struct FPnAbout;
-struct PnMenu;
-struct PnBottom;
+struct GlobalPanel;
+struct BodyPanel;
+struct ConnectionPanel;
+struct CommandPanel;
+struct ParameterPanel;
+struct LanguagePanel;
+struct AboutPanel;
+struct MenuPanel;
+struct BottomPanel;
 struct UserInterface {
 	vector<FloatPanel*> fpns;
-	std::shared_ptr<FPnGlobal> fpn_global;
-	std::shared_ptr<FPnBody> fpn_body;
-	std::shared_ptr<FPnCon> fpn_con;
-	std::shared_ptr<FPnCmd> fpn_cmd;
-	std::shared_ptr<FPnPar> fpn_par;
-	std::shared_ptr<FPnLang> fpn_lang;
-	std::shared_ptr<FPnAbout> fpn_about;
-	std::shared_ptr<PnMenu> pn_menu;
-	std::shared_ptr<PnBottom> pn_bottom;
+	std::shared_ptr<GlobalPanel> fpn_global;
+	std::shared_ptr<BodyPanel> fpn_body;
+	std::shared_ptr<ConnectionPanel> fpn_con;
+	std::shared_ptr<CommandPanel> fpn_cmd;
+	std::shared_ptr<ParameterPanel> fpn_par;
+	std::shared_ptr<LanguagePanel> fpn_lang;
+	std::shared_ptr<AboutPanel> fpn_about;
+	std::shared_ptr<MenuPanel> pn_menu;
+	std::shared_ptr<BottomPanel> pn_bottom;
 
 	UserInterface(SimulationApp& cur) {};
 	void SortFloatPanels();

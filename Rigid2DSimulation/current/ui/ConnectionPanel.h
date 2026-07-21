@@ -37,10 +37,10 @@ struct RLbCon : RichLabel {
 	void Sync(App& app) override;
 };
 
-struct FPnCon : LocalizedFloatPanel {
+struct ConnectionPanel : LocalizedFloatPanel {
 	std::shared_ptr<ClyCon> cly_con;
 	std::shared_ptr<RLbCon> rlb_con;
 	std::shared_ptr<VerticalControlList> cly;
-	FPnCon(App& app);
+	ConnectionPanel(App& app);
 };
 

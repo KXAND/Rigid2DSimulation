@@ -14,19 +14,19 @@
 
 void UserInterface::SortFloatPanels() { sort(fpns.begin(), fpns.end(), less_fpn); }
 void UserInterface::Init(SimulationApp& cur) {
-	fpn_global = std::make_shared<FPnGlobal>(cur); fpns.push_back(&*fpn_global);
-	fpn_body = std::make_shared<FPnBody>(cur); fpns.push_back(&*fpn_body);
-	fpn_con = std::make_shared<FPnCon>(cur); fpns.push_back(&*fpn_con);
-	fpn_cmd = std::make_shared<FPnCmd>(cur); fpns.push_back(&*fpn_cmd);
-	fpn_par = std::make_shared<FPnPar>(cur); fpns.push_back(&*fpn_par);
-	fpn_lang = std::make_shared<FPnLang>(cur); fpns.push_back(&*fpn_lang);
-	fpn_about = std::make_shared<FPnAbout>(cur); fpns.push_back(&*fpn_about);
+	fpn_global = std::make_shared<GlobalPanel>(cur); fpns.push_back(&*fpn_global);
+	fpn_body = std::make_shared<BodyPanel>(cur); fpns.push_back(&*fpn_body);
+	fpn_con = std::make_shared<ConnectionPanel>(cur); fpns.push_back(&*fpn_con);
+	fpn_cmd = std::make_shared<CommandPanel>(cur); fpns.push_back(&*fpn_cmd);
+	fpn_par = std::make_shared<ParameterPanel>(cur); fpns.push_back(&*fpn_par);
+	fpn_lang = std::make_shared<LanguagePanel>(cur); fpns.push_back(&*fpn_lang);
+	fpn_about = std::make_shared<AboutPanel>(cur); fpns.push_back(&*fpn_about);
 
 	// pn_menu 放在后面是因为要等 float_panel 先加载完。
 	// pn_menu 放在后面是因为要等 float_panel 先加载完。
 	// 这主要是 BtFPn 的原因。
-	pn_menu = std::make_shared<PnMenu>(cur);
-	pn_bottom = std::make_shared<PnBottom>(cur);
+	pn_menu = std::make_shared<MenuPanel>(cur);
+	pn_bottom = std::make_shared<BottomPanel>(cur);
 }
 void UserInterface::Update(SimulationApp& cur) {
 	pn_menu->Update(cur);

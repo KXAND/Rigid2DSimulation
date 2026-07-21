@@ -19,7 +19,7 @@ struct RLbGlobal : RichLabel {
 	void Sync(App& app) override;
 };
 
-struct FPnGlobal : LocalizedFloatPanel {
+struct GlobalPanel : LocalizedFloatPanel {
 	std::shared_ptr<TextBox> tb_save;
 	std::shared_ptr<BtSave> bt_save;
 	std::shared_ptr<HorizontalControlList> clx_save;
@@ -29,6 +29,6 @@ struct FPnGlobal : LocalizedFloatPanel {
 	std::shared_ptr<HorizontalSeparator> spy;
 	std::shared_ptr<RLbGlobal> rlb_global;
 	std::shared_ptr<VerticalControlList> cly;
-	FPnGlobal(App& app);
+	GlobalPanel(App& app);
 };
 

@@ -19,7 +19,7 @@ void LbMouse::Sync(App& app) {
 	txt = simulationApp.getLocalizedString(L"lb_mouse") + ToWString(simulationApp.input.msp);
 }
 
-PnBottom::PnBottom(App& app) : Panel(Panel::bottom(app)) {
+BottomPanel::BottomPanel(App& app) : Panel(Panel::bottom(app)) {
 	vector<Control*> tmp;
 	lb_fps = std::make_shared<LbFPS>(); lb_time = std::make_shared<LbTime>(); lb_mouse = std::make_shared<LbMouse>();
 	tmp = { &*lb_fps, &*lb_time, &*lb_mouse };

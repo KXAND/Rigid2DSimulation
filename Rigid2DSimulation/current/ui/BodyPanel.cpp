@@ -104,7 +104,7 @@ void RLbBody::Sync(App& app) {
 	txt += simulationApp.getLocalizedString(L"body_damp_v_ang") + FormatFixed2(body.dampCoeffAngular) + L"\n";
 }
 
-FPnBody :: FPnBody(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_body") {
+BodyPanel :: BodyPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_body") {
 	vector<Control*> tmp;
 	cly_body = std::make_shared<ClyBody>(); rlb_body = std::make_shared<RLbBody>();
 	tmp = { &*cly_body, &*rlb_body };

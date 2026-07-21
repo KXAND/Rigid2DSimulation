@@ -36,7 +36,7 @@ void RLbGlobal::Sync(App& app) {
 	txt += simulationApp.getLocalizedString(L"creator_mode") + s + L"\n";
 }
 
-FPnGlobal::FPnGlobal(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_global") {
+GlobalPanel::GlobalPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_global") {
 	vector<Control*> tmp;
 	tb_save = std::make_shared<TextBox>(270); bt_save = std::make_shared<BtSave>();
 	tmp = { &*tb_save, &*bt_save };

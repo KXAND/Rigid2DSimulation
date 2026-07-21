@@ -63,7 +63,7 @@ void BtDisplay::OnClick(App& app) {
 	simulationApp.display = (simulationApp.display + 1) % 4;
 }
 
-PnMenu::PnMenu(App& app) : Panel(Panel::menu(app)) {
+MenuPanel::MenuPanel(App& app) : Panel(Panel::menu(app)) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	vector<Control*> tmp;
 	bt_pause = std::make_shared<BtPause>(); bt_reset = std::make_shared<BtReset>(); bt_mute = std::make_shared<BtMute>();
