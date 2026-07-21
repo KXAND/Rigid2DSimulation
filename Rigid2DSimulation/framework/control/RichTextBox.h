@@ -20,9 +20,9 @@ struct RichTextBox : Control {
 	int w_cursor = 0, h_cursor = 0;
 
 	wstring value;
-	Vector2 tl_str_rel;
+	Vector2 valueOffset;
 	int selectionStart = 0, selectionEnd = 0;
-	// 下面的 rel 是相对于 tl_str_rel 的。
+	// 下面的 rel 是相对于 valueOffset 的。
 	int cursorXHistory = 0;
 
 	bool edit = false;

@@ -60,17 +60,17 @@ DVector2 RichTextBox::GetCursorPosition(App& app) const {
 	wstring tmp(value.begin(), value.begin() + selectionEnd);
 	int x = 0; DVector2 p = GetStringSize(tmp, app.ft, lineWidth, &x);
 	p.x = x; p.y -= app.ft.h;
-	return (DVector2)tl_str_rel + p;
+	return (DVector2)valueOffset + p;
 }
 
 void RichTextBox::SelectStart(App& app) {
 	selecting = true;
-	DVector2 p = app.input.msp - (tl + (DVector2)tl_str_rel);
+	DVector2 p = app.input.msp - (tl + (DVector2)valueOffset);
 	selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
 	UpdateCursorXHistory(app);
 }
 void RichTextBox::SelectEnd(App& app) {
-	DVector2 p = app.input.msp - (tl + (DVector2)tl_str_rel);
+	DVector2 p = app.input.msp - (tl + (DVector2)valueOffset);
 	selectionEnd = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
 	UpdateCursorXHistory(app);
 }
@@ -203,19 +203,19 @@ void RichTextBox::HandleKey(App& app) {
 
 void RichTextBox::ClampCursorWhileSelecting(App& app) {
 	double val = (app.input.msp.x - tl.x) - GetMaxCursorX();
-	if (val > 0) { tl_str_rel.x -= app.fps.dt() * slide_mtp * val; }
+	if (val > 0) { valueOffset.x -= app.fps.dt() * slide_mtp * val; }
 	val = edit_mg.x - (app.input.msp.x - tl.x);
-	if (val > 0) { tl_str_rel.x += app.fps.dt() * slide_mtp * val; }
+	if (val > 0) { valueOffset.x += app.fps.dt() * slide_mtp * val; }
 	val = (app.input.msp.y - tl.y) - GetMaxCursorY();
-	if (val > 0) { tl_str_rel.y -= app.fps.dt() * slide_mtp * val; }
+	if (val > 0) { valueOffset.y -= app.fps.dt() * slide_mtp * val; }
 	val = edit_mg.y - (app.input.msp.y - tl.y);
-	if (val > 0) { tl_str_rel.y += app.fps.dt() * slide_mtp * val; }
+	if (val > 0) { valueOffset.y += app.fps.dt() * slide_mtp * val; }
 }
 void RichTextBox::ClampCursorWithoutSelection(App& app) {
 	if (GetCursorPosition(app).x > GetMaxCursorX()) {
-		tl_str_rel.x -= GetCursorPosition(app).x - GetMaxCursorX();
+		valueOffset.x -= GetCursorPosition(app).x - GetMaxCursorX();
 	} else if (GetCursorPosition(app).x < edit_mg.x) {
-		tl_str_rel.x += edit_mg.x - GetCursorPosition(app).x;
+		valueOffset.x += edit_mg.x - GetCursorPosition(app).x;
 	}
 	// 我们不对 y 这么做，主要是为了让鼠标滚轮正常，其实细想挺奇怪的。
 }
@@ -225,16 +225,16 @@ void RichTextBox::ClampCursor(App& app) {
 }
 void RichTextBox::ClampTextPosition(App& app) {
 	// 除了文字过少以外，clamp_selecting 和 wheel 后也需要这一步。
-	DVector2 p_end_rel = (DVector2)tl_str_rel + GetStringSize(value, app.ft, lineWidth);
+	DVector2 p_end_rel = (DVector2)valueOffset + GetStringSize(value, app.ft, lineWidth);
 	if (p_end_rel.x < GetMaxCursorX()) {
-		tl_str_rel.x += GetMaxCursorX() - p_end_rel.x;
+		valueOffset.x += GetMaxCursorX() - p_end_rel.x;
 	}
 	if (p_end_rel.y < GetMaxCursorY()) {
-		tl_str_rel.y += GetMaxCursorY() - p_end_rel.y;
+		valueOffset.y += GetMaxCursorY() - p_end_rel.y;
 	}
 	// 下面两行是配合上面的。
-	if (tl_str_rel.x > edit_mg.x) { tl_str_rel.x = edit_mg.x; }
-	if (tl_str_rel.y > edit_mg.y) { tl_str_rel.y = edit_mg.y; }
+	if (valueOffset.x > edit_mg.x) { valueOffset.x = edit_mg.x; }
+	if (valueOffset.y > edit_mg.y) { valueOffset.y = edit_mg.y; }
 }
 
 void RichTextBox::RenderMain(App& app) {
@@ -245,7 +245,7 @@ void RichTextBox::RenderMain(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, vp, c, c_frame);
 
 	int x_cur = 0;
-	DVector2 tl_txt = tl + (DVector2)tl_str_rel;
+	DVector2 tl_txt = tl + (DVector2)valueOffset;
 	DrawString(app.scr, app.dscr, depth, GetLeftText(), c_str, app.ft, tl_txt, x_cur, lineWidth, GetTextViewport());
 	DrawString(app.scr, app.dscr, depth, GetSelectedText(), selectedColor, app.ft, tl_txt, x_cur, lineWidth, GetTextViewport());
 	DrawString(app.scr, app.dscr, depth, GetRightText(), c_str, app.ft, tl_txt, x_cur, lineWidth, GetTextViewport());
@@ -287,7 +287,7 @@ void RichTextBox::Update(App& app) {
 		}
 	} 
 
-	if (app.own.wheeled == this) { tl_str_rel.y += app.input.msw * wheel_mtp; }
+	if (app.own.wheeled == this) { valueOffset.y += app.input.msw * wheel_mtp; }
 	ClampTextPosition(app); Render(app);
 }
 void RichTextBox::Discard(App& app) {
