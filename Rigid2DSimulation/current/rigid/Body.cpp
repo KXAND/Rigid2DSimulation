@@ -272,17 +272,17 @@ void Body::Render(SimulationApp& cur) const
 	Color normalColor;
 	switch (cur.display)
 	{
-		case DISPLAY_COLOR:
+		case kColorDisplay:
 			normalColor = innerColor;
 			break;
 			if (point) { break; }
-		case DISPLAY_ENERGY:
+		case kEnergyDisplay:
 		{
 			double energy = velocity.GetLengthSquared() + velocityAngular * velocityAngular * inertia / area;
 			normalColor = (Color) Vector3(energy * cur.energyMultiplier, 0, 0);
 			break;
 		}
-		case DISPLAY_CHARGES:
+		case kChargesDisplay:
 		{
 			normalColor = chargeDensity > 0 ?
 				(Color) Vector3(chargeDensity * cur.chargeMultiplier, 0, 0) :
@@ -496,8 +496,8 @@ void Body::Update(SimulationApp& cur)
 {
 	hovered = (cur.inputOwners.hovered == this);
 
-	if (cur.mode == MODE_DEL && hovered && cur.input.IsMouseClickedDown(0)) { isMarkedForDeletion = true; }
-	if (cur.mode == MODE_SEL && hovered && cur.input.IsMouseClickedDown(0)) { cur.bodySelecting = this; }
+	if (cur.mode == kDeleteMode && hovered && cur.input.IsMouseClickedDown(0)) { isMarkedForDeletion = true; }
+	if (cur.mode == kSelectMode && hovered && cur.input.IsMouseClickedDown(0)) { cur.bodySelecting = this; }
 	if (dragged)
 	{
 		// 检查拖拽模式，应用函数
@@ -515,12 +515,12 @@ void Body::Update(SimulationApp& cur)
 		{
 			HandleDragPoint(cur);
 		}
-		dragged = cur.input.mouseButtonDown[0] && (cur.mode == MODE_DRAG);
+		dragged = cur.input.mouseButtonDown[0] && (cur.mode == kDragMode);
 	}
 	else
 	{
 		// 检查 draged是否判断正确，更新被拖拽角度
-		dragged = hovered && cur.input.IsMouseClickedDown(0) && (cur.mode == MODE_DRAG);
+		dragged = hovered && cur.input.IsMouseClickedDown(0) && (cur.mode == kDragMode);
 		if (dragged)
 		{
 			// p移到m，那么mo = 变换*原距离 = 变换*原相对位置=po，故有。
@@ -541,7 +541,7 @@ void Body::Update(SimulationApp& cur)
 	}
 
 	// 创造连接
-	bool canCreate = hovered && cur.mode == MODE_CREATE &&
+	bool canCreate = hovered && cur.mode == kCreateMode &&
 		(cur.creator->mode == CREATE_CONN || cur.creator->mode == CREATE_NAIL);
 	if (canCreate)
 	{

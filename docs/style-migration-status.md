@@ -106,6 +106,7 @@
 - `Tile` 的混色、保存、面积和填充接口已迁移为 `BlendColor`、`Save`、`GetArea`、`Fill`；混色公式与二进制读写顺序保持不变。
 - `Tile.cpp` 的缩放拷贝路径已将源/目标坐标、视区和像素索引迁移为完整 lower camel 名称；采样与拷贝计算保持不变。
 - 窗口创建和销毁消息处理函数已迁移为 `HandleCreate`、`HandleDestroy`；窗口过程分发顺序保持不变。
+- 模拟交互模式和显示模式常量已迁移为 `kPascalCase`；常量数值与全部调用点保持不变。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。
 - `AppInput` 的鼠标、键盘和文本输入状态字段，以及 `FrameRate` 的采样与时间统计字段，已迁移为表达职责的 lower camel 名称；输入事件和帧率计算逻辑保持不变。

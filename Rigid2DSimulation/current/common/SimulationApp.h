@@ -2,15 +2,15 @@
 #include "App.h"
 #include "Value.h"
 
-int constexpr MODE_DRAG = 0;
-int constexpr MODE_SEL = 1;
-int constexpr MODE_CREATE = 2;
-int constexpr MODE_DEL = 3;
+int constexpr kDragMode = 0;
+int constexpr kSelectMode = 1;
+int constexpr kCreateMode = 2;
+int constexpr kDeleteMode = 3;
 
-int constexpr DISPLAY_COLOR = 0;
-int constexpr DISPLAY_ENERGY = 1;
-int constexpr DISPLAY_CHARGES = 2;
-int constexpr DISPLAY_NONE = 3;
+int constexpr kColorDisplay = 0;
+int constexpr kEnergyDisplay = 1;
+int constexpr kChargesDisplay = 2;
+int constexpr kNoDisplay = 3;
 
 
 struct Body;

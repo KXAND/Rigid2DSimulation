@@ -125,7 +125,7 @@ void SimulationApp::Update()
 {
 	// pre update
 	(*background).PreUpdate(*this);
-	if (mode == MODE_CREATE) { creator->PreUpdate(*this); }
+	if (mode == kCreateMode) { creator->PreUpdate(*this); }
 	for (auto& b : bodies) { b->PreUpdate(*this); }
 	userInterface->PreUpdate(*this);
 	UpdateBasicState();
@@ -239,7 +239,7 @@ void SimulationApp::Update()
 		connection->Render(*this);
 	}
 
-	if (mode == MODE_CREATE) { creator->Update(*this); }
+	if (mode == kCreateMode) { creator->Update(*this); }
 	userInterface->Update(*this);
 }
 

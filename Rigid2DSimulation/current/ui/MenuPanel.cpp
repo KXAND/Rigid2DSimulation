@@ -34,10 +34,10 @@ ModeButton::ModeButton() : Button(150) {}
 void ModeButton::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	switch (simulationApp.mode) {
-	case MODE_DRAG: text = simulationApp.GetLocalizedString(L"mode_drag"); break;
-	case MODE_SEL: text = simulationApp.GetLocalizedString(L"mode_sel"); break;
-	case MODE_CREATE: text = simulationApp.GetLocalizedString(L"mode_create"); break;
-	case MODE_DEL: text = simulationApp.GetLocalizedString(L"mode_del"); break;
+	case kDragMode: text = simulationApp.GetLocalizedString(L"mode_drag"); break;
+	case kSelectMode: text = simulationApp.GetLocalizedString(L"mode_sel"); break;
+	case kCreateMode: text = simulationApp.GetLocalizedString(L"mode_create"); break;
+	case kDeleteMode: text = simulationApp.GetLocalizedString(L"mode_del"); break;
 	}
 	Button::Update(app);
 }
@@ -51,10 +51,10 @@ DisplayButton::DisplayButton() : Button(150) {}
 void DisplayButton::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	switch (simulationApp.display) {
-	case DISPLAY_COLOR: text = simulationApp.GetLocalizedString(L"disp_col"); break;
-	case DISPLAY_ENERGY: text = simulationApp.GetLocalizedString(L"disp_energy"); break;
-	case DISPLAY_CHARGES: text = simulationApp.GetLocalizedString(L"disp_charge"); break;
-	case DISPLAY_NONE: text = simulationApp.GetLocalizedString(L"disp_none"); break;
+	case kColorDisplay: text = simulationApp.GetLocalizedString(L"disp_col"); break;
+	case kEnergyDisplay: text = simulationApp.GetLocalizedString(L"disp_energy"); break;
+	case kChargesDisplay: text = simulationApp.GetLocalizedString(L"disp_charge"); break;
+	case kNoDisplay: text = simulationApp.GetLocalizedString(L"disp_none"); break;
 	}
 	Button::Update(app);
 }
