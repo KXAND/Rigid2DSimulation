@@ -13,7 +13,7 @@ Background::Background(SimulationApp& cur)
 
 void Background::Render(SimulationApp& cur)
 {
-	drawBasedTile((cur.screen), topLeft,  backgroundTile);
+	DrawTileRaw((cur.screen), topLeft,  backgroundTile);
 	DrawString((cur.screen), (cur.depthBuffer), 999, (cur.debugString),
 		Color(110), (cur.font), topLeft + DVector2(10, 10), width - 20, cur.background->ViewPort());
 }
