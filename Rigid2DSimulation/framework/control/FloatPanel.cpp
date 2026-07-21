@@ -127,7 +127,7 @@ void FloatPanel::RenderMain(App& app) {
 		titleBarHovered && (!app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? titleBarHoveredColor : titleBarNormalColor;
 	DrawRectangleWithBorderRaw(app.screen, topLeft, width, titleBarHeight, app.screen.Rect(), titleBarColor, frameColor);
 
-	DVector2 titleTopLeft = topLeft + DVector2(titleMargin, (titleBarHeight - app.font.h) / 2);
+	DVector2 titleTopLeft = topLeft + DVector2(titleMargin, (titleBarHeight - app.font.height) / 2);
 	DrawString(app.screen, app.depthBuffer, depth, title, titleColor, app.font, titleTopLeft, 0, app.screen.Rect());
 }
 void FloatPanel::RenderClose(App& app) {

@@ -26,7 +26,7 @@ void HorizontalDragBar::SetNormalizedNodePosition(double normalizedValue) {
 }
 DVector2 HorizontalDragBar::GetNodeTopLeft() const { return topLeft + DVector2(textWidth + nodeX, 0); }
 void HorizontalDragBar::Render(App& app) {
-	DVector2 textTopLeft = topLeft + DVector2(0, (nodeHeight - app.font.h) / 2);
+	DVector2 textTopLeft = topLeft + DVector2(0, (nodeHeight - app.font.height) / 2);
 	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, viewport);
 
 	Color const& color =

@@ -19,7 +19,7 @@ void DrawCharacter(Tile& targetTile, DepthBuffer& depthBuffer, double depth,
         int sourcePixelIndex = (row - topLeft.y) * sourceTile.width + left - topLeft.x;
         for (int column = left; column < right; ++column)
         {
-            if (depthBuffer[targetPixelIndex] <= depth && sourceTile.as[sourcePixelIndex] != 0)
+            if (depthBuffer[targetPixelIndex] <= depth && sourceTile.alphaValues[sourcePixelIndex] != 0)
             {
                 depthBuffer[targetPixelIndex] = depth;
                 targetTile.colors[targetPixelIndex] = color;
@@ -38,7 +38,7 @@ void DrawString(Tile& targetTile, DepthBuffer& depthBuffer, double depth,
     {
         if (character == '\n')
         {
-            currentTopLeft.y += font.h;
+            currentTopLeft.y += font.height;
             currentX = 0;
         }
         else
@@ -46,7 +46,7 @@ void DrawString(Tile& targetTile, DepthBuffer& depthBuffer, double depth,
             Tile const& glyph = font[character];
             if (maxWidth != 0 && currentX > 0 && currentX + glyph.width > maxWidth)
             {
-                currentTopLeft.y += font.h;
+                currentTopLeft.y += font.height;
                 currentX = 0;
             }
 
@@ -70,13 +70,13 @@ DVector2 GetStringSize(wstring const& text, Font const& font, int maxWidth,
 {
     int currentX = 0;
     int width = 0;
-    int height = font.h;
+    int height = font.height;
     for (wchar_t character : text)
     {
         if (character == L'\n')
         {
             width = max(width, currentX);
-            height += font.h;
+            height += font.height;
             currentX = 0;
         }
         else
@@ -85,7 +85,7 @@ DVector2 GetStringSize(wstring const& text, Font const& font, int maxWidth,
             if (maxWidth != 0 && currentX > 0 && currentX + glyph.width > maxWidth)
             {
                 width = max(width, currentX);
-                height += font.h;
+                height += font.height;
                 currentX = 0;
             }
 
@@ -116,7 +116,7 @@ int GetStringIndexAtPosition(wstring const& text, Font const& font,
         wchar_t character = text[index];
         if (character == L'\n')
         {
-            currentY += font.h;
+            currentY += font.height;
             currentX = 0;
             if (currentY > position.y)
             {
@@ -128,7 +128,7 @@ int GetStringIndexAtPosition(wstring const& text, Font const& font,
             Tile const& glyph = font[character];
             if (maxWidth != 0 && currentX > 0 && currentX + glyph.width > maxWidth)
             {
-                currentY += font.h;
+                currentY += font.height;
                 currentX = 0;
                 if (currentY > position.y)
                 {
@@ -136,7 +136,7 @@ int GetStringIndexAtPosition(wstring const& text, Font const& font,
                 }
             }
             currentX += glyph.width;
-            if (currentX > position.x && currentY + font.h > position.y)
+            if (currentX > position.x && currentY + font.height > position.y)
             {
                 return currentX - position.x > glyph.width / 2 ? index : index + 1;
             }

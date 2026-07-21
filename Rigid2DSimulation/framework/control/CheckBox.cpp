@@ -23,7 +23,7 @@ int CheckBox::GetHeight() const { return height + gap.y; }
 
 DVector2 CheckBox::GetBoxTopLeft() const { return topLeft + DVector2(textWidth, (height - boxSize) / 2); }
 void CheckBox::Render(App& app) {
-	DVector2 textTopLeft = topLeft + DVector2(0, (height - app.font.h) / 2);
+	DVector2 textTopLeft = topLeft + DVector2(0, (height - app.font.height) / 2);
 	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, viewport);
 
 	Color const& color =

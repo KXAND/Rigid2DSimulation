@@ -31,7 +31,7 @@ int DropList::GetHeight() const {
 DVector2 DropList::GetBoxTopLeft() const { return topLeft + DVector2(textWidth, 0); }
 DVector2 DropList::GetItemsTopLeft() const { return GetBoxTopLeft() + DVector2(0, height); }
 void DropList::RenderMain(App& app) {
-	DVector2 labelTextTopLeft = topLeft + DVector2(0, (height - app.font.h) / 2);
+	DVector2 labelTextTopLeft = topLeft + DVector2(0, (height - app.font.height) / 2);
 	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, labelTextTopLeft, 0, viewport);
 
 	Color const& color =
@@ -43,7 +43,7 @@ void DropList::RenderMain(App& app) {
 	Vector2 signCenter = (Vector2)GetBoxTopLeft() + Vector2(width - signMargin, height / 2);
 	DrawEllipse(app.screen, app.depthBuffer, depth, signCenter, signRadius, signRadius, viewport, markColor);
 
-	DVector2 selectedItemTextTopLeft = topLeft + DVector2(textMarginX, (height - app.font.h) / 2);
+	DVector2 selectedItemTextTopLeft = topLeft + DVector2(textMarginX, (height - app.font.height) / 2);
 	DrawString(app.screen, app.depthBuffer, depth, itemNameProvider(selectedIndex, app), textColor, app.font, labelTextTopLeft, 0, viewport);
 }
 void DropList::RenderItems(App& app) {
@@ -58,7 +58,7 @@ void DropList::RenderItems(App& app) {
 		for (int i = (0), endIndex = int(itemCount); i < endIndex; ++i) {
 			DVector2 itemTextTopLeft = GetBoxTopLeft() +
 				DVector2(0, height + itemHeight * i) +
-				DVector2(textMarginX, (itemHeight - app.font.h) / 2);
+				DVector2(textMarginX, (itemHeight - app.font.height) / 2);
 			DrawString(app.screen, app.depthBuffer, depth, itemNameProvider(i, app), textColor, app.font, itemTextTopLeft, 0, viewport);
 		}
 	}

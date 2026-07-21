@@ -37,7 +37,7 @@ void DrawTile(Tile& targetTile, DepthBuffer& depthBuffer, double depth, DVector2
 			(l - topLeft.x + sourceViewport.GetLeft());
 		for (int i = (l), iEnd = int(r); i < iEnd; ++i)
 		{
-			if (depthBuffer[targetPixelIndex] <= depth && sourceTile.as[sourcePixelIndex] != 0)
+			if (depthBuffer[targetPixelIndex] <= depth && sourceTile.alphaValues[sourcePixelIndex] != 0)
 			{
 				depthBuffer[targetPixelIndex] = depth; targetTile.colors[targetPixelIndex] = sourceTile.colors[sourcePixelIndex];
 			}
@@ -53,7 +53,7 @@ bool HitTestTile(DVector2 point, DVector2 topLeft, Tile const& sourceTile, DRect
 	// 假设了vpsrc和 tilesrc 左上角对齐
 	DVector2 sourcePoint = sourceViewport.topLeftPosition + point - topLeft;
 	int pixelIndex = sourcePoint.y * sourceTile.width + sourcePoint.x;
-	return IsInside(sourcePoint, sourceViewport) && sourceTile.as[pixelIndex] != 0;
+	return IsInside(sourcePoint, sourceViewport) && sourceTile.alphaValues[pixelIndex] != 0;
 }
 
 

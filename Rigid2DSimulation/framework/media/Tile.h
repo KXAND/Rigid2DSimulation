@@ -2,7 +2,7 @@
 #include "Vector3.h"
 struct Color
 {
-	BYTE b = 0, g = 0, r = 0;
+	BYTE blue = 0, green = 0, red = 0;
 
 	static const Color RED;
 	static const Color GREEN;
@@ -15,41 +15,41 @@ struct Color
 
 
 	Color() = default;
-	Color(BYTE r, BYTE g, BYTE b) : r(r), g(g), b(b) { }
-	explicit Color(BYTE a) : Color(a, a, a) { }
+	Color(BYTE red, BYTE green, BYTE blue) : red(red), green(green), blue(blue) { }
+	explicit Color(BYTE alpha) : Color(alpha, alpha, alpha) { }
 	explicit Color(wstring const& s);
-	explicit Color(Vector3 c)
+	explicit Color(Vector3 color)
 	{
-		r = Clamp<int>(0, 255, (int) c.GetRed() * 255);
-		g = Clamp<int>(0, 255, (int) c.GetGreen() * 255);
-		b = Clamp<int>(0, 255, (int) c.GetBlue() * 255);
+		red = Clamp<int>(0, 255, (int) color.GetRed() * 255);
+		green = Clamp<int>(0, 255, (int) color.GetGreen() * 255);
+		blue = Clamp<int>(0, 255, (int) color.GetBlue() * 255);
 	}
 	// 允许转换为 Vector3，禁止显式操作
-	explicit operator Vector3() const { return Vector3(r, g, b) / 255; }
+	explicit operator Vector3() const { return Vector3(red, green, blue) / 255; }
 };
-inline bool operator==(Color a, Color b)
+inline bool operator==(Color alpha, Color blue)
 {
-	return memcmp(&a, &b, sizeof(Color)) == 0;
+	return memcmp(&alpha, &blue, sizeof(Color)) == 0;
 }
-inline bool operator!=(Color a, Color b) { return !(a == b); }
-wstring ToWString(Color c);
-void BlendColor(Color& bc, BYTE& ba, Color fc, BYTE fa);
+inline bool operator!=(Color alpha, Color blue) { return !(alpha == blue); }
+wstring ToWString(Color color);
+void BlendColor(Color& backgroundColor, BYTE& backgroundAlpha, Color foregroundColor, BYTE foregroundAlpha);
 
 struct Tile
 {
 	int width = 0, height = 0;
 	vector<Color> colors;
-	vector<BYTE> as;
+	vector<BYTE> alphaValues;
 
 	Tile() = default;
-	Tile(int w, int h, Color c = {}, BYTE a = 0);
-	Tile(int w, int h, Tile const& src, DRect vp_src);// src 不能为空。
-	Tile(wstring const& fileName, bool* ok = NULL);
+	Tile(int width, int height, Color color = {}, BYTE alpha = 0);
+	Tile(int width, int height, Tile const& sourceTile, DRect sourceViewport);// sourceTile 不能为空。
+	Tile(wstring const& fileName, bool* isLoaded = NULL);
 	void Save(wstring const& fileName) const;
 
 	int GetArea() const;
 	DRect Rect() const;
-	void Fill(Color color, BYTE a = 255);
+	void Fill(Color color, BYTE alpha = 255);
 };
 typedef vector<double> DepthBuffer;
 

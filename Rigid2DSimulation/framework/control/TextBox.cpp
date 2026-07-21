@@ -187,7 +187,7 @@ void TextBox::ClampTextPosition(App& app) {
 }
 
 void TextBox::RenderMain(App& app) {
-	DVector2 labelTextTopLeft = topLeft + DVector2(0, (height - app.font.h) / 2);
+	DVector2 labelTextTopLeft = topLeft + DVector2(0, (height - app.font.height) / 2);
 	DrawString(app.screen, app.depthBuffer, depth, labelText, labelTextColor, app.font, labelTextTopLeft, 0, viewport);
 
 	Color const& color =
@@ -197,7 +197,7 @@ void TextBox::RenderMain(App& app) {
 	DrawRectangleWithBorderRaw(app.screen, GetBoxTopLeft(), width, height, viewport, color, frameColor);
 
 	int cursorX = 0;
-	DVector2 valueTopLeft = GetBoxTopLeft() + DVector2(valueOffsetX, (height - app.font.h) / 2);
+	DVector2 valueTopLeft = GetBoxTopLeft() + DVector2(valueOffsetX, (height - app.font.height) / 2);
 	DrawString(app.screen, app.depthBuffer, depth, GetLeftText(), valueColor, app.font, valueTopLeft, cursorX, 0, GetTextViewport());
 	DrawString(app.screen, app.depthBuffer, depth, GetSelectedText(), selectedColor, app.font, valueTopLeft, cursorX, 0, GetTextViewport());
 	DrawString(app.screen, app.depthBuffer, depth, GetRightText(), valueColor, app.font, valueTopLeft, cursorX, 0, GetTextViewport());

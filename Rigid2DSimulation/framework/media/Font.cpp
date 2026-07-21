@@ -1,29 +1,29 @@
 #include "Font.h"
 
 Font::Font() : Font(20) {}
-Font::Font(int h) : h(h) {}
-Tile const& Font::operator[](wchar_t c) const {
-	auto it = fts.find(c);
-	return it == fts.end() ? missing : it->second;
+Font::Font(int height) : height(height) {}
+Tile const& Font::operator[](wchar_t character) const {
+	auto it = glyphs.find(character);
+	return it == glyphs.end() ? missing : it->second;
 }
-wstring Font::GenerateRandomText(int n) const {
+wstring Font::GenerateRandomText(int count) const {
 	wstring s;
-	for (int i = (0), iEnd = int(n); i < iEnd; ++i) { s += chi[GenerateRandomInt(chi.size())]; } return s;
+	for (int i = (0), iEnd = int(count); i < iEnd; ++i) { s += chineseCharacters[GenerateRandomInt(chineseCharacters.size())]; } return s;
 }
 
-bool Font::LoadFont(wstring const& name, wchar_t c) {
+bool Font::LoadFont(wstring const& name, wchar_t character) {
 	wstring path = L"./fonts/" + name + L".tile";
-	bool ret = false; Tile t0(path, &ret);
-	if (ret) {
-		Tile t1 = Tile(t0.width * h / t0.height, h, t0, t0.Rect());
-		fts[c] = t1; return true;
+	bool isLoaded = false; Tile sourceTile(path, &isLoaded);
+	if (isLoaded) {
+		Tile scaledTile = Tile(sourceTile.width * height / sourceTile.height, height, sourceTile, sourceTile.Rect());
+		glyphs[character] = scaledTile; return true;
 	}
 	else { return false; }
 }
 bool Font::Initialize() {
-	wstring sym = (wstring)NUMBERS + NORMAL_SYMBOLS + LOWERS;
-	wstring upp = (wstring)UPPERS;
-	wstring cha = (wstring)CHINESE_CHARS + ADDITIONAL_CHINESE_CHARS;
+	wstring normalCharacters = (wstring)numbers + normalSymbols + lowercaseLetters;
+	wstring uppercaseCharacters = (wstring)uppercaseLetters;
+	wstring chineseCharacterSet = (wstring)chineseCharacters + additionalChineseCharacters;
 
 	LoadFont(L"less", L'<');
 	LoadFont(L"quote", L'\"');
@@ -35,17 +35,17 @@ bool Font::Initialize() {
 	LoadFont(L"asterisk", L'*');
 	LoadFont(L"question", L'?');
 	LoadFont(L"backslash", L'\\');
-	for (auto c : sym) { LoadFont({ c }, c); }
-	for (auto c : upp) { LoadFont({ c, c }, c); }
-	for (auto c : cha) {
-		if (LoadFont({ c }, c)) { chi.push_back(c); }
+	for (auto character : normalCharacters) { LoadFont({ character }, character); }
+	for (auto character : uppercaseCharacters) { LoadFont({ character, character }, character); }
+	for (auto character : chineseCharacterSet) {
+		if (LoadFont({ character }, character)) { chineseCharacters.push_back(character); }
 	}
 
 	wstring path = L"./fonts/missing.tile";
-	bool ret = false; Tile t0(path, &ret);
-	if (ret) {
-		Tile t1 = Tile(t0.width * h / t0.height, h, t0, t0.Rect());
-		missing = t1; return true;
+	bool isLoaded = false; Tile sourceTile(path, &isLoaded);
+	if (isLoaded) {
+		Tile scaledTile = Tile(sourceTile.width * height / sourceTile.height, height, sourceTile, sourceTile.Rect());
+		missing = scaledTile; return true;
 	}
 	else { return false; }
 }

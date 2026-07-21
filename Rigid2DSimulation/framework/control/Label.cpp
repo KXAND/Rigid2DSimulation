@@ -12,7 +12,7 @@ int Label::GetWidth() const { return width + gap.x; }
 int Label::GetHeight() const { return height + gap.y; }
 
 void Label::Render(App& app) {
-	DVector2 textTopLeft = topLeft + DVector2(0, height - app.font.h) / 2;
+	DVector2 textTopLeft = topLeft + DVector2(0, height - app.font.height) / 2;
 	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, viewport);
 }
 void Label::Update(App& app) {

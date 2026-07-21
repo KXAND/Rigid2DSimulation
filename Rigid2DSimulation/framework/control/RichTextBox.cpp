@@ -59,7 +59,7 @@ int RichTextBox::GetMaxCursorY() const { return height - editMargin.y; }
 DVector2 RichTextBox::GetCursorPosition(App& app) const {
 	wstring selectedText(value.begin(), value.begin() + selectionEnd);
 	int cursorX = 0; DVector2 cursorPosition = GetStringSize(selectedText, app.font, lineWidth, &cursorX);
-	cursorPosition.x = cursorX; cursorPosition.y -= app.font.h;
+	cursorPosition.x = cursorX; cursorPosition.y -= app.font.height;
 	return (DVector2)valueOffset + cursorPosition;
 }
 
@@ -117,7 +117,7 @@ void RichTextBox::HandleUp(App& app) {
 	if (HasSelection()) { selectionStart = selectionEnd = GetEditBegin(); }
 	else {
 		wstring selectedText(value.begin(), value.begin() + selectionEnd);
-		int cursorY = GetStringSize(selectedText, app.font, lineWidth).y - 2 * app.font.h;
+		int cursorY = GetStringSize(selectedText, app.font, lineWidth).y - 2 * app.font.height;
 		DVector2 cursorPosition(cursorXHistory, cursorY);
 		selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.font, cursorPosition, lineWidth);
 	}
@@ -254,7 +254,7 @@ void RichTextBox::RenderCursor(App& app) {
 	bool showCursor = edit &&
 		(sin(app.frameRate.GetElapsedTime() * blinkMultiplier) > 0 || cursorChanged);
 	if (showCursor) {
-		DVector2 cursorTopLeft = topLeft + GetCursorPosition(app) + DVector2(-cursorWidth, app.font.h - cursorHeight) / 2;
+		DVector2 cursorTopLeft = topLeft + GetCursorPosition(app) + DVector2(-cursorWidth, app.font.height - cursorHeight) / 2;
 		DrawRectangleRaw(app.screen, cursorTopLeft, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
 	}
 }
