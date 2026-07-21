@@ -11,7 +11,7 @@ struct Value {
 	// null, num, str, fun, vec, user, dic
 	double number = 0;
 	wstring stringValue;
-	Function fun;
+	Function nativeFunction;
 	Program procs;
 	vector<wstring> arguments;
 	vector<std::shared_ptr<Value>> vec;
@@ -20,7 +20,7 @@ struct Value {
 	Value() = default;
 	Value(double number);
 	Value(wstring const& text);
-	Value(Function const& fun);
+	Value(Function const& nativeFunction);
 	Value(vector<std::shared_ptr<Value>> const& vec);
 	Value(Program const& ps, vector<wstring> const& arguments);
 };

@@ -13,7 +13,7 @@ struct ScriptExpression {
 	double number = 0;
 	wstring stringValue;
 	wstring variableName;
-	wstring fun;
+	wstring functionName;
 	vector<ScriptExpression> arguments;
 	vector<ScriptExpression> vec;
 	ValuePtr<ScriptExpression> getLocalizedString, ind;
@@ -21,7 +21,7 @@ struct ScriptExpression {
 	ScriptExpression() = default;
 	ScriptExpression(wstring const& type);
 	ScriptExpression(double number);
-	ScriptExpression(wstring const& fun, vector<ScriptExpression> const& arguments);
+	ScriptExpression(wstring const& functionName, vector<ScriptExpression> const& arguments);
 	static ScriptExpression CreateString(wstring const& text);
 	static ScriptExpression CreateVariable(wstring const& value, bool isGlobal);
 };

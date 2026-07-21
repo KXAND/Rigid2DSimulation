@@ -3,8 +3,8 @@
 
 ScriptExpression::ScriptExpression(wstring const& type) : type(type) {}
 ScriptExpression::ScriptExpression(double number) : number(number) { type = L"num"; }
-ScriptExpression::ScriptExpression(wstring const& fun, vector<ScriptExpression> const& arguments) :
-	fun(fun), arguments(arguments) {
+ScriptExpression::ScriptExpression(wstring const& functionName, vector<ScriptExpression> const& arguments) :
+	functionName(functionName), arguments(arguments) {
 	type = L"call";
 }
 ScriptExpression ScriptExpression::CreateString(wstring const& text) {
@@ -33,7 +33,7 @@ wstring ToWString(ScriptExpression const& ex) {
 		for (auto const& v : ex.vec) { tmp += ToWString(v) + L","; }
 	}
 	else if (ex.type == L"call") {
-		tmp += L":" + ex.fun + L",";
+		tmp += L":" + ex.functionName + L",";
 		for (auto const& argument : ex.arguments) { tmp += ToWString(argument) + L","; }
 	}
 	tmp += L"]";
@@ -120,7 +120,7 @@ ScriptExpression ParsePreExpression(vector<PreExpression> const& in) {
 
 ScriptExpression ParseCall(vector<BracketGroup> const& in) {
 	ScriptExpression ex(L"call");
-	ex.fun = in[0].tk.variableName;
+	ex.functionName = in[0].tk.variableName;
 	ex.isGlobal = in[0].tk.isGlobal;
 
 	vector<BracketGroup> tmp;

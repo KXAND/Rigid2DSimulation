@@ -8,7 +8,7 @@
 
 Value::Value(double number) : number(number) { type = L"num"; }
 Value::Value(wstring const& text) : stringValue(text) { type = L"ToString"; }
-Value::Value(decltype(fun) const& user) : fun(user) { type = L"user"; }
+Value::Value(Function const& nativeFunction) : nativeFunction(nativeFunction) { type = L"user"; }
 Value::Value(vector<std::shared_ptr<Value>> const& vec) : vec(vec) { type = L"vec"; }
 Value::Value(Program const& ps, vector<wstring>const& arguments) :
 	procs(ps), arguments(arguments)
@@ -49,7 +49,7 @@ std::shared_ptr<Value> FindVariable(Scope& gl, Scope& sc, wstring nm, bool isgl)
 }
 bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpression const& ex, Value& out)
 {
-	auto const& f = ex.fun;
+	auto const& f = ex.functionName;
 	// 保持按需 Evaluate，避免在确定运算符前提前计算所有参数。
 	auto numArg = [&](int index) { return Evaluate(gl, sc, ex.arguments[index])->number; };
 	auto stringArg = [&](int index) -> wstring const& { return Evaluate(gl, sc, ex.arguments[index])->stringValue; };
@@ -87,23 +87,23 @@ std::shared_ptr<Value> EvaluateCall(Scope& gl, Scope& sc, ScriptExpression const
 	if (TryEvaluateDefaultFunction(gl, sc, ex, tmp)) { return std::make_shared<Value>(tmp); }
 
 	// 下面必须是值复制，这是为了避免函数自己被抹去。
-	auto fun = FindVariable(gl, sc, ex.fun, ex.isGlobal);
-	if (fun->type == L"user" && fun->fun)
+	auto functionValue = FindVariable(gl, sc, ex.functionName, ex.isGlobal);
+	if (functionValue->type == L"user" && functionValue->nativeFunction)
 	{
 		vector<std::shared_ptr<Value>> tmp;
 		for (auto const& p : ex.arguments)
 		{
 			tmp.push_back(Evaluate(gl, sc, p));
 		}
-		return fun->fun(tmp);
+		return functionValue->nativeFunction(tmp);
 	}
 
-	for (int i = (0), iEnd = int(min(fun->arguments.size(), ex.arguments.size())); i < iEnd; ++i)
+	for (int i = (0), iEnd = int(min(functionValue->arguments.size(), ex.arguments.size())); i < iEnd; ++i)
 	{
-		getLocalizedString[fun->arguments[i]] = Evaluate(gl, sc, ex.arguments[i]);
+		getLocalizedString[functionValue->arguments[i]] = Evaluate(gl, sc, ex.arguments[i]);
 	}
 	bool ret = false;
-	return Execute(ret, gl, getLocalizedString, fun->procs);
+	return Execute(ret, gl, getLocalizedString, functionValue->procs);
 }
 std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpression const& ex)
 {
