@@ -5,7 +5,7 @@
 struct HorizontalSeparator : Control {
 	int w = 0;
 	DVector2 gap;
-	Color c_mark;
+	Color markerColor;
 
 	HorizontalSeparator(int w = 0);
 	int GetW() const override;
