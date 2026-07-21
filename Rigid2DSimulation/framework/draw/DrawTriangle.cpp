@@ -59,88 +59,88 @@ bool ClipTriangleAtHorizontalBoundary(Tile& targetTile, DepthBuffer& zBuffer,
 }
 }
 
-void DrawTriangleHalf(Tile& dest, DepthBuffer& zBuffer,
-	DVector2 pa, DVector2 pb, DVector2 pc, double depth, Color color, bool same_y)
+void DrawTriangleHalf(Tile& targetTile, DepthBuffer& zBuffer,
+	DVector2 firstPoint, DVector2 middlePoint, DVector2 lastPoint, double depth, Color color, bool isYAxisMajor)
 {
-	// 假设 pa, pb, pc  已经交换过了。
+	// 假设 firstPoint, middlePoint, lastPoint  已经交换过了。
 	// 用它画斜的长方形有的时候会出现裂痕，不知道能不能修复。
-	if (pa.y == pb.y)  return;
-	int dy = pb.y > pa.y ? 1 : -1;
-	int dx = pc.x > pb.x ? 1 : -1;
-	for (int y = pa.y; y != pb.y + dy; y += dy)
+	if (firstPoint.y == middlePoint.y)  return;
+	int dy = middlePoint.y > firstPoint.y ? 1 : -1;
+	int dx = lastPoint.x > middlePoint.x ? 1 : -1;
+	for (int y = firstPoint.y; y != middlePoint.y + dy; y += dy)
 	{
-		int xb = pa.x * (pb.y - y) + pb.x * (y - pa.y); xb /= (pb.y - pa.y);
-		int xc = pa.x * (pb.y - y) + pc.x * (y - pa.y); xc /= (pb.y - pa.y);
+		int xb = firstPoint.x * (middlePoint.y - y) + middlePoint.x * (y - firstPoint.y); xb /= (middlePoint.y - firstPoint.y);
+		int xc = firstPoint.x * (middlePoint.y - y) + lastPoint.x * (y - firstPoint.y); xc /= (middlePoint.y - firstPoint.y);
 		for (int x = xb; x != xc + dx; x += dx)
 		{
-			int dp = same_y ? y * dest.width + x : x * dest.width + y;
-			if (zBuffer[dp] <= depth) { zBuffer[dp] = depth; dest.colors[dp] = color; }
+			int depthIndex = isYAxisMajor ? y * targetTile.width + x : x * targetTile.width + y;
+			if (zBuffer[depthIndex] <= depth) { zBuffer[depthIndex] = depth; targetTile.colors[depthIndex] = color; }
 		}
 	}
 }
 void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
-	DVector2 pa, DVector2 pb, DVector2 pc, double depth, Color color)
+	DVector2 firstPoint, DVector2 middlePoint, DVector2 lastPoint, double depth, Color color)
 {
 	// 如果可以让这里写得好看有条理，容易修改且不容易出 bug 就好了。
 	// @todo:考虑笔记中的 SH 算法
 
 	// 保证x轴上左到右是　cba　的顺序
 	// 这里有点低效，重复比较了，但是总的影响不大。
-	if (pa.x < pb.x) swap(pa, pb);
-	if (pa.x < pc.x) swap(pa, pc);
-	if (pb.x < pc.x) swap(pb, pc);
+	if (firstPoint.x < middlePoint.x) swap(firstPoint, middlePoint);
+	if (firstPoint.x < lastPoint.x) swap(firstPoint, lastPoint);
+	if (middlePoint.x < lastPoint.x) swap(middlePoint, lastPoint);
 
-	if (pa.x == pc.x) { return; } // 三角形三点不可能共线
-	int dx = pa.x - pc.x;
+	if (firstPoint.x == lastPoint.x) { return; } // 三角形三点不可能共线
+	int dx = firstPoint.x - lastPoint.x;
 
 	// 用屏幕边切割图形
-	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, pa, pb,
-		pc, depth, color, (long long)viewPort.GetRight() - 1,
+	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, firstPoint, middlePoint,
+		lastPoint, depth, color, (long long)viewPort.GetRight() - 1,
 		BoundarySide::Maximum))
 	{
 		return;
 	}
-	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, pc, pb,
-		pa, depth, color, (long long)viewPort.GetLeft(), BoundarySide::Minimum))
+	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, lastPoint, middlePoint,
+		firstPoint, depth, color, (long long)viewPort.GetLeft(), BoundarySide::Minimum))
 	{
 		return;
 	}
 
-	if (pa.y < pb.y) { swap(pa, pb); }
-	if (pa.y < pc.y) { swap(pa, pc); }
-	if (pb.y < pc.y) { swap(pb, pc); }
-	if (pa.y == pc.y) { return; }
-	int dy = pa.y - pc.y;
-	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, pa, pb,
-		pc, depth, color, (long long)viewPort.GetBottom() - 1,
+	if (firstPoint.y < middlePoint.y) { swap(firstPoint, middlePoint); }
+	if (firstPoint.y < lastPoint.y) { swap(firstPoint, lastPoint); }
+	if (middlePoint.y < lastPoint.y) { swap(middlePoint, lastPoint); }
+	if (firstPoint.y == lastPoint.y) { return; }
+	int dy = firstPoint.y - lastPoint.y;
+	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, firstPoint, middlePoint,
+		lastPoint, depth, color, (long long)viewPort.GetBottom() - 1,
 		BoundarySide::Maximum))
 	{
 		return;
 	}
-	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, pc, pb,
-		pa, depth, color, (long long)viewPort.GetTop(), BoundarySide::Minimum))
+	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, lastPoint, middlePoint,
+		firstPoint, depth, color, (long long)viewPort.GetTop(), BoundarySide::Minimum))
 	{
 		return;
 	}
 
 	// 这里是出于数值稳定性的考虑交换一下方向，否则如果三角形很扁的话会奇怪。
-	bool y_big = dy > dx;
-	if (!y_big)
+	bool isYAxisMajor = dy > dx;
+	if (!isYAxisMajor)
 	{
-		if (pa.x < pb.x) { swap(pa, pb); }
-		if (pa.x < pc.x) { swap(pa, pc); }
-		if (pb.x < pc.x) { swap(pb, pc); }
-		swap(pa.x, pa.y); swap(pb.x, pb.y); swap(pc.x, pc.y);
+		if (firstPoint.x < middlePoint.x) { swap(firstPoint, middlePoint); }
+		if (firstPoint.x < lastPoint.x) { swap(firstPoint, lastPoint); }
+		if (middlePoint.x < lastPoint.x) { swap(middlePoint, lastPoint); }
+		swap(firstPoint.x, firstPoint.y); swap(middlePoint.x, middlePoint.y); swap(lastPoint.x, lastPoint.y);
 	}
-	DVector2 pd = pb;
-	pd.x = pa.x * (pb.y - pc.y) + pc.x * (pa.y - pb.y); pd.x /= pa.y - pc.y;
+	DVector2 splitPoint = middlePoint;
+	splitPoint.x = firstPoint.x * (middlePoint.y - lastPoint.y) + lastPoint.x * (firstPoint.y - middlePoint.y); splitPoint.x /= firstPoint.y - lastPoint.y;
 	// @ques：不是很理解这里问什么要做两遍
-	DrawTriangleHalf(targetTile, zBuffer, pa, pb, pd, depth, color, y_big);
-	DrawTriangleHalf(targetTile, zBuffer, pc, pb, pd, depth, color, y_big);
+	DrawTriangleHalf(targetTile, zBuffer, firstPoint, middlePoint, splitPoint, depth, color, isYAxisMajor);
+	DrawTriangleHalf(targetTile, zBuffer, lastPoint, middlePoint, splitPoint, depth, color, isYAxisMajor);
 }
 void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
-	Vector2 pa, Vector2 pb, Vector2 pc, double depth, Color color)
+	Vector2 firstPoint, Vector2 middlePoint, Vector2 lastPoint, double depth, Color color)
 {
-	DrawTriangle(targetTile, zBuffer, viewPort, (DVector2) pa, (DVector2) pb, (DVector2) pc, depth, color);
+	DrawTriangle(targetTile, zBuffer, viewPort, (DVector2) firstPoint, (DVector2) middlePoint, (DVector2) lastPoint, depth, color);
 }
 

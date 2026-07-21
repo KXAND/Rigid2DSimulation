@@ -39,65 +39,65 @@ void ClipLineEndpointAtY(DVector2& endpoint, DVector2 const& otherEndpoint,
 
 // 好像这里经常发生溢出问题，不知能不能处理一下。
 // 把 int 换成 long long 了，应该会有帮助。
-bool ClipLineSegment(DVector2& pa, DVector2& pb, DRect viewPort) {
-	long long x0 = viewPort.GetLeft();
-	long long x1 = viewPort.GetRight() - 1;
-	long long y0 = viewPort.GetTop();
-	long long y1 = viewPort.GetBottom() - 1;
+bool ClipLineSegment(DVector2& firstPoint, DVector2& secondPoint, DRect viewPort) {
+	long long left = viewPort.GetLeft();
+	long long right = viewPort.GetRight() - 1;
+	long long top = viewPort.GetTop();
+	long long bottom = viewPort.GetBottom() - 1;
 
 	// 线性插值
 	// 下面假设了不会发生除以 0 的问题。
-	bool b0 = pa.x < x0 && pb.x < x0;
-	bool b1 = pa.x > x1 && pb.x > x1;
-	if (b0 || b1) { return false; }
-	ClipLineEndpointAtX(pa, pb, x0, BoundarySide::Minimum);
-	ClipLineEndpointAtX(pa, pb, x1, BoundarySide::Maximum);
-	ClipLineEndpointAtX(pb, pa, x0, BoundarySide::Minimum);
-	ClipLineEndpointAtX(pb, pa, x1, BoundarySide::Maximum);
+	bool isOutsideMinimum = firstPoint.x < left && secondPoint.x < left;
+	bool isOutsideMaximum = firstPoint.x > right && secondPoint.x > right;
+	if (isOutsideMinimum || isOutsideMaximum) { return false; }
+	ClipLineEndpointAtX(firstPoint, secondPoint, left, BoundarySide::Minimum);
+	ClipLineEndpointAtX(firstPoint, secondPoint, right, BoundarySide::Maximum);
+	ClipLineEndpointAtX(secondPoint, firstPoint, left, BoundarySide::Minimum);
+	ClipLineEndpointAtX(secondPoint, firstPoint, right, BoundarySide::Maximum);
 
-	b0 = pa.y < y0 && pb.y < y0;
-	b1 = pa.y > y1 && pb.y > y1;
-	if (b0 || b1) { return false; }
-	ClipLineEndpointAtY(pa, pb, y0, BoundarySide::Minimum);
-	ClipLineEndpointAtY(pa, pb, y1, BoundarySide::Maximum);
-	ClipLineEndpointAtY(pb, pa, y0, BoundarySide::Minimum);
-	ClipLineEndpointAtY(pb, pa, y1, BoundarySide::Maximum);
+	isOutsideMinimum = firstPoint.y < top && secondPoint.y < top;
+	isOutsideMaximum = firstPoint.y > bottom && secondPoint.y > bottom;
+	if (isOutsideMinimum || isOutsideMaximum) { return false; }
+	ClipLineEndpointAtY(firstPoint, secondPoint, top, BoundarySide::Minimum);
+	ClipLineEndpointAtY(firstPoint, secondPoint, bottom, BoundarySide::Maximum);
+	ClipLineEndpointAtY(secondPoint, firstPoint, top, BoundarySide::Minimum);
+	ClipLineEndpointAtY(secondPoint, firstPoint, bottom, BoundarySide::Maximum);
 	return true;
 }
 void DrawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
-	DVector2 pa, DVector2 pb, double d, DRect viewPort, Color color)
+	DVector2 firstPoint, DVector2 secondPoint, double depth, DRect viewPort, Color color)
 {
 	if (viewPort.width <= 0 || viewPort.height <= 0) { return; }
-	if (!ClipLineSegment(pa, pb, viewPort)) { return; }
+	if (!ClipLineSegment(firstPoint, secondPoint, viewPort)) { return; }
 
-	bool changed = false;
-	int x = pa.x; int y = pa.y;
-	int dx = abs(pb.x - pa.x);
-	int dy = abs(pb.y - pa.y);
-	int sx = (pb.x > pa.x) ? 1 : -1;
-	int sy = (pb.y > pa.y) ? 1 : -1;
-	if (dy > dx) { swap(dx, dy); changed = true; }
+	bool isYAxisMajor = false;
+	int x = firstPoint.x; int y = firstPoint.y;
+	int dx = abs(secondPoint.x - firstPoint.x);
+	int dy = abs(secondPoint.y - firstPoint.y);
+	int stepX = (secondPoint.x > firstPoint.x) ? 1 : -1;
+	int stepY = (secondPoint.y > firstPoint.y) ? 1 : -1;
+	if (dy > dx) { swap(dx, dy); isYAxisMajor = true; }
 
-	int e = dx;
-	int id = y * targetTile.width + x;
-	if (zBuffer[id] <= d) { zBuffer[id] = d; targetTile.colors[id] = color; }
+	int errorTerm = dx;
+	int depthIndex = y * targetTile.width + x;
+	if (zBuffer[depthIndex] <= depth) { zBuffer[depthIndex] = depth; targetTile.colors[depthIndex] = color; }
 
 	for (int i = (0), iEnd = int(dx); i < iEnd; ++i) {
-		e -= 2 * dy;
-		if (changed) { y += sy; }
-		else { x += sx; }
-		if (e < 0) {
-			e += 2 * dx;
-			if (changed) { x += sx; }
-			else { y += sy; }
+		errorTerm -= 2 * dy;
+		if (isYAxisMajor) { y += stepY; }
+		else { x += stepX; }
+		if (errorTerm < 0) {
+			errorTerm += 2 * dx;
+			if (isYAxisMajor) { x += stepX; }
+			else { y += stepY; }
 		}
-		int id = y * targetTile.width + x;
-		if (zBuffer[id] <= d) { zBuffer[id] = d; targetTile.colors[id] = color; }
+		int depthIndex = y * targetTile.width + x;
+		if (zBuffer[depthIndex] <= depth) { zBuffer[depthIndex] = depth; targetTile.colors[depthIndex] = color; }
 	}
 }
 void DrawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
-	Vector2 pa, Vector2 pb, double depth, DRect viewPort, Color color)
+	Vector2 firstPoint, Vector2 secondPoint, double depth, DRect viewPort, Color color)
 {
-	DrawLineSegment(targetTile, zBuffer, (DVector2)pa, (DVector2)pb, depth, viewPort, color);
+	DrawLineSegment(targetTile, zBuffer, (DVector2)firstPoint, (DVector2)secondPoint, depth, viewPort, color);
 }
 

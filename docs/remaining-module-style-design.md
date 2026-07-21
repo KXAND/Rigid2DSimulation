@@ -55,13 +55,20 @@
 | 旧名称 | 目标名称 | 范围 |
 | --- | --- | --- |
 | `DrawRectangleRaw` 的 `w`、`h` | `width`、`height` | 声明、实现和项目内调用点 |
+| `DrawRectangleRaw` 的 `tmp` | `rowColors` | 填充行颜色缓存 |
 | 椭圆参数 `a`、`b` | `horizontalRadius`、`verticalRadius` | `DrawEllipse` 声明、实现和项目内调用点 |
 | `inv_aax`、`inv_aay` | `inverseHorizontalRadiusSquared`、`inverseVerticalRadiusSquared` | `DrawEllipse` |
 | `tmp` | `normalizedDistanceSquared` | `DrawEllipse` |
 | `DrawTriangleHalf` 的 `dest` | `targetTile` | 声明与实现 |
+| `DrawTriangleHalf` 的 `ds`、`col` | `zBuffer`、`color` | 声明与实现 |
 | `pa`、`pb`、`pc` | `firstPoint`、`middlePoint`、`lastPoint` | `DrawTriangleHalf` 及其调用点 |
 | `same_y`、`y_big` | `isYAxisMajor` | 三角形扫描线方向传递 |
 | `dp` | `depthIndex` | `DrawTriangleHalf` |
+| `pd` | `splitPoint` | `DrawTriangle` 的扫描线拆分点 |
+| `DrawLineSegment`、`ClipLineSegment` 的 `pa`、`pb`、`d` | `firstPoint`、`secondPoint`、`depth` | 声明、实现和调用点 |
+| `x0`、`x1`、`y0`、`y1` | `left`、`right`、`top`、`bottom` | 线段裁剪边界 |
+| `b0`、`b1` | `isOutsideMinimum`、`isOutsideMaximum` | 水平或垂直边界之外的判定 |
+| `changed`、`sx`、`sy`、`e`、`id` | `isYAxisMajor`、`stepX`、`stepY`、`errorTerm`、`depthIndex` | Bresenham 绘制局部变量 |
 
 本模块实施边界见第 10 节的 `refactor(draw): clarify primitive geometry names`。扫描线循环的 `x`、`y`、`dx`、`dy` 与矩形裁剪边界 `a`、`b`、`c`、`d` 属于紧凑数学局部范围，保持不变。
 
@@ -173,7 +180,7 @@
 | 1 | `refactor(control): clarify control geometry names` | 已完成 | `framework/control` 的全部控件几何名称和 `current/ui` 直接访问 | 排版、布局或交互逻辑 |
 | 2 | `refactor(basic): clarify geometry names` | 已完成 | `Rect`、`DRect`、`Camera` 字段、构造参数和直接访问 | `Tile`、`App` 的几何字段 |
 | 3 | `refactor(app): clarify application names` | 已完成 | `App` 状态、本地化局部变量和 Win32 消息分发参数 | 消息流程、窗口创建逻辑 |
-| 4 | `refactor(draw): clarify primitive geometry names` | 待执行 | 矩形、椭圆、三角形绘制接口与非数学局部变量 | 绘制算法和扫描线计算 |
+| 4 | `refactor(draw): clarify primitive geometry names` | 已完成 | 矩形、椭圆、三角形绘制接口与非数学局部变量 | 绘制算法和扫描线计算 |
 | 5 | `refactor(media): clarify media resource names` | 待执行 | 字符集、`Color`、`Tile`、`Font` 与音频输出局部变量 | 图块/音频二进制布局和资源加载顺序 |
 | 6 | `refactor(common): clarify scene state names` | 待执行 | `Background`、配置读取工具和 `SimulationApp` 的集合局部变量 | 场景逻辑、网格算法和 DSL 键 |
 | 7 | `refactor(rigid): clarify physics data names` | 待执行 | `Body`、`Shape`、`Connection`、`Collision`、`Group` 的字段、接口、常量和直接调用点 | 物理公式、序列化布局和碰撞流程 |

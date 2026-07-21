@@ -1,12 +1,12 @@
 #pragma once
 #include "Tile.h"
 
-void DrawTriangleHalf(Tile& dest, DepthBuffer& ds,
-	DVector2 pa, DVector2 pb, DVector2 pc, double d, Color col, bool same_y);
+void DrawTriangleHalf(Tile& targetTile, DepthBuffer& zBuffer,
+	DVector2 firstPoint, DVector2 middlePoint, DVector2 lastPoint, double d, Color color, bool isYAxisMajor);
 
 void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
-	DVector2 pa, DVector2 pb, DVector2 pc, double depth, Color color);
+	DVector2 firstPoint, DVector2 middlePoint, DVector2 lastPoint, double depth, Color color);
 
 void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
-	Vector2 pa, Vector2 pb, Vector2 pc, double depth, Color color);
+	Vector2 firstPoint, Vector2 middlePoint, Vector2 lastPoint, double depth, Color color);
 

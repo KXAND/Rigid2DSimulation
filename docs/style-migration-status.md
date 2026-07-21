@@ -111,6 +111,7 @@
 - `framework/control` 的位置、视区、尺寸及尺寸查询接口已迁移为 `topLeft`、`viewport`、`width`、`height`、`GetWidth`、`GetHeight`；控件列表的累计尺寸局部变量已按聚合语义命名，并同步更新直接 UI 访问，不改变布局或交互逻辑。
 - `Rect`、`DRect` 与 `Camera` 的几何、位置、缩放、距离和变换字段已迁移为完整 lower camel 名称；绘制、控件、场景、刚体和图块的直接访问已同步，`Camera` 的二进制读写顺序及字段类型保持不变。
 - `App` 的语言常量、窗口尺寸、运行与日志参数、本地化读取局部变量及窗口创建状态已迁移为完整命名；`AppInput`、所有者管理和 Win32 消息分发参数同步迁移，窗口创建参数、消息分发顺序和输入状态逻辑保持不变。
+- 绘制模块的矩形、椭圆、三角形和线段接口及非数学局部变量已迁移为完整命名；裁剪、扫描线、Bresenham 和像素深度判定的计算顺序保持不变。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。
 - `AppInput` 的鼠标、键盘和文本输入状态字段，以及 `FrameRate` 的采样与时间统计字段，已迁移为表达职责的 lower camel 名称；输入事件和帧率计算逻辑保持不变。

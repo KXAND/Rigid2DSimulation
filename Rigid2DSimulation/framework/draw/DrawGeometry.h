@@ -3,7 +3,7 @@
 #include "Tile.h"
 
 // @todo: 把两个 DrawRectangle 移到别的文件中
-void DrawRectangleRaw(Tile& targetTile, DVector2 topLeft, int w, int h, DRect viewPort, Color color);
+void DrawRectangleRaw(Tile& targetTile, DVector2 topLeft, int width, int height, DRect viewPort, Color color);
 
 void DrawRectangle(Tile& targetTile, DepthBuffer& zBuffer, double depth,
 	DVector2 topLeft, int width, int height, DRect viewPort, Color color);
