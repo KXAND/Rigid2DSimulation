@@ -20,15 +20,15 @@ struct GlobalDetailsLabel : RichLabel {
 };
 
 struct GlobalPanel : LocalizedFloatPanel {
-	std::shared_ptr<TextBox> tb_save;
-	std::shared_ptr<SaveButton> bt_save;
-	std::shared_ptr<HorizontalControlList> clx_save;
-	std::shared_ptr<TextBox> tb_load;
-	std::shared_ptr<LoadButton> bt_load;
-	std::shared_ptr<HorizontalControlList> clx_load;
-	std::shared_ptr<HorizontalSeparator> spy;
-	std::shared_ptr<GlobalDetailsLabel> rlb_global;
-	std::shared_ptr<VerticalControlList> cly;
+	std::shared_ptr<TextBox> savePathTextBox;
+	std::shared_ptr<SaveButton> saveButton;
+	std::shared_ptr<HorizontalControlList> saveControls;
+	std::shared_ptr<TextBox> loadPathTextBox;
+	std::shared_ptr<LoadButton> loadButton;
+	std::shared_ptr<HorizontalControlList> loadControls;
+	std::shared_ptr<HorizontalSeparator> separator;
+	std::shared_ptr<GlobalDetailsLabel> detailsLabel;
+	std::shared_ptr<VerticalControlList> controls;
 	GlobalPanel(App& app);
 };
 

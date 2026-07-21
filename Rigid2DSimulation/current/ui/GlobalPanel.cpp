@@ -4,10 +4,10 @@
 #include "Creator.h"
 
 
-SaveButton::SaveButton() : LocalizedButton(80, L"bt_save") {}
-void SaveButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Save(simulationApp.userInterface->globalPanel->tb_save->str); }
-LoadButton::LoadButton() : LocalizedButton(80, L"bt_load") {}
-void LoadButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Load(simulationApp.userInterface->globalPanel->tb_load->str); }
+SaveButton::SaveButton() : LocalizedButton(80, L"saveButton") {}
+void SaveButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Save(simulationApp.userInterface->globalPanel->savePathTextBox->str); }
+LoadButton::LoadButton() : LocalizedButton(80, L"loadButton") {}
+void LoadButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Load(simulationApp.userInterface->globalPanel->loadPathTextBox->str); }
 
 void GlobalDetailsLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
@@ -38,18 +38,18 @@ void GlobalDetailsLabel::Sync(App& app) {
 
 GlobalPanel::GlobalPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_global") {
 	vector<Control*> tmp;
-	tb_save = std::make_shared<TextBox>(270); bt_save = std::make_shared<SaveButton>();
-	tmp = { &*tb_save, &*bt_save };
-	clx_save = std::make_shared<HorizontalControlList>(tmp);
+	savePathTextBox = std::make_shared<TextBox>(270); saveButton = std::make_shared<SaveButton>();
+	tmp = { &*savePathTextBox, &*saveButton };
+	saveControls = std::make_shared<HorizontalControlList>(tmp);
 	tmp = {};
-	tb_load = std::make_shared<TextBox>(270); bt_load = std::make_shared<LoadButton>();
-	tmp = { &*tb_load, &*bt_load };
-	clx_load = std::make_shared<HorizontalControlList>(tmp);
+	loadPathTextBox = std::make_shared<TextBox>(270); loadButton = std::make_shared<LoadButton>();
+	tmp = { &*loadPathTextBox, &*loadButton };
+	loadControls = std::make_shared<HorizontalControlList>(tmp);
 	tmp = {};
-	spy = std::make_shared<HorizontalSeparator>(400); rlb_global = std::make_shared<GlobalDetailsLabel>();
-	tmp = { &*clx_save, &*clx_load, &*spy, &*rlb_global };
-	cly = std::make_shared<VerticalControlList>(tmp);
-	c = &*cly;
+	separator = std::make_shared<HorizontalSeparator>(400); detailsLabel = std::make_shared<GlobalDetailsLabel>();
+	tmp = { &*saveControls, &*loadControls, &*separator, &*detailsLabel };
+	controls = std::make_shared<VerticalControlList>(tmp);
+	c = &*controls;
 	Init(app);
 }
 
