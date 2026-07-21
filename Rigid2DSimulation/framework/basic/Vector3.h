@@ -201,19 +201,19 @@ inline Matrix3 operator*(Matrix3 const& a, Matrix3 const& b) {
 }
 
 struct Camera {
-	DRect vp;
-	Vector3 p;
+	DRect viewport;
+	Vector3 position;
 	Vector3 look;
-	double scl = 0;
-	double r = 0;
+	double scale = 0;
+	double radian = 0;
 	// min_y 必须为正数，为了防止除以 0。
-	double min_d = 0, max_d = 0;
+	double minimumDistance = 0, maximumDistance = 0;
 	double theta = 0, phi = 0, psi = 0;
 
-	DVector2 ct;
-	Matrix3 mt;
+	DVector2 center;
+	Matrix3 transformMatrix;
 
-	explicit Camera(DRect vp = {});
+	explicit Camera(DRect viewport = {});
 	void Save(FILE* file);
 	explicit Camera(FILE* file);
 

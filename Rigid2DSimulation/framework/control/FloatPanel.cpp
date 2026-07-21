@@ -41,8 +41,8 @@ FloatPanel::FloatPanel(App& app, int width, int height) : FloatPanel() {
 
 	DRect contentViewportRelative;
 	contentViewportRelative.topLeftPosition = DVector2(10 - 2, 40 - 2);
-	contentViewportRelative.w = width - 40 + 4;
-	contentViewportRelative.h = height - 50 + 4;
+	contentViewportRelative.width = width - 40 + 4;
+	contentViewportRelative.height = height - 50 + 4;
 	contentViewport = contentViewportRelative;
 }
 

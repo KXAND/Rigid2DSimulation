@@ -109,6 +109,7 @@
 - 模拟交互模式和显示模式常量已迁移为 `kPascalCase`；常量数值与全部调用点保持不变。
 - 下拉项的“无”名称提供器已迁移为 `GetNoneItemName`；返回文本与选择逻辑保持不变。
 - `framework/control` 的位置、视区、尺寸及尺寸查询接口已迁移为 `topLeft`、`viewport`、`width`、`height`、`GetWidth`、`GetHeight`；控件列表的累计尺寸局部变量已按聚合语义命名，并同步更新直接 UI 访问，不改变布局或交互逻辑。
+- `Rect`、`DRect` 与 `Camera` 的几何、位置、缩放、距离和变换字段已迁移为完整 lower camel 名称；绘制、控件、场景、刚体和图块的直接访问已同步，`Camera` 的二进制读写顺序及字段类型保持不变。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。
 - `AppInput` 的鼠标、键盘和文本输入状态字段，以及 `FrameRate` 的采样与时间统计字段，已迁移为表达职责的 lower camel 名称；输入事件和帧率计算逻辑保持不变。
@@ -126,9 +127,9 @@
 
 每个确定的命名主题必须完成旧名称检索、`Debug|x64` 构建和差异检查后，作为独立 `refactor:` 提交。
 
-### 3.2 控件几何字段迁移
+### 3.2 已完成主题记录
 
-`docs/control-geometry-migration-plan.md` 已定义 `topLeft`、`viewport`、`width`、`height` 的统一术语、豁免范围和单一控件几何命名提交的验收条件。后续控件几何相关提交必须按该计划执行并更新其完成状态。
+`docs/control-geometry-migration-plan.md` 与 `docs/remaining-module-style-design.md` 已记录完成的控件与基础几何命名主题。后续只执行后者列出的待执行模块，不重新拆分已完成主题。
 
 ### 3.3 模块设计文档
 

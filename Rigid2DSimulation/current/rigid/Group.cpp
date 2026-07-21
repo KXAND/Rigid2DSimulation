@@ -13,25 +13,25 @@ void Group::Warp(DRect Rect)
 	for (auto b : bodies)
 		if (b->position.x > Rect.GetLeft()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->position.x += Rect.w; b->track.clear(); }
+		for (auto b : bodies) { b->position.x += Rect.width; b->track.clear(); }
 
 	isInRect = true;
 	for (auto b : bodies)
 		if (b->position.x < Rect.GetRight()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->position.x -= Rect.w; b->track.clear(); }
+		for (auto b : bodies) { b->position.x -= Rect.width; b->track.clear(); }
 
 	isInRect = true;
 	for (auto b : bodies)
 		if (b->position.y > Rect.GetTop()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->position.y += Rect.h;  b->track.clear(); }
+		for (auto b : bodies) { b->position.y += Rect.height;  b->track.clear(); }
 
 	isInRect = true;
 	for (auto b : bodies)
 		if (b->position.y < Rect.GetBottom()) { isInRect = false; break; }
 	if (isInRect)
-		for (auto b : bodies) { b->position.y -= Rect.h; b->track.clear(); }
+		for (auto b : bodies) { b->position.y -= Rect.height; b->track.clear(); }
 }
 
 void findBodiesInGroup(vector<Body*>& out, Body* body)

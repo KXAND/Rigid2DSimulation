@@ -105,8 +105,8 @@ void SimulationApp::Reset()
 	maxRealDeltaTime = 0.05;
 	simulationTime = 0; stepNum = 60;
 	rectScene.topLeftPosition = background->topLeft;
-	rectScene.w = background->width;
-	rectScene.h = background->height;
+	rectScene.width = background->width;
+	rectScene.height = background->height;
 	gridSize = 50;
 	energyMultiplier = 4e-6;
 	chargeMultiplier = 1;
@@ -180,8 +180,8 @@ void SimulationApp::Update()
 	(*background).Render(*this);
 	realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
 	currentScope[L"cur.frameRate.GetDeltaTime()"] = std::make_shared<Value>(realDeltaTime);
-	gridNumX = ceil(rectScene.w / gridSize);
-	gridNumY = ceil(rectScene.h / gridSize);
+	gridNumX = ceil(rectScene.width / gridSize);
+	gridNumY = ceil(rectScene.height / gridSize);
 	if (isSceneChanged) { isSceneChanged = false; groups = FormGroups(bodies); }
 	for (const auto& b : bodies) { b->Update(*this); }
 
@@ -260,8 +260,8 @@ void SimulationApp::SetConfig(Value const& v)
 	TryReadConfigNumber(v, L"isTrackShown", isTrackShown);
 	if (auto value = FindConfigValue(v, L"sceneLeft")) { rectScene.topLeftPosition.x = value->number; }
 	if (auto value = FindConfigValue(v, L"sceneTop")) { rectScene.topLeftPosition.y = value->number; }
-	if (auto value = FindConfigValue(v, L"sceneWidth")) { rectScene.w = value->number; }
-	if (auto value = FindConfigValue(v, L"sceneHeight")) { rectScene.h = value->number; }
+	if (auto value = FindConfigValue(v, L"sceneWidth")) { rectScene.width = value->number; }
+	if (auto value = FindConfigValue(v, L"sceneHeight")) { rectScene.height = value->number; }
 	if (auto value = FindConfigValue(v, L"gravity")) { gravity = ToVector2(*value); }
 
 	isSceneChanged = true;

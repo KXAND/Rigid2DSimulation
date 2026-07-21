@@ -6,9 +6,9 @@ void DrawTileRaw(Tile& targetTile, DVector2 topLeft, Tile const& sourceTile)
 	auto sourceViewport = sourceTile.Rect();
 
 	int l = max(targetViewport.GetLeft(), topLeft.x);
-	int r = min(targetViewport.GetRight(), topLeft.x + sourceViewport.w);
+	int r = min(targetViewport.GetRight(), topLeft.x + sourceViewport.width);
 	int t = max(targetViewport.GetTop(), topLeft.y);
-	int b = min(targetViewport.GetBottom(), topLeft.y + sourceViewport.h);
+	int b = min(targetViewport.GetBottom(), topLeft.y + sourceViewport.height);
 	if (l >= r || t >= b) { return; } // 坐标系为左上为原点，所以正常情况是 l<r, t<b
 
 	for (int j = (t), jEnd = int(b); j < jEnd; ++j)
@@ -25,9 +25,9 @@ void DrawTile(Tile& targetTile, DepthBuffer& depthBuffer, double depth, DVector2
 	DRect targetViewport, Tile const& sourceTile, DRect sourceViewport)
 {
 	int l = max(targetViewport.GetLeft(), topLeft.x);
-	int r = min(targetViewport.GetRight(), topLeft.x + sourceViewport.w);
+	int r = min(targetViewport.GetRight(), topLeft.x + sourceViewport.width);
 	int t = max(targetViewport.GetTop(), topLeft.y);
-	int b = min(targetViewport.GetBottom(), topLeft.y + sourceViewport.h);
+	int b = min(targetViewport.GetBottom(), topLeft.y + sourceViewport.height);
 	if (l >= r || t >= b) { return; }
 
 	for (int j = (t), jEnd = int(b); j < jEnd; ++j)

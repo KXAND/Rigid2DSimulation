@@ -188,10 +188,10 @@ void Body::Warp(DRect rc)
 {
 	if (invMass == 0 || dragged) { return; }
 
-	if (position.x < rc.GetLeft()) { position.x += rc.w; }
-	else if (position.x > rc.GetRight()) { position.x -= rc.w; }
-	if (position.y < rc.GetTop()) { position.y += rc.h; }
-	else if (position.y > rc.GetBottom()) { position.y -= rc.h; }
+	if (position.x < rc.GetLeft()) { position.x += rc.width; }
+	else if (position.x > rc.GetRight()) { position.x -= rc.width; }
+	if (position.y < rc.GetTop()) { position.y += rc.height; }
+	else if (position.y > rc.GetBottom()) { position.y -= rc.height; }
 }
 
 void Body::RegisterGrid(SimulationApp& cur)

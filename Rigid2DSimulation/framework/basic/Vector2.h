@@ -164,33 +164,33 @@ wstring ToWString(Vector2 vector);
 
 struct Rect
 {
-    Vector2 tl;
-    double w = 0;
-    double h = 0;
+    Vector2 topLeft;
+    double width = 0;
+    double height = 0;
 
     Rect() = default;
-    Rect(double w, double h) : Rect({}, w, h)
+    Rect(double width, double height) : Rect({}, width, height)
     {
     }
-    Rect(Vector2 tl, double w, double h) : tl(tl), w(w), h(h)
+    Rect(Vector2 topLeft, double width, double height) : topLeft(topLeft), width(width), height(height)
     {
     }
 
     double GetLeft() const
     {
-        return tl.x;
+        return topLeft.x;
     }
     double GetTop() const
     {
-        return tl.y;
+        return topLeft.y;
     }
     double GetRight() const
     {
-        return GetLeft() + w;
+        return GetLeft() + width;
     }
     double GetBottom() const
     {
-        return GetTop() + h;
+        return GetTop() + height;
     }
 };
 

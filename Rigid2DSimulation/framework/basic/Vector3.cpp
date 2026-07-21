@@ -13,24 +13,24 @@ wstring FormatFixed2(Vector3 vector)
     return L"(" + FormatFixed2(vector.x) + L"," + FormatFixed2(vector.y) + L"," + FormatFixed2(vector.z) + L")";
 }
 
-Camera::Camera(DRect vp) : vp(vp)
+Camera::Camera(DRect viewport) : viewport(viewport)
 {
-    r = 1000;
-    scl = 500;
-    max_d = 1e6;
-    min_d = 1;
+    radian = 1000;
+    scale = 500;
+    maximumDistance = 1e6;
+    minimumDistance = 1;
     Calculate();
 }
 
 void Camera::Save(FILE* file)
 {
-    fwrite(&(vp), sizeof(vp), 1, file);
-    fwrite(&(p), sizeof(p), 1, file);
+    fwrite(&(viewport), sizeof(viewport), 1, file);
+    fwrite(&(position), sizeof(position), 1, file);
     fwrite(&(look), sizeof(look), 1, file);
-    fwrite(&(scl), sizeof(scl), 1, file);
-    fwrite(&(r), sizeof(r), 1, file);
-    fwrite(&(min_d), sizeof(min_d), 1, file);
-    fwrite(&(max_d), sizeof(max_d), 1, file);
+    fwrite(&(scale), sizeof(scale), 1, file);
+    fwrite(&(radian), sizeof(radian), 1, file);
+    fwrite(&(minimumDistance), sizeof(minimumDistance), 1, file);
+    fwrite(&(maximumDistance), sizeof(maximumDistance), 1, file);
     fwrite(&(theta), sizeof(theta), 1, file);
     fwrite(&(phi), sizeof(phi), 1, file);
     fwrite(&(psi), sizeof(psi), 1, file);
@@ -38,13 +38,13 @@ void Camera::Save(FILE* file)
 
 Camera::Camera(FILE* file)
 {
-    fread(&(vp), sizeof(vp), 1, file);
-    fread(&(p), sizeof(p), 1, file);
+    fread(&(viewport), sizeof(viewport), 1, file);
+    fread(&(position), sizeof(position), 1, file);
     fread(&(look), sizeof(look), 1, file);
-    fread(&(scl), sizeof(scl), 1, file);
-    fread(&(r), sizeof(r), 1, file);
-    fread(&(min_d), sizeof(min_d), 1, file);
-    fread(&(max_d), sizeof(max_d), 1, file);
+    fread(&(scale), sizeof(scale), 1, file);
+    fread(&(radian), sizeof(radian), 1, file);
+    fread(&(minimumDistance), sizeof(minimumDistance), 1, file);
+    fread(&(maximumDistance), sizeof(maximumDistance), 1, file);
     fread(&(theta), sizeof(theta), 1, file);
     fread(&(phi), sizeof(phi), 1, file);
     fread(&(psi), sizeof(psi), 1, file);
@@ -53,18 +53,18 @@ Camera::Camera(FILE* file)
 
 void Camera::Calculate()
 {
-    p.y = -cos(theta) * cos(phi);
-    p.x = sin(theta) * cos(phi);
-    p.z = sin(phi);
-    p = p * r + look;
+    position.y = -cos(theta) * cos(phi);
+    position.x = sin(theta) * cos(phi);
+    position.z = sin(phi);
+    position = position * radian + look;
 
     // 下面可能会产生奇异的情况。
-    Vector3 verticalAxis = (look - p).GetNormalized();
+    Vector3 verticalAxis = (look - position).GetNormalized();
     Vector3 horizontalAxis = Cross(verticalAxis, Vector3(0, 0, 1)).GetNormalized();
     Vector3 depthAxis = Cross(horizontalAxis, verticalAxis);
-    mt = Matrix3(horizontalAxis, verticalAxis, depthAxis).Transpose();
-    mt = Matrix3::Rotation(Vector3(0, 1, 0), psi) * mt;
-    ct = vp.topLeftPosition + DVector2(vp.w, vp.h) / 2;
+    transformMatrix = Matrix3(horizontalAxis, verticalAxis, depthAxis).Transpose();
+    transformMatrix = Matrix3::Rotation(Vector3(0, 1, 0), psi) * transformMatrix;
+    center = viewport.topLeftPosition + DVector2(viewport.width, viewport.height) / 2;
 }
 
 void Camera::CalculateFirstPerson()
@@ -77,7 +77,7 @@ void Camera::CalculateFirstPerson()
     Vector3 horizontalAxis = Cross(verticalAxis, Vector3(0, 0, 1)).GetNormalized();
     Vector3 depthAxis = Cross(horizontalAxis, verticalAxis);
 
-    mt = Matrix3(horizontalAxis, verticalAxis, depthAxis).Transpose();
-    mt = Matrix3::Rotation(Vector3(0, 1, 0), psi) * mt;
-    ct = vp.topLeftPosition + DVector2(vp.w, vp.h) / 2;
+    transformMatrix = Matrix3(horizontalAxis, verticalAxis, depthAxis).Transpose();
+    transformMatrix = Matrix3::Rotation(Vector3(0, 1, 0), psi) * transformMatrix;
+    center = viewport.topLeftPosition + DVector2(viewport.width, viewport.height) / 2;
 }

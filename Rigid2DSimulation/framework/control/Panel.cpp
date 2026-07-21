@@ -22,8 +22,8 @@ Panel Panel::CreateMenuPanel(App& app) {
 
 	DRect contentViewportRelative;
 	contentViewportRelative.topLeftPosition = DVector2(10 - 2, 10 - 2);
-	contentViewportRelative.w = panel.width - 20 + 4;
-	contentViewportRelative.h = panel.height - 20 + 4;
+	contentViewportRelative.width = panel.width - 20 + 4;
+	contentViewportRelative.height = panel.height - 20 + 4;
 	panel.contentViewport = contentViewportRelative; return panel;
 }
 Panel Panel::CreateBottomPanel(App& app) {
@@ -35,8 +35,8 @@ Panel Panel::CreateBottomPanel(App& app) {
 
 	DRect contentViewportRelative;
 	contentViewportRelative.topLeftPosition = DVector2(10 - 2, 10 - 2);
-	contentViewportRelative.w = panel.width - 20 + 4;
-	contentViewportRelative.h = panel.height - 20 + 4;
+	contentViewportRelative.width = panel.width - 20 + 4;
+	contentViewportRelative.height = panel.height - 20 + 4;
 	panel.contentViewport = contentViewportRelative; return panel;
 }
 

@@ -111,14 +111,14 @@ wstring ToWString(DVector2 vector);
 struct DRect
 {
     DVector2 topLeftPosition;
-    int w = 0;
-    int h = 0;
+    int width = 0;
+    int height = 0;
 
     DRect() = default;
-    DRect(int w, int h) : DRect({}, w, h)
+    DRect(int width, int height) : DRect({}, width, height)
     {
     }
-    DRect(DVector2 topLeft, int w, int h) : topLeftPosition(topLeft), w(w), h(h)
+    DRect(DVector2 topLeft, int width, int height) : topLeftPosition(topLeft), width(width), height(height)
     {
     }
 
@@ -132,15 +132,15 @@ struct DRect
     }
     int GetRight() const
     {
-        return GetLeft() + w;
+        return GetLeft() + width;
     }
     int GetBottom() const
     {
-        return GetTop() + h;
+        return GetTop() + height;
     }
     DVector2 GetCenter() const
     {
-        return topLeftPosition + DVector2(w, h) / 2;
+        return topLeftPosition + DVector2(width, height) / 2;
     }
 };
 

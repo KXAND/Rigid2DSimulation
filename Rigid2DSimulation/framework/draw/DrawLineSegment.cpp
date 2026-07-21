@@ -67,7 +67,7 @@ bool ClipLineSegment(DVector2& pa, DVector2& pb, DRect viewPort) {
 void DrawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
 	DVector2 pa, DVector2 pb, double d, DRect viewPort, Color color)
 {
-	if (viewPort.w <= 0 || viewPort.h <= 0) { return; }
+	if (viewPort.width <= 0 || viewPort.height <= 0) { return; }
 	if (!ClipLineSegment(pa, pb, viewPort)) { return; }
 
 	bool changed = false;
