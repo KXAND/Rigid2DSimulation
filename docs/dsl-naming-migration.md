@@ -58,7 +58,7 @@
 | --- | --- | --- | --- |
 | `body` | `body` | `Body::Execute` | 不迁移 |
 | `conn` | `connection` | `Connection::Execute` | 待迁移 |
-| `t` | `time` | `Body` 脚本作用域、`SimulationApp::Update` | 待迁移 |
+| `t` | `time` | `Body` 脚本作用域、`SimulationApp::Update` | 已迁移 |
 | `left_bgr` | `backgroundLeft` | `SimulationApp::UpdateBasicState` | 待迁移 |
 | `top_bgr` | `backgroundTop` | `SimulationApp::UpdateBasicState` | 待迁移 |
 | `w_bgr` | `backgroundWidth` | `SimulationApp::UpdateBasicState` | 待迁移 |
@@ -73,7 +73,7 @@
 
 | 旧名称 | 目标名称 | 读取位置 | 状态 |
 | --- | --- | --- | --- |
-| `vol` | `volume` | `SimulationApp::SetConfig` | 待迁移 |
+| `vol` | `volume` | `SimulationApp::SetConfig` | 已迁移 |
 | `energy_mul` | `energyMultiplier` | `SimulationApp::SetConfig` | 待迁移 |
 | `chargeMultiplier` | `chargeMultiplier` | `SimulationApp::SetConfig` | 不迁移 |
 | `eps_paralell` | `parallelEpsilon` | `SimulationApp::SetConfig` | 待迁移 |
@@ -83,7 +83,7 @@
 | `stepNum` | `stepCount` | `SimulationApp::SetConfig` | 待迁移 |
 | `gridSize` | `gridSize` | `SimulationApp::SetConfig` | 不迁移 |
 | `useEqualPositionCorrection` | `useEqualPositionCorrection` | `SimulationApp::SetConfig` | 不迁移 |
-| `t` | `time` | `SimulationApp::SetConfig` | 待迁移 |
+| `t` | `time` | `SimulationApp::SetConfig` | 已迁移 |
 | `isTrackShown` | `isTrackShown` | `SimulationApp::SetConfig` | 不迁移 |
 | `left_scene` | `sceneLeft` | `SimulationApp::SetConfig` | 待迁移 |
 | `top_scene` | `sceneTop` | `SimulationApp::SetConfig` | 待迁移 |
