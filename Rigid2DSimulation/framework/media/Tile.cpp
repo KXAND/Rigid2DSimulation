@@ -20,7 +20,7 @@ wstring ToWString(Color c)
 {
 	return L"(" + std::to_wstring(c.r) + L"," + std::to_wstring(c.g) + L"," + std::to_wstring(c.b) + L")";
 }
-void cover(Color& bc, BYTE& ba, Color fc, BYTE fa)
+void BlendColor(Color& bc, BYTE& ba, Color fc, BYTE fa)
 {
 	// 目前还不会推导公式，应该有简化的空间。
 	if (fa == 0) { return; }
@@ -34,7 +34,7 @@ void cover(Color& bc, BYTE& ba, Color fc, BYTE fa)
 }
 
 Tile::Tile(int w, int h, Color color, BYTE a) :
-	width(w), height(h), colors(area(), color), as(area(), a)
+	width(w), height(h), colors(GetArea(), color), as(GetArea(), a)
 {
 }
 Tile::Tile(int w, int h, Tile const& src, DRect vp_src) : Tile(w, h)
@@ -49,14 +49,14 @@ Tile::Tile(int w, int h, Tile const& src, DRect vp_src) : Tile(w, h)
 		colors[dp] = src.colors[sp]; as[dp] = src.as[sp];
 	}
 }
-void Tile::save(wstring const& fileName) const
+void Tile::Save(wstring const& fileName) const
 {
 	FILE* file = OpenFile(fileName, L"wb");
 	if (!file) { return; }
 	fwrite(&(width), sizeof(width), 1, file);
 	fwrite(&(height), sizeof(height), 1, file);
-	fwrite(&colors[0], sizeof(*(&colors[0])), area(), file);
-	fwrite(&as[0], sizeof(*(&as[0])), area(), file);
+	fwrite(&colors[0], sizeof(*(&colors[0])), GetArea(), file);
+	fwrite(&as[0], sizeof(*(&as[0])), GetArea(), file);
 	fclose(file);
 }
 Tile::Tile(wstring const& fileName, bool* ok)
@@ -67,16 +67,16 @@ Tile::Tile(wstring const& fileName, bool* ok)
 	fread(&(width), sizeof(width), 1, file);
 	fread(&(height), sizeof(height), 1, file);
 	colors.resize(width * height); as.resize(width * height);
-	fread(&colors[0], sizeof(*(&colors[0])), area(), file);
-	fread(&as[0], sizeof(*(&as[0])), area(), file);
+	fread(&colors[0], sizeof(*(&colors[0])), GetArea(), file);
+	fread(&as[0], sizeof(*(&as[0])), GetArea(), file);
 	fclose(file);
 }
 
-int Tile::area() const { return width * height; }
+int Tile::GetArea() const { return width * height; }
 DRect Tile::Rect() const { return { width, height }; }
-void Tile::fill(Color color, BYTE a)
+void Tile::Fill(Color color, BYTE a)
 {
-	for (int i = (0), iEnd = int(area()); i < iEnd; ++i) { colors[i] = color; }
-	memset(as.data(), a, area());
+	for (int i = (0), iEnd = int(GetArea()); i < iEnd; ++i) { colors[i] = color; }
+	memset(as.data(), a, GetArea());
 }
 

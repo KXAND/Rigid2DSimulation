@@ -33,7 +33,7 @@ inline bool operator==(Color a, Color b)
 }
 inline bool operator!=(Color a, Color b) { return !(a == b); }
 wstring ToWString(Color c);
-void cover(Color& bc, BYTE& ba, Color fc, BYTE fa);
+void BlendColor(Color& bc, BYTE& ba, Color fc, BYTE fa);
 
 struct Tile
 {
@@ -45,11 +45,11 @@ struct Tile
 	Tile(int w, int h, Color c = {}, BYTE a = 0);
 	Tile(int w, int h, Tile const& src, DRect vp_src);// src ²»ÄÜÎª¿Õ¡£
 	Tile(wstring const& fileName, bool* ok = NULL);
-	void save(wstring const& fileName) const;
+	void Save(wstring const& fileName) const;
 
-	int area() const;
+	int GetArea() const;
 	DRect Rect() const;
-	void fill(Color color, BYTE a = 255);
+	void Fill(Color color, BYTE a = 255);
 };
 typedef vector<double> DepthBuffer;
 
