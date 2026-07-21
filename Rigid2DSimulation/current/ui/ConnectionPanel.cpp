@@ -27,9 +27,9 @@ ConnectionEditorControls::ConnectionEditorControls() {
 }
 void ConnectionEditorControls::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	auto* selectedConnection = simulationApp.connectionSelecting;
-	if (selectedConnection != selectedConnection) {
-		selectedConnection = selectedConnection;
+	auto* appSelectedConnection = simulationApp.connectionSelecting;
+	if (selectedConnection != appSelectedConnection) {
+		selectedConnection = appSelectedConnection;
 		for (auto c : controls) { c->Discard(app); }
 		if (selectedConnection) { controls = { &*scriptEditor, &*actionButtons, &*separator }; }
 		else { controls = {}; }

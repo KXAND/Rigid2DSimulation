@@ -69,9 +69,9 @@ BodyEditorControls::BodyEditorControls() {
 }
 void BodyEditorControls::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	auto* selectedBody = simulationApp.bodySelecting;
-	if (selectedBody != selectedBody) {
-		selectedBody = selectedBody;
+	auto* appSelectedBody = simulationApp.bodySelecting;
+	if (selectedBody != appSelectedBody) {
+		selectedBody = appSelectedBody;
 		for (auto c : controls) { c->Discard(app); }
 		if (selectedBody) { controls = { &*connectionList, &*scriptEditor, &*actionButtons, &*separator }; }
 		else { controls = {}; }
