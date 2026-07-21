@@ -130,11 +130,11 @@ std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpression con
 			*getLocalizedString = {};
 			getLocalizedString->type = L"dic";
 		}
-		if (getLocalizedString->dic.find(ind->stringValue) == getLocalizedString->dic.end())
+		if (getLocalizedString->dictionary.find(ind->stringValue) == getLocalizedString->dictionary.end())
 		{
-			getLocalizedString->dic[ind->stringValue] = std::make_shared<Value>();
+			getLocalizedString->dictionary[ind->stringValue] = std::make_shared<Value>();
 		}
-		return getLocalizedString->dic[ind->stringValue];
+		return getLocalizedString->dictionary[ind->stringValue];
 	}
 
 	return std::make_shared<Value>();

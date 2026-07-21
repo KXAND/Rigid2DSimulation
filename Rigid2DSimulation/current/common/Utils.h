@@ -3,8 +3,8 @@
 
 inline std::shared_ptr<Value> FindConfigValue(Value const& cfg, wchar_t const* key)
 {
-	auto it = cfg.dic.find(key);
-	return it == cfg.dic.end() ? std::shared_ptr<Value>() : it->second;
+	auto it = cfg.dictionary.find(key);
+	return it == cfg.dictionary.end() ? std::shared_ptr<Value>() : it->second;
 }
 
 template<class T>

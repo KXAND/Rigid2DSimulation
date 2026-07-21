@@ -15,7 +15,7 @@ struct Value {
 	Program procs;
 	vector<wstring> arguments;
 	vector<std::shared_ptr<Value>> elements;
-	map<wstring, std::shared_ptr<Value>> dic;
+	map<wstring, std::shared_ptr<Value>> dictionary;
 
 	Value() = default;
 	Value(double number);
