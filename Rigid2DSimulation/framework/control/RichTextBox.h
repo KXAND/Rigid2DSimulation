@@ -12,8 +12,8 @@ struct RichTextBox : Control {
 	Color c_str, c_edit, c_frame, c_normal,
 		c_cursor, hoveredColor, c_invalid, selectedColor;
 
-	DVector2 edit_mg;
-	DVector2 show_txt_mg;
+	DVector2 editMargin;
+	DVector2 textViewportMargin;
 	double slide_mtp = 0;
 	double wheel_mtp = 0;
 	double twinkle_mtp = 0;

@@ -18,22 +18,22 @@ RichTextBox::RichTextBox(int w, int h, bool newline) : w(w), h(h) {
 	c_invalid = { 0, 0, 0 };
 	selectedColor = { 150, 150, 255 };
 
-	edit_mg = { 5, 5 };
-	show_txt_mg = { 2, 2 };
+	editMargin = { 5, 5 };
+	textViewportMargin = { 2, 2 };
 	slide_mtp = 8;
 	wheel_mtp = 40;
 	twinkle_mtp = 8;
 	w_cursor = 2; h_cursor = 20;
 
-	if (newline) { lineWidth = w - 2 * edit_mg.x; }
+	if (newline) { lineWidth = w - 2 * editMargin.x; }
 }
 int RichTextBox::GetW() const { return w + gap.x; }
 int RichTextBox::GetH() const { return h + gap.y; }
 
 DRect RichTextBox::GetTextViewport() const {
-	DVector2 tl_show_txt = tl + show_txt_mg;
-	int w_show_txt = w - 2 * show_txt_mg.x;
-	int h_show_txt = h - 2 * show_txt_mg.y;
+	DVector2 tl_show_txt = tl + textViewportMargin;
+	int w_show_txt = w - 2 * textViewportMargin.x;
+	int h_show_txt = h - 2 * textViewportMargin.y;
 	return getOverlapRect(vp, { tl_show_txt, w_show_txt, h_show_txt });
 }
 wstring RichTextBox::GetLeftText() const {
@@ -54,8 +54,8 @@ wstring RichTextBox::GetRightText() const {
 int RichTextBox::GetEditBegin() const { return min(selectionStart, selectionEnd); }
 int RichTextBox::GetEditEnd() const { return max(selectionStart, selectionEnd); }
 bool RichTextBox::HasSelection() const { return selectionStart != selectionEnd; }
-int RichTextBox::GetMaxCursorX() const { return w - edit_mg.x; }
-int RichTextBox::GetMaxCursorY() const { return h - edit_mg.y; }
+int RichTextBox::GetMaxCursorX() const { return w - editMargin.x; }
+int RichTextBox::GetMaxCursorY() const { return h - editMargin.y; }
 DVector2 RichTextBox::GetCursorPosition(App& app) const {
 	wstring tmp(value.begin(), value.begin() + selectionEnd);
 	int x = 0; DVector2 p = GetStringSize(tmp, app.ft, lineWidth, &x);
@@ -204,18 +204,18 @@ void RichTextBox::HandleKey(App& app) {
 void RichTextBox::ClampCursorWhileSelecting(App& app) {
 	double val = (app.input.msp.x - tl.x) - GetMaxCursorX();
 	if (val > 0) { valueOffset.x -= app.fps.dt() * slide_mtp * val; }
-	val = edit_mg.x - (app.input.msp.x - tl.x);
+	val = editMargin.x - (app.input.msp.x - tl.x);
 	if (val > 0) { valueOffset.x += app.fps.dt() * slide_mtp * val; }
 	val = (app.input.msp.y - tl.y) - GetMaxCursorY();
 	if (val > 0) { valueOffset.y -= app.fps.dt() * slide_mtp * val; }
-	val = edit_mg.y - (app.input.msp.y - tl.y);
+	val = editMargin.y - (app.input.msp.y - tl.y);
 	if (val > 0) { valueOffset.y += app.fps.dt() * slide_mtp * val; }
 }
 void RichTextBox::ClampCursorWithoutSelection(App& app) {
 	if (GetCursorPosition(app).x > GetMaxCursorX()) {
 		valueOffset.x -= GetCursorPosition(app).x - GetMaxCursorX();
-	} else if (GetCursorPosition(app).x < edit_mg.x) {
-		valueOffset.x += edit_mg.x - GetCursorPosition(app).x;
+	} else if (GetCursorPosition(app).x < editMargin.x) {
+		valueOffset.x += editMargin.x - GetCursorPosition(app).x;
 	}
 	// 我们不对 y 这么做，主要是为了让鼠标滚轮正常，其实细想挺奇怪的。
 }
@@ -233,8 +233,8 @@ void RichTextBox::ClampTextPosition(App& app) {
 		valueOffset.y += GetMaxCursorY() - p_end_rel.y;
 	}
 	// 下面两行是配合上面的。
-	if (valueOffset.x > edit_mg.x) { valueOffset.x = edit_mg.x; }
-	if (valueOffset.y > edit_mg.y) { valueOffset.y = edit_mg.y; }
+	if (valueOffset.x > editMargin.x) { valueOffset.x = editMargin.x; }
+	if (valueOffset.y > editMargin.y) { valueOffset.y = editMargin.y; }
 }
 
 void RichTextBox::RenderMain(App& app) {
