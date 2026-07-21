@@ -9,7 +9,7 @@ struct ScriptExpression {
 	// 但是实现的时候我还是希望分开来，虽然也没啥理由就是了。
 	// num, var, str, call, null, vec, access
 
-	bool global = false;
+	bool isGlobal = false;
 	double number = 0;
 	wstring str;
 	wstring Value;

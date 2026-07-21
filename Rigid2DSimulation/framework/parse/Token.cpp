@@ -8,11 +8,11 @@ Token Token::CreateString(wstring const& text) {
 }
 Token Token::CreateVariable(wstring const& value, bool isGlobal) {
 	Token tk(L"var");
-	tk.Value = value; tk.global = isGlobal; return tk;
+	tk.Value = value; tk.isGlobal = isGlobal; return tk;
 }
 wstring ToWString(Token const& tk) {
 	wstring tmp = L"[" + tk.type;
-	if (tk.type == L"var") { tmp += (tk.global ? L":&" : L":") + tk.Value; }
+	if (tk.type == L"var") { tmp += (tk.isGlobal ? L":&" : L":") + tk.Value; }
 	if (tk.type == L"num") { tmp += L":" + FormatFixed2(tk.number); }
 	if (tk.type == L"str") { tmp += L":" + tk.str; }
 	tmp += L"]"; return tmp;

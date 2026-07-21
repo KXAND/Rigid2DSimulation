@@ -87,7 +87,7 @@ std::shared_ptr<Value> EvaluateCall(Scope& gl, Scope& sc, ScriptExpression const
 	if (TryEvaluateDefaultFunction(gl, sc, ex, tmp)) { return std::make_shared<Value>(tmp); }
 
 	// 下面必须是值复制，这是为了避免函数自己被抹去。
-	auto fun = FindVariable(gl, sc, ex.fun, ex.global);
+	auto fun = FindVariable(gl, sc, ex.fun, ex.isGlobal);
 	if (fun->type == L"user" && fun->fun)
 	{
 		vector<std::shared_ptr<Value>> tmp;
@@ -145,7 +145,7 @@ std::shared_ptr<Value> Evaluate(Scope& gl, Scope& sc, ScriptExpression const& ex
 	else if (ex.type == L"var")
 	{
 		if (ex.Value == L"kPi") { return std::make_shared<Value>(kPi); }
-		return FindVariable(gl, sc, ex.Value, ex.global);
+		return FindVariable(gl, sc, ex.Value, ex.isGlobal);
 	}
 	else if (ex.type == L"num") { return std::make_shared<Value>(ex.number); }
 	else if (ex.type == L"ToString") { return std::make_shared<Value>(ex.str); }

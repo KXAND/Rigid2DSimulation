@@ -6,7 +6,7 @@ struct Token {
 	double number = 0;
 	wstring str;
 	wstring Value;
-	bool global = false;
+	bool isGlobal = false;
 
 	Token() = default;
 	Token(wstring const& type);
