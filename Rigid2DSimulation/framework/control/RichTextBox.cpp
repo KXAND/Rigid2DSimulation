@@ -77,7 +77,7 @@ void RichTextBox::SelectEnd(App& app) {
 void RichTextBox::UpdateCursorXHistory(App& app) {
 	auto s = wstring(value.begin(), value.begin() + selectionEnd);
 	int tmp = 0; GetStringSize(s, app.ft, lineWidth, &tmp);
-	x_cs_rel_hist = tmp;
+	cursorXHistory = tmp;
 }
 
 void RichTextBox::AddCharacters(App& app) {
@@ -118,7 +118,7 @@ void RichTextBox::HandleUp(App& app) {
 	else {
 		wstring tmp(value.begin(), value.begin() + selectionEnd);
 		int y = GetStringSize(tmp, app.ft, lineWidth).y - 2 * app.ft.h;
-		DVector2 p(x_cs_rel_hist, y);
+		DVector2 p(cursorXHistory, y);
 		selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
 	}
 }
@@ -130,7 +130,7 @@ void RichTextBox::HandleDown(App& app) {
 	else {
 		wstring tmp(value.begin(), value.begin() + selectionEnd);
 		int y = GetStringSize(tmp, app.ft, lineWidth).y;
-		DVector2 p(x_cs_rel_hist, y);
+		DVector2 p(cursorXHistory, y);
 		selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
 	}
 }
@@ -277,7 +277,7 @@ void RichTextBox::Update(App& app) {
 		if (!enabled || !hovered && app.input.isMouseClickedDown(0)) {
 			// 请注意 kb_owner 的登记在 PreUpdate 中进行。
 			app.own.ReleaseKeyboard(this); edit = selecting = false;
-			selectionStart = selectionEnd = 0; x_cs_rel_hist = 0;
+			selectionStart = selectionEnd = 0; cursorXHistory = 0;
 		}
 	} else {
 		Sync(app);
@@ -293,7 +293,7 @@ void RichTextBox::Update(App& app) {
 void RichTextBox::Discard(App& app) {
 	app.own.remove(this); app.own.ReleaseKeyboard(this);
 	edit = hovered = false; selecting = false;
-	selectionStart = selectionEnd = 0; x_cs_rel_hist = 0;
+	selectionStart = selectionEnd = 0; cursorXHistory = 0;
 }
 void RichTextBox::PreUpdate(App& app) {
 	if (edit) { app.own.keyboardOwner = this; }

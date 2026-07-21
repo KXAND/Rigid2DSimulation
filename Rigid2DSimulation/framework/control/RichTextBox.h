@@ -23,7 +23,7 @@ struct RichTextBox : Control {
 	Vector2 tl_str_rel;
 	int selectionStart = 0, selectionEnd = 0;
 	// 下面的 rel 是相对于 tl_str_rel 的。
-	int x_cs_rel_hist = 0;
+	int cursorXHistory = 0;
 
 	bool edit = false;
 	bool enabled = true;
