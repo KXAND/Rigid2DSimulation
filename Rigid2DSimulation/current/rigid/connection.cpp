@@ -1,7 +1,7 @@
 #include "connection.h"
 #include "body.h"
 #include "current/common/utils.h"
-#include "SimulationApp.h" 
+#include "SimulationApp.h"
 #include "draw_px_seg.h"
 #include "Background.h"
 #include "connection.h"
