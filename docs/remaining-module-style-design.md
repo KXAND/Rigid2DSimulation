@@ -132,7 +132,7 @@
 | `Creator::thick`、`rad` | `thickness`、`radius` | `Creator` |
 | `CREATE_*` | 对应 `kCreate*` 常量 | `Creator` 与调用点 |
 | `min_wh`、`min_r`、`min_len` | `minimumSize`、`minimumRadius`、`minimumLength` | `Creator` |
-| `thk` | `thickness` | `Creator::UpdatePlate` 与 `Boundary` |
+| `thk` | `plateThickness`、`thickness` | 分别用于 `Creator::UpdatePlate` 的局部副本与 `Boundary` 参数，避免遮蔽 `Creator::thickness` |
 | `shs_cfg`、`cfg` | `shapeConfigurations`、`configuration` | `CreateBody` |
 | `bo`、`shs`、`sh`、`o_rel`、`vs` | `body`、`shapes`、`shape`、`relativePosition`、`vertices` | `CreateBody` |
 | `bw`、`bh`、`bx0`、`bx1`、`by0`、`by1` | `backgroundWidth`、`backgroundHeight`、`left`、`right`、`top`、`bottom` | `Boundary` |
@@ -184,5 +184,5 @@
 | 5 | `refactor(media): clarify media resource names` | 已完成 | 字符集、`Color`、`Tile`、`Font` 与音频输出局部变量 | 图块/音频二进制布局和资源加载顺序 |
 | 6 | `refactor(common): clarify scene state names` | 已完成 | `Background`、配置读取工具和 `SimulationApp` 的集合局部变量 | 场景逻辑、网格算法和 DSL 键 |
 | 7 | `refactor(rigid): clarify physics data names` | 已完成 | `Body`、`Shape`、`Connection`、`Collision`、`Group` 的字段、接口、常量和直接调用点 | 物理公式、序列化布局和碰撞流程 |
-| 8 | `refactor(rigid): clarify scene builder names` | 待执行 | `Creator`、`SceneBuilders`、`ShapeBuiltins` 的参数、局部变量和直接调用点 | 创建流程、DSL 语法和配置键 |
+| 8 | `refactor(rigid): clarify scene builder names` | 已完成 | `Creator`、`SceneBuilders`、`ShapeBuiltins` 的参数、局部变量和直接调用点 | 创建流程、DSL 语法和配置键 |
 | 9 | `refactor(ui): clarify panel local names` | 待执行 | `UserInterface` 应用参数和各面板控件列表局部变量 | 面板业务逻辑、资源字符串键和排版 |

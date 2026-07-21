@@ -542,7 +542,7 @@ void Body::Update(SimulationApp& simulationApp)
 
 	// 创造连接
 	bool canCreate = hovered && simulationApp.mode == kCreateMode &&
-		(simulationApp.creator->mode == CREATE_CONN || simulationApp.creator->mode == CREATE_NAIL);
+		(simulationApp.creator->mode == kCreateConnection || simulationApp.creator->mode == kCreateNail);
 	if (canCreate)
 	{
 		if (simulationApp.input.IsMouseClickedDown(0) && !simulationApp.creator->active)

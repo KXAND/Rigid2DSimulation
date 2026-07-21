@@ -9,10 +9,10 @@
 
 Creator::Creator()
 {
-	DepthBody = 10;
-	DepthConnection = -1;
-	thick = 10;
-	rad = 8;
+	bodyDepth = 10;
+	connectionDepth = -1;
+	thickness = 10;
+	radius = 8;
 }
 Creator::Creator(Value const& v) : Creator()
 {
@@ -21,18 +21,18 @@ Creator::Creator(Value const& v) : Creator()
 		if (md->type == L"str")
 		{
 			auto s = md->stringValue;
-			if (s == L"box") { mode = CREATE_BOX; }
-			else if (s == L"ball") { mode = CREATE_BALL; }
-			else if (s == L"plate") { mode = CREATE_PLATE; }
-			else if (s == L"connection") { mode = CREATE_CONN; }
-			else if (s == L"point") { mode = CREATE_POINT; }
-			else if (s == L"nail") { mode = CREATE_NAIL; }
-			else if (s == L"particle") { mode = CREATE_PARTICLE; }
+			if (s == L"box") { mode = kCreateBox; }
+			else if (s == L"ball") { mode = kCreateBall; }
+			else if (s == L"plate") { mode = kCreatePlate; }
+			else if (s == L"connection") { mode = kCreateConnection; }
+			else if (s == L"point") { mode = kCreatePoint; }
+			else if (s == L"nail") { mode = kCreateNail; }
+			else if (s == L"particle") { mode = kCreateParticle; }
 		}
 		else { mode = md->number; }
 	}
-	TryReadConfigNumber(v, L"thickness", thick);
-	TryReadConfigNumber(v, L"radius", rad);
+	TryReadConfigNumber(v, L"thickness", thickness);
+	TryReadConfigNumber(v, L"radius", radius);
 	if (auto value = FindConfigValue(v, L"bodyConfiguration")) { bodyConfiguration = std::make_shared<Value>(*value); }
 	if (auto value = FindConfigValue(v, L"connectionConfiguration")) { connectionConfiguration = std::make_shared<Value>(*value); }
 }
@@ -41,23 +41,23 @@ double Creator::Depth() const
 {
 	switch (mode)
 	{
-		case CREATE_CONN:
-		case CREATE_NAIL:
-			return DepthConnection;
+		case kCreateConnection:
+		case kCreateNail:
+			return connectionDepth;
 		default:
 			break;
 	}
-	return DepthBody;
+	return bodyDepth;
 }
 
-void Creator::UpdateBox(SimulationApp& cur)
+void Creator::UpdateBox(SimulationApp& simulationApp)
 {
 	if (active)
 	{
 		double x0 = creationStartPoint.x, y0 = creationStartPoint.y;
-		double x1 = cur.input.mousePosition.x, y1 = cur.input.mousePosition.y;
-		double min_wh = 10;
-		if (x1 - x0 >= min_wh && y1 - y0 >= min_wh)
+		double x1 = simulationApp.input.mousePosition.x, y1 = simulationApp.input.mousePosition.y;
+		double minimumSize = 10;
+		if (x1 - x0 >= minimumSize && y1 - y0 >= minimumSize)
 		{
 			body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(x1 - x0, y1 - y0)));
 			body->position = Vector2(x0 + x1, y0 + y1) / 2;
@@ -66,31 +66,31 @@ void Creator::UpdateBox(SimulationApp& cur)
 			body->Init();
 		}
 
-		if (!cur.input.mouseButtonDown[0])
+		if (!simulationApp.input.mouseButtonDown[0])
 		{
 			active = false;
 			if (body)
 			{
-				cur.bodies.push_back(body);
-				body = NULL; cur.isSceneChanged = true;
+				simulationApp.bodies.push_back(body);
+				body = NULL; simulationApp.isSceneChanged = true;
 			}
 		}
 	}
 	else
 	{
-		if (hovered && cur.input.IsMouseClickedDown(0))
+		if (hovered && simulationApp.input.IsMouseClickedDown(0))
 		{
-			active = true; creationStartPoint = cur.input.mousePosition;
+			active = true; creationStartPoint = simulationApp.input.mousePosition;
 		}
 	}
 }
-void Creator::UpdateBall(SimulationApp& cur)
+void Creator::UpdateBall(SimulationApp& simulationApp)
 {
 	if (active)
 	{
-		double r = sqrt((creationStartPoint - cur.input.mousePosition).GetLengthSquared());
-		double min_r = 7.5;
-		if (r > min_r)
+		double r = sqrt((creationStartPoint - simulationApp.input.mousePosition).GetLengthSquared());
+		double minimumRadius = 7.5;
+		if (r > minimumRadius)
 		{
 			body = std::make_shared<Body>(std::make_shared<Shape>(r));
 			body->position = Vector2(creationStartPoint);
@@ -99,61 +99,61 @@ void Creator::UpdateBall(SimulationApp& cur)
 			body->Init();
 		}
 
-		if (!cur.input.mouseButtonDown[0])
+		if (!simulationApp.input.mouseButtonDown[0])
 		{
 			active = false;
 			if (body)
 			{
-				cur.bodies.push_back(body);
-				body = NULL; cur.isSceneChanged = true;
+				simulationApp.bodies.push_back(body);
+				body = NULL; simulationApp.isSceneChanged = true;
 			}
 		}
 	}
 	else
 	{
-		if (hovered && cur.input.IsMouseClickedDown(0))
+		if (hovered && simulationApp.input.IsMouseClickedDown(0))
 		{
-			active = true; creationStartPoint = cur.input.mousePosition;
+			active = true; creationStartPoint = simulationApp.input.mousePosition;
 		}
 	}
 }
-void Creator::UpdatePlate(SimulationApp& cur)
+void Creator::UpdatePlate(SimulationApp& simulationApp)
 {
 	if (active)
 	{
-		double thk = thick;
-		double min_len = 5;
-		DVector2 v = creationStartPoint - cur.input.mousePosition;
+		double plateThickness = thickness;
+		double minimumLength = 5;
+		DVector2 v = creationStartPoint - simulationApp.input.mousePosition;
 		double len = sqrt(v.GetLengthSquared());
-		if (len > min_len)
+		if (len > minimumLength)
 		{
-			body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(len + thk, thk)));
-			body->position = Vector2(creationStartPoint + cur.input.mousePosition) / 2;
+			body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(len + plateThickness, plateThickness)));
+			body->position = Vector2(creationStartPoint + simulationApp.input.mousePosition) / 2;
 			body->radian = atan2(v.y, v.x);
 			body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 			if (bodyConfiguration) { body->ReadConfig(*bodyConfiguration); }
 			body->Init();
 		}
 
-		if (!cur.input.mouseButtonDown[0])
+		if (!simulationApp.input.mouseButtonDown[0])
 		{
 			active = false;
 			if (body)
 			{
-				cur.bodies.push_back(body);
-				body = NULL; cur.isSceneChanged = true;
+				simulationApp.bodies.push_back(body);
+				body = NULL; simulationApp.isSceneChanged = true;
 			}
 		}
 	}
 	else
 	{
-		if (hovered && cur.input.IsMouseClickedDown(0))
+		if (hovered && simulationApp.input.IsMouseClickedDown(0))
 		{
-			active = true; creationStartPoint = cur.input.mousePosition;
+			active = true; creationStartPoint = simulationApp.input.mousePosition;
 		}
 	}
 }
-void Creator::UpdateConnection(SimulationApp& cur)
+void Creator::UpdateConnection(SimulationApp& simulationApp)
 {
 	if (active)
 	{
@@ -161,7 +161,7 @@ void Creator::UpdateConnection(SimulationApp& cur)
 		if (connectionConfiguration) { connection->ReadConfig(*connectionConfiguration); }
 		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
 		// 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
-		if (!cur.input.mouseButtonDown[0])
+		if (!simulationApp.input.mouseButtonDown[0])
 		{
 			if (body1)
 			{
@@ -173,8 +173,8 @@ void Creator::UpdateConnection(SimulationApp& cur)
 				connection->SignUpToBodies();
 				connection->UpdatePosition();
 				connection->length = (connection->p0 - connection->p1).GetLength();
-				cur.connections.push_back(connection);
-				cur.isSceneChanged = true;
+				simulationApp.connections.push_back(connection);
+				simulationApp.isSceneChanged = true;
 			}
 			connection = NULL;
 			body0 = body1 = NULL; active = false;
@@ -185,26 +185,26 @@ void Creator::UpdateConnection(SimulationApp& cur)
 		if (body0) { active = true; }
 	}
 }
-void Creator::UpdatePoint(SimulationApp& cur)
+void Creator::UpdatePoint(SimulationApp& simulationApp)
 {
-	if (hovered && cur.input.IsMouseClickedDown(0))
+	if (hovered && simulationApp.input.IsMouseClickedDown(0))
 	{
-		body = std::make_shared<Body>((Vector2) cur.input.mousePosition);
+		body = std::make_shared<Body>((Vector2) simulationApp.input.mousePosition);
 		body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 		if (bodyConfiguration) { body->ReadConfig(*bodyConfiguration); }
 		body->Init();
-		cur.bodies.push_back(body);
+		simulationApp.bodies.push_back(body);
 		body = NULL; 
-		cur.isSceneChanged = true;
+		simulationApp.isSceneChanged = true;
 	}
 }
-void Creator::UpdateNail(SimulationApp& cur)
+void Creator::UpdateNail(SimulationApp& simulationApp)
 {
 	if (body0)
 	{
 		body = std::make_shared<Body>(body0->position + body0->transform * p0Relative);
 		body->Init();
-		cur.bodies.push_back(body);
+		simulationApp.bodies.push_back(body);
 		connection = std::make_shared<Connection>();
 		connection->type = kLinkConnection;
 		connection->body0 = body0;
@@ -212,62 +212,62 @@ void Creator::UpdateNail(SimulationApp& cur)
 		connection->p0Relative = p0Relative;
 		connection->SignUpToBodies();
 		connection->UpdatePosition();
-		cur.connections.push_back(connection);
+		simulationApp.connections.push_back(connection);
 
 		body0 = NULL; connection = NULL;
-		body = NULL; cur.isSceneChanged = true;
+		body = NULL; simulationApp.isSceneChanged = true;
 	}
 }
-void Creator::UpdateParticle(SimulationApp& cur)
+void Creator::UpdateParticle(SimulationApp& simulationApp)
 {
-	if (hovered && cur.input.IsMouseClickedDown(0))
+	if (hovered && simulationApp.input.IsMouseClickedDown(0))
 	{
-		body = std::make_shared<Body>(std::make_shared<Shape>(rad));
-		body->position = (Vector2) cur.input.mousePosition;
+		body = std::make_shared<Body>(std::make_shared<Shape>(radius));
+		body->position = (Vector2) simulationApp.input.mousePosition;
 		body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 		if (bodyConfiguration) { body->ReadConfig(*bodyConfiguration); }
 		body->Init();
-		cur.bodies.push_back(body);
-		body = NULL; cur.isSceneChanged = true;
+		simulationApp.bodies.push_back(body);
+		body = NULL; simulationApp.isSceneChanged = true;
 	}
 }
-void Creator::Update(SimulationApp& cur)
+void Creator::Update(SimulationApp& simulationApp)
 {
-	hovered = (cur.inputOwners.hovered == this);
+	hovered = (simulationApp.inputOwners.hovered == this);
 	body = NULL; connection = NULL;
 
 	switch (mode)
 	{
-		case CREATE_BOX: UpdateBox(cur); break;
-		case CREATE_BALL: UpdateBall(cur); break;
-		case CREATE_PLATE: UpdatePlate(cur); break;
-		case CREATE_CONN: UpdateConnection(cur); break;
-		case CREATE_POINT: UpdatePoint(cur); break;
-		case CREATE_NAIL: UpdateNail(cur); break;
-		case CREATE_PARTICLE: UpdateParticle(cur); break;
+		case kCreateBox: UpdateBox(simulationApp); break;
+		case kCreateBall: UpdateBall(simulationApp); break;
+		case kCreatePlate: UpdatePlate(simulationApp); break;
+		case kCreateConnection: UpdateConnection(simulationApp); break;
+		case kCreatePoint: UpdatePoint(simulationApp); break;
+		case kCreateNail: UpdateNail(simulationApp); break;
+		case kCreateParticle: UpdateParticle(simulationApp); break;
 	}
 
 
-	if (body) { body->Render(cur); }
+	if (body) { body->Render(simulationApp); }
 	if (connection && body0)
 	{
 		connection->p0 = body0->position + body0->transform * p0Relative;
-		connection->p1 = (Vector2) cur.input.mousePosition;
-		connection->Render(cur);
+		connection->p1 = (Vector2) simulationApp.input.mousePosition;
+		connection->Render(simulationApp);
 	}
 }
-void Creator::Discard(SimulationApp& cur)
+void Creator::Discard(SimulationApp& simulationApp)
 {
-	cur.inputOwners.Remove(this); body0 = body1 = NULL;
+	simulationApp.inputOwners.Remove(this); body0 = body1 = NULL;
 	body = NULL; connection = NULL;
 	hovered = active = false;
 }
-void Creator::PreUpdate(SimulationApp& cur)
+void Creator::PreUpdate(SimulationApp& simulationApp)
 {
-	if (cur.inputOwners.hoveredDepth <= Depth() && IsInside(cur.input.mousePosition, cur.background->GetViewport()))
+	if (simulationApp.inputOwners.hoveredDepth <= Depth() && IsInside(simulationApp.input.mousePosition, simulationApp.background->GetViewport()))
 	{
-		cur.inputOwners.hoveredDepth = Depth();
-		cur.inputOwners.hovered = this;
+		simulationApp.inputOwners.hoveredDepth = Depth();
+		simulationApp.inputOwners.hovered = this;
 	}
 }
 

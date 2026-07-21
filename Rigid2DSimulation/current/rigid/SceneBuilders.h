@@ -3,11 +3,11 @@
 struct Value;
 struct SimulationApp;
 
-void CreateBody(SimulationApp& cur, Value const& shs_cfg, Value const& cfg);
-void CreateConnection(SimulationApp& cur, Value const& cfg);
-void Boundary(SimulationApp& cur, Value const& thk, Value const& cfg);
-void Gear(SimulationApp& cur, Value const& r, Value const& n, Value const& h, Value const& cfg);
-void Strand(SimulationApp& cur, Value const& _p0, Value const& _p1,
-	Value const& _n, Value const& ratio, Value const& bodyConfiguration, Value const& cfg_conn);
-void Necklace(SimulationApp& cur, Value const& _o, Value const& rad,
-	Value const& _n, Value const& ratio, Value const& bodyConfiguration, Value const& cfg_conn);
+void CreateBody(SimulationApp& simulationApp, Value const& shapeConfigurations, Value const& configuration);
+void CreateConnection(SimulationApp& simulationApp, Value const& configuration);
+void Boundary(SimulationApp& simulationApp, Value const& thickness, Value const& configuration);
+void Gear(SimulationApp& simulationApp, Value const& radius, Value const& toothCount, Value const& toothHeight, Value const& configuration);
+void Strand(SimulationApp& simulationApp, Value const& point0Value, Value const& point1Value,
+	Value const& countValue, Value const& ratio, Value const& bodyConfiguration, Value const& connectionConfiguration);
+void Necklace(SimulationApp& simulationApp, Value const& centerValue, Value const& radius,
+	Value const& countValue, Value const& ratio, Value const& bodyConfiguration, Value const& connectionConfiguration);

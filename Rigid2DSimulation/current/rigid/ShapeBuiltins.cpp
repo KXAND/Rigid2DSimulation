@@ -2,114 +2,114 @@
 #include "Value.h"
 #include "Shape.h"
 
-shared_ptr<Value> Ball(Value const& r)
+shared_ptr<Value> Ball(Value const& radius)
 {
 	vector<shared_ptr<Value>> vs;
 	vector<shared_ptr<Value>> v;
 	v.push_back(make_shared<Value>(1));
-	v.push_back(make_shared<Value>(r));
+	v.push_back(make_shared<Value>(radius));
 	vs.push_back(make_shared<Value>(v));
 	return make_shared<Value>(vs);
 }
-shared_ptr<Value> Box(Value const& w, Value const& h)
+shared_ptr<Value> Box(Value const& width, Value const& height)
 {
 	vector<std::shared_ptr<Value>> vs;
 	vector<std::shared_ptr<Value>> v;
 	v.push_back(std::make_shared<Value>(0));
 	vector<std::shared_ptr<Value>> tmp;
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+w.number / 2), std::make_shared<Value>(+h.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-w.number / 2), std::make_shared<Value>(+h.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-w.number / 2), std::make_shared<Value>(-h.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+w.number / 2), std::make_shared<Value>(-h.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+width.number / 2), std::make_shared<Value>(+height.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-width.number / 2), std::make_shared<Value>(+height.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-width.number / 2), std::make_shared<Value>(-height.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+width.number / 2), std::make_shared<Value>(-height.number / 2) }));
 	v.push_back(std::make_shared<Value>(tmp));
 	vs.push_back(std::make_shared<Value>(v));
 	return std::make_shared<Value>(vs);
 }
-std::shared_ptr<Value> RegularPolygon(Value const& n, Value const& r)
+std::shared_ptr<Value> RegularPolygon(Value const& sideCount, Value const& radius)
 {
 	vector<std::shared_ptr<Value>> vs;
 	vector<std::shared_ptr<Value>> v;
 	v.push_back(std::make_shared<Value>(0));
 	vector<std::shared_ptr<Value>> tmp;
-	auto m = max(3, (int)n.number);
+	auto m = max(3, (int)sideCount.number);
 	for (int i = (0), iEnd = int(m); i < iEnd; ++i)
 	{
 		double phi = 2 * kPi * i / m;
-		tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(r.number * cos(phi)), std::make_shared<Value>(r.number * sin(phi)) }));
+		tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(radius.number * cos(phi)), std::make_shared<Value>(radius.number * sin(phi)) }));
 	}
 	v.push_back(std::make_shared<Value>(tmp));
 	vs.push_back(std::make_shared<Value>(v));
 	return std::make_shared<Value>(vs);
 }
-std::shared_ptr<Value> Parallelogram(Value const& w, Value const& h, Value const& s)
+std::shared_ptr<Value> Parallelogram(Value const& width, Value const& height, Value const& shear)
 {
 	vector<std::shared_ptr<Value>> vs;
 	vector<std::shared_ptr<Value>> v;
 	v.push_back(std::make_shared<Value>(0));
 	vector<std::shared_ptr<Value>> tmp;
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+w.number / 2 + s.number), std::make_shared<Value>(+h.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-w.number / 2 + s.number), std::make_shared<Value>(+h.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-w.number / 2 - s.number), std::make_shared<Value>(-h.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+w.number / 2 - s.number), std::make_shared<Value>(-h.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+width.number / 2 + shear.number), std::make_shared<Value>(+height.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-width.number / 2 + shear.number), std::make_shared<Value>(+height.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-width.number / 2 - shear.number), std::make_shared<Value>(-height.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+width.number / 2 - shear.number), std::make_shared<Value>(-height.number / 2) }));
 	v.push_back(std::make_shared<Value>(tmp));
 	vs.push_back(std::make_shared<Value>(v));
 	return std::make_shared<Value>(vs);
 }
-std::shared_ptr<Value> Trapezoid(Value const& t, Value const& b, Value const& h)
+std::shared_ptr<Value> Trapezoid(Value const& topWidth, Value const& bottomWidth, Value const& height)
 {
 	vector<std::shared_ptr<Value>> vs;
 	vector<std::shared_ptr<Value>> v;
 	v.push_back(std::make_shared<Value>(0));
 	vector<std::shared_ptr<Value>> tmp;
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+t.number / 2), std::make_shared<Value>(+h.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-t.number / 2), std::make_shared<Value>(+h.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-b.number / 2), std::make_shared<Value>(-h.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+b.number / 2), std::make_shared<Value>(-h.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+topWidth.number / 2), std::make_shared<Value>(+height.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-topWidth.number / 2), std::make_shared<Value>(+height.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-bottomWidth.number / 2), std::make_shared<Value>(-height.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+bottomWidth.number / 2), std::make_shared<Value>(-height.number / 2) }));
 	v.push_back(std::make_shared<Value>(tmp));
 	vs.push_back(std::make_shared<Value>(v));
 	return std::make_shared<Value>(vs);
 }
-std::shared_ptr<Value> Cross(Value const& s, Value const& thk)
+std::shared_ptr<Value> Cross(Value const& size, Value const& thickness)
 {
 	vector<std::shared_ptr<Value>> vs;
 	vector<std::shared_ptr<Value>> v;
 	v.push_back(std::make_shared<Value>(0));
 	vector<std::shared_ptr<Value>> tmp;
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+s.number / 2), std::make_shared<Value>(+thk.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-s.number / 2), std::make_shared<Value>(+thk.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-s.number / 2), std::make_shared<Value>(-thk.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+s.number / 2), std::make_shared<Value>(-thk.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+size.number / 2), std::make_shared<Value>(+thickness.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-size.number / 2), std::make_shared<Value>(+thickness.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-size.number / 2), std::make_shared<Value>(-thickness.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+size.number / 2), std::make_shared<Value>(-thickness.number / 2) }));
 	v.push_back(std::make_shared<Value>(tmp));
 	vs.push_back(std::make_shared<Value>(v));
 	v.clear();
 	v.push_back(std::make_shared<Value>(0));
 	tmp.clear();
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+thk.number / 2), std::make_shared<Value>(+s.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-thk.number / 2), std::make_shared<Value>(+s.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-thk.number / 2), std::make_shared<Value>(-s.number / 2) }));
-	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+thk.number / 2), std::make_shared<Value>(-s.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+thickness.number / 2), std::make_shared<Value>(+size.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-thickness.number / 2), std::make_shared<Value>(+size.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(-thickness.number / 2), std::make_shared<Value>(-size.number / 2) }));
+	tmp.push_back(std::make_shared<Value>(vector<std::shared_ptr<Value>>{ std::make_shared<Value>(+thickness.number / 2), std::make_shared<Value>(-size.number / 2) }));
 	v.push_back(std::make_shared<Value>(tmp));
 	vs.push_back(std::make_shared<Value>(v));
 	return std::make_shared<Value>(vs);
 }
-std::shared_ptr<Value> FramedBox(Value const& w, Value const& h, Value const& thk)
+std::shared_ptr<Value> FramedBox(Value const& width, Value const& height, Value const& thickness)
 {
-	Vector2 a0(+w.number / 2 + thk.number / 2, +h.number / 2 + thk.number / 2);
-	Vector2 a1(-w.number / 2 - thk.number / 2, +h.number / 2 + thk.number / 2);
-	Vector2 a2(-w.number / 2 - thk.number / 2, +h.number / 2 - thk.number / 2);
-	Vector2 a3(+w.number / 2 + thk.number / 2, +h.number / 2 - thk.number / 2);
-	Vector2 b0(+w.number / 2 + thk.number / 2, -h.number / 2 + thk.number / 2);
-	Vector2 b1(-w.number / 2 - thk.number / 2, -h.number / 2 + thk.number / 2);
-	Vector2 b2(-w.number / 2 - thk.number / 2, -h.number / 2 - thk.number / 2);
-	Vector2 b3(+w.number / 2 + thk.number / 2, -h.number / 2 - thk.number / 2);
-	Vector2 c0(+w.number / 2 + thk.number / 2, +h.number / 2 + thk.number / 2);
-	Vector2 c1(+w.number / 2 + thk.number / 2, -h.number / 2 - thk.number / 2);
-	Vector2 c2(+w.number / 2 - thk.number / 2, -h.number / 2 - thk.number / 2);
-	Vector2 c3(+w.number / 2 - thk.number / 2, +h.number / 2 + thk.number / 2);
-	Vector2 d0(-w.number / 2 + thk.number / 2, +h.number / 2 + thk.number / 2);
-	Vector2 d1(-w.number / 2 + thk.number / 2, -h.number / 2 - thk.number / 2);
-	Vector2 d2(-w.number / 2 - thk.number / 2, -h.number / 2 - thk.number / 2);
-	Vector2 d3(-w.number / 2 - thk.number / 2, +h.number / 2 + thk.number / 2);
+	Vector2 a0(+width.number / 2 + thickness.number / 2, +height.number / 2 + thickness.number / 2);
+	Vector2 a1(-width.number / 2 - thickness.number / 2, +height.number / 2 + thickness.number / 2);
+	Vector2 a2(-width.number / 2 - thickness.number / 2, +height.number / 2 - thickness.number / 2);
+	Vector2 a3(+width.number / 2 + thickness.number / 2, +height.number / 2 - thickness.number / 2);
+	Vector2 b0(+width.number / 2 + thickness.number / 2, -height.number / 2 + thickness.number / 2);
+	Vector2 b1(-width.number / 2 - thickness.number / 2, -height.number / 2 + thickness.number / 2);
+	Vector2 b2(-width.number / 2 - thickness.number / 2, -height.number / 2 - thickness.number / 2);
+	Vector2 b3(+width.number / 2 + thickness.number / 2, -height.number / 2 - thickness.number / 2);
+	Vector2 c0(+width.number / 2 + thickness.number / 2, +height.number / 2 + thickness.number / 2);
+	Vector2 c1(+width.number / 2 + thickness.number / 2, -height.number / 2 - thickness.number / 2);
+	Vector2 c2(+width.number / 2 - thickness.number / 2, -height.number / 2 - thickness.number / 2);
+	Vector2 c3(+width.number / 2 - thickness.number / 2, +height.number / 2 + thickness.number / 2);
+	Vector2 d0(-width.number / 2 + thickness.number / 2, +height.number / 2 + thickness.number / 2);
+	Vector2 d1(-width.number / 2 + thickness.number / 2, -height.number / 2 - thickness.number / 2);
+	Vector2 d2(-width.number / 2 - thickness.number / 2, -height.number / 2 - thickness.number / 2);
+	Vector2 d3(-width.number / 2 - thickness.number / 2, +height.number / 2 + thickness.number / 2);
 	vector<std::shared_ptr<Value>> vs;
 	vector<std::shared_ptr<Value>> v;
 	v.push_back(std::make_shared<Value>(0));

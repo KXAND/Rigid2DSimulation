@@ -25,13 +25,13 @@ void GlobalDetailsLabel::Sync(App& app) {
 
 	wstring s;
 	switch (simulationApp.creator->mode) {
-	case CREATE_BALL: s = simulationApp.GetLocalizedString(L"crt_ball"); break;
-	case CREATE_BOX: s = simulationApp.GetLocalizedString(L"crt_box"); break;
-	case CREATE_CONN: s = simulationApp.GetLocalizedString(L"crt_conn"); break;
-	case CREATE_NAIL: s = simulationApp.GetLocalizedString(L"crt_nail"); break;
-	case CREATE_PARTICLE: s = simulationApp.GetLocalizedString(L"crt_particle"); break;
-	case CREATE_PLATE: s = simulationApp.GetLocalizedString(L"crt_plate"); break;
-	case CREATE_POINT: s = simulationApp.GetLocalizedString(L"crt_point"); break;
+	case kCreateBall: s = simulationApp.GetLocalizedString(L"crt_ball"); break;
+	case kCreateBox: s = simulationApp.GetLocalizedString(L"crt_box"); break;
+	case kCreateConnection: s = simulationApp.GetLocalizedString(L"crt_conn"); break;
+	case kCreateNail: s = simulationApp.GetLocalizedString(L"crt_nail"); break;
+	case kCreateParticle: s = simulationApp.GetLocalizedString(L"crt_particle"); break;
+	case kCreatePlate: s = simulationApp.GetLocalizedString(L"crt_plate"); break;
+	case kCreatePoint: s = simulationApp.GetLocalizedString(L"crt_point"); break;
 	}
 	text += simulationApp.GetLocalizedString(L"creator_mode") + s + L"\n";
 }

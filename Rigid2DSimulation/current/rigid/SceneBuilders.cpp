@@ -6,52 +6,52 @@
 #include "Shape.h"
 #include "Connection.h"
 
-void CreateBody(SimulationApp& cur, Value const& shs_cfg, Value const& cfg)
+void CreateBody(SimulationApp& simulationApp, Value const& shapeConfigurations, Value const& configuration)
 {
 	bool point = false;
-	TryReadConfigNumber(cfg, L"point", point);
-	std::shared_ptr<Body> bo;
-	vector<std::shared_ptr<Shape>> shs;
-	for (auto v : shs_cfg.elements)
+	TryReadConfigNumber(configuration, L"point", point);
+	std::shared_ptr<Body> body;
+	vector<std::shared_ptr<Shape>> shapes;
+	for (auto v : shapeConfigurations.elements)
 	{
 		if (v->elements.empty()) { continue; }
-		std::shared_ptr<Shape> sh;
+		std::shared_ptr<Shape> shape;
 		if (v->elements[0]->number)
 		{
 			if (v->elements.size() < 2) { continue; }
-			Vector2 o_rel;
-			if (v->elements.size() >= 3) { o_rel = ToVector2(*v->elements[2]); }
-			sh = std::make_shared<Shape>(v->elements[1]->number, o_rel);
+			Vector2 relativePosition;
+			if (v->elements.size() >= 3) { relativePosition = ToVector2(*v->elements[2]); }
+			shape = std::make_shared<Shape>(v->elements[1]->number, relativePosition);
 		}
 		else
 		{
 			if (v->elements.size() < 2) { continue; }
-			vector<Vector2> vs;
+			vector<Vector2> vertices;
 			for (auto w : v->elements[1]->elements)
 			{
-				vs.push_back(ToVector2(*w));
+				vertices.push_back(ToVector2(*w));
 			}
-			sh = std::make_shared<Shape>(vs);
+			shape = std::make_shared<Shape>(vertices);
 		}
-		shs.push_back(sh);
+		shapes.push_back(shape);
 	}
-	if (point) { bo = std::make_shared<Body>(Vector2()); }
-	else { bo = std::make_shared<Body>(shs); }
-	bo->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-	bo->ReadConfig(cfg);
+	if (point) { body = std::make_shared<Body>(Vector2()); }
+	else { body = std::make_shared<Body>(shapes); }
+	body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+	body->ReadConfig(configuration);
 	bool resetPosition = false;
-	TryReadConfigNumber(cfg, L"resetPosition", resetPosition);
-	bo->Init(resetPosition);
-	cur.bodies.push_back(bo);
-	cur.isSceneChanged = true;
+	TryReadConfigNumber(configuration, L"resetPosition", resetPosition);
+	body->Init(resetPosition);
+	simulationApp.bodies.push_back(body);
+	simulationApp.isSceneChanged = true;
 }
-void CreateConnection(SimulationApp& cur, Value const& cfg)
+void CreateConnection(SimulationApp& simulationApp, Value const& configuration)
 {
-	auto& bodies = cur.bodies;
+	auto& bodies = simulationApp.bodies;
 	int idx0 = GenerateRandomInt(bodies.size());
 	int idx1 = GenerateRandomInt(bodies.size());
-	TryReadConfigNumber(cfg, L"index0", idx0);
-	TryReadConfigNumber(cfg, L"index1", idx1);
+	TryReadConfigNumber(configuration, L"index0", idx0);
+	TryReadConfigNumber(configuration, L"index1", idx1);
 	idx0 = Clamp(idx0, 0, (int)bodies.size());
 	idx1 = Clamp(idx1, 0, (int)bodies.size());
 	std::shared_ptr<Connection> connection;
@@ -61,8 +61,8 @@ void CreateConnection(SimulationApp& cur, Value const& cfg)
 	connection->p0Relative = connection->body0->GenerateRandomPointInside();
 	connection->p1Relative = connection->body1->GenerateRandomPointInside();
 	bool absolute = false;
-	TryReadConfigNumber(cfg, L"absolute", absolute);
-	if (auto value = FindConfigValue(cfg, L"point0"))
+	TryReadConfigNumber(configuration, L"absolute", absolute);
+	if (auto value = FindConfigValue(configuration, L"point0"))
 	{
 		connection->p0Relative = ToVector2(*value);
 		if (absolute)
@@ -71,7 +71,7 @@ void CreateConnection(SimulationApp& cur, Value const& cfg)
 			connection->p0Relative = connection->body0->transform.Inverse() * connection->p0Relative;
 		}
 	}
-	if (auto value = FindConfigValue(cfg, L"point1"))
+	if (auto value = FindConfigValue(configuration, L"point1"))
 	{
 		connection->p1Relative = ToVector2(*value);
 		if (absolute)
@@ -83,171 +83,171 @@ void CreateConnection(SimulationApp& cur, Value const& cfg)
 	connection->SignUpToBodies();
 	connection->UpdatePosition();
 	connection->length = (connection->p0 - connection->p1).GetLength();
-	connection->ReadConfig(cfg);
-	cur.connections.push_back(connection);
-	cur.isSceneChanged = true;
+	connection->ReadConfig(configuration);
+	simulationApp.connections.push_back(connection);
+	simulationApp.isSceneChanged = true;
 }
 
-void Boundary(SimulationApp& cur, Value const& thk, Value const& cfg)
+void Boundary(SimulationApp& simulationApp, Value const& thickness, Value const& configuration)
 {
-	double bw = cur.background->width, bh = cur.background->height;
-	double bx0 = cur.background->topLeft.x, bx1 = bx0 + bw;
-	double by0 = cur.background->topLeft.y, by1 = by0 + bh;
+	double backgroundWidth = simulationApp.background->width, backgroundHeight = simulationApp.background->height;
+	double left = simulationApp.background->topLeft.x, right = left + backgroundWidth;
+	double top = simulationApp.background->topLeft.y, bottom = top + backgroundHeight;
 	std::shared_ptr<Body> body;
 	Color color = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thk.number, bh)));
-	body->position = Vector2(bx0, (by0 + by1) / 2);
+	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thickness.number, backgroundHeight)));
+	body->position = Vector2(left, (top + bottom) / 2);
 	body->fixed = true;
 	body->innerColor = color;
-	body->ReadConfig(cfg);
+	body->ReadConfig(configuration);
 	body->Init();
-	cur.bodies.push_back(body);
-	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thk.number, bh)));
-	body->position = Vector2(bx1, (by0 + by1) / 2);
+	simulationApp.bodies.push_back(body);
+	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thickness.number, backgroundHeight)));
+	body->position = Vector2(right, (top + bottom) / 2);
 	body->fixed = true;
 	body->innerColor = color;
-	body->ReadConfig(cfg);
+	body->ReadConfig(configuration);
 	body->Init();
-	cur.bodies.push_back(body);
-	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(bw, thk.number)));
-	body->position = Vector2((bx0 + bx1) / 2, by0);
+	simulationApp.bodies.push_back(body);
+	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(backgroundWidth, thickness.number)));
+	body->position = Vector2((left + right) / 2, top);
 	body->fixed = true;
 	body->innerColor = color;
-	body->ReadConfig(cfg);
+	body->ReadConfig(configuration);
 	body->Init();
-	cur.bodies.push_back(body);
-	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(bw, thk.number)));
-	body->position = Vector2((bx0 + bx1) / 2, by1);
+	simulationApp.bodies.push_back(body);
+	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(backgroundWidth, thickness.number)));
+	body->position = Vector2((left + right) / 2, bottom);
 	body->fixed = true;
 	body->innerColor = color;
-	body->ReadConfig(cfg);
+	body->ReadConfig(configuration);
 	body->Init();
-	cur.bodies.push_back(body);
-	cur.isSceneChanged = true;
+	simulationApp.bodies.push_back(body);
+	simulationApp.isSceneChanged = true;
 }
-void Gear(SimulationApp& cur, Value const& r, Value const& n, Value const& h, Value const& cfg)
+void Gear(SimulationApp& simulationApp, Value const& radius, Value const& toothCount, Value const& toothHeight, Value const& configuration)
 {
-	vector<std::shared_ptr<Shape>> shs;
-	shs.push_back(std::make_shared<Shape>(r.number));
-	for (int i = (0), iEnd = int(n.number); i < iEnd; ++i)
+	vector<std::shared_ptr<Shape>> shapes;
+	shapes.push_back(std::make_shared<Shape>(radius.number));
+	for (int i = (0), iEnd = int(toothCount.number); i < iEnd; ++i)
 	{
-		double phi0 = 2 * kPi * i / (int)n.number;
-		double phi1 = 2 * kPi * (i + 1) / (int)n.number;
+		double phi0 = 2 * kPi * i / (int)toothCount.number;
+		double phi1 = 2 * kPi * (i + 1) / (int)toothCount.number;
 		double phi = (phi0 + phi1) / 2;
-		Vector2 v = Vector2(cos(phi), sin(phi)) * (r.number + h.number);
-		Vector2 v0 = Vector2(cos(phi0), sin(phi0)) * r.number;
-		Vector2 v1 = Vector2(cos(phi1), sin(phi1)) * r.number;
-		shs.push_back(std::make_shared<Shape>(vector<Vector2>{ v0, v, v1 }));
+		Vector2 v = Vector2(cos(phi), sin(phi)) * (radius.number + toothHeight.number);
+		Vector2 v0 = Vector2(cos(phi0), sin(phi0)) * radius.number;
+		Vector2 v1 = Vector2(cos(phi1), sin(phi1)) * radius.number;
+		shapes.push_back(std::make_shared<Shape>(vector<Vector2>{ v0, v, v1 }));
 	}
-	auto wheel = std::make_shared<Body>(shs);
+	auto wheel = std::make_shared<Body>(shapes);
 	wheel->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-	wheel->ReadConfig(cfg);
+	wheel->ReadConfig(configuration);
 	wheel->Init();
-	cur.bodies.push_back(wheel);
+	simulationApp.bodies.push_back(wheel);
 	auto root = std::make_shared<Body>(wheel->position);
 	root->innerColor = wheel->innerColor;
 	root->Init();
-	cur.bodies.push_back(root);
+	simulationApp.bodies.push_back(root);
 	auto connection = std::make_shared<Connection>();
 	connection->type = kLinkConnection;
 	connection->body0 = &*root;
 	connection->body1 = &*wheel;
 	connection->SignUpToBodies();
 	connection->UpdatePosition();
-	cur.connections.push_back(connection);
-	cur.isSceneChanged = true;
+	simulationApp.connections.push_back(connection);
+	simulationApp.isSceneChanged = true;
 }
-void Strand(SimulationApp& cur, Value const& _p0, Value const& _p1,
-	Value const& _n, Value const& ratio, Value const& bodyConfiguration, Value const& cfg_conn)
+void Strand(SimulationApp& simulationApp, Value const& point0Value, Value const& point1Value,
+	Value const& countValue, Value const& ratio, Value const& bodyConfiguration, Value const& connectionConfiguration)
 {
-	Vector2 p0 = ToVector2(_p0), p1 = ToVector2(_p1);
-	int n = _n.number;
-	std::shared_ptr<Body> b0, b1;
+	Vector2 p0 = ToVector2(point0Value), p1 = ToVector2(point1Value);
+	int n = countValue.number;
+	std::shared_ptr<Body> previousBody, currentBody;
 	std::shared_ptr<Connection> connection;
-	double len = (p1 - p0).GetLength() / n;
-	double rad = 0.5 * ratio.number * len;
-	double gap = max(0.0, len - 2 * rad);
-	Color col = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-	b0 = std::make_shared<Body>(std::make_shared<Shape>(rad));
-	b0->innerColor = col;
-	b0->position = p0;
-	b0->ReadConfig(bodyConfiguration);
-	b0->Init();
-	cur.bodies.push_back(b0);
+	double segmentLength = (p1 - p0).GetLength() / n;
+	double bodyRadius = 0.5 * ratio.number * segmentLength;
+	double gap = max(0.0, segmentLength - 2 * bodyRadius);
+	Color bodyColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+	previousBody = std::make_shared<Body>(std::make_shared<Shape>(bodyRadius));
+	previousBody->innerColor = bodyColor;
+	previousBody->position = p0;
+	previousBody->ReadConfig(bodyConfiguration);
+	previousBody->Init();
+	simulationApp.bodies.push_back(previousBody);
 	for (int i = (1), iEnd = int(n + 1); i < iEnd; ++i)
 	{
-		b1 = std::make_shared<Body>(std::make_shared<Shape>(rad));
-		b1->innerColor = col;
-		b1->position = (p0 * (n - i) + p1 * i) / n;
-		b1->ReadConfig(bodyConfiguration);
-		b1->Init();
-		cur.bodies.push_back(b1);
+		currentBody = std::make_shared<Body>(std::make_shared<Shape>(bodyRadius));
+		currentBody->innerColor = bodyColor;
+		currentBody->position = (p0 * (n - i) + p1 * i) / n;
+		currentBody->ReadConfig(bodyConfiguration);
+		currentBody->Init();
+		simulationApp.bodies.push_back(currentBody);
 		connection = std::make_shared<Connection>();
-		connection->body0 = &*b0;
-		connection->body1 = &*b1;
+		connection->body0 = &*previousBody;
+		connection->body1 = &*currentBody;
 		connection->length = gap;
-		connection->p0Relative = +rad * (p1 - p0).GetNormalized();
-		connection->p1Relative = -rad * (p1 - p0).GetNormalized();
-		connection->ReadConfig(cfg_conn);
+		connection->p0Relative = +bodyRadius * (p1 - p0).GetNormalized();
+		connection->p1Relative = -bodyRadius * (p1 - p0).GetNormalized();
+		connection->ReadConfig(connectionConfiguration);
 		connection->SignUpToBodies();
 		connection->UpdatePosition();
-		cur.connections.push_back(connection);
-		b0 = b1;
+		simulationApp.connections.push_back(connection);
+		previousBody = currentBody;
 	}
-	cur.isSceneChanged = true;
+	simulationApp.isSceneChanged = true;
 }
-void Necklace(SimulationApp& cur, Value const& _o, Value const& rad,
-	Value const& _n, Value const& ratio, Value const& bodyConfiguration, Value const& cfg_conn)
+void Necklace(SimulationApp& simulationApp, Value const& centerValue, Value const& radius,
+	Value const& countValue, Value const& ratio, Value const& bodyConfiguration, Value const& connectionConfiguration)
 {
-	std::shared_ptr<Body> beg, b0, b1;
-	int n = _n.number;
-	Vector2 o = ToVector2(_o);
+	std::shared_ptr<Body> firstBody, previousBody, currentBody;
+	int n = countValue.number;
+	Vector2 center = ToVector2(centerValue);
 	std::shared_ptr<Connection> connection;
-	double len = 2 * kPi * rad.number / n;
-	double ball_rad = 0.5 * ratio.number * len;
-	double gap = max(0.0, len - 2 * ball_rad);
-	Color col = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-	b0 = std::make_shared<Body>(std::make_shared<Shape>(ball_rad));
-	b0->innerColor = col;
-	b0->position = o + Vector2(rad.number, 0);
-	b0->ReadConfig(bodyConfiguration);
-	b0->Init();
-	cur.bodies.push_back(b0);
-	beg = b0;
+	double segmentLength = 2 * kPi * radius.number / n;
+	double ballRadius = 0.5 * ratio.number * segmentLength;
+	double gap = max(0.0, segmentLength - 2 * ballRadius);
+	Color bodyColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+	previousBody = std::make_shared<Body>(std::make_shared<Shape>(ballRadius));
+	previousBody->innerColor = bodyColor;
+	previousBody->position = center + Vector2(radius.number, 0);
+	previousBody->ReadConfig(bodyConfiguration);
+	previousBody->Init();
+	simulationApp.bodies.push_back(previousBody);
+	firstBody = previousBody;
 	for (int i = (1), iEnd = int(n); i < iEnd; ++i)
 	{
 		double phi = 2 * kPi * i / n;
-		b1 = std::make_shared<Body>(std::make_shared<Shape>(ball_rad));
-		b1->innerColor = col;
-		b1->position = o + Vector2(cos(phi), sin(phi)) * rad.number;
-		b1->ReadConfig(bodyConfiguration);
-		b1->Init();
-		cur.bodies.push_back(b1);
+		currentBody = std::make_shared<Body>(std::make_shared<Shape>(ballRadius));
+		currentBody->innerColor = bodyColor;
+		currentBody->position = center + Vector2(cos(phi), sin(phi)) * radius.number;
+		currentBody->ReadConfig(bodyConfiguration);
+		currentBody->Init();
+		simulationApp.bodies.push_back(currentBody);
 		connection = std::make_shared<Connection>();
-		connection->body0 = &*b0;
-		connection->body1 = &*b1;
+		connection->body0 = &*previousBody;
+		connection->body1 = &*currentBody;
 		connection->length = gap;
-		connection->p1Relative = ball_rad * Vector2(+sin(phi), -cos(phi));
+		connection->p1Relative = ballRadius * Vector2(+sin(phi), -cos(phi));
 		phi = 2 * kPi * (i - 1) / n;
-		connection->p0Relative = ball_rad * Vector2(-sin(phi), +cos(phi));
-		connection->ReadConfig(cfg_conn);
+		connection->p0Relative = ballRadius * Vector2(-sin(phi), +cos(phi));
+		connection->ReadConfig(connectionConfiguration);
 		connection->SignUpToBodies();
 		connection->UpdatePosition();
-		cur.connections.push_back(connection);
-		b0 = b1;
+		simulationApp.connections.push_back(connection);
+		previousBody = currentBody;
 	}
 	double phi = 2 * kPi * n / n;
-	b1 = beg;
+	currentBody = firstBody;
 	connection = std::make_shared<Connection>();
-	connection->body0 = &*b0;
-	connection->body1 = &*b1;
+	connection->body0 = &*previousBody;
+	connection->body1 = &*currentBody;
 	connection->length = gap;
-	connection->p1Relative = ball_rad * Vector2(+sin(phi), -cos(phi));
+	connection->p1Relative = ballRadius * Vector2(+sin(phi), -cos(phi));
 	phi = 2 * kPi * (n - 1) / n;
-	connection->p0Relative = ball_rad * Vector2(-sin(phi), +cos(phi));
-	connection->ReadConfig(cfg_conn);
+	connection->p0Relative = ballRadius * Vector2(-sin(phi), +cos(phi));
+	connection->ReadConfig(connectionConfiguration);
 	connection->SignUpToBodies();
 	connection->UpdatePosition();
-	cur.connections.push_back(connection);
-	cur.isSceneChanged = true;
+	simulationApp.connections.push_back(connection);
+	simulationApp.isSceneChanged = true;
 }
