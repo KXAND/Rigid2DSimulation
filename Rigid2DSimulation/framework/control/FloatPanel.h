@@ -49,8 +49,8 @@ struct FloatPanel {
 	void InitializeControl(App& app);
 	void InitializeScrollBar();
 
-	void hide(App& app);
-	void show(App& app);
+	void Hide(App& app);
+	void Show(App& app);
 	void HandleCaption(App& app);
 	void HandleWheelAndClampContent(App& app);
 

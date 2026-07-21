@@ -91,8 +91,8 @@ void FloatPanel::InitializeScrollBar() {
 	sb->top_show = tl.y + tl_show_rel.y;
 }
 
-void FloatPanel::hide(App& app) { shown = false; Discard(app); }
-void FloatPanel::show(App& app) { shown = true; t_click = app.fps.dur(); }
+void FloatPanel::Hide(App& app) { shown = false; Discard(app); }
+void FloatPanel::Show(App& app) { shown = true; t_click = app.fps.dur(); }
 void FloatPanel::HandleCaption(App& app) {
 	hovered_close = hovered && isInside(app.input.msp, { GetCloseTopLeft(), s_close, s_close });
 	hovered_bar = hovered && !hovered_close && isInside(app.input.msp, { tl, w, h_bar });
@@ -106,7 +106,7 @@ void FloatPanel::HandleCaption(App& app) {
 	else { dragged_bar = hovered_bar && app.input.isMouseClickedDown(0); }
 
 	if (chosen_close) {
-		if (enabled_close && !app.input.msd[0]) { hide(app); return; }
+		if (enabled_close && !app.input.msd[0]) { Hide(app); return; }
 		chosen_close = enabled_close && hovered_close && app.input.msd[0];
 	}
 	else { chosen_close = enabled_close && hovered_close && app.input.isMouseClickedDown(0); }

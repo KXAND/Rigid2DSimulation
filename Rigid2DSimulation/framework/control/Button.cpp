@@ -51,7 +51,7 @@ LocalizedButton::LocalizedButton(int w, wstring const& id) : Button(w), id_txt(i
 void LocalizedButton::Update(App& app) { txt = app.getLocalizedString(id_txt); Button::Update(app); }
 
 ShowFloatPanelButton::ShowFloatPanelButton(FloatPanel* fpn) : Button(150), fpn(fpn) {}
-void ShowFloatPanelButton::OnClick(App& app) { fpn->show(app); }
+void ShowFloatPanelButton::OnClick(App& app) { fpn->Show(app); }
 void ShowFloatPanelButton::Update(App& app) {
 	enabled = !fpn->shown;
 	txt = fpn->txt; Button::Update(app);
