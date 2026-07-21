@@ -91,7 +91,7 @@
 - `ScriptExpression.cpp` 已完成 Allman 大括号、完整控制流大括号、单语句单行和逻辑空行迁移；表达式归约优先级、递归解析与序列化顺序保持不变。
 - `Value.cpp` 已完成 Allman 大括号、完整控制流大括号、单语句单行和逻辑空行迁移；作用域访问、内建函数、表达式求值与语句执行顺序保持不变。
 - `framework/parse` 的五个头文件已完成 Allman 类型大括号与合并字段声明拆分；公开类型、成员与包含关系保持不变。
-- `framework/basic/DVector2.h/.cpp` 已完成 Allman 大括号、4 空格缩进、单语句单行和字段声明拆分；二维整数几何接口与运算顺序保持不变。
+- `framework/basic/DVector2.h/.cpp` 已完成 Allman 大括号、4 空格缩进、单语句单行、字段声明拆分及参数、局部变量命名迁移；二维整数几何接口与运算顺序保持不变。
 - `framework/basic/ValuePtr.h` 已完成 Allman 大括号和 4 空格缩进；内部存储成员及构造、赋值参数已由无语义缩写迁移为完整 lower camel 名称。
 - `framework/basic/Utils.h/.cpp` 已完成 Allman 大括号、4 空格缩进、完整控制流大括号和局部命名迁移；随机、字符串、控制台、剪贴板与字符过滤的调用顺序保持不变。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。

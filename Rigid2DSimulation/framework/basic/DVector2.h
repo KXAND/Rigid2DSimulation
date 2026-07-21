@@ -11,7 +11,7 @@ struct DVector2
     DVector2(int x, int y) : x(x), y(y)
     {
     }
-    explicit DVector2(wstring const& s);
+    explicit DVector2(wstring const& text);
 
     int GetLengthSquared() const
     {
@@ -25,88 +25,88 @@ struct DVector2
     {
         return { -x, -y };
     }
-    DVector2& operator+=(DVector2 a)
+    DVector2& operator+=(DVector2 other)
     {
-        x += a.x;
-        y += a.y;
+        x += other.x;
+        y += other.y;
         return *this;
     }
-    DVector2& operator-=(DVector2 a)
+    DVector2& operator-=(DVector2 other)
     {
-        return *this += -a;
+        return *this += -other;
     }
-    DVector2& operator*=(DVector2 a)
+    DVector2& operator*=(DVector2 other)
     {
-        x *= a.x;
-        y *= a.y;
+        x *= other.x;
+        y *= other.y;
         return *this;
     }
-    DVector2& operator/=(DVector2 a)
+    DVector2& operator/=(DVector2 other)
     {
-        x /= a.x;
-        y /= a.y;
+        x /= other.x;
+        y /= other.y;
         return *this;
     }
-    DVector2& operator*=(int a)
+    DVector2& operator*=(int scale)
     {
-        x *= a;
-        y *= a;
+        x *= scale;
+        y *= scale;
         return *this;
     }
-    DVector2& operator/=(int a)
+    DVector2& operator/=(int scale)
     {
-        x /= a;
-        y /= a;
+        x /= scale;
+        y /= scale;
         return *this;
     }
 };
 
-inline DVector2 operator+(DVector2 a, DVector2 b)
+inline DVector2 operator+(DVector2 left, DVector2 right)
 {
-    return a += b;
+    return left += right;
 }
 
-inline DVector2 operator-(DVector2 a, DVector2 b)
+inline DVector2 operator-(DVector2 left, DVector2 right)
 {
-    return a -= b;
+    return left -= right;
 }
 
-inline DVector2 operator*(DVector2 a, DVector2 b)
+inline DVector2 operator*(DVector2 left, DVector2 right)
 {
-    return a *= b;
+    return left *= right;
 }
 
-inline DVector2 operator/(DVector2 a, DVector2 b)
+inline DVector2 operator/(DVector2 left, DVector2 right)
 {
-    return a /= b;
+    return left /= right;
 }
 
-inline DVector2 operator*(DVector2 a, int b)
+inline DVector2 operator*(DVector2 vector, int scale)
 {
-    return a *= b;
+    return vector *= scale;
 }
 
-inline DVector2 operator/(DVector2 a, int b)
+inline DVector2 operator/(DVector2 vector, int scale)
 {
-    return a /= b;
+    return vector /= scale;
 }
 
-inline DVector2 operator*(int a, DVector2 b)
+inline DVector2 operator*(int scale, DVector2 vector)
 {
-    return b * a;
+    return vector * scale;
 }
 
-inline bool operator==(DVector2 a, DVector2 b)
+inline bool operator==(DVector2 left, DVector2 right)
 {
-    return memcmp(&a, &b, sizeof(DVector2)) == 0;
+    return memcmp(&left, &right, sizeof(DVector2)) == 0;
 }
 
-inline bool operator!=(DVector2 a, DVector2 b)
+inline bool operator!=(DVector2 left, DVector2 right)
 {
-    return !(a == b);
+    return !(left == right);
 }
 
-wstring ToWString(DVector2 v);
+wstring ToWString(DVector2 vector);
 
 struct DRect
 {
@@ -118,7 +118,7 @@ struct DRect
     DRect(int w, int h) : DRect({}, w, h)
     {
     }
-    DRect(DVector2 tl, int w, int h) : topLeftPosition(tl), w(w), h(h)
+    DRect(DVector2 topLeft, int w, int h) : topLeftPosition(topLeft), w(w), h(h)
     {
     }
 
@@ -144,6 +144,6 @@ struct DRect
     }
 };
 
-bool IsInside(DVector2 v, DRect r);
+bool IsInside(DVector2 vector, DRect rectangle);
 // 这里可能会出现负的 DRect。
-DRect GetOverlapRect(DRect a, DRect b);
+DRect GetOverlapRect(DRect first, DRect second);
