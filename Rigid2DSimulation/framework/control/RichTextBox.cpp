@@ -242,7 +242,7 @@ void RichTextBox::RenderMain(App& app) {
 		!enabled ? invalidColor :
 		edit ? editColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-	drawRectangleWithBorderRaw(app.screen, tl, w, h, vp, color, frameColor);
+	DrawRectangleWithBorderRaw(app.screen, tl, w, h, vp, color, frameColor);
 
 	int textCursorX = 0;
 	DVector2 textTopLeft = tl + (DVector2)valueOffset;
@@ -255,7 +255,7 @@ void RichTextBox::RenderCursor(App& app) {
 		(sin(app.frameRate.GetElapsedTime() * blinkMultiplier) > 0 || cursorChanged);
 	if (showCursor) {
 		DVector2 cursorTopLeft = tl + GetCursorPosition(app) + DVector2(-cursorWidth, app.font.h - cursorHeight) / 2;
-		drawRectangleRaw(app.screen, cursorTopLeft, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
+		DrawRectangleRaw(app.screen, cursorTopLeft, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
 	}
 }
 void RichTextBox::Render(App& app) {

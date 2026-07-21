@@ -1,7 +1,7 @@
 #include "DrawGeometry.h"
 #include "DrawLineSegment.h"
 
-void drawRectangleRaw(Tile& targetTile, DVector2 topLeft, int w, int h, DRect viewPort, Color color)
+void DrawRectangleRaw(Tile& targetTile, DVector2 topLeft, int w, int h, DRect viewPort, Color color)
 {
 	int a = max(viewPort.GetLeft(), topLeft.x);
 	int b = min(viewPort.GetRight(), topLeft.x + w);
@@ -17,7 +17,7 @@ void drawRectangleRaw(Tile& targetTile, DVector2 topLeft, int w, int h, DRect vi
 	}
 }
 
-void drawRectangle(Tile& targetTile, DepthBuffer& zBuffer, double depth,
+void DrawRectangle(Tile& targetTile, DepthBuffer& zBuffer, double depth,
 	DVector2 topLeft, int width, int height, DRect viewPort, Color color)
 {
 	int a = max(viewPort.GetLeft(), topLeft.x);
@@ -37,7 +37,7 @@ void drawRectangle(Tile& targetTile, DepthBuffer& zBuffer, double depth,
 	}
 }
 
-void drawRectangleWithTransform(Tile& targetTile, DepthBuffer& zBuffer, double depth,
+void DrawRectangleWithTransform(Tile& targetTile, DepthBuffer& zBuffer, double depth,
 	Vector2 center, double width, double height, Matrix2 transformMatrix, DRect viewPort, Color color)
 {
 	Matrix2 transformInverse = transformMatrix.Inverse();
@@ -67,7 +67,7 @@ void drawRectangleWithTransform(Tile& targetTile, DepthBuffer& zBuffer, double d
 	}
 }
 
-void drawEllipse(Tile& targetTile, DepthBuffer& zBuffer, double depth,
+void DrawEllipse(Tile& targetTile, DepthBuffer& zBuffer, double depth,
 	Vector2 center, double a, double b, DRect viewPort, Color color)
 {
 	int left = max(viewPort.GetLeft(), int(center.x - a) - 1);

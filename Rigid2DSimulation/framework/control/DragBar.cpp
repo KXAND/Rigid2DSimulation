@@ -34,8 +34,8 @@ void HorizontalDragBar::Render(App& app) {
 		dragged ? draggedColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
 	DVector2 barTopLeft = tl + DVector2(textWidth, (nodeHeight - barHeight) / 2);
-	drawRectangleRaw(app.screen, barTopLeft, barWidth, barHeight, vp, barColor);
-	drawRectangleRaw(app.screen, GetNodeTopLeft(), nodeWidth, nodeHeight, vp, color);
+	DrawRectangleRaw(app.screen, barTopLeft, barWidth, barHeight, vp, barColor);
+	DrawRectangleRaw(app.screen, GetNodeTopLeft(), nodeWidth, nodeHeight, vp, color);
 }
 
 void HorizontalDragBar::Update(App& app) {

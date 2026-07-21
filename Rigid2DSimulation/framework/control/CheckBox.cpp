@@ -29,11 +29,11 @@ void CheckBox::Render(App& app) {
 	Color const& color =
 		!enabled ? invalidColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-	drawRectangleRaw(app.screen, GetBoxTopLeft(), boxSize, boxSize, vp, color);
+	DrawRectangleRaw(app.screen, GetBoxTopLeft(), boxSize, boxSize, vp, color);
 	if (checked) {
 		int innerOffset = (boxSize - innerBoxSize) / 2;
 		DVector2 innerBoxTopLeft = GetBoxTopLeft() + DVector2(innerOffset, innerOffset);
-		drawRectangleRaw(app.screen, innerBoxTopLeft, innerBoxSize, innerBoxSize, vp, innerColor);
+		DrawRectangleRaw(app.screen, innerBoxTopLeft, innerBoxSize, innerBoxSize, vp, innerColor);
 	}
 }
 

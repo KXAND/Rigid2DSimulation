@@ -15,13 +15,13 @@ VerticalScrollBar::VerticalScrollBar() {
 	invalidColor = { 0, 0, 0 };
 }
 void VerticalScrollBar::Render(App& app) {
-	drawRectangleWithBorderRaw(app.screen, tl, w, h, app.screen.Rect(), barColor, frameColor);
+	DrawRectangleWithBorderRaw(app.screen, tl, w, h, app.screen.Rect(), barColor, frameColor);
 	if (hasOverflow) {
 		Color const& color =
 			!enabled ? invalidColor :
 			dragged ? draggedColor :
 			(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-		drawRectangleWithBorderRaw(app.screen, tl + DVector2(0, thumbY), w, thumbHeight, app.screen.Rect(), color, frameColor);
+		DrawRectangleWithBorderRaw(app.screen, tl + DVector2(0, thumbY), w, thumbHeight, app.screen.Rect(), color, frameColor);
 	}
 }
 

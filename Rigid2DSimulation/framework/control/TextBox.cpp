@@ -194,7 +194,7 @@ void TextBox::RenderMain(App& app) {
 		!enabled ? invalidColor :
 		edit ? editColor :
 		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-	drawRectangleWithBorderRaw(app.screen, GetBoxTopLeft(), w, h, vp, color, frameColor);
+	DrawRectangleWithBorderRaw(app.screen, GetBoxTopLeft(), w, h, vp, color, frameColor);
 
 	int cursorX = 0;
 	DVector2 valueTopLeft = GetBoxTopLeft() + DVector2(valueOffsetX, (h - app.font.h) / 2);
@@ -208,7 +208,7 @@ void TextBox::RenderCursor(App& app) {
 	if (show_cursor) {
 		int cursorScreenX = GetBoxTopLeft().x + GetCursorX(app) - cursorWidth / 2;
 		int cursorScreenY = GetBoxTopLeft().y + (h - cursorHeight) / 2;
-		drawRectangleRaw(app.screen, { cursorScreenX, cursorScreenY }, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
+		DrawRectangleRaw(app.screen, { cursorScreenX, cursorScreenY }, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
 	}
 }
 void TextBox::Render(App& app) {

@@ -121,11 +121,11 @@ void FloatPanel::HandleWheelAndClampContent(App& app) {
 }
 
 void FloatPanel::RenderMain(App& app) {
-	drawRectangleWithBorderRaw(app.screen, tl, w, h, app.screen.Rect(), panelColor, frameColor);
+	DrawRectangleWithBorderRaw(app.screen, tl, w, h, app.screen.Rect(), panelColor, frameColor);
 	Color const& titleBarColor =
 		titleBarDragged ? titleBarDraggedColor :
 		titleBarHovered && (!app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? titleBarHoveredColor : titleBarNormalColor;
-	drawRectangleWithBorderRaw(app.screen, tl, w, titleBarHeight, app.screen.Rect(), titleBarColor, frameColor);
+	DrawRectangleWithBorderRaw(app.screen, tl, w, titleBarHeight, app.screen.Rect(), titleBarColor, frameColor);
 
 	DVector2 titleTopLeft = tl + DVector2(titleMargin, (titleBarHeight - app.font.h) / 2);
 	DrawString(app.screen, app.depthBuffer, depth, title, titleColor, app.font, titleTopLeft, 0, app.screen.Rect());
@@ -135,7 +135,7 @@ void FloatPanel::RenderClose(App& app) {
 		!closeButtonEnabled ? closeButtonInvalidColor :
 		closeButtonChosen ? closeButtonChosenColor :
 		closeButtonHovered && (!app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? closeButtonHoveredColor : closeButtonNormalColor;
-	drawRectangleRaw(app.screen, GetCloseTopLeft(), closeButtonSize, closeButtonSize, app.screen.Rect(), closeButtonColor);
+	DrawRectangleRaw(app.screen, GetCloseTopLeft(), closeButtonSize, closeButtonSize, app.screen.Rect(), closeButtonColor);
 
 	DVector2 closeMarkCenter = GetCloseTopLeft() + DVector2(closeButtonSize, closeButtonSize) / 2;
 	DVector2 closeMarkArm = { closeMarkHalfSize , closeMarkHalfSize };

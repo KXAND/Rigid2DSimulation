@@ -99,6 +99,7 @@
 - `framework/basic/Vector3.cpp` 已完成相机构造、保存和投影实现的 Allman 排版与局部命名迁移；序列化字段、投影计算和第一人称计算顺序保持不变。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
 - 线段裁剪、线段绘制和椭圆边框绘制接口已迁移为 `ClipLineSegment`、`DrawLineSegment`、`DrawEllipseBorder`；刚体与控件调用点已同步，裁剪和栅格化顺序保持不变。
+- 基础几何与带边框矩形绘制接口已迁移为 `DrawRectangleRaw`、`DrawRectangle`、`DrawRectangleWithTransform`、`DrawEllipse`、`DrawRectangleWithBorderRaw`、`DrawRectangleWithBorder`；刚体、碰撞和控件调用点已同步，绘制参数与深度判定保持不变。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。
 - `AppInput` 的鼠标、键盘和文本输入状态字段，以及 `FrameRate` 的采样与时间统计字段，已迁移为表达职责的 lower camel 名称；输入事件和帧率计算逻辑保持不变。

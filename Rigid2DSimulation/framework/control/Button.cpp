@@ -27,7 +27,7 @@ void Button::Render(App& app) {
 	DVector2 textSize = GetStringSize(text, app.font, 0);
 	DVector2 textTopLeft = tl + DVector2(w, h) / 2 - textSize / 2;
 
-	drawRectangleWithBorderRaw(app.screen, tl, w, h, vp, color, frameColor);
+	DrawRectangleWithBorderRaw(app.screen, tl, w, h, vp, color, frameColor);
 	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, vp);
 }
 

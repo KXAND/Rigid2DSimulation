@@ -302,14 +302,14 @@ void Body::Render(SimulationApp& cur) const
 
 	if (point)
 	{
-		drawEllipse(cur.screen, cur.depthBuffer, GetDepth(), position, pointRadius, pointRadius, cur.background->ViewPort(), color);
+		DrawEllipse(cur.screen, cur.depthBuffer, GetDepth(), position, pointRadius, pointRadius, cur.background->ViewPort(), color);
 		DrawEllipseBorder(cur.screen, cur.depthBuffer, GetDepth(), position, pointRadius, pointRadius, cur.background->ViewPort(), borderColor, 20);
 	}
 	for (auto& shape : shapes)
 	{
 		if (shape->isCircle)
 		{
-			drawEllipse(cur.screen, cur.depthBuffer, GetDepth(),
+			DrawEllipse(cur.screen, cur.depthBuffer, GetDepth(),
 				shape->position, shape->r, shape->r, cur.background->ViewPort(), color);
 			DrawEllipseBorder(cur.screen, cur.depthBuffer, GetDepth(),
 				shape->position, shape->r, shape->r, cur.background->ViewPort(), borderColor, 30);

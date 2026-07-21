@@ -71,7 +71,7 @@ void Panel::InitializeScrollBar() {
 	scrollBar->visibleTop = tl.y + contentOffset.y;
 }
 void Panel::Render(App& app) {
-	drawRectangleWithBorderRaw(app.screen, tl, w, h, app.screen.Rect(), panelColor, frameColor);
+	DrawRectangleWithBorderRaw(app.screen, tl, w, h, app.screen.Rect(), panelColor, frameColor);
 }
 
 void Panel::Init(App& app) { InitializeControl(app); InitializeScrollBar(); }
