@@ -14,10 +14,10 @@ struct RichTextBox : Control {
 
 	DVector2 editMargin;
 	DVector2 textViewportMargin;
-	double slide_mtp = 0;
-	double wheel_mtp = 0;
-	double twinkle_mtp = 0;
-	int w_cursor = 0, h_cursor = 0;
+	double slideMultiplier = 0;
+	double wheelMultiplier = 0;
+	double blinkMultiplier = 0;
+	int cursorWidth = 0, cursorHeight = 0;
 
 	wstring value;
 	Vector2 valueOffset;

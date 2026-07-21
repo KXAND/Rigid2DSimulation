@@ -20,10 +20,10 @@ RichTextBox::RichTextBox(int w, int h, bool newline) : w(w), h(h) {
 
 	editMargin = { 5, 5 };
 	textViewportMargin = { 2, 2 };
-	slide_mtp = 8;
-	wheel_mtp = 40;
-	twinkle_mtp = 8;
-	w_cursor = 2; h_cursor = 20;
+	slideMultiplier = 8;
+	wheelMultiplier = 40;
+	blinkMultiplier = 8;
+	cursorWidth = 2; cursorHeight = 20;
 
 	if (newline) { lineWidth = w - 2 * editMargin.x; }
 }
@@ -203,13 +203,13 @@ void RichTextBox::HandleKey(App& app) {
 
 void RichTextBox::ClampCursorWhileSelecting(App& app) {
 	double val = (app.input.msp.x - tl.x) - GetMaxCursorX();
-	if (val > 0) { valueOffset.x -= app.fps.dt() * slide_mtp * val; }
+	if (val > 0) { valueOffset.x -= app.fps.dt() * slideMultiplier * val; }
 	val = editMargin.x - (app.input.msp.x - tl.x);
-	if (val > 0) { valueOffset.x += app.fps.dt() * slide_mtp * val; }
+	if (val > 0) { valueOffset.x += app.fps.dt() * slideMultiplier * val; }
 	val = (app.input.msp.y - tl.y) - GetMaxCursorY();
-	if (val > 0) { valueOffset.y -= app.fps.dt() * slide_mtp * val; }
+	if (val > 0) { valueOffset.y -= app.fps.dt() * slideMultiplier * val; }
 	val = editMargin.y - (app.input.msp.y - tl.y);
-	if (val > 0) { valueOffset.y += app.fps.dt() * slide_mtp * val; }
+	if (val > 0) { valueOffset.y += app.fps.dt() * slideMultiplier * val; }
 }
 void RichTextBox::ClampCursorWithoutSelection(App& app) {
 	if (GetCursorPosition(app).x > GetMaxCursorX()) {
@@ -252,10 +252,10 @@ void RichTextBox::RenderMain(App& app) {
 }
 void RichTextBox::RenderCursor(App& app) {
 	bool show_cursor = edit &&
-		(sin(app.fps.dur() * twinkle_mtp) > 0 || cursor_change);
+		(sin(app.fps.dur() * blinkMultiplier) > 0 || cursor_change);
 	if (show_cursor) {
-		DVector2 tl_cs = tl + GetCursorPosition(app) + DVector2(-w_cursor, app.ft.h - h_cursor) / 2;
-		drawRectangleRaw(app.scr, tl_cs, w_cursor, h_cursor, GetTextViewport(), cursorColor);
+		DVector2 tl_cs = tl + GetCursorPosition(app) + DVector2(-cursorWidth, app.ft.h - cursorHeight) / 2;
+		drawRectangleRaw(app.scr, tl_cs, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
 	}
 }
 void RichTextBox::Render(App& app) {
@@ -287,7 +287,7 @@ void RichTextBox::Update(App& app) {
 		}
 	} 
 
-	if (app.own.wheeled == this) { valueOffset.y += app.input.msw * wheel_mtp; }
+	if (app.own.wheeled == this) { valueOffset.y += app.input.msw * wheelMultiplier; }
 	ClampTextPosition(app); Render(app);
 }
 void RichTextBox::Discard(App& app) {
