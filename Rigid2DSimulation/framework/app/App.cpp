@@ -3,24 +3,24 @@
 
 App::App()
 {
-	w = 800; h = 600;
+	width = 800; height = 600;
 	title = L"程序"; windowClassName = L"class";
 }
 void App::Init()
 {
 	AddLog(L"开始加载程序.\n");
-	SetLocale(); screen = Tile(w, h);
-	depthBuffer = initialDepthBuffer = DepthBuffer(w * h, -DBL_MAX);
-	bool ret = font.Initialize();
-	AddLog(ret ? L"成功加载字体模块.\n" : L"加载字体模块失败.\n");
+	SetLocale(); screen = Tile(width, height);
+	depthBuffer = initialDepthBuffer = DepthBuffer(width * height, -DBL_MAX);
+	bool isFontLoaded = font.Initialize();
+	AddLog(isFontLoaded ? L"成功加载字体模块.\n" : L"加载字体模块失败.\n");
 
-	HRESULT hr = SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-	AddLog(hr == S_OK ? L"成功设置 DPI 感知.\n" : L"设置 DPI 感知失败.\n");
+	HRESULT dpiAwarenessResult = SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+	AddLog(dpiAwarenessResult == S_OK ? L"成功设置 DPI 感知.\n" : L"设置 DPI 感知失败.\n");
 	instanceHandle = GetModuleHandle(NULL);
 	AddLog(instanceHandle ? L"成功取得模块句柄.\n" : L"取得模块句柄失败.\n");
 
-	RegisterWindowClass(); CreateApplicationWindow(); ret = waveOutput.Initialize();
-	AddLog(ret ? L"成功加载声音模块.\n" : L"加载声音模块失败.\n");
+	RegisterWindowClass(); CreateApplicationWindow(); bool isAudioLoaded = waveOutput.Initialize();
+	AddLog(isAudioLoaded ? L"成功加载声音模块.\n" : L"加载声音模块失败.\n");
 	input.Initialize(windowHandle); InitializeBitmapInfo(); LoadLocalizationFile();
 
 	deviceContext = GetDC(windowHandle);
@@ -28,29 +28,29 @@ void App::Init()
 	systemCursor = LoadCursorW(NULL, IDC_ARROW);
 	AddLog(systemCursor ? L"成功加载光标.\n" : L"加载光标失败.\n");
 }
-void App::Run(bool console)
+void App::Run(bool showConsole)
 {
-	if (!console) { HideConsole(); }
-	MSG msg{}; frameRate.Start(); ShowWindow(windowHandle, SW_SHOW);
+	if (!showConsole) { HideConsole(); }
+	MSG message{}; frameRate.Start(); ShowWindow(windowHandle, SW_SHOW);
 
 	while (true)
 	{
-		if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE))
+		if (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE))
 		{
-			if (msg.message == WM_QUIT) { break; }
-			TranslateMessage(&msg);
-			DispatchMessageW(&msg);
+			if (message.message == WM_QUIT) { break; }
+			TranslateMessage(&message);
+			DispatchMessageW(&message);
 		}
 		else
 		{
-			bool ret = SetWindowText(windowHandle, title.c_str());
-			if (!ret) { AddLog(L"设置标题失败.\n"); }
+			bool isWindowTitleUpdated = SetWindowText(windowHandle, title.c_str());
+			if (!isWindowTitleUpdated) { AddLog(L"设置标题失败.\n"); }
 			frameRate.Update(); ResetDepthBuffer();
-			ret = input.SyncMouse(windowHandle);
-			if (!ret) { AddLog(L"同步鼠标位置失败.\n");
+			bool isMouseSynchronized = input.SyncMouse(windowHandle);
+			if (!isMouseSynchronized) { AddLog(L"同步鼠标位置失败.\n");
 			}
-			Update(); ret = waveOutput.Play();
-			if (!ret) { AddLog(L"播放声音失败.\n"); }
+			Update(); bool isAudioPlayed = waveOutput.Play();
+			if (!isAudioPlayed) { AddLog(L"播放声音失败.\n"); }
 			PresentScreen(); input.Reset(); inputOwners.Reset();
 		}
 	} ReleaseDC(windowHandle, deviceContext);
@@ -63,15 +63,15 @@ void App::ResetDepthBuffer()
 }
 void App::PresentScreen()
 {
-	int ret = SetDIBitsToDevice(deviceContext, 0, 0, w, h,
-		0, 0, 0, h, screen.colors.data(), &bitmapInfo, DIB_RGB_COLORS);
-	if (!ret) { AddLog(L"展示屏幕失败.\n"); }
+	int isScreenPresented = SetDIBitsToDevice(deviceContext, 0, 0, width, height,
+		0, 0, 0, height, screen.colors.data(), &bitmapInfo, DIB_RGB_COLORS);
+	if (!isScreenPresented) { AddLog(L"展示屏幕失败.\n"); }
 }
-void App::AddLog(wstring const& s)
+void App::AddLog(wstring const& text)
 {
-	FILE* f_log = OpenFile(L"运行记录.log", L"a");
-	if (!f_log) { PrintConsole(L"运行记录打开失败。", true); }
-	else { fwprintf(f_log, s.c_str()); fclose(f_log); }
+	FILE* logFile = OpenFile(L"运行记录.log", L"a");
+	if (!logFile) { PrintConsole(L"运行记录打开失败。", true); }
+	else { fwprintf(logFile, text.c_str()); fclose(logFile); }
 }
 wstring App::GetLocalizedString(wstring const& id) const
 {
@@ -85,68 +85,68 @@ wstring App::GetLocalizedString(wstring const& id) const
 
 void App::InitializeBitmapInfo()
 {
-	BITMAPINFOHEADER hd{};
-	hd.biSize = sizeof(hd);
-	hd.biWidth = w;
-	hd.biHeight = -h;
-	hd.biPlanes = 1;
-	hd.biBitCount = 24;
-	hd.biCompression = BI_RGB;
-	bitmapInfo.bmiHeader = hd;
+	BITMAPINFOHEADER bitmapInfoHeader{};
+	bitmapInfoHeader.biSize = sizeof(bitmapInfoHeader);
+	bitmapInfoHeader.biWidth = width;
+	bitmapInfoHeader.biHeight = -height;
+	bitmapInfoHeader.biPlanes = 1;
+	bitmapInfoHeader.biBitCount = 24;
+	bitmapInfoHeader.biCompression = BI_RGB;
+	bitmapInfo.bmiHeader = bitmapInfoHeader;
 }
 void App::LoadLocalizationFile()
 {
-	FILE* f = OpenFile(L"localization.txt", L"r");
-	if (!f) { return; }
+	FILE* file = OpenFile(L"localization.txt", L"r");
+	if (!file) { return; }
 
 	bool dollar = false;
-	wstringstream s; wstring id;
-	vector<wstring> strs; wchar_t c = getwc(f);
-	while (c != WEOF)
+	wstringstream textBuffer; wstring id;
+	vector<wstring> translations; wchar_t character = getwc(file);
+	while (character != WEOF)
 	{
-		if (c == L'$')
+		if (character == L'$')
 		{
 			if (dollar)
 			{
-				strs.push_back(s.str());
-				s = wstringstream();
+				translations.push_back(textBuffer.str());
+				textBuffer = wstringstream();
 			} dollar = !dollar;
 		}
-		else if (dollar) { s << c; }
-		else if (!iswspace(c))
+		else if (dollar) { textBuffer << character; }
+		else if (!iswspace(character))
 		{
-			if (!strs.empty())
+			if (!translations.empty())
 			{
-				localizationDict[id] = strs;
-				strs.clear(); id.clear();
-			} id += c;
-		} c = getwc(f);
+				localizationDict[id] = translations;
+				translations.clear(); id.clear();
+			} id += character;
+		} character = getwc(file);
 	}
-	if (!strs.empty()) { localizationDict[id] = strs; }
-	fclose(f);
+	if (!translations.empty()) { localizationDict[id] = translations; }
+	fclose(file);
 }
 void App::RegisterWindowClass()
 {
-	WNDCLASSEXW wc{};
-	wc.cbSize = sizeof(wc);
-	wc.lpfnWndProc = WindowProcedure;
-	wc.hInstance = instanceHandle;
-	wc.lpszClassName = windowClassName.c_str();
+	WNDCLASSEXW windowClass{};
+	windowClass.cbSize = sizeof(windowClass);
+	windowClass.lpfnWndProc = WindowProcedure;
+	windowClass.hInstance = instanceHandle;
+	windowClass.lpszClassName = windowClassName.c_str();
 
-	ATOM ret = RegisterClassExW(&wc);
-	AddLog(ret ? L"成功注册窗口类.\n" : L"注册窗口类失败.\n");
+	ATOM windowClassAtom = RegisterClassExW(&windowClass);
+	AddLog(windowClassAtom ? L"成功注册窗口类.\n" : L"注册窗口类失败.\n");
 }
 void App::CreateApplicationWindow()
 {
-	RECT cr{}; cr.right = w; cr.bottom = h;
-	DWORD sty = WS_SYSMENU | WS_CAPTION;
-	BOOL ret = AdjustWindowRect(&cr, sty, FALSE);
-	AddLog(ret ? L"成功调整窗口矩形.\n" : L"调整窗口矩形失败.\n");
-	int rw = cr.right - cr.left;
-	int rh = cr.bottom - cr.top;
+	RECT clientRect{}; clientRect.right = width; clientRect.bottom = height;
+	DWORD windowStyle = WS_SYSMENU | WS_CAPTION;
+	BOOL isWindowRectAdjusted = AdjustWindowRect(&clientRect, windowStyle, FALSE);
+	AddLog(isWindowRectAdjusted ? L"成功调整窗口矩形.\n" : L"调整窗口矩形失败.\n");
+	int windowWidth = clientRect.right - clientRect.left;
+	int windowHeight = clientRect.bottom - clientRect.top;
 
 	windowHandle = CreateWindowExW(0, windowClassName.c_str(),
-		title.c_str(), sty, 0, 0, rw, rh, NULL, NULL, instanceHandle, this);
+		title.c_str(), windowStyle, 0, 0, windowWidth, windowHeight, NULL, NULL, instanceHandle, this);
 	AddLog(windowHandle ? L"成功创建窗口.\n" : L"创建窗口失败.\n");
 }
 

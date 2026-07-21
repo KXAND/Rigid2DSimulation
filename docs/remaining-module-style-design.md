@@ -39,8 +39,14 @@
 | `f` | `file` | `App::LoadLocalizationFile` |
 | `s`、`strs`、`c` | `textBuffer`、`translations`、`character` | `App::LoadLocalizationFile` |
 | `wc`、`cr`、`sty`、`rw`、`rh` | `windowClass`、`clientRect`、`windowStyle`、`windowWidth`、`windowHeight` | 窗口注册与创建函数 |
+| `hr` | `dpiAwarenessResult` | `App::Init` |
+| `ret` | 按调用点分别为 `isFontLoaded`、`isAudioLoaded`、`isWindowTitleUpdated`、`isMouseSynchronized`、`isAudioPlayed`、`isScreenPresented`、`windowClassAtom`、`isWindowRectAdjusted` | `App.cpp` 的初始化、主循环、显示、窗口注册和窗口创建 |
+| `AppMessage.cpp` 的 `app` | `application` | 消息处理函数与窗口过程静态应用指针 |
+| `AppInput` 的 `m`、`k` | `mouseButtonIndex`、`keyCode` | 鼠标和键盘查询接口 |
+| `AppInput` 的 `hwnd`、`pnt`、`ret`、`hold` | `windowHandle`、`mouseScreenPosition`、`isPositionRetrieved`、`isButtonPressed` | 鼠标同步和初始化 |
+| `InputOwners` 的 `o` | `owner` | 所有者移除和释放接口 |
 
-应用状态和消息分发合并为第 10 节的 `refactor(app): clarify application names`。消息参数映射为：`wnd` 到 `windowHandle`、`msg` 到 `message`、`wp` 到 `wParam`、`lp` 到 `lParam`、`pcs` 到 `createStruct`、`cs` 到 `cursor`、`dt` 到 `wheelDelta`。Windows 消息常量和 API 名称保持不变。
+应用状态、输入局部变量和消息分发合并为第 10 节的 `refactor(app): clarify application names`。消息参数映射为：`wnd` 到 `windowHandle`、`msg` 到 `message`、`wp` 到 `wParam`、`lp` 到 `lParam`、`pcs` 到 `createStruct`、`cs` 到 `cursor`、`dt` 到 `wheelDelta`。Windows 消息常量和 API 名称保持不变。
 
 ## 4. `framework/draw`
 
@@ -166,7 +172,7 @@
 | --- | --- | --- | --- | --- |
 | 1 | `refactor(control): clarify control geometry names` | 已完成 | `framework/control` 的全部控件几何名称和 `current/ui` 直接访问 | 排版、布局或交互逻辑 |
 | 2 | `refactor(basic): clarify geometry names` | 已完成 | `Rect`、`DRect`、`Camera` 字段、构造参数和直接访问 | `Tile`、`App` 的几何字段 |
-| 3 | `refactor(app): clarify application names` | 待执行 | `App` 状态、本地化局部变量和 Win32 消息分发参数 | 消息流程、窗口创建逻辑 |
+| 3 | `refactor(app): clarify application names` | 已完成 | `App` 状态、本地化局部变量和 Win32 消息分发参数 | 消息流程、窗口创建逻辑 |
 | 4 | `refactor(draw): clarify primitive geometry names` | 待执行 | 矩形、椭圆、三角形绘制接口与非数学局部变量 | 绘制算法和扫描线计算 |
 | 5 | `refactor(media): clarify media resource names` | 待执行 | 字符集、`Color`、`Tile`、`Font` 与音频输出局部变量 | 图块/音频二进制布局和资源加载顺序 |
 | 6 | `refactor(common): clarify scene state names` | 待执行 | `Background`、配置读取工具和 `SimulationApp` 的集合局部变量 | 场景逻辑、网格算法和 DSL 键 |

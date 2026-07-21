@@ -15,8 +15,8 @@
 
 SimulationApp::SimulationApp()
 {
-    w = 1800;
-    h = 900;
+    width = 1800;
+    height = 900;
     SetLocale();
     waveOutput.blockDuration = 4 * 5e-4;
 

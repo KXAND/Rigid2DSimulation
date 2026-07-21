@@ -6,27 +6,27 @@ void AppInput::TrackMouse() {
 		TrackMouseEvent(&mouseLeaveTracking);
 	}
 }
-bool AppInput::SyncMouse(HWND hwnd) {
-	POINT pnt{}; BOOL ret = GetCursorPos(&pnt);
-	if (!ret) { return false; }
-	ret = ScreenToClient(hwnd, &pnt);
-	if (!ret) { return false; }
+bool AppInput::SyncMouse(HWND windowHandle) {
+	POINT mouseScreenPosition{}; BOOL isPositionRetrieved = GetCursorPos(&mouseScreenPosition);
+	if (!isPositionRetrieved) { return false; }
+	isPositionRetrieved = ScreenToClient(windowHandle, &mouseScreenPosition);
+	if (!isPositionRetrieved) { return false; }
 
-	previousMousePosition = mousePosition; mousePosition = { pnt.x, pnt.y };
+	previousMousePosition = mousePosition; mousePosition = { mouseScreenPosition.x, mouseScreenPosition.y };
 	if (!isMouseInputOwned) {
-		bool hold = HIWORD(GetAsyncKeyState(VK_LBUTTON));
-		if (!hold) { mouseButtonDown[0] = false; }
-		hold = HIWORD(GetAsyncKeyState(VK_MBUTTON));
-		if (!hold) { mouseButtonDown[1] = false; }
-		hold = HIWORD(GetAsyncKeyState(VK_RBUTTON));
-		if (!hold) { mouseButtonDown[2] = false; }
+		bool isButtonPressed = HIWORD(GetAsyncKeyState(VK_LBUTTON));
+		if (!isButtonPressed) { mouseButtonDown[0] = false; }
+		isButtonPressed = HIWORD(GetAsyncKeyState(VK_MBUTTON));
+		if (!isButtonPressed) { mouseButtonDown[1] = false; }
+		isButtonPressed = HIWORD(GetAsyncKeyState(VK_RBUTTON));
+		if (!isButtonPressed) { mouseButtonDown[2] = false; }
 	} return true;
 }
 
-void AppInput::Initialize(HWND hwnd) {
+void AppInput::Initialize(HWND windowHandle) {
 	mouseLeaveTracking.cbSize = sizeof(mouseLeaveTracking);
 	mouseLeaveTracking.dwFlags = TME_LEAVE;
-	mouseLeaveTracking.hwndTrack = hwnd;
+	mouseLeaveTracking.hwndTrack = windowHandle;
 }
 void AppInput::Reset() {
 	mouseWheelDelta = 0; typedCharacters.clear();
@@ -52,12 +52,12 @@ void FrameRate::Update() {
 void InputOwners::Reset() {
 	hoveredDepth = wheeledDepth = -DBL_MAX; keyboardOwner = hovered = wheeled = NULL;
 }
-void InputOwners::Remove(void* o) {
-	if (keyboardOwner == o) { keyboardOwner = NULL; }
-	if (hovered == o) { hovered = NULL; }
-	if (wheeled == o) { wheeled = NULL; }
+void InputOwners::Remove(void* owner) {
+	if (keyboardOwner == owner) { keyboardOwner = NULL; }
+	if (hovered == owner) { hovered = NULL; }
+	if (wheeled == owner) { wheeled = NULL; }
 }
-void InputOwners::ReleaseKeyboard(void* o) {
-	if (keyboardOwner == o) { keyboardOwner = NULL; }
+void InputOwners::ReleaseKeyboard(void* owner) {
+	if (keyboardOwner == owner) { keyboardOwner = NULL; }
 }
 

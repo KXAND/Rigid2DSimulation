@@ -17,7 +17,7 @@ Panel::Panel() {
 Panel Panel::CreateMenuPanel(App& app) {
 	Panel panel;
 	panel.width = 169;
-	panel.height = app.h - 40;
+	panel.height = app.height - 40;
 	panel.visibleHeight = panel.height - 20;
 
 	DRect contentViewportRelative;
@@ -28,9 +28,9 @@ Panel Panel::CreateMenuPanel(App& app) {
 }
 Panel Panel::CreateBottomPanel(App& app) {
 	Panel panel;
-	panel.width = app.w;
+	panel.width = app.width;
 	panel.height = 40;
-	panel.topLeft.y = app.h - panel.height;
+	panel.topLeft.y = app.height - panel.height;
 	panel.visibleHeight = panel.height;
 
 	DRect contentViewportRelative;

@@ -17,13 +17,13 @@ struct AppInput {
 	bool isMouseLeaveTracked = false;
 	TRACKMOUSEEVENT mouseLeaveTracking{};
 
-	bool IsMouseClickedDown(int m) { return mouseButtonDown[m] && !previousMouseButtonDown[m]; }
-	bool IsKeyPressedDown(int k) { return keyDown[k] && !previousKeyDown[k]; }
+	bool IsMouseClickedDown(int mouseButtonIndex) { return mouseButtonDown[mouseButtonIndex] && !previousMouseButtonDown[mouseButtonIndex]; }
+	bool IsKeyPressedDown(int keyCode) { return keyDown[keyCode] && !previousKeyDown[keyCode]; }
 
 	void TrackMouse();
-	bool SyncMouse(HWND hwnd);
+	bool SyncMouse(HWND windowHandle);
 
-	void Initialize(HWND hwnd);
+	void Initialize(HWND windowHandle);
 	void Reset();
 };
 
@@ -50,7 +50,7 @@ struct InputOwners {
 	double hoveredDepth = -DBL_MAX, wheeledDepth = -DBL_MAX;
 
 	void Reset();
-	void Remove(void* o);
-	void ReleaseKeyboard(void* o);
+	void Remove(void* owner);
+	void ReleaseKeyboard(void* owner);
 };
 

@@ -3,12 +3,12 @@
 #include "WaveOutput.h"
 #include "AppItem.h"
 
-int constexpr LAN_CHI = 0;
-int constexpr LAN_ENG = 1;
+int constexpr kChineseLanguage = 0;
+int constexpr kEnglishLanguage = 1;
 
-LRESULT CALLBACK WindowProcedure(HWND wnd, UINT msg, WPARAM wp, LPARAM lp);
+LRESULT CALLBACK WindowProcedure(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam);
 struct App {
-	int w = 0, h = 0;
+	int width = 0, height = 0;
 	Tile screen;
 	DepthBuffer depthBuffer, initialDepthBuffer;
 
@@ -34,11 +34,11 @@ struct App {
 	App();
 	void Init();
 	virtual void Update() {}
-	void Run(bool ShowConsole = false);
+	void Run(bool showConsole = false);
 
 	void ResetDepthBuffer();
 	void PresentScreen();
-	void AddLog(wstring const& s);
+	void AddLog(wstring const& text);
 	wstring GetLocalizedString(wstring const& id) const;
 
 	void InitializeBitmapInfo();

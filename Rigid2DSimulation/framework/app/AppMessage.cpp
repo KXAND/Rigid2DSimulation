@@ -1,49 +1,49 @@
 #include "App.h"
 
-int HandleCreate(App*& app, WPARAM wp, LPARAM lp) {
-	auto pcs = (CREATESTRUCT*)lp;
-	app = (App*)pcs->lpCreateParams;
+int HandleCreate(App*& application, WPARAM wParam, LPARAM lParam) {
+	auto createStruct = (CREATESTRUCT*)lParam;
+	application = (App*)createStruct->lpCreateParams;
 	return 0;
 }
-int HandleDestroy(App* app, WPARAM wp, LPARAM lp) {
+int HandleDestroy(App* application, WPARAM wParam, LPARAM lParam) {
 	PostQuitMessage(0);
 	return 0;
 }
-int HandleKillFocus(App* app, WPARAM wp, LPARAM lp) {
-	app->input.keyDown.fill(false);
+int HandleKillFocus(App* application, WPARAM wParam, LPARAM lParam) {
+	application->input.keyDown.fill(false);
 	return 0;
 }
-int HandleSetCursor(App* app, WPARAM wp, LPARAM lp) {
-	HCURSOR cs =
-		LOWORD(lp) != HTCLIENT || app->useSystemCursor ?
-		app->systemCursor : NULL;
-	SetCursor(cs);
+int HandleSetCursor(App* application, WPARAM wParam, LPARAM lParam) {
+	HCURSOR cursor =
+		LOWORD(lParam) != HTCLIENT || application->useSystemCursor ?
+		application->systemCursor : NULL;
+	SetCursor(cursor);
 	return 0;
 }
-int HandleCaptureChanged(App* app, WPARAM wp, LPARAM lp) {
-	app->input.isTitleBarClicked = true;
-	app->input.keyDown.fill(false);
+int HandleCaptureChanged(App* application, WPARAM wParam, LPARAM lParam) {
+	application->input.isTitleBarClicked = true;
+	application->input.keyDown.fill(false);
 	return 0;
 }
-int HandleCharacter(App* app, WPARAM wp, LPARAM lp) {
-	app->input.typedCharacters += (wchar_t)wp;
+int HandleCharacter(App* application, WPARAM wParam, LPARAM lParam) {
+	application->input.typedCharacters += (wchar_t)wParam;
 	return 0;
 }
-int HandleKeyUp(App* app, WPARAM wp, LPARAM lp) {
-	app->input.keyDown[wp] = false;
+int HandleKeyUp(App* application, WPARAM wParam, LPARAM lParam) {
+	application->input.keyDown[wParam] = false;
 	return 0;
 }
-int HandleKeyDown(App* app, WPARAM wp, LPARAM lp) {
-	app->input.keyMessageCounts[wp]++;
-	app->input.keyDown[wp] = true;
+int HandleKeyDown(App* application, WPARAM wParam, LPARAM lParam) {
+	application->input.keyMessageCounts[wParam]++;
+	application->input.keyDown[wParam] = true;
 	return 0;
 }
-int HandleMouseMove(App* app, WPARAM wp, LPARAM lp) {
+int HandleMouseMove(App* application, WPARAM wParam, LPARAM lParam) {
 	return 0;
 }
-int HandleMouseWheel(App* app, WPARAM wp, LPARAM lp) {
-	int dt = GET_WHEEL_DELTA_WPARAM(wp);
-	app->input.mouseWheelDelta = (double)dt / WHEEL_DELTA;
+int HandleMouseWheel(App* application, WPARAM wParam, LPARAM lParam) {
+	int wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+	application->input.mouseWheelDelta = (double)wheelDelta / WHEEL_DELTA;
 	return 0;
 }
 
@@ -51,68 +51,68 @@ int HandleMouseWheel(App* app, WPARAM wp, LPARAM lp) {
 // 可能一帧之内鼠标做了很多事情。
 // 窗口最小化或者被遮挡之后，如何判断鼠标是否在窗口内。
 // 好像鼠标在桌面之外的时候不会有 MOUSELEAVE 消息。
-int HandleMouseLeave(App* app, WPARAM wp, LPARAM lp) {
-	app->input.isMouseInputOwned = false;
-	app->input.isMouseLeaveTracked = false;
+int HandleMouseLeave(App* application, WPARAM wParam, LPARAM lParam) {
+	application->input.isMouseInputOwned = false;
+	application->input.isMouseLeaveTracked = false;
 	return 0;
 }
-int HandleLeftMouseUp(App* app, WPARAM wp, LPARAM lp) {
-	app->input.mouseButtonDown[0] = false;
-	app->input.isMouseInputOwned = true;
+int HandleLeftMouseUp(App* application, WPARAM wParam, LPARAM lParam) {
+	application->input.mouseButtonDown[0] = false;
+	application->input.isMouseInputOwned = true;
 	return 0;
 }
-int HandleLeftMouseDown(App* app, WPARAM wp, LPARAM lp) {
-	app->input.mouseButtonDown[0] = true;
-	app->input.isMouseInputOwned = true;
-	app->input.TrackMouse();
+int HandleLeftMouseDown(App* application, WPARAM wParam, LPARAM lParam) {
+	application->input.mouseButtonDown[0] = true;
+	application->input.isMouseInputOwned = true;
+	application->input.TrackMouse();
 	return 0;
 }
-int HandleMiddleMouseUp(App* app, WPARAM wp, LPARAM lp) {
-	app->input.mouseButtonDown[1] = false;
-	app->input.isMouseInputOwned = true;
+int HandleMiddleMouseUp(App* application, WPARAM wParam, LPARAM lParam) {
+	application->input.mouseButtonDown[1] = false;
+	application->input.isMouseInputOwned = true;
 	return 0;
 }
-int HandleMiddleMouseDown(App* app, WPARAM wp, LPARAM lp) {
-	app->input.mouseButtonDown[1] = true;
-	app->input.isMouseInputOwned = true;
-	app->input.TrackMouse();
+int HandleMiddleMouseDown(App* application, WPARAM wParam, LPARAM lParam) {
+	application->input.mouseButtonDown[1] = true;
+	application->input.isMouseInputOwned = true;
+	application->input.TrackMouse();
 	return 0;
 }
-int HandleRightMouseUp(App* app, WPARAM wp, LPARAM lp) {
-	app->input.mouseButtonDown[2] = false;
-	app->input.isMouseInputOwned = true;
+int HandleRightMouseUp(App* application, WPARAM wParam, LPARAM lParam) {
+	application->input.mouseButtonDown[2] = false;
+	application->input.isMouseInputOwned = true;
 	return 0;
 }
-int HandleRightMouseDown(App* app, WPARAM wp, LPARAM lp) {
-	app->input.mouseButtonDown[2] = true;
-	app->input.isMouseInputOwned = true;
-	app->input.TrackMouse();
+int HandleRightMouseDown(App* application, WPARAM wParam, LPARAM lParam) {
+	application->input.mouseButtonDown[2] = true;
+	application->input.isMouseInputOwned = true;
+	application->input.TrackMouse();
 	return 0;
 }
 
 // 我搞不清楚什么是 capture changed。
 // 实际中发现在点击标题栏的时候会有这个消息。
-LRESULT CALLBACK WindowProcedure(HWND wnd, UINT msg, WPARAM wp, LPARAM lp) {
-	static App* app = NULL;
-	switch (msg) {
-	case WM_CREATE: return HandleCreate(app, wp, lp);
-	case WM_DESTROY: return HandleDestroy(app, wp, lp);
-	case WM_KILLFOCUS: return HandleKillFocus(app, wp, lp);
-	case WM_SETCURSOR: return HandleSetCursor(app, wp, lp);
-	case WM_CAPTURECHANGED: return HandleCaptureChanged(app, wp, lp);
-	case WM_CHAR: return HandleCharacter(app, wp, lp);
-	case WM_KEYUP: return HandleKeyUp(app, wp, lp);
-	case WM_KEYDOWN: return HandleKeyDown(app, wp, lp);
-	case WM_MOUSEMOVE: return HandleMouseMove(app, wp, lp);
-	case WM_MOUSEWHEEL: return HandleMouseWheel(app, wp, lp);
-	case WM_MOUSELEAVE: return HandleMouseLeave(app, wp, lp);
-	case WM_LBUTTONUP: return HandleLeftMouseUp(app, wp, lp);
-	case WM_LBUTTONDOWN: return HandleLeftMouseDown(app, wp, lp);
-	case WM_MBUTTONUP: return HandleMiddleMouseUp(app, wp, lp);
-	case WM_MBUTTONDOWN: return HandleMiddleMouseDown(app, wp, lp);
-	case WM_RBUTTONUP: return HandleRightMouseUp(app, wp, lp);
-	case WM_RBUTTONDOWN: return HandleRightMouseDown(app, wp, lp);
-	default: return DefWindowProc(wnd, msg, wp, lp);
+LRESULT CALLBACK WindowProcedure(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam) {
+	static App* application = NULL;
+	switch (message) {
+	case WM_CREATE: return HandleCreate(application, wParam, lParam);
+	case WM_DESTROY: return HandleDestroy(application, wParam, lParam);
+	case WM_KILLFOCUS: return HandleKillFocus(application, wParam, lParam);
+	case WM_SETCURSOR: return HandleSetCursor(application, wParam, lParam);
+	case WM_CAPTURECHANGED: return HandleCaptureChanged(application, wParam, lParam);
+	case WM_CHAR: return HandleCharacter(application, wParam, lParam);
+	case WM_KEYUP: return HandleKeyUp(application, wParam, lParam);
+	case WM_KEYDOWN: return HandleKeyDown(application, wParam, lParam);
+	case WM_MOUSEMOVE: return HandleMouseMove(application, wParam, lParam);
+	case WM_MOUSEWHEEL: return HandleMouseWheel(application, wParam, lParam);
+	case WM_MOUSELEAVE: return HandleMouseLeave(application, wParam, lParam);
+	case WM_LBUTTONUP: return HandleLeftMouseUp(application, wParam, lParam);
+	case WM_LBUTTONDOWN: return HandleLeftMouseDown(application, wParam, lParam);
+	case WM_MBUTTONUP: return HandleMiddleMouseUp(application, wParam, lParam);
+	case WM_MBUTTONDOWN: return HandleMiddleMouseDown(application, wParam, lParam);
+	case WM_RBUTTONUP: return HandleRightMouseUp(application, wParam, lParam);
+	case WM_RBUTTONDOWN: return HandleRightMouseDown(application, wParam, lParam);
+	default: return DefWindowProc(windowHandle, message, wParam, lParam);
 	}
 }
 
