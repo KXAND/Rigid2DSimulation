@@ -63,9 +63,10 @@
 | `top_bgr` | `backgroundTop` | `SimulationApp::UpdateBasicState` | 已迁移 |
 | `w_bgr` | `backgroundWidth` | `SimulationApp::UpdateBasicState` | 已迁移 |
 | `h_bgr` | `backgroundHeight` | `SimulationApp::UpdateBasicState` | 已迁移 |
-| `cur.fps.dt()` | `cur.frameRate.GetDeltaTime()` | `SimulationApp::Update` | 已迁移 |
+| `cur.fps.dt()` | `current.frameRate.GetDeltaTime()` | `SimulationApp::Update` | 已迁移 |
+| `cur.debugString` | `current.debugString` | `SimulationApp::UpdateBasicState` | 已迁移 |
 
-`cur.frameRate.GetDeltaTime()` 含有访问和调用语法；当前实现将其作为完整作用域键写入，未改变解析器的访问表达式语法。
+`current.frameRate.GetDeltaTime()` 含有访问和调用语法；当前实现将其作为完整作用域键写入，未改变解析器的访问表达式语法。
 
 ## 5. 场景与刚体配置键
 

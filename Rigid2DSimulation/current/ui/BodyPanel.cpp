@@ -31,7 +31,7 @@ void BodyConnectionLabel::Sync(App& app) {
 	case kSpringConnection: type = simulationApp.GetLocalizedString(L"springConnection"); break;
 	case kCordConnection: type = simulationApp.GetLocalizedString(L"cordConnection"); break;
 	}
-	text = simulationApp.GetLocalizedString(L"conn") + std::to_wstring(id) + L": " + type;
+	text = simulationApp.GetLocalizedString(L"connectionLabel") + std::to_wstring(id) + L": " + type;
 }
 
 SelectBodyConnectionCheckBox::SelectBodyConnectionCheckBox(int id) : id(id), LocalizedCheckBox(L"selectBodyConnection") {}

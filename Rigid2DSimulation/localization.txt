@@ -38,7 +38,7 @@ bodyDynamicFriction $动摩擦系数: $ $Dynamic Friction: $
 bodyVelocityDamping $速度阻尼: $ $Vel. Damping: $
 bodyAngularVelocityDamping $角速度阻尼: $ $Ang. Vel. Damping: $
 noConnectionSelected $没有选中连接.$ $No connection selected.$
-conn $连接 $ $Connection $
+connectionLabel $连接 $ $Connection $
 connectionType $类别: $ $Type: $
 ropeConnection $绳子$ $Rope$
 linkConnection $连杆$ $Rod$
@@ -69,7 +69,7 @@ timeLabel $时间: $ $Time: $
 mousePositionLabel $鼠标: $ $Mouse: $
 mute $静音$ $Mute$
 unmute $解除静音$ $Unmute$
-vol $音量: $ $Volume: $
+volume $音量: $ $Volume: $
 start $启动$ $Start$
 pause $暂停$ $Pause$
 resetButton $重置$ $Reset$

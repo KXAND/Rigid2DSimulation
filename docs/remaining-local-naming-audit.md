@@ -87,9 +87,13 @@
 | 媒体 | `framework/media/Font.cpp` | `s` | 1 | `text` | 随机生成的文本 |
 | 媒体 | `framework/media/Tile.h/.cpp` | `Color` 构造函数的 `s`、`i` | 2 | `text`、`position` | 颜色文本及其读取位置 |
 | 媒体 | `framework/media/Tile.h/.cpp` 及调用点 | `Color::RED` 等八个全大写具名常量 | 8 | `Color::kRed` 至 `Color::kBlack` | 与具名常量的 `kPascalCase` 规则一致 |
+| 媒体 | `framework/media/Tile.h` | `Color` 比较运算符的 `alpha`、`blue` | 4 | `leftColor`、`rightColor` | 两个参数均为完整颜色值，不含透明度或蓝色分量的特殊语义 |
 | 用户界面 | `current/ui/UserInterface.h/.cpp` | `fpns`、`fp` | 16 | `floatPanels`、`floatPanel` | 浮动面板集合及其遍历元素 |
 | 刚体 | `current/rigid/Body.cpp` | `Body::Init` 的 `shapes` | 1 | `shape` | 形状集合中的单个元素，避免与容器同名 |
 | 用户界面 | `current/ui/BodyPanel.cpp`、`ConnectionPanel.cpp` | 遍历控件的 `c` | 2 | `control` | 控件集合中的单个元素 |
+| 用户界面 | `current/ui/BodyPanel.cpp`、`localization.txt` | 本地化键 `conn` | 2 | `connectionLabel` | 连接编号前的显示标签 |
+| 用户界面 | `current/ui/GlobalPanel.cpp`、`localization.txt` | 本地化键 `vol` | 2 | `volume` | 全局音量的显示标签 |
+| 场景模拟 | `current/common/SimulationApp.cpp`、DSL 文档 | DSL 根名 `cur` | 3 | `current` | 作用域键 `current.frameRate.GetDeltaTime()`、`current.debugString` 及迁移记录 |
 | 形状内建 | `current/rigid/ShapeBuiltins.cpp` | `a0` 至 `a3` | 4 | `topOuterRight`、`topOuterLeft`、`topInnerLeft`、`topInnerRight` | 框架盒上边多边形的四个顶点 |
 | 形状内建 | `current/rigid/ShapeBuiltins.cpp` | `b0` 至 `b3` | 4 | `bottomInnerRight`、`bottomInnerLeft`、`bottomOuterLeft`、`bottomOuterRight` | 框架盒下边多边形的四个顶点 |
 | 形状内建 | `current/rigid/ShapeBuiltins.cpp` | `c0` 至 `c3` | 4 | `rightOuterTop`、`rightOuterBottom`、`rightInnerBottom`、`rightInnerTop` | 框架盒右边多边形的四个顶点 |
@@ -182,11 +186,11 @@ about_txt -> aboutText
 - `a`、`b`：`SimulationApp::DetectCollisions` 中仅表示网格横、纵坐标，属于数学坐标例外，不等同于表中的刚体遍历变量 `b`。
 - `torgue0`、`torgue1`：只改正标识符拼写，不删除、不补用，也不重新推导力矩公式。
 - 紧邻 `find` 调用的 `it`：`current/common/Utils.h` 和 `framework/media/Font.cpp` 中均直接以该迭代器完成 `end` 比较或取值，属于 C++ 容器查找的惯用局部名。
-- DSL 函数名、配置键、作用域键、`.rigid2d` 二进制读写顺序和平台 API：均不是 C++ 局部命名整改对象。
+- `.rigid2d` 二进制读写顺序和平台 API：均不是 C++ 局部命名整改对象。DSL 函数名、配置键和作用域键的改名须同步更新注册点、读取点、脚本与 `docs/dsl-naming-migration.md`。
 
 ## 5. 候选审阅结论
 
-此前待确认的 34 个绑定均已审阅：13 个已移入第 2 节，另 21 个因属于公式局部量或成对端点记号而移入第 4 节。本次审阅还核对了 `Shape::IsInside` 的 `p` 以及 `Connection` 的 `p0Relative`、`p1Relative`，两者同样属于第 4 节的明确豁免范围。后续复查发现的 `Color` 具名常量、浮动面板集合和循环元素名已补入第 2 节；当前没有未确认的 C++ 命名候选。
+此前待确认的 34 个绑定均已审阅：13 个已移入第 2 节，另 21 个因属于公式局部量或成对端点记号而移入第 4 节。本次审阅还核对了 `Shape::IsInside` 的 `p` 以及 `Connection` 的 `p0Relative`、`p1Relative`，两者同样属于第 4 节的明确豁免范围。后续复查发现的 `Color` 具名常量、比较参数、浮动面板集合、循环元素名、本地化键和 DSL 根名已补入第 2 节；当前没有未确认的 C++ 命名候选。
 
 ## 6. 实施边界与验收
 

@@ -27,11 +27,11 @@ struct Color
 	// 允许转换为 Vector3，禁止显式操作
 	explicit operator Vector3() const { return Vector3(red, green, blue) / 255; }
 };
-inline bool operator==(Color alpha, Color blue)
+inline bool operator==(Color leftColor, Color rightColor)
 {
-	return memcmp(&alpha, &blue, sizeof(Color)) == 0;
+	return memcmp(&leftColor, &rightColor, sizeof(Color)) == 0;
 }
-inline bool operator!=(Color alpha, Color blue) { return !(alpha == blue); }
+inline bool operator!=(Color leftColor, Color rightColor) { return !(leftColor == rightColor); }
 wstring ToWString(Color color);
 void BlendColor(Color& backgroundColor, BYTE& backgroundAlpha, Color foregroundColor, BYTE foregroundAlpha);
 

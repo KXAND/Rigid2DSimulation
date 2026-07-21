@@ -179,7 +179,7 @@ void SimulationApp::Update( )
 	(*background).Update(*this);
 	(*background).Render(*this);
 	realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime( ));
-	currentScope[L"cur.frameRate.GetDeltaTime()"] = std::make_shared<Value>(realDeltaTime);
+	currentScope[L"current.frameRate.GetDeltaTime()"] = std::make_shared<Value>(realDeltaTime);
 	gridNumX = ceil(rectScene.width / gridSize);
 	gridNumY = ceil(rectScene.height / gridSize);
 	if (isSceneChanged) { isSceneChanged = false; groups = FormGroups(bodies); }
@@ -449,7 +449,7 @@ void SimulationApp::InitializeDefaultFunctions( )
 void SimulationApp::UpdateBasicState( )
 {
 	title = GetLocalizedString(L"title");
-	if (currentScope.find(L"cur.debugString") != currentScope.end( )) { debugString = currentScope[L"cur.debugString"]->stringValue; }
+	if (currentScope.find(L"current.debugString") != currentScope.end( )) { debugString = currentScope[L"current.debugString"]->stringValue; }
 	if (currentScope.find(L"Update") != currentScope.end( )) { auto file = currentScope[L"Update"];  Execute(currentScope, file->bodyStatements); }
 
 	// 删除标记为删除的键
