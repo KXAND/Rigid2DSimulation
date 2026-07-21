@@ -27,12 +27,12 @@ struct Panel {
 	static Panel menu(App& app);
 	static Panel bottom(App& app);
 
-	int min_y() const;
-	DRect vp_show(App& app) const;
-	// 不用 delegate 而用专门的 set_c 主要是希望能重置滚动。
-	void set_c(App& app, Control* _c);
-	void init_c(App& app);
-	void init_sb();
+	int GetMinY() const;
+	DRect GetVisibleViewport(App& app) const;
+	// 不用 delegate 而用专门的 SetControl 主要是希望能重置滚动。
+	void SetControl(App& app, Control* _c);
+	void InitializeControl(App& app);
+	void InitializeScrollBar();
 	void render(App& app);
 
 	void Init(App& app);

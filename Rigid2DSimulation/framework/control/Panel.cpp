@@ -40,29 +40,29 @@ Panel Panel::bottom(App& app) {
 	pn.vp_show_rel = tmp; return pn;
 }
 
-int Panel::min_y() const {
+int Panel::GetMinY() const {
 	return tl.y + tl_show_rel.y + h_show - c->GetH();
 }
-DRect Panel::vp_show(App& app) const {
+DRect Panel::GetVisibleViewport(App& app) const {
 	DRect vp = vp_show_rel;
 	vp.topLeftPosition += tl; return getOverlapRect(app.scr.Rect(), vp);
 }
-void Panel::set_c(App& app, Control* _c) {
+void Panel::SetControl(App& app, Control* _c) {
 	if (c != _c) {
 		if (c) { c->Discard(app); }
 		if (c = _c) {
 			c->tl = tl + tl_show_rel;
-			c->vp = vp_show(app);
+			c->vp = GetVisibleViewport(app);
 		} sb->c = c;
 	}
 }
-void Panel::init_c(App& app) {
+void Panel::InitializeControl(App& app) {
 	if (c) {
 		c->tl = tl + tl_show_rel;
-		c->vp = vp_show(app);
+		c->vp = GetVisibleViewport(app);
 	}
 }
-void Panel::init_sb() {
+void Panel::InitializeScrollBar() {
 	sb = std::make_shared<VerticalScrollBar>();
 	sb->c = c;
 	sb->h = h;
@@ -74,7 +74,7 @@ void Panel::render(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), c_panel, c_frame);
 }
 
-void Panel::Init(App& app) { init_c(app); init_sb(); }
+void Panel::Init(App& app) { InitializeControl(app); InitializeScrollBar(); }
 void Panel::Update(App& app) {
 	full = (c != NULL) && h_show < c->GetH();
 	hovered = (app.own.hovered == this);
@@ -83,7 +83,7 @@ void Panel::Update(App& app) {
 	if (full) {
 		int cy = c->tl.y;
 		if (wheeled) { cy += app.input.msw * wheel_mtp; }
-		c->tl.y = clamp(cy, min_y(), tl.y + tl_show_rel.y);
+		c->tl.y = clamp(cy, GetMinY(), tl.y + tl_show_rel.y);
 	}
 	else if (c) { c->tl.y = tl.y + tl_show_rel.y; }
 
