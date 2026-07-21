@@ -40,6 +40,7 @@
 - `Panel` 的静态构造方法及 `FloatPanel` 的可见性方法已迁移为 PascalCase；所有项目调用点已同步。
 - `Button` 的文本、颜色、资源键、几何局部变量和浮动面板指针已迁移为表达职责的 lower camel 名称。
 - `Label`、`RichLabel`、`CheckBox` 和 `HorizontalDragBar` 的文本、颜色、尺寸、资源键及相关局部变量已迁移为完整 lower camel 名称，并同步更新 UI 派生类。
+- `DropList`、`HorizontalSeparator`、`VerticalScrollBar` 与横纵控件列表的字段和局部变量已迁移为完整 lower camel 名称；滚动条和控件列表的直接面板调用点已同步。
 - 已完成的提交保持文件改名、类型名改名、宏替换和纯排版互相分离。
 
 ## 3. 下一批
