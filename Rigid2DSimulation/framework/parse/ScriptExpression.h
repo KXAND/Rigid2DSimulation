@@ -3,7 +3,8 @@
 #include "BracketGroup.h"
 
 // 这里空间可能占的太大了，运行时多态可以解决。但是懒得麻烦了。
-struct ScriptExpression {
+struct ScriptExpression
+{
     wstring type = L"null";
     // vec 和 access 其实都可以放到 call 的框架里。
     // 但是实现的时候我还是希望分开来，虽然也没啥理由就是了。
@@ -16,7 +17,8 @@ struct ScriptExpression {
     wstring functionName;
     vector<ScriptExpression> arguments;
     vector<ScriptExpression> elements;
-    ValuePtr<ScriptExpression> accessedExpression, indexExpression;
+    ValuePtr<ScriptExpression> accessedExpression;
+    ValuePtr<ScriptExpression> indexExpression;
 
     ScriptExpression() = default;
     ScriptExpression(wstring const& type);
@@ -27,7 +29,8 @@ struct ScriptExpression {
 };
 wstring ToWString(ScriptExpression const& expression);
 
-struct PreExpression {
+struct PreExpression
+{
     bool isToken = false;
     ScriptExpression expression;
     Token token;

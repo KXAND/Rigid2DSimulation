@@ -1,7 +1,8 @@
 #pragma once
 #include "Utils.h"
 
-struct Token {
+struct Token
+{
     wstring type;
     double number = 0;
     wstring stringValue;

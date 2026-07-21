@@ -1,12 +1,14 @@
 #pragma once
 #include "ScriptExpression.h"
 
-struct ScriptStatement {
+struct ScriptStatement
+{
     wstring type = L"empty";
     // assign, single, define, return, if, while
     ScriptExpression returnExpression;
     ScriptExpression expression;
-    ScriptExpression leftExpression, rightExpression;
+    ScriptExpression leftExpression;
+    ScriptExpression rightExpression;
 
     wstring functionName;
     vector<ScriptStatement> bodyStatements;
@@ -15,7 +17,8 @@ struct ScriptStatement {
     ScriptExpression loopCondition;
     vector<ScriptStatement> loopStatements;
     ScriptExpression condition;
-    vector<ScriptStatement> thenStatements, elseStatements;
+    vector<ScriptStatement> thenStatements;
+    vector<ScriptStatement> elseStatements;
 
     ScriptStatement() = default;
     ScriptStatement(wstring const& type);

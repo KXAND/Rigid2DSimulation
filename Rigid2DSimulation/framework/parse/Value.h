@@ -5,7 +5,8 @@
 struct Value;
 typedef function<std::shared_ptr<Value>(vector<std::shared_ptr<Value>> const&)> Function;
 typedef vector<ScriptStatement> Program;
-struct Value {
+struct Value
+{
     // 其实还不是很确定 type 有没有用，这里会有些乱掉。
     wstring type = L"null";
     // null, num, str, fun, vec, user, dic

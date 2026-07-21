@@ -90,6 +90,7 @@
 - `ScriptStatement.cpp` 已完成 Allman 大括号、完整控制流大括号、单语句单行和逻辑空行迁移；语句解析、赋值定位与序列化顺序保持不变。
 - `ScriptExpression.cpp` 已完成 Allman 大括号、完整控制流大括号、单语句单行和逻辑空行迁移；表达式归约优先级、递归解析与序列化顺序保持不变。
 - `Value.cpp` 已完成 Allman 大括号、完整控制流大括号、单语句单行和逻辑空行迁移；作用域访问、内建函数、表达式求值与语句执行顺序保持不变。
+- `framework/parse` 的五个头文件已完成 Allman 类型大括号与合并字段声明拆分；公开类型、成员与包含关系保持不变。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。
