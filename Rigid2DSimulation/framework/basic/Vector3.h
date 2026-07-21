@@ -9,7 +9,7 @@ struct Vector3 {
 	Vector3() = default;
 	Vector3(double x, double y, double z) : x(x), y(y), z(z) {}
 	Vector3(double a) : Vector3(a, a, a) {}
-	explicit Vector3(wstring const& s);
+	explicit Vector3(wstring const& text);
 
 	// @todo:for dColor,Ó¦¸ÃÉ¾³ý
 	double& GetRed() { return x; }
@@ -57,7 +57,7 @@ inline bool operator==(Vector3 a, Vector3 b) {
 	return memcmp(&a, &b, sizeof(Vector3)) == 0;
 }
 inline bool operator!=(Vector3 a, Vector3 b) { return !(a == b); }
-wstring FormatFixed2(Vector3 v);
+wstring FormatFixed2(Vector3 vector);
 
 struct Matrix3;
 Matrix3 operator+(Matrix3 a, Matrix3 const& b);
