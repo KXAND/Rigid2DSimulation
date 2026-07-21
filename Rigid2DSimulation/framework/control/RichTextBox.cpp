@@ -31,10 +31,10 @@ int RichTextBox::GetW() const { return w + gap.x; }
 int RichTextBox::GetH() const { return h + gap.y; }
 
 DRect RichTextBox::GetTextViewport() const {
-	DVector2 tl_show_txt = tl + textViewportMargin;
-	int w_show_txt = w - 2 * textViewportMargin.x;
-	int h_show_txt = h - 2 * textViewportMargin.y;
-	return getOverlapRect(vp, { tl_show_txt, w_show_txt, h_show_txt });
+	DVector2 textViewportTopLeft = tl + textViewportMargin;
+	int textViewportWidth = w - 2 * textViewportMargin.x;
+	int textViewportHeight = h - 2 * textViewportMargin.y;
+	return getOverlapRect(vp, { textViewportTopLeft, textViewportWidth, textViewportHeight });
 }
 wstring RichTextBox::GetLeftText() const {
 	auto a = value.begin();
@@ -57,27 +57,27 @@ bool RichTextBox::HasSelection() const { return selectionStart != selectionEnd; 
 int RichTextBox::GetMaxCursorX() const { return w - editMargin.x; }
 int RichTextBox::GetMaxCursorY() const { return h - editMargin.y; }
 DVector2 RichTextBox::GetCursorPosition(App& app) const {
-	wstring tmp(value.begin(), value.begin() + selectionEnd);
-	int x = 0; DVector2 p = GetStringSize(tmp, app.ft, lineWidth, &x);
-	p.x = x; p.y -= app.ft.h;
-	return (DVector2)valueOffset + p;
+	wstring selectedText(value.begin(), value.begin() + selectionEnd);
+	int cursorX = 0; DVector2 cursorPosition = GetStringSize(selectedText, app.ft, lineWidth, &cursorX);
+	cursorPosition.x = cursorX; cursorPosition.y -= app.ft.h;
+	return (DVector2)valueOffset + cursorPosition;
 }
 
 void RichTextBox::SelectStart(App& app) {
 	selecting = true;
-	DVector2 p = app.input.msp - (tl + (DVector2)valueOffset);
-	selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
+	DVector2 mousePosition = app.input.msp - (tl + (DVector2)valueOffset);
+	selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, mousePosition, lineWidth);
 	UpdateCursorXHistory(app);
 }
 void RichTextBox::SelectEnd(App& app) {
-	DVector2 p = app.input.msp - (tl + (DVector2)valueOffset);
-	selectionEnd = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
+	DVector2 mousePosition = app.input.msp - (tl + (DVector2)valueOffset);
+	selectionEnd = GetStringIndexAtPosition(value, app.ft, mousePosition, lineWidth);
 	UpdateCursorXHistory(app);
 }
 void RichTextBox::UpdateCursorXHistory(App& app) {
-	auto s = wstring(value.begin(), value.begin() + selectionEnd);
-	int tmp = 0; GetStringSize(s, app.ft, lineWidth, &tmp);
-	cursorXHistory = tmp;
+	auto textBeforeCursor = wstring(value.begin(), value.begin() + selectionEnd);
+	int cursorX = 0; GetStringSize(textBeforeCursor, app.ft, lineWidth, &cursorX);
+	cursorXHistory = cursorX;
 }
 
 void RichTextBox::AddCharacters(App& app) {
@@ -91,7 +91,7 @@ void RichTextBox::AddCharacters(App& app) {
 }
 void RichTextBox::HandleLeft(App& app) {
 	selecting = false;
-	cursor_change = true;
+	cursorChanged = true;
 
 	if (HasSelection()) { selectionStart = selectionEnd = GetEditBegin(); }
 	else {
@@ -101,7 +101,7 @@ void RichTextBox::HandleLeft(App& app) {
 }
 void RichTextBox::HandleRight(App& app) {
 	selecting = false;
-	cursor_change = true;
+	cursorChanged = true;
 
 	if (HasSelection()) { selectionStart = selectionEnd = GetEditEnd(); }
 	else {
@@ -112,31 +112,31 @@ void RichTextBox::HandleRight(App& app) {
 }
 void RichTextBox::HandleUp(App& app) {
 	selecting = false;
-	cursor_change = true;
+	cursorChanged = true;
 
 	if (HasSelection()) { selectionStart = selectionEnd = GetEditBegin(); }
 	else {
-		wstring tmp(value.begin(), value.begin() + selectionEnd);
-		int y = GetStringSize(tmp, app.ft, lineWidth).y - 2 * app.ft.h;
-		DVector2 p(cursorXHistory, y);
-		selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
+		wstring selectedText(value.begin(), value.begin() + selectionEnd);
+		int y = GetStringSize(selectedText, app.ft, lineWidth).y - 2 * app.ft.h;
+		DVector2 cursorPosition(cursorXHistory, y);
+		selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, cursorPosition, lineWidth);
 	}
 }
 void RichTextBox::HandleDown(App& app) {
 	selecting = false;
-	cursor_change = true;
+	cursorChanged = true;
 
 	if (HasSelection()) { selectionStart = selectionEnd = GetEditEnd(); }
 	else {
-		wstring tmp(value.begin(), value.begin() + selectionEnd);
-		int y = GetStringSize(tmp, app.ft, lineWidth).y;
-		DVector2 p(cursorXHistory, y);
-		selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
+		wstring selectedText(value.begin(), value.begin() + selectionEnd);
+		int y = GetStringSize(selectedText, app.ft, lineWidth).y;
+		DVector2 cursorPosition(cursorXHistory, y);
+		selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, cursorPosition, lineWidth);
 	}
 }
 void RichTextBox::HandleBackspace(App& app) {
 	selecting = false;
-	cursor_change = true;
+	cursorChanged = true;
 
 	if (HasSelection()) {
 		value = GetLeftText() + GetRightText();
@@ -150,7 +150,7 @@ void RichTextBox::HandleBackspace(App& app) {
 }
 void RichTextBox::HandleDelete(App& app) {
 	selecting = false;
-	cursor_change = true;
+	cursorChanged = true;
 
 	if (HasSelection()) {
 		value = GetLeftText() + GetRightText();
@@ -184,7 +184,7 @@ void RichTextBox::HandleSelectAll(App& app) {
 	UpdateCursorXHistory(app);
 }
 void RichTextBox::HandleKey(App& app) {
-	cursor_change = false;
+	cursorChanged = false;
 
 	if (app.input.kbmsg[VK_LEFT]) { HandleLeft(app); }
 	else if (app.input.kbmsg[VK_RIGHT]) { HandleRight(app); }
@@ -202,14 +202,14 @@ void RichTextBox::HandleKey(App& app) {
 }
 
 void RichTextBox::ClampCursorWhileSelecting(App& app) {
-	double val = (app.input.msp.x - tl.x) - GetMaxCursorX();
-	if (val > 0) { valueOffset.x -= app.fps.dt() * slideMultiplier * val; }
-	val = editMargin.x - (app.input.msp.x - tl.x);
-	if (val > 0) { valueOffset.x += app.fps.dt() * slideMultiplier * val; }
-	val = (app.input.msp.y - tl.y) - GetMaxCursorY();
-	if (val > 0) { valueOffset.y -= app.fps.dt() * slideMultiplier * val; }
-	val = editMargin.y - (app.input.msp.y - tl.y);
-	if (val > 0) { valueOffset.y += app.fps.dt() * slideMultiplier * val; }
+	double overflowDistance = (app.input.msp.x - tl.x) - GetMaxCursorX();
+	if (overflowDistance > 0) { valueOffset.x -= app.fps.dt() * slideMultiplier * overflowDistance; }
+	overflowDistance = editMargin.x - (app.input.msp.x - tl.x);
+	if (overflowDistance > 0) { valueOffset.x += app.fps.dt() * slideMultiplier * overflowDistance; }
+	overflowDistance = (app.input.msp.y - tl.y) - GetMaxCursorY();
+	if (overflowDistance > 0) { valueOffset.y -= app.fps.dt() * slideMultiplier * overflowDistance; }
+	overflowDistance = editMargin.y - (app.input.msp.y - tl.y);
+	if (overflowDistance > 0) { valueOffset.y += app.fps.dt() * slideMultiplier * overflowDistance; }
 }
 void RichTextBox::ClampCursorWithoutSelection(App& app) {
 	if (GetCursorPosition(app).x > GetMaxCursorX()) {
@@ -225,12 +225,12 @@ void RichTextBox::ClampCursor(App& app) {
 }
 void RichTextBox::ClampTextPosition(App& app) {
 	// 除了文字过少以外，clamp_selecting 和 wheel 后也需要这一步。
-	DVector2 p_end_rel = (DVector2)valueOffset + GetStringSize(value, app.ft, lineWidth);
-	if (p_end_rel.x < GetMaxCursorX()) {
-		valueOffset.x += GetMaxCursorX() - p_end_rel.x;
+	DVector2 textEndPosition = (DVector2)valueOffset + GetStringSize(value, app.ft, lineWidth);
+	if (textEndPosition.x < GetMaxCursorX()) {
+		valueOffset.x += GetMaxCursorX() - textEndPosition.x;
 	}
-	if (p_end_rel.y < GetMaxCursorY()) {
-		valueOffset.y += GetMaxCursorY() - p_end_rel.y;
+	if (textEndPosition.y < GetMaxCursorY()) {
+		valueOffset.y += GetMaxCursorY() - textEndPosition.y;
 	}
 	// 下面两行是配合上面的。
 	if (valueOffset.x > editMargin.x) { valueOffset.x = editMargin.x; }
@@ -244,18 +244,18 @@ void RichTextBox::RenderMain(App& app) {
 		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : normalColor;
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, vp, color, frameColor);
 
-	int x_cur = 0;
-	DVector2 tl_txt = tl + (DVector2)valueOffset;
-	DrawString(app.scr, app.dscr, depth, GetLeftText(), valueColor, app.ft, tl_txt, x_cur, lineWidth, GetTextViewport());
-	DrawString(app.scr, app.dscr, depth, GetSelectedText(), selectedColor, app.ft, tl_txt, x_cur, lineWidth, GetTextViewport());
-	DrawString(app.scr, app.dscr, depth, GetRightText(), valueColor, app.ft, tl_txt, x_cur, lineWidth, GetTextViewport());
+	int textCursorX = 0;
+	DVector2 textTopLeft = tl + (DVector2)valueOffset;
+	DrawString(app.scr, app.dscr, depth, GetLeftText(), valueColor, app.ft, textTopLeft, textCursorX, lineWidth, GetTextViewport());
+	DrawString(app.scr, app.dscr, depth, GetSelectedText(), selectedColor, app.ft, textTopLeft, textCursorX, lineWidth, GetTextViewport());
+	DrawString(app.scr, app.dscr, depth, GetRightText(), valueColor, app.ft, textTopLeft, textCursorX, lineWidth, GetTextViewport());
 }
 void RichTextBox::RenderCursor(App& app) {
-	bool show_cursor = edit &&
-		(sin(app.fps.dur() * blinkMultiplier) > 0 || cursor_change);
-	if (show_cursor) {
-		DVector2 tl_cs = tl + GetCursorPosition(app) + DVector2(-cursorWidth, app.ft.h - cursorHeight) / 2;
-		drawRectangleRaw(app.scr, tl_cs, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
+	bool showCursor = edit &&
+		(sin(app.fps.dur() * blinkMultiplier) > 0 || cursorChanged);
+	if (showCursor) {
+		DVector2 cursorTopLeft = tl + GetCursorPosition(app) + DVector2(-cursorWidth, app.ft.h - cursorHeight) / 2;
+		drawRectangleRaw(app.scr, cursorTopLeft, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
 	}
 }
 void RichTextBox::Render(App& app) {

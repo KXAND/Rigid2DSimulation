@@ -29,7 +29,7 @@ struct RichTextBox : Control {
 	bool enabled = true;
 	bool hovered = false;
 	bool selecting = false;
-	bool cursor_change = false;
+	bool cursorChanged = false;
 
 	RichTextBox();
 	RichTextBox(int w, int h, bool newline = true);
