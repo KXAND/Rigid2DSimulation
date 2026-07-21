@@ -22,25 +22,25 @@ struct Value {
 	Value(wstring const& text);
 	Value(Function const& nativeFunction);
 	Value(vector<std::shared_ptr<Value>> const& elements);
-	Value(Program const& ps, vector<wstring> const& arguments);
+	Value(Program const& statements, vector<wstring> const& arguments);
 };
 
 struct Vector2;
 struct Vector3;
-Vector2 ToVector2(Value const& v);
-Vector3 ToVector3(Value const& v);
+Vector2 ToVector2(Value const& value);
+Vector3 ToVector3(Value const& value);
 
 typedef map<wstring, std::shared_ptr<Value>> Scope;
-std::shared_ptr<Value> FindVariable(Scope& curScope, Scope& sc, wstring nm, bool isgl);
+std::shared_ptr<Value> FindVariable(Scope& globalScope, Scope& scope, wstring variableName, bool isGlobal);
 // 下面不用常值引用是为了减少不必要的复制。但是说实话我不知道有没有必要。
-bool TryEvaluateDefaultFunction(Scope& curScope, Scope& sc, ScriptExpression const& ex, Value& out);
+bool TryEvaluateDefaultFunction(Scope& globalScope, Scope& scope, ScriptExpression const& expression, Value& result);
 
-std::shared_ptr<Value> EvaluateCall(Scope& curScope, Scope& sc, ScriptExpression const& ex);
-std::shared_ptr<Value> EvaluateAccess(Scope& curScope, Scope& sc, ScriptExpression const& ex);
-std::shared_ptr<Value> Evaluate(Scope& curScope, Scope& sc, ScriptExpression const& ex);
+std::shared_ptr<Value> EvaluateCall(Scope& globalScope, Scope& scope, ScriptExpression const& expression);
+std::shared_ptr<Value> EvaluateAccess(Scope& globalScope, Scope& scope, ScriptExpression const& expression);
+std::shared_ptr<Value> Evaluate(Scope& globalScope, Scope& scope, ScriptExpression const& expression);
 
 // 有一个风险是一个函数会不会在执行过程中把自己抹去，要注意如何规避掉。
-std::shared_ptr<Value> Execute(bool& ret, Scope& curScope, Scope& sc, Program const& ps);
-std::shared_ptr<Value> Execute(Scope& curScope, Program const& ps);
+std::shared_ptr<Value> Execute(bool& hasReturned, Scope& globalScope, Scope& scope, Program const& statements);
+std::shared_ptr<Value> Execute(Scope& globalScope, Program const& statements);
 Program Compile(wstring const& code);
 
