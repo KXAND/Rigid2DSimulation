@@ -21,10 +21,10 @@ struct Font {
 
 	Tile const& operator[](wchar_t c) const;
 	// 严格来说用单独的方法更好，但是这样很方便。
-	wstring rnd(int n) const;
+	wstring GenerateRandomText(int n) const;
 
-	bool load_font(wstring const& name, wchar_t c);
-	bool init();
+	bool LoadFont(wstring const& name, wchar_t c);
+	bool Initialize();
 };
 
 

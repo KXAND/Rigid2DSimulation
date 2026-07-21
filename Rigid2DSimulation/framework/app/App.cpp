@@ -11,7 +11,7 @@ void App::Init()
 	AddLog(L"开始加载程序.\n");
 	SetLocale(); scr = Tile(w, h);
 	dscr = ini_dscr = DepthBuffer(w * h, -DBL_MAX);
-	bool ret = ft.init();
+	bool ret = ft.Initialize();
 	AddLog(ret ? L"成功加载字体模块.\n" : L"加载字体模块失败.\n");
 
 	HRESULT hr = SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
