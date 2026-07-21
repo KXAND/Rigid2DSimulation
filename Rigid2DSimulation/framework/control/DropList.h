@@ -1,6 +1,6 @@
 #pragma once
 #include "Font.h"
-#include "control.h"
+#include "Control.h"
 
 typedef function<wstring(int, App&)> DpNm;
 wstring dpnm_none(int id, App &app);

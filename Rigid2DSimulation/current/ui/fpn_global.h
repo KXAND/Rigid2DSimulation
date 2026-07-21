@@ -1,11 +1,11 @@
 #pragma once
-#include "label.h"
-#include "button.h"
-#include "textbox.h"
-#include "ctrl_list.h"
-#include "float_panel.h"
-#include "rich_label.h"
-#include "separator.h"
+#include "Label.h"
+#include "Button.h"
+#include "TextBox.h"
+#include "ControlList.h"
+#include "FloatPanel.h"
+#include "RichLabel.h"
+#include "Separator.h"
 
 struct BtSave : BtLan {
 	BtSave();

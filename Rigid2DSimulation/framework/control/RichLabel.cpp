@@ -1,4 +1,4 @@
-#include "rich_label.h"
+#include "RichLabel.h"
 #include "App.h"
 #include "DrawString.h"
 

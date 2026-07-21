@@ -1,4 +1,4 @@
-#include "control.h"
+#include "Control.h"
 
 void Delegate::set_c(App& app, Control* _c) {
 	if (c && c != _c) { c->Discard(app); }

@@ -1,6 +1,6 @@
 #pragma once
 #include "Tile.h"
-#include "control.h"
+#include "Control.h"
 
 struct SeparatorY : Control {
 	int w = 0;

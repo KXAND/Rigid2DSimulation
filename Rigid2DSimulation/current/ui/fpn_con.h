@@ -1,10 +1,10 @@
 #pragma once
-#include "button.h"
-#include "ctrl_list.h"
-#include "float_panel.h"
-#include "rich_textbox.h"
-#include "rich_label.h"
-#include "separator.h"
+#include "Button.h"
+#include "ControlList.h"
+#include "FloatPanel.h"
+#include "RichTextBox.h"
+#include "RichLabel.h"
+#include "Separator.h"
 
 struct Connection;
 struct RTbCon : RichTextbox {

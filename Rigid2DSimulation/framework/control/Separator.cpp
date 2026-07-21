@@ -1,4 +1,4 @@
-#include "separator.h"
+#include "Separator.h"
 #include "App.h"
 #include "DrawGeometry.h"
 

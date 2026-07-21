@@ -1,6 +1,6 @@
 #pragma once
 #include "Font.h"
-#include "control.h"
+#include "Control.h"
 
 struct RichLabel : Control {
 	DVector2 gap;

@@ -1,8 +1,8 @@
-#include "panel.h"
+#include "Panel.h"
 #include "App.h"
-#include "control.h"
+#include "Control.h"
 #include "DrawBorderedRectangle.h"
-#include "scrollbar.h"
+#include "ScrollBar.h"
 
 
 Panel::Panel() {

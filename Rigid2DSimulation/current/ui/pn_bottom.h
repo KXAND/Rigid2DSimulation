@@ -1,7 +1,7 @@
 #pragma once
-#include "panel.h"
-#include "label.h"
-#include "ctrl_list.h"
+#include "Panel.h"
+#include "Label.h"
+#include "ControlList.h"
 
 struct LbFPS : Label {
 	LbFPS();

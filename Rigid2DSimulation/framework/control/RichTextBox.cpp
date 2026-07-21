@@ -1,4 +1,4 @@
-#include "rich_textbox.h"
+#include "RichTextBox.h"
 #include "App.h"
 #include "DrawGeometry.h"
 #include "DrawString.h"

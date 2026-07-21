@@ -1,6 +1,6 @@
-#include "scrollbar.h"
+#include "ScrollBar.h"
 #include "App.h"
-#include "control.h"
+#include "Control.h"
 #include "DrawBorderedRectangle.h"
 
 

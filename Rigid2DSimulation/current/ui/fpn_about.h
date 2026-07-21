@@ -1,7 +1,7 @@
 #pragma once
-#include "ctrl_list.h"
-#include "rich_label.h"
-#include "float_panel.h"
+#include "ControlList.h"
+#include "RichLabel.h"
+#include "FloatPanel.h"
 
 struct FPnAbout : FPnLan {
 	std::shared_ptr<RLbLan> rtb_about;

@@ -1,4 +1,4 @@
-#include "checkbox.h"
+#include "CheckBox.h"
 #include "App.h"
 #include "DrawGeometry.h"
 #include "DrawString.h"

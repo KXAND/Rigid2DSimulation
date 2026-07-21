@@ -1,4 +1,4 @@
-#include "ctrl_list.h"
+#include "ControlList.h"
 
 CtrlListX::CtrlListX(vector<Control*> const& cs) : cs(cs) {}
 int CtrlListX::GetW() const {

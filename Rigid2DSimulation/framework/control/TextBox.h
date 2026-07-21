@@ -1,41 +1,40 @@
 #pragma once
-#include "Vector2.h"
 #include "Font.h"
-#include "control.h"
+#include "Control.h"
 
-struct RichTextbox : Control {
+struct Textbox : Control {
 	DVector2 gap;
-	int w_str = 0;
 	double depth = 0;
+	wstring txt;
 	int w = 0, h = 0;
 	bool clr_upon_edit = false;
-	dColor c_str, c_edit, c_frame, c_normal,
+	dColor c_txt, c_str, c_edit, c_frame, c_normal,
 		c_cursor, hoveredColor, c_invalid, selectedColor;
 
-	DVector2 edit_mg;
-	DVector2 show_txt_mg;
+	// cs = cursor，mg = margin。
+	// 也是 x_str_rel 的默认值，否则一开始编辑文字的位置就会变化。
+	int w_edit_mg = 0;
+	int w_show_txt_mg = 0;
 	double slide_mtp = 0;
-	double wheel_mtp = 0;
 	double twinkle_mtp = 0;
 	int w_cursor = 0, h_cursor = 0;
 
 	wstring str;
-	Vector2 tl_str_rel;
+	double x_str_rel = 0;
 	int edit_a = 0, edit_b = 0;
-	// 下面的 rel 是相对于 tl_str_rel 的。
-	int x_cs_rel_hist = 0;
 
+	int w_txt = 0;
 	bool edit = false;
 	bool enabled = true;
 	bool hovered = false;
 	bool selecting = false;
 	bool cursor_change = false;
 
-	RichTextbox();
-	RichTextbox(int w, int h, bool newline = true);
+	Textbox(int w = 0);
 	int GetW() const override;
 	int GetH() const override;
 
+	DVector2 tl_box() const;
 	DRect vp_show_txt() const;
 	wstring left() const;
 	wstring mid() const;
@@ -44,18 +43,14 @@ struct RichTextbox : Control {
 	int edit_end() const;
 	bool selected() const;
 	int max_x_cs_rel() const;
-	int max_y_cs_rel() const;
-	DVector2 p_cs_rel(App& app) const;
+	int x_cs_rel(App& app) const;
 
 	void select_a(App& app);
 	void select_b(App& app);
-	void update_x_cs_rel_hist(App& app);
 
 	void add_chs(App& app);
 	void hdl_left(App& app);
 	void hdl_right(App& app);
-	void hdl_up(App& app);
-	void hdl_down(App& app);
 	void hdl_back(App& app);
 	void hdl_delete(App& app);
 	void hdl_clip(App& app);
@@ -80,6 +75,12 @@ struct RichTextbox : Control {
 	void Update(App& app) override;
 	void Discard(App& app) override;
 	void PreUpdate(App& app) override;
+};
+struct TbLan : Textbox {
+	wstring id_txt;
+	TbLan() = default;
+	TbLan(wstring const& id, int w);
+	void Update(App& app) override;
 };
 
 

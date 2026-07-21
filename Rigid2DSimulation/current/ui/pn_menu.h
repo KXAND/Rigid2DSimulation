@@ -1,7 +1,7 @@
 #pragma once
-#include "panel.h"
-#include "button.h"
-#include "ctrl_list.h"
+#include "Panel.h"
+#include "Button.h"
+#include "ControlList.h"
 
 struct BtPause : Button {
 	BtPause();

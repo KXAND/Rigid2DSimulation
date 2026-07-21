@@ -1,6 +1,6 @@
 #include "ui.h"
 #include "SimulationApp.h"
-#include "float_panel.h"
+#include "FloatPanel.h"
 #include "fpn_global.h"
 #include "fpn_body.h"
 #include "fpn_con.h"

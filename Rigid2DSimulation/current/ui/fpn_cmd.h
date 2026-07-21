@@ -1,8 +1,8 @@
 #pragma once
-#include "button.h"
-#include "ctrl_list.h"
-#include "float_panel.h"
-#include "rich_textbox.h"
+#include "Button.h"
+#include "ControlList.h"
+#include "FloatPanel.h"
+#include "RichTextBox.h"
 
 struct RTbCmd : RichTextbox {
 	RTbCmd();

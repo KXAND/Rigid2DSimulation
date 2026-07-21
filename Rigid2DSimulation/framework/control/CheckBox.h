@@ -1,6 +1,6 @@
 #pragma once
 #include "Tile.h"
-#include "control.h"
+#include "Control.h"
 
 struct Checkbox : Control {
 	int h = 0;

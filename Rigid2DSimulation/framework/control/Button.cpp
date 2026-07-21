@@ -1,8 +1,8 @@
-#include "button.h"
+#include "Button.h"
 #include "App.h"
 #include "DrawString.h"
 #include "DrawBorderedRectangle.h"
-#include "float_panel.h"
+#include "FloatPanel.h"
 
 
 Button::Button(int w) : w(w) {

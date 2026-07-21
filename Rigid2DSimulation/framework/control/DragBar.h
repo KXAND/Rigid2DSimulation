@@ -1,6 +1,6 @@
 #pragma once
 #include "Tile.h"
-#include "control.h"
+#include "Control.h"
 
 struct DragbarX : Control {
 	DVector2 gap;

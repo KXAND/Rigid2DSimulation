@@ -1,9 +1,9 @@
-#include "textbox.h"
+#include "TextBox.h"
 #include "App.h"
 #include "DrawGeometry.h"
 #include "DrawString.h"
 #include "DrawBorderedRectangle.h"
-#include "rich_textbox.h"
+#include "RichTextBox.h"
 
 
 Textbox::Textbox(int w) : w(w) {

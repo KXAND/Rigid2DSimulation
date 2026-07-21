@@ -1,4 +1,4 @@
-#include "label.h"
+#include "Label.h"
 #include "App.h"
 #include "DrawString.h"
 

@@ -1,10 +1,10 @@
 #pragma once
-#include "button.h"
-#include "textbox.h"
-#include "dragbar.h"
-#include "ctrl_list.h"
-#include "separator.h"
-#include "float_panel.h"
+#include "Button.h"
+#include "TextBox.h"
+#include "DragBar.h"
+#include "ControlList.h"
+#include "Separator.h"
+#include "FloatPanel.h"
 
 struct TbParNm : Textbox {
 	int id = 0;

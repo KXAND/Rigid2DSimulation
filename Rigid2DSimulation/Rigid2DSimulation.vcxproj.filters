@@ -100,46 +100,46 @@
     <ClCompile Include="framework\draw\DrawLineSegment.cpp">
       <Filter>framework\draw</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\control.cpp">
+    <ClCompile Include="framework\control\Control.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\ctrl_list.cpp">
+    <ClCompile Include="framework\control\ControlList.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\label.cpp">
+    <ClCompile Include="framework\control\Label.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\rich_label.cpp">
+    <ClCompile Include="framework\control\RichLabel.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\separator.cpp">
+    <ClCompile Include="framework\control\Separator.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\button.cpp">
+    <ClCompile Include="framework\control\Button.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\checkbox.cpp">
+    <ClCompile Include="framework\control\CheckBox.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\dragbar.cpp">
+    <ClCompile Include="framework\control\DragBar.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\droplist.cpp">
+    <ClCompile Include="framework\control\DropList.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\float_panel.cpp">
+    <ClCompile Include="framework\control\FloatPanel.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\panel.cpp">
+    <ClCompile Include="framework\control\Panel.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\rich_textbox.cpp">
+    <ClCompile Include="framework\control\RichTextBox.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\scrollbar.cpp">
+    <ClCompile Include="framework\control\ScrollBar.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\textbox.cpp">
+    <ClCompile Include="framework\control\TextBox.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
     <ClCompile Include="current\ui\fpn_about.cpp">
@@ -282,46 +282,46 @@
     <ClInclude Include="framework\draw\DrawString.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\control.h">
+    <ClInclude Include="framework\control\Control.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\button.h">
+    <ClInclude Include="framework\control\Button.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\checkbox.h">
+    <ClInclude Include="framework\control\CheckBox.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\ctrl_list.h">
+    <ClInclude Include="framework\control\ControlList.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\dragbar.h">
+    <ClInclude Include="framework\control\DragBar.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\droplist.h">
+    <ClInclude Include="framework\control\DropList.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\float_panel.h">
+    <ClInclude Include="framework\control\FloatPanel.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\label.h">
+    <ClInclude Include="framework\control\Label.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\panel.h">
+    <ClInclude Include="framework\control\Panel.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\rich_label.h">
+    <ClInclude Include="framework\control\RichLabel.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\rich_textbox.h">
+    <ClInclude Include="framework\control\RichTextBox.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\scrollbar.h">
+    <ClInclude Include="framework\control\ScrollBar.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\separator.h">
+    <ClInclude Include="framework\control\Separator.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\textbox.h">
+    <ClInclude Include="framework\control\TextBox.h">
       <Filter>framework\control</Filter>
     </ClInclude>
     <ClInclude Include="current\ui\fpn_about.h">

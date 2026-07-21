@@ -1,7 +1,7 @@
 #pragma once
-#include "button.h"
-#include "ctrl_list.h"
-#include "float_panel.h"
+#include "Button.h"
+#include "ControlList.h"
+#include "FloatPanel.h"
 
 struct BtChi : Button {
 	BtChi();

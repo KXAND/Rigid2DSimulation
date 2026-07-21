@@ -1,5 +1,5 @@
 #pragma once
-#include "control.h"
+#include "Control.h"
 
 struct CtrlListX : Control {
 	vector<Control*> cs;
