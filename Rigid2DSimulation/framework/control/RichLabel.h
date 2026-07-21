@@ -6,11 +6,11 @@ struct RichLabel : Control {
 	DVector2 gap;
 	double depth = 0;
 	int w = 0, h = 0;
-	bool fixed_w = false;
-	bool fixed_h = false;
+	bool fixedWidth = false;
+	bool fixedHeight = false;
 
-	Color c_txt;
-	wstring txt;
+	Color textColor;
+	wstring text;
 
 	RichLabel(int w = 0);
 	int GetW() const override;
@@ -22,7 +22,7 @@ struct RichLabel : Control {
 	void Update(App& app);
 };
 struct LocalizedRichLabel : RichLabel {
-	wstring id_txt;
+	wstring textId;
 	LocalizedRichLabel() = default;
 	LocalizedRichLabel(int w, wstring const& id);
 	void Sync(App& app) override;

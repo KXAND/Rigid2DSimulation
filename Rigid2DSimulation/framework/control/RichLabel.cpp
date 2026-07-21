@@ -5,26 +5,26 @@
 
 RichLabel::RichLabel(int w) : w(w) {
 	gap = { 10, 10 }; depth = 1000;
-	fixed_w = true;
-	c_txt = { 255, 255, 255 }; txt = L"大段文本";
+	fixedWidth = true;
+	textColor = { 255, 255, 255 }; text = L"大段文本";
 }
 int RichLabel::GetW() const { return w + gap.x; }
 int RichLabel::GetH() const { return h + gap.y; }
 
-int RichLabel::GetLineWidth() const { return fixed_w ? w : 0; }
+int RichLabel::GetLineWidth() const { return fixedWidth ? w : 0; }
 void RichLabel::Render(App& app) {
-	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl, GetLineWidth(), vp);
+	DrawString(app.scr, app.dscr, depth, text, textColor, app.ft, tl, GetLineWidth(), vp);
 }
 void RichLabel::Update(App& app) {
 	Sync(app);
-	DVector2 wh = GetStringSize(txt, app.ft, GetLineWidth());
-	if (!fixed_w) { w = wh.x; }
-	if (!fixed_h) { h = wh.y; }
+	DVector2 textSize = GetStringSize(text, app.ft, GetLineWidth());
+	if (!fixedWidth) { w = textSize.x; }
+	if (!fixedHeight) { h = textSize.y; }
 	Render(app);
 }
 
-LocalizedRichLabel::LocalizedRichLabel(int w, wstring const& id) : id_txt(id), RichLabel(w) {}
-void LocalizedRichLabel::Sync(App& app) { txt = app.getLocalizedString(id_txt); }
+LocalizedRichLabel::LocalizedRichLabel(int w, wstring const& id) : textId(id), RichLabel(w) {}
+void LocalizedRichLabel::Sync(App& app) { text = app.getLocalizedString(textId); }
 
 
 

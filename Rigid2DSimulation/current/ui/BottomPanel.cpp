@@ -1,22 +1,22 @@
 #include "BottomPanel.h"
 #include "SimulationApp.h"
 
-FrameRateLabel::FrameRateLabel() { w = 450; fixed_w = true; }
+FrameRateLabel::FrameRateLabel() { w = 450; fixedWidth = true; }
 void FrameRateLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	txt = simulationApp.getLocalizedString(L"frm_tm") + FormatFixed2(simulationApp.fps.frm_time * 1000) +
+	text = simulationApp.getLocalizedString(L"frm_tm") + FormatFixed2(simulationApp.fps.frm_time * 1000) +
 		L", FPS: " + FormatFixed2(simulationApp.fps.fps);
 }
 
-TimeLabel::TimeLabel() { w = 200; fixed_w = true; }
+TimeLabel::TimeLabel() { w = 200; fixedWidth = true; }
 void TimeLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	txt = simulationApp.getLocalizedString(L"timeLabel") + FormatFixed2(simulationApp.t);
+	text = simulationApp.getLocalizedString(L"timeLabel") + FormatFixed2(simulationApp.t);
 }
-MousePositionLabel::MousePositionLabel() { w = 300; fixed_w = true; }
+MousePositionLabel::MousePositionLabel() { w = 300; fixedWidth = true; }
 void MousePositionLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	txt = simulationApp.getLocalizedString(L"mousePositionLabel") + ToWString(simulationApp.input.msp);
+	text = simulationApp.getLocalizedString(L"mousePositionLabel") + ToWString(simulationApp.input.msp);
 }
 
 BottomPanel::BottomPanel(App& app) : Panel(Panel::CreateBottomPanel(app)) {

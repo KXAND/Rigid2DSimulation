@@ -44,9 +44,9 @@ void ConnectionEditorControls::Discard(App& app) {
 void ConnectionDetailsLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto* selectedConnection = simulationApp.connectionSelecting;
-	if (!selectedConnection) { txt = simulationApp.getLocalizedString(L"conn_not_sel"); return; }
+	if (!selectedConnection) { text = simulationApp.getLocalizedString(L"conn_not_sel"); return; }
 	auto& connection = *selectedConnection;
-	txt.clear();
+	text.clear();
 
 	wstring type;
 	switch (connection.type) {
@@ -55,9 +55,9 @@ void ConnectionDetailsLabel::Sync(App& app) {
 	case CON_SPRING: type = simulationApp.getLocalizedString(L"conn_spring"); break;
 	case CON_CORD: type = simulationApp.getLocalizedString(L"conn_cord"); break;
 	}
-	txt += simulationApp.getLocalizedString(L"conn_type") + type + L"\n";
-	txt += simulationApp.getLocalizedString(L"conn_len") + FormatFixed2(connection.len) + L"\n";
-	txt += simulationApp.getLocalizedString(L"conn_hooke") + FormatFixed2(connection.hooke) + L"\n";
+	text += simulationApp.getLocalizedString(L"conn_type") + type + L"\n";
+	text += simulationApp.getLocalizedString(L"conn_len") + FormatFixed2(connection.len) + L"\n";
+	text += simulationApp.getLocalizedString(L"conn_hooke") + FormatFixed2(connection.hooke) + L"\n";
 }
 
 ConnectionPanel::ConnectionPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_con") {

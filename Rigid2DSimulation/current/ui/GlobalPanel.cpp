@@ -11,17 +11,17 @@ void LoadButton::OnClick(App& app) { auto& simulationApp = static_cast<Simulatio
 
 void GlobalDetailsLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	txt = L"";
-	txt += simulationApp.getLocalizedString(L"vol") + FormatFixed2(simulationApp.vol) + L"\n";
-	txt += simulationApp.getLocalizedString(L"n_step") + std::to_wstring(simulationApp.stepNum) + L"\n";
-	txt += simulationApp.getLocalizedString(L"s_grid") + FormatFixed2(simulationApp.gridSize) + L"\n";
-	txt += simulationApp.getLocalizedString(L"max_real_dt") + FormatFixed2(simulationApp.maxRealDeltaTime) + L"\n";
-	txt += simulationApp.getLocalizedString(L"tl_scene") + ToWString(simulationApp.rectScene.topLeftPosition) + L"\n";
-	txt += simulationApp.getLocalizedString(L"w_scene") + std::to_wstring(simulationApp.rectScene.w) + L"\n";
-	txt += simulationApp.getLocalizedString(L"h_scene") + std::to_wstring(simulationApp.rectScene.h) + L"\n";
-	txt += simulationApp.getLocalizedString(L"gravity") + ToWString(simulationApp.gravity) + L"\n";
-	txt += simulationApp.getLocalizedString(L"electrostatic") + std::to_wstring(simulationApp.hasElectrostatic) + L"\n";
-	txt += simulationApp.getLocalizedString(L"coulomb") + FormatFixed2(simulationApp.coulomb) + L"\n";
+	text = L"";
+	text += simulationApp.getLocalizedString(L"vol") + FormatFixed2(simulationApp.vol) + L"\n";
+	text += simulationApp.getLocalizedString(L"n_step") + std::to_wstring(simulationApp.stepNum) + L"\n";
+	text += simulationApp.getLocalizedString(L"s_grid") + FormatFixed2(simulationApp.gridSize) + L"\n";
+	text += simulationApp.getLocalizedString(L"max_real_dt") + FormatFixed2(simulationApp.maxRealDeltaTime) + L"\n";
+	text += simulationApp.getLocalizedString(L"tl_scene") + ToWString(simulationApp.rectScene.topLeftPosition) + L"\n";
+	text += simulationApp.getLocalizedString(L"w_scene") + std::to_wstring(simulationApp.rectScene.w) + L"\n";
+	text += simulationApp.getLocalizedString(L"h_scene") + std::to_wstring(simulationApp.rectScene.h) + L"\n";
+	text += simulationApp.getLocalizedString(L"gravity") + ToWString(simulationApp.gravity) + L"\n";
+	text += simulationApp.getLocalizedString(L"electrostatic") + std::to_wstring(simulationApp.hasElectrostatic) + L"\n";
+	text += simulationApp.getLocalizedString(L"coulomb") + FormatFixed2(simulationApp.coulomb) + L"\n";
 
 	wstring s;
 	switch (simulationApp.creator->mode) {
@@ -33,7 +33,7 @@ void GlobalDetailsLabel::Sync(App& app) {
 	case CREATE_PLATE: s = simulationApp.getLocalizedString(L"crt_plate"); break;
 	case CREATE_POINT: s = simulationApp.getLocalizedString(L"crt_point"); break;
 	}
-	txt += simulationApp.getLocalizedString(L"creator_mode") + s + L"\n";
+	text += simulationApp.getLocalizedString(L"creator_mode") + s + L"\n";
 }
 
 GlobalPanel::GlobalPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_global") {

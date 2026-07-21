@@ -6,10 +6,10 @@ struct Label : Control {
 	DVector2 gap;
 	double depth = 0;
 	int w = 0, h = 0;
-	bool fixed_w = false;
+	bool fixedWidth = false;
 
-	Color c_txt;
-	wstring txt;
+	Color textColor;
+	wstring text;
 
 	Label(bool big = false);
 	int GetW() const override;
@@ -20,7 +20,7 @@ struct Label : Control {
 	void Update(App& app) override;
 };
 struct LocalizedLabel : Label {
-	wstring id_txt;
+	wstring textId;
 	LocalizedLabel() = default;
 	LocalizedLabel(wstring const& id, bool big = false);
 	void Sync(App& app) override;
