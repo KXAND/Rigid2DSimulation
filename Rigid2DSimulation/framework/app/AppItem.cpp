@@ -23,12 +23,12 @@ bool AppInput::SyncMouse(HWND hwnd) {
 	} return true;
 }
 
-void AppInput::init(HWND hwnd) {
+void AppInput::Initialize(HWND hwnd) {
 	mouse_track.cbSize = sizeof(mouse_track);
 	mouse_track.dwFlags = TME_LEAVE;
 	mouse_track.hwndTrack = hwnd;
 }
-void AppInput::reset() {
+void AppInput::Reset() {
 	msw = 0; chs.clear();
 	// msp 在 App 中已经做过了。
 	msd_old = msd; kbd_old = kbd;
@@ -36,8 +36,8 @@ void AppInput::reset() {
 }
 
 FrameRate::FrameRate() { frm_cnt_max = 10; }
-void FrameRate::run() { tm = std::chrono::high_resolution_clock::now(); }
-void FrameRate::update() {
+void FrameRate::Start() { tm = std::chrono::high_resolution_clock::now(); }
+void FrameRate::Update() {
 	auto now = std::chrono::high_resolution_clock::now();
 	real_dur += real_dt = (now - tm).count();
 	tm = now; frm_cnt++; ns_cnt += real_dt;
@@ -49,10 +49,10 @@ void FrameRate::update() {
 	}
 }
 
-void InputOwners::reset() {
+void InputOwners::Reset() {
 	hoveredDepth = wheeledDepth = -DBL_MAX; keyboardOwner = hovered = wheeled = NULL;
 }
-void InputOwners::remove(void* o) {
+void InputOwners::Remove(void* o) {
 	if (keyboardOwner == o) { keyboardOwner = NULL; }
 	if (hovered == o) { hovered = NULL; }
 	if (wheeled == o) { wheeled = NULL; }

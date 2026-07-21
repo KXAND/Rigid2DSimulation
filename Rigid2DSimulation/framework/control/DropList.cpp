@@ -76,18 +76,18 @@ void DropList::Update(App& app) {
 			int itemRelativeY = app.input.msp.y - GetBoxTopLeft().y - h;
 			hoveredItemIndex = itemRelativeY >= 0 ? itemRelativeY / itemHeight : -1;
 		}
-		if (enabled && hovered && app.input.isMouseClickedDown(0)) {
+		if (enabled && hovered && app.input.IsMouseClickedDown(0)) {
 			if (hoveredItemIndex != -1) { selectedIndex = hoveredItemIndex; }
 			Upload(app);
 		}
-		if (!enabled || app.input.isMouseClickedDown(0)) { hoveredItemIndex = -1; edit = false; }
+		if (!enabled || app.input.IsMouseClickedDown(0)) { hoveredItemIndex = -1; edit = false; }
 	} else {
 		Sync(app);
-		edit = enabled && hovered && app.input.isMouseClickedDown(0);
+		edit = enabled && hovered && app.input.IsMouseClickedDown(0);
 	} Render(app);
 }
 void DropList::Discard(App& app) {
-	app.own.remove(this); textWidth = 0;
+	app.own.Remove(this); textWidth = 0;
 	edit = hovered = false; hoveredItemIndex = -1;
 }
 void DropList::PreUpdate(App& app) {

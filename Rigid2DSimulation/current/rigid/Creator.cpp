@@ -78,7 +78,7 @@ void Creator::UpdateBox(SimulationApp& cur)
 	}
 	else
 	{
-		if (hovered && cur.input.isMouseClickedDown(0))
+		if (hovered && cur.input.IsMouseClickedDown(0))
 		{
 			active = true; creationStartPoint = cur.input.msp;
 		}
@@ -111,7 +111,7 @@ void Creator::UpdateBall(SimulationApp& cur)
 	}
 	else
 	{
-		if (hovered && cur.input.isMouseClickedDown(0))
+		if (hovered && cur.input.IsMouseClickedDown(0))
 		{
 			active = true; creationStartPoint = cur.input.msp;
 		}
@@ -147,7 +147,7 @@ void Creator::UpdatePlate(SimulationApp& cur)
 	}
 	else
 	{
-		if (hovered && cur.input.isMouseClickedDown(0))
+		if (hovered && cur.input.IsMouseClickedDown(0))
 		{
 			active = true; creationStartPoint = cur.input.msp;
 		}
@@ -187,7 +187,7 @@ void Creator::UpdateConnection(SimulationApp& cur)
 }
 void Creator::UpdatePoint(SimulationApp& cur)
 {
-	if (hovered && cur.input.isMouseClickedDown(0))
+	if (hovered && cur.input.IsMouseClickedDown(0))
 	{
 		body = std::make_shared<Body>((Vector2) cur.input.msp);
 		body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
@@ -220,7 +220,7 @@ void Creator::UpdateNail(SimulationApp& cur)
 }
 void Creator::UpdateParticle(SimulationApp& cur)
 {
-	if (hovered && cur.input.isMouseClickedDown(0))
+	if (hovered && cur.input.IsMouseClickedDown(0))
 	{
 		body = std::make_shared<Body>(std::make_shared<Shape>(rad));
 		body->position = (Vector2) cur.input.msp;
@@ -258,7 +258,7 @@ void Creator::Update(SimulationApp& cur)
 }
 void Creator::Discard(SimulationApp& cur)
 {
-	cur.own.remove(this); body0 = body1 = NULL;
+	cur.own.Remove(this); body0 = body1 = NULL;
 	body = NULL; connection = NULL;
 	hovered = active = false;
 }

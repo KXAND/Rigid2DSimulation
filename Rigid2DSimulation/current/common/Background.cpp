@@ -23,7 +23,7 @@ void Background::Update(SimulationApp& cur)
 	hovered = ((cur.own.hovered) == this);
 	wheeled = ((cur.own.wheeled) == this);
 
-	if (hovered && (cur.input.isMouseClickedDown)(0))
+	if (hovered && (cur.input.IsMouseClickedDown)(0))
 	{
 		cur.bodySelecting = NULL;
 		cur.connectionSelecting = NULL;

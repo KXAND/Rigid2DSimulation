@@ -41,12 +41,12 @@ void VerticalScrollBar::Update(App& app) {
 		} else {
 			thumbY = (visibleTop - contentControl->tl.y) * h / contentControl->GetH();
 			thumbY = clamp(thumbY, 0, h - thumbHeight);
-			dragged = hasOverflow && enabled && hovered && app.input.isMouseClickedDown(0);
+			dragged = hasOverflow && enabled && hovered && app.input.IsMouseClickedDown(0);
 		}
 	} else { dragged = false; } Render(app);
 }
 void VerticalScrollBar::Discard(App& app) {
-	app.own.remove(this); dragged = hovered = hasOverflow = hoveredThumb = false;
+	app.own.Remove(this); dragged = hovered = hasOverflow = hoveredThumb = false;
 }
 void VerticalScrollBar::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&

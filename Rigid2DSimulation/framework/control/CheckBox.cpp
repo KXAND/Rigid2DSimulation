@@ -40,12 +40,12 @@ void CheckBox::Render(App& app) {
 void CheckBox::Update(App& app) {
 	hovered = (app.own.hovered == this);
 	textWidth = GetStringSize(text, app.ft, 0).x;
-	bool click = enabled && hovered && app.input.isMouseClickedDown(0);
+	bool click = enabled && hovered && app.input.IsMouseClickedDown(0);
 	if (click) { checked = !checked; Upload(app); }
 	else { Sync(app); } Render(app);
 }
 void CheckBox::Discard(App& app) {
-	app.own.remove(this); textWidth = 0;
+	app.own.Remove(this); textWidth = 0;
 	hovered = false;
 }
 void CheckBox::PreUpdate(App& app) {

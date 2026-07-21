@@ -194,22 +194,22 @@ void RichTextBox::HandleKey(App& app) {
 	else if (app.input.kbmsg[VK_BACK]) { HandleBackspace(app); }
 
 	if (app.input.kbd[VK_CONTROL]) {
-		if (app.input.isKeyPressedDown('C')) { HandleCopy(app); }
-		else if (app.input.isKeyPressedDown('X')) { HandleCut(app); }
-		else if (app.input.isKeyPressedDown('V')) { HandlePaste(app); }
-		else if (app.input.isKeyPressedDown('A')) { HandleSelectAll(app); }
+		if (app.input.IsKeyPressedDown('C')) { HandleCopy(app); }
+		else if (app.input.IsKeyPressedDown('X')) { HandleCut(app); }
+		else if (app.input.IsKeyPressedDown('V')) { HandlePaste(app); }
+		else if (app.input.IsKeyPressedDown('A')) { HandleSelectAll(app); }
 	}
 }
 
 void RichTextBox::ClampCursorWhileSelecting(App& app) {
 	double overflowDistance = (app.input.msp.x - tl.x) - GetMaxCursorX();
-	if (overflowDistance > 0) { valueOffset.x -= app.fps.dt() * slideMultiplier * overflowDistance; }
+	if (overflowDistance > 0) { valueOffset.x -= app.fps.GetDeltaTime() * slideMultiplier * overflowDistance; }
 	overflowDistance = editMargin.x - (app.input.msp.x - tl.x);
-	if (overflowDistance > 0) { valueOffset.x += app.fps.dt() * slideMultiplier * overflowDistance; }
+	if (overflowDistance > 0) { valueOffset.x += app.fps.GetDeltaTime() * slideMultiplier * overflowDistance; }
 	overflowDistance = (app.input.msp.y - tl.y) - GetMaxCursorY();
-	if (overflowDistance > 0) { valueOffset.y -= app.fps.dt() * slideMultiplier * overflowDistance; }
+	if (overflowDistance > 0) { valueOffset.y -= app.fps.GetDeltaTime() * slideMultiplier * overflowDistance; }
 	overflowDistance = editMargin.y - (app.input.msp.y - tl.y);
-	if (overflowDistance > 0) { valueOffset.y += app.fps.dt() * slideMultiplier * overflowDistance; }
+	if (overflowDistance > 0) { valueOffset.y += app.fps.GetDeltaTime() * slideMultiplier * overflowDistance; }
 }
 void RichTextBox::ClampCursorWithoutSelection(App& app) {
 	if (GetCursorPosition(app).x > GetMaxCursorX()) {
@@ -252,7 +252,7 @@ void RichTextBox::RenderMain(App& app) {
 }
 void RichTextBox::RenderCursor(App& app) {
 	bool showCursor = edit &&
-		(sin(app.fps.dur() * blinkMultiplier) > 0 || cursorChanged);
+		(sin(app.fps.GetElapsedTime() * blinkMultiplier) > 0 || cursorChanged);
 	if (showCursor) {
 		DVector2 cursorTopLeft = tl + GetCursorPosition(app) + DVector2(-cursorWidth, app.ft.h - cursorHeight) / 2;
 		drawRectangleRaw(app.scr, cursorTopLeft, cursorWidth, cursorHeight, GetTextViewport(), cursorColor);
@@ -269,19 +269,19 @@ void RichTextBox::Update(App& app) {
 		// 我感觉 selecting 有关的逻辑也是有点乱的。
 		// 怎么看待 UI 交互真的是个大问题。怎么清晰的表达需求。
 		if (selecting) { SelectEnd(app); }
-		if (enabled && hovered && app.input.isMouseClickedDown(0)) { SelectStart(app); }
+		if (enabled && hovered && app.input.IsMouseClickedDown(0)) { SelectStart(app); }
 		if (!app.input.msd[0]) { selecting = false; }
 		HandleKey(app); AddCharacters(app); ClampCursor(app); Upload(app);
 
-		if (enabled && !hovered && app.input.isMouseClickedDown(0)) { OnDone(app); }
-		if (!enabled || !hovered && app.input.isMouseClickedDown(0)) {
+		if (enabled && !hovered && app.input.IsMouseClickedDown(0)) { OnDone(app); }
+		if (!enabled || !hovered && app.input.IsMouseClickedDown(0)) {
 			// 请注意 kb_owner 的登记在 PreUpdate 中进行。
 			app.own.ReleaseKeyboard(this); edit = selecting = false;
 			selectionStart = selectionEnd = 0; cursorXHistory = 0;
 		}
 	} else {
 		Sync(app);
-		if (enabled && hovered && app.input.isMouseClickedDown(0)) {
+		if (enabled && hovered && app.input.IsMouseClickedDown(0)) {
 			if (clearUponEdit) { value.clear(); }
 			SelectStart(app); edit = true;
 		}
@@ -291,7 +291,7 @@ void RichTextBox::Update(App& app) {
 	ClampTextPosition(app); Render(app);
 }
 void RichTextBox::Discard(App& app) {
-	app.own.remove(this); app.own.ReleaseKeyboard(this);
+	app.own.Remove(this); app.own.ReleaseKeyboard(this);
 	edit = hovered = false; selecting = false;
 	selectionStart = selectionEnd = 0; cursorXHistory = 0;
 }

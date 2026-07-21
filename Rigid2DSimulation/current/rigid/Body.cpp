@@ -496,8 +496,8 @@ void Body::Update(SimulationApp& cur)
 {
 	hovered = (cur.own.hovered == this);
 
-	if (cur.mode == MODE_DEL && hovered && cur.input.isMouseClickedDown(0)) { isMarkedForDeletion = true; }
-	if (cur.mode == MODE_SEL && hovered && cur.input.isMouseClickedDown(0)) { cur.bodySelecting = this; }
+	if (cur.mode == MODE_DEL && hovered && cur.input.IsMouseClickedDown(0)) { isMarkedForDeletion = true; }
+	if (cur.mode == MODE_SEL && hovered && cur.input.IsMouseClickedDown(0)) { cur.bodySelecting = this; }
 	if (dragged)
 	{
 		// 检查拖拽模式，应用函数
@@ -520,7 +520,7 @@ void Body::Update(SimulationApp& cur)
 	else
 	{
 		// 检查 draged是否判断正确，更新被拖拽角度
-		dragged = hovered && cur.input.isMouseClickedDown(0) && (cur.mode == MODE_DRAG);
+		dragged = hovered && cur.input.IsMouseClickedDown(0) && (cur.mode == MODE_DRAG);
 		if (dragged)
 		{
 			// p移到m，那么mo = 变换*原距离 = 变换*原相对位置=po，故有。
@@ -545,7 +545,7 @@ void Body::Update(SimulationApp& cur)
 		(cur.creator->mode == CREATE_CONN || cur.creator->mode == CREATE_NAIL);
 	if (canCreate)
 	{
-		if (cur.input.isMouseClickedDown(0) && !cur.creator->active)
+		if (cur.input.IsMouseClickedDown(0) && !cur.creator->active)
 		{
 			cur.creator->body0 = this;
 			cur.creator->p0Relative = transform.inverse() * ((Vector2) cur.input.msp - position);

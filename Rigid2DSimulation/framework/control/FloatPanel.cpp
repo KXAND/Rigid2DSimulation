@@ -92,7 +92,7 @@ void FloatPanel::InitializeScrollBar() {
 }
 
 void FloatPanel::Hide(App& app) { shown = false; Discard(app); }
-void FloatPanel::Show(App& app) { shown = true; lastClickTime = app.fps.dur(); }
+void FloatPanel::Show(App& app) { shown = true; lastClickTime = app.fps.GetElapsedTime(); }
 void FloatPanel::HandleCaption(App& app) {
 	closeButtonHovered = hovered && isInside(app.input.msp, { GetCloseTopLeft(), closeButtonSize, closeButtonSize });
 	titleBarHovered = hovered && !closeButtonHovered && isInside(app.input.msp, { tl, w, titleBarHeight });
@@ -103,13 +103,13 @@ void FloatPanel::HandleCaption(App& app) {
 		newTopLeft.y = clamp(newTopLeft.y, 0, app.scr.height - titleBarHeight); SetTopLeft(app, newTopLeft);
 		titleBarDragged = app.input.msd[0];
 	}
-	else { titleBarDragged = titleBarHovered && app.input.isMouseClickedDown(0); }
+	else { titleBarDragged = titleBarHovered && app.input.IsMouseClickedDown(0); }
 
 	if (closeButtonChosen) {
 		if (closeButtonEnabled && !app.input.msd[0]) { Hide(app); return; }
 		closeButtonChosen = closeButtonEnabled && closeButtonHovered && app.input.msd[0];
 	}
-	else { closeButtonChosen = closeButtonEnabled && closeButtonHovered && app.input.isMouseClickedDown(0); }
+	else { closeButtonChosen = closeButtonEnabled && closeButtonHovered && app.input.IsMouseClickedDown(0); }
 }
 void FloatPanel::HandleWheelAndClampContent(App& app) {
 	if (hasOverflow) {
@@ -156,7 +156,7 @@ void FloatPanel::Update(App& app) {
 	wheeled = (app.own.wheeled == this);
 
 	HandleWheelAndClampContent(app);
-	if (hovered && app.input.isMouseClickedDown(0)) { lastClickTime = app.fps.dur(); }
+	if (hovered && app.input.IsMouseClickedDown(0)) { lastClickTime = app.fps.GetElapsedTime(); }
 	// 这项摆在最后是因为他可能执行 hide 指令。
 	HandleCaption(app);
 
@@ -170,7 +170,7 @@ void FloatPanel::Update(App& app) {
 void FloatPanel::Discard(App& app) {
 	closeButtonChosen = closeButtonHovered =
 		hovered = wheeled = titleBarHovered = titleBarDragged = false;
-	app.own.remove(this); scrollBar->Discard(app);
+	app.own.Remove(this); scrollBar->Discard(app);
 	if (contentControl) { contentControl->Discard(app); }
 }
 void FloatPanel::PreUpdate(App& app) {

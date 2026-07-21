@@ -17,14 +17,14 @@ struct AppInput {
 	bool mouse_tracked = false;
 	TRACKMOUSEEVENT mouse_track{};
 
-	bool isMouseClickedDown(int m) { return msd[m] && !msd_old[m]; }
-	bool isKeyPressedDown(int k) { return kbd[k] && !kbd_old[k]; }
+	bool IsMouseClickedDown(int m) { return msd[m] && !msd_old[m]; }
+	bool IsKeyPressedDown(int k) { return kbd[k] && !kbd_old[k]; }
 
 	void TrackMouse();
 	bool SyncMouse(HWND hwnd);
 
-	void init(HWND hwnd);
-	void reset();
+	void Initialize(HWND hwnd);
+	void Reset();
 };
 
 struct FrameRate {
@@ -36,11 +36,11 @@ struct FrameRate {
 	std::chrono::high_resolution_clock::time_point tm;
 
 	FrameRate();
-	void run();
-	void update();
+	void Start();
+	void Update();
 
-	double dt() const { return real_dt / 1e9; }
-	double dur() const { return real_dur / 1e9; }
+	double GetDeltaTime() const { return real_dt / 1e9; }
+	double GetElapsedTime() const { return real_dur / 1e9; }
 };
 
 struct InputOwners {
@@ -49,8 +49,8 @@ struct InputOwners {
 	void* wheeled = NULL;
 	double hoveredDepth = -DBL_MAX, wheeledDepth = -DBL_MAX;
 
-	void reset();
-	void remove(void* o);
+	void Reset();
+	void Remove(void* o);
 	void ReleaseKeyboard(void* o);
 };
 

@@ -95,7 +95,7 @@ void Panel::Update(App& app) {
 	if (useScrollBar) { scrollBar->Update(app); }
 }
 void Panel::Discard(App& app) {
-	app.own.remove(this); scrollBar->Discard(app);
+	app.own.Remove(this); scrollBar->Discard(app);
 	if (contentControl) { contentControl->Discard(app); }
 }
 void Panel::PreUpdate(App& app) {

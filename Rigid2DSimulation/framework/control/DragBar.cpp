@@ -49,11 +49,11 @@ void HorizontalDragBar::Update(App& app) {
 		dragged = enabled && app.input.msd[0];
 	} else {
 		Sync(app);
-		dragged = enabled && hovered && app.input.isMouseClickedDown(0);
+		dragged = enabled && hovered && app.input.IsMouseClickedDown(0);
 	} Render(app);
 }
 void HorizontalDragBar::Discard(App& app) {
-	app.own.remove(this); textWidth = 0;
+	app.own.Remove(this); textWidth = 0;
 	dragged = hovered = false;
 }
 void HorizontalDragBar::PreUpdate(App& app) {

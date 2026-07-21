@@ -150,7 +150,7 @@ void SimulationApp::Update()
 	// 检查暂停
 	if (!own.keyboardOwner)
 	{
-		if (input.isKeyPressedDown(L' ')) { isPaused = !isPaused; }
+		if (input.IsKeyPressedDown(L' ')) { isPaused = !isPaused; }
 	}
 
 	// 删除被标记为删除的图形和其上的连接
@@ -178,8 +178,8 @@ void SimulationApp::Update()
 	// 更新运行信息
 	(*background).Update(*this);
 	(*background).Render(*this);
-	realDeltaTime = min(maxRealDeltaTime, fps.dt());
-	currentScope[L"cur.fps.dt()"] = std::make_shared<Value>(realDeltaTime);
+	realDeltaTime = min(maxRealDeltaTime, fps.GetDeltaTime());
+	currentScope[L"cur.fps.GetDeltaTime()"] = std::make_shared<Value>(realDeltaTime);
 	gridNumX = ceil(rectScene.w / gridSize);
 	gridNumY = ceil(rectScene.h / gridSize);
 	if (isSceneChanged) { isSceneChanged = false; groups = FormGroups(bodies); }

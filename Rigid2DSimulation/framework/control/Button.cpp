@@ -37,10 +37,10 @@ void Button::Update(App& app) {
 		if (enabled && !app.input.msd[0]) { OnClick(app); }
 		chosen = enabled && hovered && app.input.msd[0];
 	} else {
-		chosen = enabled && hovered && app.input.isMouseClickedDown(0);
+		chosen = enabled && hovered && app.input.IsMouseClickedDown(0);
 	} Render(app);
 }
-void Button::Discard(App& app) { app.own.remove(this); chosen = hovered = false; }
+void Button::Discard(App& app) { app.own.Remove(this); chosen = hovered = false; }
 void Button::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, vp);

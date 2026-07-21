@@ -154,18 +154,18 @@ void TextBox::HandleKey(App& app) {
 	else if (app.input.kbmsg[VK_BACK]) { HandleBackspace(app); }
 
 	if (app.input.kbd[VK_CONTROL]) {
-		if (app.input.isKeyPressedDown('C')) { HandleCopy(app); }
-		else if (app.input.isKeyPressedDown('X')) { HandleCut(app); }
-		else if (app.input.isKeyPressedDown('V')) { HandlePaste(app); }
-		else if (app.input.isKeyPressedDown('A')) { HandleSelectAll(app); }
+		if (app.input.IsKeyPressedDown('C')) { HandleCopy(app); }
+		else if (app.input.IsKeyPressedDown('X')) { HandleCut(app); }
+		else if (app.input.IsKeyPressedDown('V')) { HandlePaste(app); }
+		else if (app.input.IsKeyPressedDown('A')) { HandleSelectAll(app); }
 	}
 }
 
 void TextBox::ClampSelectingCursor(App& app) {
 	double val = (app.input.msp.x - GetBoxTopLeft().x) - GetMaxCursorX();
-	if (val > 0) { valueOffsetX -= app.fps.dt() * slideMultiplier * val; }
+	if (val > 0) { valueOffsetX -= app.fps.GetDeltaTime() * slideMultiplier * val; }
 	val = editMarginWidth - (app.input.msp.x - GetBoxTopLeft().x);
-	if (val > 0) { valueOffsetX += app.fps.dt() * slideMultiplier * val; }
+	if (val > 0) { valueOffsetX += app.fps.GetDeltaTime() * slideMultiplier * val; }
 }
 void TextBox::ClampCursor(App& app) {
 	if (GetCursorX(app) > GetMaxCursorX()) {
@@ -204,7 +204,7 @@ void TextBox::RenderMain(App& app) {
 }
 void TextBox::RenderCursor(App& app) {
 	bool show_cursor = edit &&
-		(sin(app.fps.dur() * blinkMultiplier) > 0 || cursor_change);
+		(sin(app.fps.GetElapsedTime() * blinkMultiplier) > 0 || cursor_change);
 	if (show_cursor) {
 		int cursorScreenX = GetBoxTopLeft().x + GetCursorX(app) - cursorWidth / 2;
 		int cursorScreenY = GetBoxTopLeft().y + (h - cursorHeight) / 2;
@@ -220,26 +220,26 @@ void TextBox::Update(App& app) {
 	labelTextWidth = GetStringSize(labelText, app.ft, 0).x;
 	if (edit) {
 		if (selecting) { SelectEnd(app); }
-		if (enabled && hovered && app.input.isMouseClickedDown(0)) { SelectStart(app); }
+		if (enabled && hovered && app.input.IsMouseClickedDown(0)) { SelectStart(app); }
 		if (!app.input.msd[0]) { selecting = false; }
 		HandleKey(app); AddCharacters(app); ClampCursorPosition(app); Upload(app);
 
-		if (enabled && !hovered && app.input.isMouseClickedDown(0)) { OnDone(app); }
-		if (!enabled || !hovered && app.input.isMouseClickedDown(0)) {
+		if (enabled && !hovered && app.input.IsMouseClickedDown(0)) { OnDone(app); }
+		if (!enabled || !hovered && app.input.IsMouseClickedDown(0)) {
 			// 请注意 kb_owner 的登记在 PreUpdate 中进行。
 			app.own.ReleaseKeyboard(this); edit = selecting = false;
 			selectionStart = selectionEnd = 0;
 		}
 	} else {
 		Sync(app);
-		if (enabled && hovered && app.input.isMouseClickedDown(0)) {
+		if (enabled && hovered && app.input.IsMouseClickedDown(0)) {
 			if (clearUponEdit) { value.clear(); }
 			SelectStart(app); edit = true;
 		}
 	} ClampTextPosition(app); Render(app);
 }
 void TextBox::Discard(App& app) {
-	app.own.remove(this); app.own.ReleaseKeyboard(this);
+	app.own.Remove(this); app.own.ReleaseKeyboard(this);
 	labelTextWidth = 0; edit = hovered = false;
 	selecting = cursor_change = false;
 	selectionStart = selectionEnd = 0;

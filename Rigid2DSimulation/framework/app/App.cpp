@@ -21,7 +21,7 @@ void App::Init()
 
 	RegisterWindowClass(); CreateApplicationWindow(); ret = waveOutput.Initialize();
 	AddLog(ret ? L"成功加载声音模块.\n" : L"加载声音模块失败.\n");
-	input.init(hwnd); InitializeBitmapInfo(); LoadLocalizationFile();
+	input.Initialize(hwnd); InitializeBitmapInfo(); LoadLocalizationFile();
 
 	hdc = GetDC(hwnd);
 	AddLog(hdc ? L"成功取得设备环境句柄.\n" : L"取得设备环境句柄失败.\n");
@@ -31,7 +31,7 @@ void App::Init()
 void App::Run(bool console)
 {
 	if (!console) { HideConsole(); }
-	MSG msg{}; fps.run(); ShowWindow(hwnd, SW_SHOW);
+	MSG msg{}; fps.Start(); ShowWindow(hwnd, SW_SHOW);
 
 	while (true)
 	{
@@ -45,13 +45,13 @@ void App::Run(bool console)
 		{
 			bool ret = SetWindowText(hwnd, title.c_str());
 			if (!ret) { AddLog(L"设置标题失败.\n"); }
-			fps.update(); ResetDepthBuffer();
+			fps.Update(); ResetDepthBuffer();
 			ret = input.SyncMouse(hwnd);
 			if (!ret) { AddLog(L"同步鼠标位置失败.\n");
 			}
 			Update(); ret = waveOutput.Play();
 			if (!ret) { AddLog(L"播放声音失败.\n"); }
-			PresentScreen(); input.reset(); own.reset();
+			PresentScreen(); input.Reset(); own.Reset();
 		}
 	} ReleaseDC(hwnd, hdc);
 	waveOutput.Shutdown(); AddLog(L"退出程序.\n\n");
