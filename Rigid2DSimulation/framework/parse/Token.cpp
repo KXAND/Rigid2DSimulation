@@ -3,125 +3,125 @@
 Token::Token(wstring const& type) : type(type) {}
 Token::Token(double number) : number(number) { type = L"num"; }
 Token Token::CreateString(wstring const& text) {
-	Token tk(L"str");
-	tk.stringValue = text; return tk;
+	Token token(L"str");
+	token.stringValue = text; return token;
 }
 Token Token::CreateVariable(wstring const& value, bool isGlobal) {
-	Token tk(L"var");
-	tk.variableName = value; tk.isGlobal = isGlobal; return tk;
+	Token token(L"var");
+	token.variableName = value; token.isGlobal = isGlobal; return token;
 }
-wstring ToWString(Token const& tk) {
-	wstring tmp = L"[" + tk.type;
-	if (tk.type == L"var") { tmp += (tk.isGlobal ? L":&" : L":") + tk.variableName; }
-	if (tk.type == L"num") { tmp += L":" + FormatFixed2(tk.number); }
-	if (tk.type == L"str") { tmp += L":" + tk.stringValue; }
-	tmp += L"]"; return tmp;
+wstring ToWString(Token const& token) {
+	wstring serializedText = L"[" + token.type;
+	if (token.type == L"var") { serializedText += (token.isGlobal ? L":&" : L":") + token.variableName; }
+	if (token.type == L"num") { serializedText += L":" + FormatFixed2(token.number); }
+	if (token.type == L"str") { serializedText += L":" + token.stringValue; }
+	serializedText += L"]"; return serializedText;
 }
 
-Token ParseNumberToken(wstring const& in, int& id) {
-	wstring tmp = { in[id] }; bool ok = true;
-	bool dot = false;
-	while (ok && ++id != in.size()) {
-		auto c = in[id];
-		if (c == L'.') {
-			if (dot) { return Token(L"error"); }
-			dot = true;
+Token ParseNumberToken(wstring const& source, int& index) {
+	wstring numberText = { source[index] }; bool isValid = true;
+	bool hasDecimalPoint = false;
+	while (isValid && ++index != source.size()) {
+		auto character = source[index];
+		if (character == L'.') {
+			if (hasDecimalPoint) { return Token(L"error"); }
+			hasDecimalPoint = true;
 		}
-		ok = iswdigit(c) || c == L'.';
-		if (ok) { tmp += c; }
+		isValid = iswdigit(character) || character == L'.';
+		if (isValid) { numberText += character; }
 	}
-	auto c = in[id];
-	if (isalpha(c) || c == L'_') { return Token(L"error"); }
-	return Token(ParseDouble(tmp));
+	auto character = source[index];
+	if (isalpha(character) || character == L'_') { return Token(L"error"); }
+	return Token(ParseDouble(numberText));
 }
-Token ParseStringToken(wstring const& in, int& id) {
-	wstring tmp; bool ok = true;
-	bool escape = false;
-	while (ok && ++id != in.size()) {
-		auto c = in[id];
-		if (c == L'\n') { return Token(L"error"); }
-		if (escape) {
-			if (c == L'n') { c = L'\n'; }
-			escape = false; ok = true;
-		} else { escape = (c == L'\\'); ok = (c != L'\"'); }
-		if (ok && !escape) { tmp += c; }
-	} ++id;
-	return Token::CreateString(tmp);
+Token ParseStringToken(wstring const& source, int& index) {
+	wstring stringValue; bool isValid = true;
+	bool isEscaped = false;
+	while (isValid && ++index != source.size()) {
+		auto character = source[index];
+		if (character == L'\n') { return Token(L"error"); }
+		if (isEscaped) {
+			if (character == L'n') { character = L'\n'; }
+			isEscaped = false; isValid = true;
+		} else { isEscaped = (character == L'\\'); isValid = (character != L'\"'); }
+		if (isValid && !isEscaped) { stringValue += character; }
+	} ++index;
+	return Token::CreateString(stringValue);
 }
-Token ParseMarkToken(wstring const& in, int& id) {
-	vector<wstring> two = {
+Token ParseMarkToken(wstring const& source, int& index) {
+	vector<wstring> twoCharacterMarks = {
 		L"||", L"&&", L"==", L"!=", L"<=", L">=", L"//"
 	};
-	if (id + 1 < in.size())
-	for (auto const& s : two)
-	if (in[id] == s[0] && in[id + 1] == s[1]) { id += 2; return Token(s); }
+	if (index + 1 < source.size())
+	for (auto const& mark : twoCharacterMarks)
+	if (source[index] == mark[0] && source[index + 1] == mark[1]) { index += 2; return Token(mark); }
 
-	if (id < in.size())
-	for (auto c : (wstring)L",.+-*/=<>!(){}[]&; \n\"")
-	if (in[id] == c) { ++id; return Token(wstring({ c })); }
+	if (index < source.size())
+	for (auto character : (wstring)L",.+-*/=<>!(){}[]&; \n\"")
+	if (source[index] == character) { ++index; return Token(wstring({ character })); }
 	return Token(L"error");
 }
-Token ParseGlobalVariableToken(wstring const& in, int& id) {
-	wstring tmp; bool ok = true;
-	// 下面这行判断的顺序很重要，ok 不能移到右边。
-	while (ok && ++id != in.size()) {
-		auto c = in[id];
-		ok = iswalpha(c) || c == L'_' || iswdigit(c);
-		if (ok) { tmp += c; }
-	} return Token::CreateVariable(tmp, true);
+Token ParseGlobalVariableToken(wstring const& source, int& index) {
+	wstring variableName; bool isValid = true;
+	// 下面这行判断的顺序很重要，isValid 不能移到右边。
+	while (isValid && ++index != source.size()) {
+		auto character = source[index];
+		isValid = iswalpha(character) || character == L'_' || iswdigit(character);
+		if (isValid) { variableName += character; }
+	} return Token::CreateVariable(variableName, true);
 }
-Token ParseVariableOrReservedToken(wstring const& in, int& id) {
-	wstring tmp = { in[id] }; bool ok = true;
-	// 下面这行判断的顺序很重要，ok 不能移到右边。
-	while (ok && ++id != in.size()) {
-		auto c = in[id];
-		ok = iswalpha(c) || c == L'_' || iswdigit(c);
-		if (ok) { tmp += c; }
+Token ParseVariableOrReservedToken(wstring const& source, int& index) {
+	wstring variableName = { source[index] }; bool isValid = true;
+	// 下面这行判断的顺序很重要，isValid 不能移到右边。
+	while (isValid && ++index != source.size()) {
+		auto character = source[index];
+		isValid = iswalpha(character) || character == L'_' || iswdigit(character);
+		if (isValid) { variableName += character; }
 	}
-	bool reserved =
-		tmp == L"def" || tmp == L"return" || tmp == L"if" ||
-		tmp == L"else" || tmp == L"while" || tmp == L"null";
-	if (reserved) { return Token(tmp); }
-	return Token::CreateVariable(tmp, false);
+	bool isReserved =
+		variableName == L"def" || variableName == L"return" || variableName == L"if" ||
+		variableName == L"else" || variableName == L"while" || variableName == L"null";
+	if (isReserved) { return Token(variableName); }
+	return Token::CreateVariable(variableName, false);
 }
-Token ParseToken(wstring const& in, int& id) {
-	auto c = in[id];
-	if (c == L'&') { return ParseGlobalVariableToken(in, id); }
-	if (iswalpha(c) || c == L'_') { return ParseVariableOrReservedToken(in, id); }
-	if (iswdigit(c)) { return ParseNumberToken(in, id); }
-	if (c == L'\"') { return ParseStringToken(in, id); }
-	return ParseMarkToken(in, id);
+Token ParseToken(wstring const& source, int& index) {
+	auto character = source[index];
+	if (character == L'&') { return ParseGlobalVariableToken(source, index); }
+	if (iswalpha(character) || character == L'_') { return ParseVariableOrReservedToken(source, index); }
+	if (iswdigit(character)) { return ParseNumberToken(source, index); }
+	if (character == L'\"') { return ParseStringToken(source, index); }
+	return ParseMarkToken(source, index);
 }
 
-vector<Token> NormalizeSigns(vector<Token> const& in) {
-	vector<Token> out;
-	bool add = false; int sgn = 1;
+vector<Token> NormalizeSigns(vector<Token> const& tokens) {
+	vector<Token> result;
+	bool isSign = false; int sign = 1;
 
-	for (auto const& tk : in) {
-		bool old_add = add;
-		add = tk.type == L"+" || tk.type == L"-";
-		if (add) {
-			if (old_add) { sgn *= tk.type == L"+" ? 1 : -1; }
-			else { sgn = tk.type == L"+" ? 1 : -1; } continue;
-		} else if (old_add) {
-			out.push_back(Token(sgn == 1 ? L"+" : L"-"));
-		} out.push_back(tk);
+	for (auto const& token : tokens) {
+		bool previousIsSign = isSign;
+		isSign = token.type == L"+" || token.type == L"-";
+		if (isSign) {
+			if (previousIsSign) { sign *= token.type == L"+" ? 1 : -1; }
+			else { sign = token.type == L"+" ? 1 : -1; } continue;
+		} else if (previousIsSign) {
+			result.push_back(Token(sign == 1 ? L"+" : L"-"));
+		} result.push_back(token);
 	}
-	if (add) { out.push_back(Token(sgn == 1 ? L"+" : L"-")); }
-	return out;
+	if (isSign) { result.push_back(Token(sign == 1 ? L"+" : L"-")); }
+	return result;
 }
-vector<Token> Tokenize(wstring const& in) {
-	int id = 0; vector<Token> tmp;
-	while (id != in.size()) {
-		// 你之前在 tk 前面加了 const &，千万不要在这样了。
-		auto tk = ParseToken(in, id);
+vector<Token> Tokenize(wstring const& source) {
+	int index = 0; vector<Token> tokens;
+	while (index != source.size()) {
+		// 你之前在 token 前面加了 const &，千万不要在这样了。
+		auto token = ParseToken(source, index);
 		bool blank =
-			tk.type == L" " || tk.type == L"\n";
-		if (tk.type == L"//") {
-			while (id != in.size() && in[id++] != L'\n');
+			token.type == L" " || token.type == L"\n";
+		if (token.type == L"//") {
+			while (index != source.size() && source[index++] != L'\n');
 		}
-		else if (tk.type == L"error") { return {}; }
-		else if (!blank) { tmp.push_back(tk); }
-	} return NormalizeSigns(tmp);
+		else if (token.type == L"error") { return {}; }
+		else if (!blank) { tokens.push_back(token); }
+	} return NormalizeSigns(tokens);
 }
 
