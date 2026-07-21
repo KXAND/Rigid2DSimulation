@@ -28,18 +28,18 @@ struct Vector3 {
 	Vector3& operator*=(double a) { x *= a; y *= a; z *= a; return *this; }
 	Vector3& operator/=(double a) { return *this *= 1 / a; }
 
-	bool zero() const { return x == 0 && y == 0 && z == 0; }
+	bool IsZero() const { return x == 0 && y == 0 && z == 0; }
 	bool IsNearZero(double eps) const {
 		return abs(x) <= eps && abs(y) <= eps && abs(z) <= eps;
 	}
-	Vector3 normalize() const { return zero() ? Vector3{} : *this / len(); }
-	double len() const { return sqrt(lensqr()); }
-	double lensqr() const { return x * x + y * y + z * z; }
+	Vector3 GetNormalized() const { return IsZero() ? Vector3{} : *this / GetLength(); }
+	double GetLength() const { return sqrt(GetLengthSquared()); }
+	double GetLengthSquared() const { return x * x + y * y + z * z; }
 };
-inline double dot(Vector3 a, Vector3 b) {
+inline double Dot(Vector3 a, Vector3 b) {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
-inline Vector3 cross(Vector3 a, Vector3 b) {
+inline Vector3 Cross(Vector3 a, Vector3 b) {
 	return {
 		a.y * b.z - a.z * b.y,
 		a.z * b.x - a.x * b.z,
@@ -90,7 +90,7 @@ struct Matrix3 {
 			0, 0, 1,
 		};
 	}
-	static Matrix3 cross(Vector3 v) {
+	static Matrix3 Cross(Vector3 v) {
 		// 指的是 u = v × u。
 		Matrix3 m;
 		m.a01 = -v.z;  m.a02 = v.y;
@@ -109,7 +109,7 @@ struct Matrix3 {
 		// 这里假设了 axis 是单位的。
 		Matrix3 mz = tensor(axis, axis);
 		Matrix3 mx = Matrix3::I() - mz;
-		Matrix3 my = cross(axis);
+		Matrix3 my = Cross(axis);
 		return cos(theta) * mx + sin(theta) * my + mz;
 	}
 

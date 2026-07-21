@@ -239,7 +239,7 @@ void Body::Init(bool repos_o)
 				int j = (i + 1) % shapes->verticesRelative.size();
 				auto p = shapes->verticesRelative[i], q = shapes->verticesRelative[j];
 				double tri_area = Matrix2(p, q).det() / 2;
-				double tri_inertia = dot(p, p) + dot(p, q) + dot(q, q);
+				double tri_inertia = Dot(p, p) + Dot(p, q) + Dot(q, q);
 				tri_inertia *= tri_area / 6;
 
 				sub_center += tri_area * (p + q) / 3;
@@ -443,18 +443,18 @@ void Body::HandleDragPoint(SimulationApp& cur)
 	Vector2 mousePos = Vector2(cur.input.mousePosition);
 	Vector2 pPos = position + transform * relativeDragPoint;
 	Vector2 mouseVelocity = Vector2(cur.input.mousePosition - cur.input.previousMousePosition) / cur.realDeltaTime;
-	Vector2 pmDir = (mousePos - pPos).normalize();
+	Vector2 pmDir = (mousePos - pPos).GetNormalized();
 
 	Vector2 opDir = pPos - position;
 	opDir = Vector2(-opDir.y, opDir.x);
 	Vector2 pVelocity = velocity + velocityAngular * opDir;
-	double rd0 = dot(opDir, pmDir);
+	double rd0 = Dot(opDir, pmDir);
 	double inv_i0 = invMass + rd0 * rd0 * invInertia;
 
-	Vector2 impulse = dot(mouseVelocity - pVelocity, pmDir) * pmDir / inv_i0;
+	Vector2 impulse = Dot(mouseVelocity - pVelocity, pmDir) * pmDir / inv_i0;
 
 	velocity += impulse * invMass;
-	velocityAngular += dot(impulse, opDir) * invInertia;
+	velocityAngular += Dot(impulse, opDir) * invInertia;
 	position += mousePos - pPos;
 }
 
@@ -479,18 +479,18 @@ void Body::HandleDragForce(SimulationApp& cur, double deltaTime)
 	// 运动路径方向
 	Vector2 p1 = Vector2(cur.input.mousePosition);
 	Vector2 p0 = position + transform * relativeDragPoint;
-	Vector2 d = (p1 - p0).normalize();
+	Vector2 d = (p1 - p0).GetNormalized();
 
 	// 力
 	double k = 1e6;
-	Vector2 impulse = k * (p1 - p0).len() * deltaTime * d;
+	Vector2 impulse = k * (p1 - p0).GetLength() * deltaTime * d;
 
 	// 刚体半径
 	Vector2 r0 = p0 - position;
 	r0 = Vector2(-r0.y, r0.x);
 
 	velocity += impulse * invMass;
-	velocityAngular += dot(impulse, r0) * invInertia;
+	velocityAngular += Dot(impulse, r0) * invInertia;
 }
 void Body::Update(SimulationApp& cur)
 {
@@ -567,7 +567,7 @@ void Body::PreUpdate(SimulationApp& cur)
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulomb)
 {
 	double dsqr = (b1.position - b0.position).GetLengthSquared();
-	Vector2 d = (b1.position - b0.position).normalize();
+	Vector2 d = (b1.position - b0.position).GetNormalized();
 	Vector2 je = -b0.charge * b1.charge * d / dsqr * sdt * coulomb;
 	b0.velocity += je * b0.invMass;
 	b1.velocity -= je * b1.invMass;

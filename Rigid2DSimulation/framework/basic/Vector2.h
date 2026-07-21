@@ -42,16 +42,16 @@ struct Vector2
 	bool operator==(const Vector2& other) const { return this->x == other.x && this->y == other.y; }
 	bool operator!=(const Vector2& other) const { return this->x != other.x || this->y != other.y; }
 
-	bool zero() const { return x == 0 && y == 0; }
-	bool nearZero(double eps) const
+	bool IsZero() const { return x == 0 && y == 0; }
+	bool IsNearZero(double eps) const
 	{
 		return abs(x) <= eps && abs(y) <= eps;
 	}
-	Vector2 normalize() const { return zero() ? Vector2{} : *this / len(); }
-	double len() const { return sqrt(GetLengthSquared()); }
+	Vector2 GetNormalized() const { return IsZero() ? Vector2{} : *this / GetLength(); }
+	double GetLength() const { return sqrt(GetLengthSquared()); }
 	double GetLengthSquared() const { return x * x + y * y; }
 };
-inline double dot(const Vector2& a, const Vector2& b) { return a.x * b.x + a.y * b.y; }
+inline double Dot(const Vector2& a, const Vector2& b) { return a.x * b.x + a.y * b.y; }
 //Ë³ÐòÎÊÌâ
 inline Vector2 operator*(const double& scale, const Vector2& vector) { return Vector2(vector.x * scale, vector.y * scale); }
 

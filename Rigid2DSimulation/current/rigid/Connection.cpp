@@ -107,23 +107,23 @@ void Connection::SimulateRopeOrLink(bool equalReponse)
 	Vector2 v1 = body1->velocity + body1->velocityAngular * r1;
 
 	Vector2 d = p1 - p0;
-	double currLenth = d.len();
-	d = d.normalize();
+	double currLenth = d.GetLength();
+	d = d.GetNormalized();
 	isTight = currLenth > len;
 	if (!isTight && type == CON_ROPE) { return; }// rope在压缩时不受力，拉伸时和link一样不形变
 
-	double torque0 = dot(r0, d);
-	double torque1 = dot(r1, d);
+	double torque0 = Dot(r0, d);
+	double torque1 = Dot(r1, d);
 	double accelFactor0 = body0->invMass + torque0 * torque0 * body0->invInertia;
 	double accelFactor1 = body1->invMass + torque1 * torque1 * body1->invInertia;
-	double velocityDiffOnD = dot(v0 - v1, d);
+	double velocityDiffOnD = Dot(v0 - v1, d);
 	if (type == CON_ROPE) { velocityDiffOnD = min(0.0, velocityDiffOnD); }
 	Vector2 impulse = -velocityDiffOnD / (accelFactor0 + accelFactor1) * d;
 
 	body0->velocity += impulse * body0->invMass;
 	body1->velocity -= impulse * body1->invMass;
-	body0->velocityAngular += dot(impulse, r0) * body0->invInertia;
-	body1->velocityAngular -= dot(impulse, r1) * body1->invInertia;
+	body0->velocityAngular += Dot(impulse, r0) * body0->invInertia;
+	body1->velocityAngular -= Dot(impulse, r1) * body1->invInertia;
 
 	if (equalReponse)
 	{
@@ -161,23 +161,23 @@ void Connection::SimulateCordOrSpring(double deltaTime)
 	Vector2 v1 = body1->velocity + body1->velocityAngular * r1;
 
 	Vector2 p0p1Vec = p1 - p0;
-	double currLenth = p0p1Vec.len();
-	p0p1Vec = p0p1Vec.normalize();
-	if (p0p1Vec.zero()) { p0p1Vec = Vector2(1, 0); }
+	double currLenth = p0p1Vec.GetLength();
+	p0p1Vec = p0p1Vec.GetNormalized();
+	if (p0p1Vec.IsZero()) { p0p1Vec = Vector2(1, 0); }
 
 	isTight = currLenth > len;
 	if (!isTight && type == CON_CORD) { return; }// cord在压缩不受力，拉伸和spring一样
 
 	// @todo:关于力矩的公式我已经忘了，需要再推导
-	double torgue0 = dot(r0, p0p1Vec);
-	double torgue1 = dot(r1, p0p1Vec);
+	double torgue0 = Dot(r0, p0p1Vec);
+	double torgue1 = Dot(r1, p0p1Vec);
 	Vector2 springsForce = (currLenth - len) * hooke * deltaTime * p0p1Vec;
 
 	// 每 dt内计算一次，可以直接加上加速度
 	body0->velocity += springsForce * body0->invMass;
 	body1->velocity -= springsForce * body1->invMass;
-	body0->velocityAngular += dot(springsForce, r0) * body0->invInertia;
-	body1->velocityAngular -= dot(springsForce, r1) * body1->invInertia;
+	body0->velocityAngular += Dot(springsForce, r0) * body0->invInertia;
+	body1->velocityAngular -= Dot(springsForce, r1) * body1->invInertia;
 }
 
 void Connection::Simulate(double deltaTime, bool useEqualPositionCorrection)

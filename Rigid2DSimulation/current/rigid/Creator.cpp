@@ -172,7 +172,7 @@ void Creator::UpdateConnection(SimulationApp& cur)
 
 				connection->SignUpToBodies();
 				connection->UpdatePosition();
-				connection->len = (connection->p0 - connection->p1).len();
+				connection->len = (connection->p0 - connection->p1).GetLength();
 				cur.connections.push_back(connection);
 				cur.isSceneChanged = true;
 			}

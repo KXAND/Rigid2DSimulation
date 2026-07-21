@@ -82,7 +82,7 @@ void CreateConnection(SimulationApp& cur, Value const& cfg)
 	}
 	connection->SignUpToBodies();
 	connection->UpdatePosition();
-	connection->len = (connection->p0 - connection->p1).len();
+	connection->len = (connection->p0 - connection->p1).GetLength();
 	connection->ReadCfg(cfg);
 	cur.connections.push_back(connection);
 	cur.isSceneChanged = true;
@@ -164,7 +164,7 @@ void Strand(SimulationApp& cur, Value const& _p0, Value const& _p1,
 	int n = _n.num;
 	std::shared_ptr<Body> b0, b1;
 	std::shared_ptr<Connection> connection;
-	double len = (p1 - p0).len() / n;
+	double len = (p1 - p0).GetLength() / n;
 	double rad = 0.5 * ratio.num * len;
 	double gap = max(0.0, len - 2 * rad);
 	Color col = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
@@ -186,8 +186,8 @@ void Strand(SimulationApp& cur, Value const& _p0, Value const& _p1,
 		connection->body0 = &*b0;
 		connection->body1 = &*b1;
 		connection->len = gap;
-		connection->p0Relative = +rad * (p1 - p0).normalize();
-		connection->p1Relative = -rad * (p1 - p0).normalize();
+		connection->p0Relative = +rad * (p1 - p0).GetNormalized();
+		connection->p1Relative = -rad * (p1 - p0).GetNormalized();
 		connection->ReadCfg(cfg_conn);
 		connection->SignUpToBodies();
 		connection->UpdatePosition();
