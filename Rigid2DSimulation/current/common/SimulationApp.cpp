@@ -18,7 +18,7 @@ SimulationApp::SimulationApp()
     w = 1800;
     h = 900;
     SetLocale();
-    wv.len_block = 4 * 5e-4;
+    waveOutput.blockDuration = 4 * 5e-4;
 
     PrintConsole(L"正在加载字体...");
     App::Init();
@@ -144,7 +144,7 @@ void SimulationApp::Update()
 			currentMusicClip->sampleIndex = 0;
 			currentMusicClip = (currentMusicClip == &*firstMusicClip) ? &*secondMusicClip : &*firstMusicClip;
 		}
-		if (!isMuted) { currentMusicClip->Play(wv.wvin); }
+		if (!isMuted) { currentMusicClip->Play(waveOutput.inputSamples); }
 	}
 
 	// 检查暂停

@@ -16,7 +16,7 @@ struct App {
 	int languageIdx = 0;
 	map<wstring, vector<wstring>> localizationDict;
 
-	WaveOutput wv;
+	WaveOutput waveOutput;
 	FrameRate fps;
 	AppInput input;
 	InputOwners own;

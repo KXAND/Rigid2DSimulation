@@ -19,7 +19,7 @@ void App::Init()
 	hinst = GetModuleHandle(NULL);
 	addLog(hinst ? L"成功取得模块句柄.\n" : L"取得模块句柄失败.\n");
 
-	RegisterWindowClass(); CreateApplicationWindow(); ret = wv.init();
+	RegisterWindowClass(); CreateApplicationWindow(); ret = waveOutput.Initialize();
 	addLog(ret ? L"成功加载声音模块.\n" : L"加载声音模块失败.\n");
 	input.init(hwnd); InitializeBitmapInfo(); loadLocalizationFile();
 
@@ -49,12 +49,12 @@ void App::Run(bool console)
 			ret = input.SyncMouse(hwnd);
 			if (!ret) { addLog(L"同步鼠标位置失败.\n");
 			}
-			Update(); ret = wv.play();
+			Update(); ret = waveOutput.Play();
 			if (!ret) { addLog(L"播放声音失败.\n"); }
 			PresentScreen(); input.reset(); own.reset();
 		}
 	} ReleaseDC(hwnd, hdc);
-	wv.exit(); addLog(L"退出程序.\n\n");
+	waveOutput.Shutdown(); addLog(L"退出程序.\n\n");
 }
 
 void App::ResetDepthBuffer()

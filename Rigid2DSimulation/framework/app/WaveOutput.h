@@ -3,33 +3,33 @@
 
 // 这里反正能用，不知道有没有更好的实现方式。
 struct WaveBlock {
-	WAVEHDR hdr{};
-	vector<int16_t> dat;
+	WAVEHDR waveHeader{};
+	vector<int16_t> samples;
 
-	WaveBlock(int n = 0);
-	int n() const;
-	bool done() const;
-	bool play(HWAVEOUT hwo);
-	bool finish(HWAVEOUT hwo);
+	WaveBlock(int sampleCount = 0);
+	int GetSampleCount() const;
+	bool IsDone() const;
+	bool Play(HWAVEOUT waveOutputHandle);
+	bool Finish(HWAVEOUT waveOutputHandle);
 };
 
 struct WaveOutput {
-	HWAVEOUT hwo{};
-	int sp = 0;
-	int n_safe = 0;
-	int n_blocks = 0;
-	double len_block = 0;
-	WAVEFORMATEX wofm{};
+	HWAVEOUT waveOutputHandle{};
+	int sampleRate = 0;
+	int safeBlockCount = 0;
+	int blockCount = 0;
+	double blockDuration = 0;
+	WAVEFORMATEX format{};
 
-	int n_play = 0;
-	vector<double> wvin;
+	int playingBlockCount = 0;
+	vector<double> inputSamples;
 	// 实践发现下面用指针是必要的, 否则涉及到复制会有错误，可能跟 winapi 有关。
-	deque<std::shared_ptr<WaveBlock>> wvblks;
+	deque<std::shared_ptr<WaveBlock>> blocks;
 
 	WaveOutput();
-	int len_block_n() const;
-	bool init();
-	bool play();
-	void exit();
+	int GetBlockSampleCount() const;
+	bool Initialize();
+	bool Play();
+	void Shutdown();
 };
 
