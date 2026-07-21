@@ -26,12 +26,12 @@ void BodyConnectionLabel::Sync(App& app) {
 	auto* connection = simulationApp.bodySelecting->connections[id];
 	wstring type;
 	switch (connection->type) {
-	case CON_ROPE: type = simulationApp.getLocalizedString(L"conn_rope"); break;
-	case CON_LINK: type = simulationApp.getLocalizedString(L"conn_link"); break;
-	case CON_SPRING: type = simulationApp.getLocalizedString(L"conn_spring"); break;
-	case CON_CORD: type = simulationApp.getLocalizedString(L"conn_cord"); break;
+	case CON_ROPE: type = simulationApp.GetLocalizedString(L"conn_rope"); break;
+	case CON_LINK: type = simulationApp.GetLocalizedString(L"conn_link"); break;
+	case CON_SPRING: type = simulationApp.GetLocalizedString(L"conn_spring"); break;
+	case CON_CORD: type = simulationApp.GetLocalizedString(L"conn_cord"); break;
 	}
-	text = simulationApp.getLocalizedString(L"conn") + std::to_wstring(id) + L": " + type;
+	text = simulationApp.GetLocalizedString(L"conn") + std::to_wstring(id) + L": " + type;
 }
 
 SelectBodyConnectionCheckBox::SelectBodyConnectionCheckBox(int id) : id(id), LocalizedCheckBox(L"cb_body_con") {}
@@ -86,22 +86,22 @@ void BodyEditorControls::Discard(App& app) {
 void BodyDetailsLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto* selectedBody = simulationApp.bodySelecting;
-	if (!selectedBody) { text = simulationApp.getLocalizedString(L"body_not_sel"); return; }
+	if (!selectedBody) { text = simulationApp.GetLocalizedString(L"body_not_sel"); return; }
 	auto& body = *selectedBody;
 	text.clear();
 
-	text += simulationApp.getLocalizedString(L"body_o") + ToWString(body.position) + L"\n";
-	text += simulationApp.getLocalizedString(L"body_v") + ToWString(body.velocity) + L"\n";
-	text += simulationApp.getLocalizedString(L"body_ang") + FormatFixed2(body.radian) + L"\n";
-	text += simulationApp.getLocalizedString(L"body_v_ang") + FormatFixed2(body.velocityAngular) + L"\n";
-	text += simulationApp.getLocalizedString(L"body_fixed") + std::to_wstring(body.fixed) + L"\n";
-	text += simulationApp.getLocalizedString(L"body_density") + FormatFixed2(body.density) + L"\n";
-	text += simulationApp.getLocalizedString(L"body_charge_density") + FormatFixed2(body.chargeDensity) + L"\n";
-	text += simulationApp.getLocalizedString(L"body_e") + FormatFixed2(body.elasticity) + L"\n";
-	text += simulationApp.getLocalizedString(L"body_mu_s") + FormatFixed2(body.frictionStatic) + L"\n";
-	text += simulationApp.getLocalizedString(L"body_mu_d") + FormatFixed2(body.frictionDynamic) + L"\n";
-	text += simulationApp.getLocalizedString(L"body_damp_v") + FormatFixed2(body.dampCoeff) + L"\n";
-	text += simulationApp.getLocalizedString(L"body_damp_v_ang") + FormatFixed2(body.dampCoeffAngular) + L"\n";
+	text += simulationApp.GetLocalizedString(L"body_o") + ToWString(body.position) + L"\n";
+	text += simulationApp.GetLocalizedString(L"body_v") + ToWString(body.velocity) + L"\n";
+	text += simulationApp.GetLocalizedString(L"body_ang") + FormatFixed2(body.radian) + L"\n";
+	text += simulationApp.GetLocalizedString(L"body_v_ang") + FormatFixed2(body.velocityAngular) + L"\n";
+	text += simulationApp.GetLocalizedString(L"body_fixed") + std::to_wstring(body.fixed) + L"\n";
+	text += simulationApp.GetLocalizedString(L"body_density") + FormatFixed2(body.density) + L"\n";
+	text += simulationApp.GetLocalizedString(L"body_charge_density") + FormatFixed2(body.chargeDensity) + L"\n";
+	text += simulationApp.GetLocalizedString(L"body_e") + FormatFixed2(body.elasticity) + L"\n";
+	text += simulationApp.GetLocalizedString(L"body_mu_s") + FormatFixed2(body.frictionStatic) + L"\n";
+	text += simulationApp.GetLocalizedString(L"body_mu_d") + FormatFixed2(body.frictionDynamic) + L"\n";
+	text += simulationApp.GetLocalizedString(L"body_damp_v") + FormatFixed2(body.dampCoeff) + L"\n";
+	text += simulationApp.GetLocalizedString(L"body_damp_v_ang") + FormatFixed2(body.dampCoeffAngular) + L"\n";
 }
 
 BodyPanel :: BodyPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_body") {

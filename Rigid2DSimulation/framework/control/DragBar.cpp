@@ -63,7 +63,7 @@ void HorizontalDragBar::PreUpdate(App& app) {
 }
 
 LocalizedHorizontalDragBar::LocalizedHorizontalDragBar(wstring const& id, int w) : HorizontalDragBar(w), textId(id) {}
-void LocalizedHorizontalDragBar::Update(App& app) { text = app.getLocalizedString(textId); HorizontalDragBar::Update(app); }
+void LocalizedHorizontalDragBar::Update(App& app) { text = app.GetLocalizedString(textId); HorizontalDragBar::Update(app); }
 
 
 

@@ -38,11 +38,11 @@ struct App {
 
 	void ResetDepthBuffer();
 	void PresentScreen();
-	void addLog(wstring const& s);
-	wstring getLocalizedString(wstring const& id) const;
+	void AddLog(wstring const& s);
+	wstring GetLocalizedString(wstring const& id) const;
 
 	void InitializeBitmapInfo();
-	void loadLocalizationFile();
+	void LoadLocalizationFile();
 	void RegisterWindowClass();
 	void CreateApplicationWindow();
 };

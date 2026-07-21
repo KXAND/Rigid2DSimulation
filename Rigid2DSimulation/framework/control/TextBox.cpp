@@ -253,7 +253,7 @@ void TextBox::PreUpdate(App& app) {
 }
 
 LocalizedTextBox::LocalizedTextBox(wstring const& id, int w) : TextBox(w), labelTextId(id) {}
-void LocalizedTextBox::Update(App& app) { labelText = app.getLocalizedString(labelTextId); TextBox::Update(app); }
+void LocalizedTextBox::Update(App& app) { labelText = app.GetLocalizedString(labelTextId); TextBox::Update(app); }
 
 
 

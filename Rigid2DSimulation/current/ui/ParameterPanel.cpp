@@ -37,7 +37,7 @@ void ParameterControlList::Update(App& app) {
 }
 
 AddParameterButton::AddParameterButton() : LocalizedButton(160, L"addButton") {}
-void AddParameterButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters.push_back(std::make_shared<SceneParameter>(simulationApp.getLocalizedString(L"unnamed_par"))); }
+void AddParameterButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters.push_back(std::make_shared<SceneParameter>(simulationApp.GetLocalizedString(L"unnamed_par"))); }
 
 ParameterPanel::ParameterPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_par") {
 	vector<Control*> tmp;

@@ -24,7 +24,7 @@ void RichLabel::Update(App& app) {
 }
 
 LocalizedRichLabel::LocalizedRichLabel(int w, wstring const& id) : textId(id), RichLabel(w) {}
-void LocalizedRichLabel::Sync(App& app) { text = app.getLocalizedString(textId); }
+void LocalizedRichLabel::Sync(App& app) { text = app.GetLocalizedString(textId); }
 
 
 

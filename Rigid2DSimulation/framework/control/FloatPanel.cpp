@@ -190,7 +190,7 @@ void FloatPanel::PreUpdate(App& app) {
 LocalizedFloatPanel::LocalizedFloatPanel(App& app, int w, int h, wstring const& id) :
 	FloatPanel(app, w, h), titleLocalizationId(id) {}
 void LocalizedFloatPanel::Update(App& app) {
-	title = app.getLocalizedString(titleLocalizationId); FloatPanel::Update(app);
+	title = app.GetLocalizedString(titleLocalizationId); FloatPanel::Update(app);
 }
 
 bool CompareFloatPanels(FloatPanel* const firstPanel, FloatPanel* const secondPanel) {

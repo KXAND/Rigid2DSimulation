@@ -98,7 +98,7 @@ void DropList::PreUpdate(App& app) {
 }
 
 LocalizedDropList::LocalizedDropList(wstring const& id, int w, DropListItemNameProvider const& itemNameProvider) : DropList(w, itemNameProvider), textId(id) {}
-void LocalizedDropList::Update(App& app) { text = app.getLocalizedString(textId); DropList::Update(app); }
+void LocalizedDropList::Update(App& app) { text = app.GetLocalizedString(textId); DropList::Update(app); }
 
 
 

@@ -12,28 +12,28 @@ void LoadButton::OnClick(App& app) { auto& simulationApp = static_cast<Simulatio
 void GlobalDetailsLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	text = L"";
-	text += simulationApp.getLocalizedString(L"vol") + FormatFixed2(simulationApp.volume) + L"\n";
-	text += simulationApp.getLocalizedString(L"n_step") + std::to_wstring(simulationApp.stepNum) + L"\n";
-	text += simulationApp.getLocalizedString(L"s_grid") + FormatFixed2(simulationApp.gridSize) + L"\n";
-	text += simulationApp.getLocalizedString(L"max_real_dt") + FormatFixed2(simulationApp.maxRealDeltaTime) + L"\n";
-	text += simulationApp.getLocalizedString(L"tl_scene") + ToWString(simulationApp.rectScene.topLeftPosition) + L"\n";
-	text += simulationApp.getLocalizedString(L"w_scene") + std::to_wstring(simulationApp.rectScene.w) + L"\n";
-	text += simulationApp.getLocalizedString(L"h_scene") + std::to_wstring(simulationApp.rectScene.h) + L"\n";
-	text += simulationApp.getLocalizedString(L"gravity") + ToWString(simulationApp.gravity) + L"\n";
-	text += simulationApp.getLocalizedString(L"electrostatic") + std::to_wstring(simulationApp.hasElectrostatic) + L"\n";
-	text += simulationApp.getLocalizedString(L"coulomb") + FormatFixed2(simulationApp.coulomb) + L"\n";
+	text += simulationApp.GetLocalizedString(L"vol") + FormatFixed2(simulationApp.volume) + L"\n";
+	text += simulationApp.GetLocalizedString(L"n_step") + std::to_wstring(simulationApp.stepNum) + L"\n";
+	text += simulationApp.GetLocalizedString(L"s_grid") + FormatFixed2(simulationApp.gridSize) + L"\n";
+	text += simulationApp.GetLocalizedString(L"max_real_dt") + FormatFixed2(simulationApp.maxRealDeltaTime) + L"\n";
+	text += simulationApp.GetLocalizedString(L"tl_scene") + ToWString(simulationApp.rectScene.topLeftPosition) + L"\n";
+	text += simulationApp.GetLocalizedString(L"w_scene") + std::to_wstring(simulationApp.rectScene.w) + L"\n";
+	text += simulationApp.GetLocalizedString(L"h_scene") + std::to_wstring(simulationApp.rectScene.h) + L"\n";
+	text += simulationApp.GetLocalizedString(L"gravity") + ToWString(simulationApp.gravity) + L"\n";
+	text += simulationApp.GetLocalizedString(L"electrostatic") + std::to_wstring(simulationApp.hasElectrostatic) + L"\n";
+	text += simulationApp.GetLocalizedString(L"coulomb") + FormatFixed2(simulationApp.coulomb) + L"\n";
 
 	wstring s;
 	switch (simulationApp.creator->mode) {
-	case CREATE_BALL: s = simulationApp.getLocalizedString(L"crt_ball"); break;
-	case CREATE_BOX: s = simulationApp.getLocalizedString(L"crt_box"); break;
-	case CREATE_CONN: s = simulationApp.getLocalizedString(L"crt_conn"); break;
-	case CREATE_NAIL: s = simulationApp.getLocalizedString(L"crt_nail"); break;
-	case CREATE_PARTICLE: s = simulationApp.getLocalizedString(L"crt_particle"); break;
-	case CREATE_PLATE: s = simulationApp.getLocalizedString(L"crt_plate"); break;
-	case CREATE_POINT: s = simulationApp.getLocalizedString(L"crt_point"); break;
+	case CREATE_BALL: s = simulationApp.GetLocalizedString(L"crt_ball"); break;
+	case CREATE_BOX: s = simulationApp.GetLocalizedString(L"crt_box"); break;
+	case CREATE_CONN: s = simulationApp.GetLocalizedString(L"crt_conn"); break;
+	case CREATE_NAIL: s = simulationApp.GetLocalizedString(L"crt_nail"); break;
+	case CREATE_PARTICLE: s = simulationApp.GetLocalizedString(L"crt_particle"); break;
+	case CREATE_PLATE: s = simulationApp.GetLocalizedString(L"crt_plate"); break;
+	case CREATE_POINT: s = simulationApp.GetLocalizedString(L"crt_point"); break;
 	}
-	text += simulationApp.getLocalizedString(L"creator_mode") + s + L"\n";
+	text += simulationApp.GetLocalizedString(L"creator_mode") + s + L"\n";
 }
 
 GlobalPanel::GlobalPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_global") {

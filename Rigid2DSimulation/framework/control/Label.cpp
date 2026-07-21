@@ -22,7 +22,7 @@ void Label::Update(App& app) {
 }
 
 LocalizedLabel::LocalizedLabel(wstring const& id, bool big) : Label(big), textId(id) {}
-void LocalizedLabel::Sync(App& app) { text = app.getLocalizedString(textId); }
+void LocalizedLabel::Sync(App& app) { text = app.GetLocalizedString(textId); }
 
 
 

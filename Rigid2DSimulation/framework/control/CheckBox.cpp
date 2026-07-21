@@ -55,7 +55,7 @@ void CheckBox::PreUpdate(App& app) {
 }
 
 LocalizedCheckBox::LocalizedCheckBox(wstring const& id, bool big) : CheckBox(big), textId(id) {}
-void LocalizedCheckBox::Update(App& app) { text = app.getLocalizedString(textId); CheckBox::Update(app); }
+void LocalizedCheckBox::Update(App& app) { text = app.GetLocalizedString(textId); CheckBox::Update(app); }
 
 
 

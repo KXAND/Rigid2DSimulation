@@ -48,7 +48,7 @@ void Button::PreUpdate(App& app) {
 }
 
 LocalizedButton::LocalizedButton(int w, wstring const& id) : Button(w), textId(id) {}
-void LocalizedButton::Update(App& app) { text = app.getLocalizedString(textId); Button::Update(app); }
+void LocalizedButton::Update(App& app) { text = app.GetLocalizedString(textId); Button::Update(app); }
 
 ShowFloatPanelButton::ShowFloatPanelButton(FloatPanel* floatPanel) : Button(150), floatPanel(floatPanel) {}
 void ShowFloatPanelButton::OnClick(App& app) { floatPanel->Show(app); }
