@@ -11,20 +11,20 @@ void FrameRateLabel::Sync(App& app) {
 TimeLabel::TimeLabel() { w = 200; fixed_w = true; }
 void TimeLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	txt = simulationApp.getLocalizedString(L"lb_time") + FormatFixed2(simulationApp.t);
+	txt = simulationApp.getLocalizedString(L"timeLabel") + FormatFixed2(simulationApp.t);
 }
 MousePositionLabel::MousePositionLabel() { w = 300; fixed_w = true; }
 void MousePositionLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	txt = simulationApp.getLocalizedString(L"lb_mouse") + ToWString(simulationApp.input.msp);
+	txt = simulationApp.getLocalizedString(L"mousePositionLabel") + ToWString(simulationApp.input.msp);
 }
 
 BottomPanel::BottomPanel(App& app) : Panel(Panel::bottom(app)) {
 	vector<Control*> tmp;
-	lb_fps = std::make_shared<FrameRateLabel>(); lb_time = std::make_shared<TimeLabel>(); lb_mouse = std::make_shared<MousePositionLabel>();
-	tmp = { &*lb_fps, &*lb_time, &*lb_mouse };
-	clx = std::make_shared<HorizontalControlList>(tmp);
-	c = &*clx;
+	frameRateLabel = std::make_shared<FrameRateLabel>(); timeLabel = std::make_shared<TimeLabel>(); mousePositionLabel = std::make_shared<MousePositionLabel>();
+	tmp = { &*frameRateLabel, &*timeLabel, &*mousePositionLabel };
+	controls = std::make_shared<HorizontalControlList>(tmp);
+	c = &*controls;
 	Init(app);
 }
 

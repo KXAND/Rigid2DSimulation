@@ -13,9 +13,9 @@ struct EnglishLanguageButton : Button {
 };
 
 struct LanguagePanel : LocalizedFloatPanel {
-	std::shared_ptr<ChineseLanguageButton> bt_chi;
-	std::shared_ptr<EnglishLanguageButton> bt_eng;
-	std::shared_ptr<VerticalControlList> cly;
+	std::shared_ptr<ChineseLanguageButton> chineseButton;
+	std::shared_ptr<EnglishLanguageButton> englishButton;
+	std::shared_ptr<VerticalControlList> controls;
 	LanguagePanel(App& app);
 };
 

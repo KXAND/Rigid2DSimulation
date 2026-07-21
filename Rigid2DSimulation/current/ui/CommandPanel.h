@@ -15,9 +15,9 @@ struct CompileButton : LocalizedButton {
 };
 
 struct CommandPanel : LocalizedFloatPanel {
-	std::shared_ptr<CommandScriptEditor> rtb;
-	std::shared_ptr<CompileButton> bt_compile;
-	std::shared_ptr<VerticalControlList> cly;
+	std::shared_ptr<CommandScriptEditor> scriptEditor;
+	std::shared_ptr<CompileButton> compileButton;
+	std::shared_ptr<VerticalControlList> controls;
 	CommandPanel(App& app);
 };
 

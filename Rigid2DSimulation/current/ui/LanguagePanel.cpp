@@ -10,11 +10,11 @@ void EnglishLanguageButton::OnClick(App& app) { auto& simulationApp = static_cas
 
 LanguagePanel::LanguagePanel(App& app) : LocalizedFloatPanel(app, 200, 200, L"fpn_lang") {
 	vector<Control*> tmp; shown = true;
-	bt_chi = std::make_shared<ChineseLanguageButton>();
-	bt_eng = std::make_shared<EnglishLanguageButton>();
-	tmp = { &*bt_chi, &*bt_eng };
-	cly = std::make_shared<VerticalControlList>(tmp);
-	c = &*cly;
+	chineseButton = std::make_shared<ChineseLanguageButton>();
+	englishButton = std::make_shared<EnglishLanguageButton>();
+	tmp = { &*chineseButton, &*englishButton };
+	controls = std::make_shared<VerticalControlList>(tmp);
+	c = &*controls;
 	Init(app);
 }
 

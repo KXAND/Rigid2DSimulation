@@ -15,11 +15,11 @@ void CompileButton::OnClick(App& app) {
 
 CommandPanel::CommandPanel(App& app) : LocalizedFloatPanel(app, 600, 600, L"fpn_cmd") {
 	vector<Control*> tmp;
-	rtb = std::make_shared<CommandScriptEditor>();
-	bt_compile = std::make_shared<CompileButton>();
-	tmp = { &*rtb, &*bt_compile };
-	cly = std::make_shared<VerticalControlList>(tmp);
-	c = &*cly;
+	scriptEditor = std::make_shared<CommandScriptEditor>();
+	compileButton = std::make_shared<CompileButton>();
+	tmp = { &*scriptEditor, &*compileButton };
+	controls = std::make_shared<VerticalControlList>(tmp);
+	c = &*controls;
 	Init(app);
 }
 

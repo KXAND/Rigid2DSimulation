@@ -18,10 +18,10 @@ struct MousePositionLabel : Label {
 };
 
 struct BottomPanel : Panel {
-	std::shared_ptr<FrameRateLabel> lb_fps;
-	std::shared_ptr<TimeLabel> lb_time;
-	std::shared_ptr<MousePositionLabel> lb_mouse;
-	std::shared_ptr<HorizontalControlList> clx;
+	std::shared_ptr<FrameRateLabel> frameRateLabel;
+	std::shared_ptr<TimeLabel> timeLabel;
+	std::shared_ptr<MousePositionLabel> mousePositionLabel;
+	std::shared_ptr<HorizontalControlList> controls;
 	BottomPanel(App& app);
 };
 

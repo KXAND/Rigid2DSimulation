@@ -4,8 +4,8 @@
 #include "FloatPanel.h"
 
 struct AboutPanel : LocalizedFloatPanel {
-	std::shared_ptr<LocalizedRichLabel> rtb_about;
-	std::shared_ptr<VerticalControlList> cly;
+	std::shared_ptr<LocalizedRichLabel> aboutText;
+	std::shared_ptr<VerticalControlList> controls;
 	AboutPanel(App& app);
 };
 
