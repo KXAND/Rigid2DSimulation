@@ -2,17 +2,17 @@
 #include "Utils.h"
 
 struct Token {
-	wstring type;
-	double number = 0;
-	wstring stringValue;
-	wstring variableName;
-	bool isGlobal = false;
+    wstring type;
+    double number = 0;
+    wstring stringValue;
+    wstring variableName;
+    bool isGlobal = false;
 
-	Token() = default;
-	Token(wstring const& type);
-	Token(double number);
-	static Token CreateString(wstring const& text);
-	static Token CreateVariable(wstring const& value, bool isGlobal);
+    Token() = default;
+    Token(wstring const& type);
+    Token(double number);
+    static Token CreateString(wstring const& text);
+    static Token CreateVariable(wstring const& value, bool isGlobal);
 };
 wstring ToWString(Token const& token);
 
