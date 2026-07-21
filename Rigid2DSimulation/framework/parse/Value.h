@@ -9,7 +9,7 @@ struct Value {
 	// 其实还不是很确定 type 有没有用，这里会有些乱掉。
 	wstring type = L"null";
 	// null, num, str, fun, vec, user, dic
-	double num = 0;
+	double number = 0;
 	wstring str;
 	Function fun;
 	Program procs;
@@ -18,7 +18,7 @@ struct Value {
 	map<wstring, std::shared_ptr<Value>> dic;
 
 	Value() = default;
-	Value(double num);
+	Value(double number);
 	Value(wstring const& str);
 	Value(Function const& fun);
 	Value(vector<std::shared_ptr<Value>> const& vec);

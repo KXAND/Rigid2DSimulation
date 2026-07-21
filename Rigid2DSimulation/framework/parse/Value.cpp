@@ -6,7 +6,7 @@
 // 每次都能找到新 bug，很可能还有一些 bug。
 // 同时速度上也有很多改进空间。
 
-Value::Value(double num) : num(num) { type = L"num"; }
+Value::Value(double number) : number(number) { type = L"num"; }
 Value::Value(wstring const& str) : str(str) { type = L"ToString"; }
 Value::Value(decltype(fun) const& user) : fun(user) { type = L"user"; }
 Value::Value(vector<std::shared_ptr<Value>> const& vec) : vec(vec) { type = L"vec"; }
@@ -20,17 +20,17 @@ Vector2 ToVector2(Value const& v)
 {
 	Vector2 out;
 	if (v.vec.size() < 2) { return {}; }
-	out.x = v.vec[0]->num;
-	out.y = v.vec[1]->num;
+	out.x = v.vec[0]->number;
+	out.y = v.vec[1]->number;
 	return out;
 }
 Vector3 ToVector3(Value const& v)
 {
 	Vector3 out;
 	if (v.vec.size() < 3) { return {}; }
-	out.x = v.vec[0]->num;
-	out.y = v.vec[1]->num;
-	out.z = v.vec[2]->num;
+	out.x = v.vec[0]->number;
+	out.y = v.vec[1]->number;
+	out.z = v.vec[2]->number;
 	return out;
 }
 
@@ -51,7 +51,7 @@ bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpression const& ex
 {
 	auto const& f = ex.fun;
 	// 保持按需 Evaluate，避免在确定运算符前提前计算所有参数。
-	auto numArg = [&](int index) { return Evaluate(gl, sc, ex.pars[index])->num; };
+	auto numArg = [&](int index) { return Evaluate(gl, sc, ex.pars[index])->number; };
 	auto strArg = [&](int index) -> wstring const& { return Evaluate(gl, sc, ex.pars[index])->str; };
 
 	if (f == L"!") { out = Value(!numArg(0)); return true; }
@@ -117,11 +117,11 @@ std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpression con
 			*getLocalizedString = {};
 			getLocalizedString->type = L"vec";
 		}
-		for (int i = (getLocalizedString->vec.size() - 1), iEnd = int(ind->num); i < iEnd; ++i)
+		for (int i = (getLocalizedString->vec.size() - 1), iEnd = int(ind->number); i < iEnd; ++i)
 		{
 			getLocalizedString->vec.push_back(std::make_shared<Value>());
 		}
-		return getLocalizedString->vec[ind->num];
+		return getLocalizedString->vec[ind->number];
 	}
 
 	if (ind->type == L"ToString")
@@ -147,7 +147,7 @@ std::shared_ptr<Value> Evaluate(Scope& gl, Scope& sc, ScriptExpression const& ex
 		if (ex.Value == L"kPi") { return std::make_shared<Value>(kPi); }
 		return FindVariable(gl, sc, ex.Value, ex.global);
 	}
-	else if (ex.type == L"num") { return std::make_shared<Value>(ex.num); }
+	else if (ex.type == L"num") { return std::make_shared<Value>(ex.number); }
 	else if (ex.type == L"ToString") { return std::make_shared<Value>(ex.str); }
 	else if (ex.type == L"vec")
 	{
@@ -175,13 +175,13 @@ std::shared_ptr<Value> Execute(bool& ret, Scope& gl, Scope& sc, Program const& p
 		else if (p.type == L"assign") { *Evaluate(gl, sc, p.left) = *Evaluate(gl, sc, p.right); }
 		else if (p.type == L"if")
 		{
-			auto& ps = Evaluate(gl, sc, p.if_con)->num ? p.if_procs : p.else_procs;
+			auto& ps = Evaluate(gl, sc, p.if_con)->number ? p.if_procs : p.else_procs;
 			auto v = Execute(ret, gl, sc, ps);
 			if (ret) { return v; }
 		}
 		else if (p.type == L"while")
 		{
-			while (Evaluate(gl, sc, p.lp_con)->num)
+			while (Evaluate(gl, sc, p.lp_con)->number)
 			{
 				auto v = Execute(ret, sc, gl, p.lp);
 				if (ret) { return v; }

@@ -12,6 +12,6 @@ inline bool TryReadConfigNumber(Value const& cfg, wchar_t const* key, T& out)
 {
 	auto value = FindConfigValue(cfg, key);
 	if (!value) { return false; }
-	out = value->num;
+	out = value->number;
 	return true;
 }

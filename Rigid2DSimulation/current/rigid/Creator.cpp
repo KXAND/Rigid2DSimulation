@@ -29,7 +29,7 @@ Creator::Creator(Value const& v) : Creator()
 			else if (s == L"nail") { mode = CREATE_NAIL; }
 			else if (s == L"particle") { mode = CREATE_PARTICLE; }
 		}
-		else { mode = md->num; }
+		else { mode = md->number; }
 	}
 	TryReadConfigNumber(v, L"thickness", thick);
 	TryReadConfigNumber(v, L"radius", rad);

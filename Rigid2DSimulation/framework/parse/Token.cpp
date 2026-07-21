@@ -1,7 +1,7 @@
 #include "Token.h"
 
 Token::Token(wstring const& type) : type(type) {}
-Token::Token(double num) : num(num) { type = L"num"; }
+Token::Token(double number) : number(number) { type = L"num"; }
 Token Token::CreateString(wstring const& text) {
 	Token tk(L"str");
 	tk.str = text; return tk;
@@ -13,7 +13,7 @@ Token Token::CreateVariable(wstring const& value, bool isGlobal) {
 wstring ToWString(Token const& tk) {
 	wstring tmp = L"[" + tk.type;
 	if (tk.type == L"var") { tmp += (tk.global ? L":&" : L":") + tk.Value; }
-	if (tk.type == L"num") { tmp += L":" + FormatFixed2(tk.num); }
+	if (tk.type == L"num") { tmp += L":" + FormatFixed2(tk.number); }
 	if (tk.type == L"str") { tmp += L":" + tk.str; }
 	tmp += L"]"; return tmp;
 }

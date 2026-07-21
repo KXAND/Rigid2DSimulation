@@ -67,7 +67,7 @@ void Connection::ReadCfg(Value const& cfg)
 			else if (s == L"spring") { type = CON_SPRING; }
 			else if (s == L"cord") { type = CON_CORD; }
 		}
-		else { type = md->num; }
+		else { type = md->number; }
 	}
 }
 void Connection::SignUpToBodies()

@@ -403,11 +403,11 @@ void Body::FollowPresetAngle(SimulationApp& cur, double stepDt)
 	Scope scope;
 	bool ret = false;
 	scope[L"time"] = std::make_shared<Value>(cur.simulationTime);
-	auto radianOld = Execute(ret, cur.currentScope, scope, *angleProgram)->num;
+	auto radianOld = Execute(ret, cur.currentScope, scope, *angleProgram)->number;
 	scope.clear();
 	scope[L"time"] = std::make_shared<Value>(cur.simulationTime + stepDt);
 	ret = false;
-	auto radianNew = Execute(ret, cur.currentScope, scope, *angleProgram)->num;
+	auto radianNew = Execute(ret, cur.currentScope, scope, *angleProgram)->number;
 	auto velocityAngularNew = (radianNew - radianOld) / stepDt;
 
 	radian = radianNew;
@@ -421,7 +421,7 @@ void Body::FollowPresetAngularVelocity(SimulationApp& cur)
 	Scope sc;
 	bool ret = false;
 	sc[L"time"] = std::make_shared<Value>(cur.simulationTime);
-	auto velocityAngularNew = Execute(ret, cur.currentScope, sc, *angularVelocityProgram)->num;
+	auto velocityAngularNew = Execute(ret, cur.currentScope, sc, *angularVelocityProgram)->number;
 
 	velocityAngular = velocityAngularNew;
 }

@@ -258,10 +258,10 @@ void SimulationApp::SetConfig(Value const& v)
 	TryReadConfigNumber(v, L"useEqualPositionCorrection", useEqualPositionCorrection);
 	TryReadConfigNumber(v, L"time", simulationTime);
 	TryReadConfigNumber(v, L"isTrackShown", isTrackShown);
-	if (auto value = FindConfigValue(v, L"sceneLeft")) { rectScene.topLeftPosition.x = value->num; }
-	if (auto value = FindConfigValue(v, L"sceneTop")) { rectScene.topLeftPosition.y = value->num; }
-	if (auto value = FindConfigValue(v, L"sceneWidth")) { rectScene.w = value->num; }
-	if (auto value = FindConfigValue(v, L"sceneHeight")) { rectScene.h = value->num; }
+	if (auto value = FindConfigValue(v, L"sceneLeft")) { rectScene.topLeftPosition.x = value->number; }
+	if (auto value = FindConfigValue(v, L"sceneTop")) { rectScene.topLeftPosition.y = value->number; }
+	if (auto value = FindConfigValue(v, L"sceneWidth")) { rectScene.w = value->number; }
+	if (auto value = FindConfigValue(v, L"sceneHeight")) { rectScene.h = value->number; }
 	if (auto value = FindConfigValue(v, L"gravity")) { gravity = ToVector2(*value); }
 
 	isSceneChanged = true;

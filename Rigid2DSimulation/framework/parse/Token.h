@@ -3,14 +3,14 @@
 
 struct Token {
 	wstring type;
-	double num = 0;
+	double number = 0;
 	wstring str;
 	wstring Value;
 	bool global = false;
 
 	Token() = default;
 	Token(wstring const& type);
-	Token(double num);
+	Token(double number);
 	static Token CreateString(wstring const& text);
 	static Token CreateVariable(wstring const& value, bool isGlobal);
 };

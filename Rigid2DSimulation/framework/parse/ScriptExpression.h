@@ -10,7 +10,7 @@ struct ScriptExpression {
 	// num, var, str, call, null, vec, access
 
 	bool global = false;
-	double num = 0;
+	double number = 0;
 	wstring str;
 	wstring Value;
 	wstring fun;
@@ -20,7 +20,7 @@ struct ScriptExpression {
 
 	ScriptExpression() = default;
 	ScriptExpression(wstring const& type);
-	ScriptExpression(double num);
+	ScriptExpression(double number);
 	ScriptExpression(wstring const& fun, vector<ScriptExpression> const& pars);
 	static ScriptExpression CreateString(wstring const& text);
 	static ScriptExpression CreateVariable(wstring const& value, bool isGlobal);

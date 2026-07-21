@@ -58,6 +58,7 @@
 - 基础工具中的字符串数值解析与宽字符文件打开包装已迁移为 `ParseDouble` 和 `OpenFile`，不再与 C 运行库缩写混淆；文本过滤参数已统一为 lower camel。
 - 解析器的字符串和变量标记工厂已迁移为 `CreateString`、`CreateVariable`，并消除其参数缩写。
 - 解析器令牌、表达式、语句、括号组和运行时值的类型字段已统一为 `type`，并同步更新刚体配置读取点。
+- 解析器令牌、表达式和运行时值的数值字段已统一为 `number`，并同步更新配置、刚体和形状构建调用点。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。

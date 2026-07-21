@@ -2,7 +2,7 @@
 #include "BracketGroup.h"
 
 ScriptExpression::ScriptExpression(wstring const& type) : type(type) {}
-ScriptExpression::ScriptExpression(double num) : num(num) { type = L"num"; }
+ScriptExpression::ScriptExpression(double number) : number(number) { type = L"num"; }
 ScriptExpression::ScriptExpression(wstring const& fun, vector<ScriptExpression> const& pars) :
 	fun(fun), pars(pars) {
 	type = L"call";
@@ -22,7 +22,7 @@ ScriptExpression ScriptExpression::CreateVariable(wstring const& value, bool isG
 wstring ToWString(ScriptExpression const& ex) {
 	wstring tmp = L"[" + ex.type;
 	if (ex.type == L"var") { tmp += (ex.global ? L":&" : L":") + ex.Value; }
-	else if (ex.type == L"num") { tmp += L":" + FormatFixed2(ex.num); }
+	else if (ex.type == L"num") { tmp += L":" + FormatFixed2(ex.number); }
 	else if (ex.type == L"str") { tmp += L":" + ex.str; }
 	else if (ex.type == L"access") {
 		if (!ex.getLocalizedString || !ex.ind) { return {}; }
@@ -183,7 +183,7 @@ ScriptExpression ParseExpression(vector<BracketGroup> const& in) {
 		if (b.type == 0) {
 			if (b.tk.type == L"var") { return ScriptExpression::CreateVariable(b.tk.Value, b.tk.global); }
 			else if (b.tk.type == L"str") { return ScriptExpression::CreateString(b.tk.str); }
-			else if (b.tk.type == L"num") { return ScriptExpression(b.tk.num); }
+			else if (b.tk.type == L"num") { return ScriptExpression(b.tk.number); }
 			else if (b.tk.type == L"null") { return ScriptExpression(L"null"); }
 			else { return ScriptExpression(L"error"); }
 		}
