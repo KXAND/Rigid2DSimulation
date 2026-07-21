@@ -5,13 +5,13 @@
 struct HorizontalDragBar : Control {
 	DVector2 gap;
 	double depth = 0;
-	wstring txt;
-	int bw = 0, bh = 0;
-	int nw = 0, nh = 0;
-	Color c_txt, c_bar, c_normal, hoveredColor, c_invalid, draggedColor;
+	wstring text;
+	int barWidth = 0, barHeight = 0;
+	int nodeWidth = 0, nodeHeight = 0;
+	Color textColor, barColor, normalColor, hoveredColor, invalidColor, draggedColor;
 
-	int w_txt = 0;
-	int nx_rel = 0;
+	int textWidth = 0;
+	int nodeX = 0;
 	bool dragged = false;
 	bool enabled = true;
 	bool hovered = false;
@@ -21,7 +21,7 @@ struct HorizontalDragBar : Control {
 	int GetH() const override;
 
 	double GetNormalizedValue() const;
-	void SetNormalizedNodePosition(double uv);
+	void SetNormalizedNodePosition(double normalizedValue);
 	DVector2 GetNodeTopLeft() const;
 
 	void Render(App& app);
@@ -34,7 +34,7 @@ struct HorizontalDragBar : Control {
 	void PreUpdate(App& app) override;
 };
 struct LocalizedHorizontalDragBar : HorizontalDragBar {
-	wstring id_txt;
+	wstring textId;
 	LocalizedHorizontalDragBar() = default;
 	LocalizedHorizontalDragBar(wstring const& id, int w);
 	void Update(App& app) override;
