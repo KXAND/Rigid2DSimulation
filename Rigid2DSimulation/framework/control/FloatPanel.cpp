@@ -10,29 +10,29 @@
 
 FloatPanel::FloatPanel() {
 	depth = 1000;
-	txt = L"窗口";
+	title = L"窗口";
 	wheelMultiplier = 40;
 	contentOffset = { 10, 40 };
 
-	h_bar = 30;
-	s_close = 20;
-	half_s_mark = 5;
-	margin_close = 5;
-	margin_title = 5;
+	titleBarHeight = 30;
+	closeButtonSize = 20;
+	closeMarkHalfSize = 5;
+	closeButtonMargin = 5;
+	titleMargin = 5;
 
-	c_txt = { 255, 255, 255 };
-	c_mark = { 255, 255, 255 };
+	titleColor = { 255, 255, 255 };
+	closeMarkColor = { 255, 255, 255 };
 	frameColor = { 150, 150, 150 };
 	panelColor = { 0, 0, 0 };
 
-	c_bar_normal = { 40, 40, 40 };
-	c_bar_dragged = { 80, 40, 40 };
-	c_bar_hovered = { 40, 40, 80 };
+	titleBarNormalColor = { 40, 40, 40 };
+	titleBarDraggedColor = { 80, 40, 40 };
+	titleBarHoveredColor = { 40, 40, 80 };
 
-	c_close_normal = { 0, 0, 0 };
-	c_close_chosen = { 255, 20, 20 };
-	c_close_hovered = { 20, 20, 255 };
-	c_close_invalid = { 255, 255, 255 };
+	closeButtonNormalColor = { 0, 0, 0 };
+	closeButtonChosenColor = { 255, 20, 20 };
+	closeButtonHoveredColor = { 20, 20, 255 };
+	closeButtonInvalidColor = { 255, 255, 255 };
 }
 FloatPanel::FloatPanel(App& app, int _w, int _h) : FloatPanel() {
 	w = _w; h = _h;
@@ -54,9 +54,9 @@ DRect FloatPanel::GetVisibleViewport(App& app) const {
 	vp.topLeftPosition += tl; return getOverlapRect(app.scr.Rect(), vp);
 }
 DVector2 FloatPanel::GetCloseTopLeft() const {
-	int x_rel = w - margin_close - s_close;
-	int y_rel = (h_bar - s_close) / 2;
-	return tl + DVector2(x_rel, y_rel);
+	int closeX = w - closeButtonMargin - closeButtonSize;
+	int closeY = (titleBarHeight - closeButtonSize) / 2;
+	return tl + DVector2(closeX, closeY);
 }
 void FloatPanel::SetControl(App& app, Control* _c) {
 	if (contentControl != _c) {
@@ -73,7 +73,7 @@ void FloatPanel::SetTopLeft(App& app, DVector2 const& p) {
 		// 在调用 GetVisibleViewport 之前需要先更新 tl。
 		tl = p; contentControl->vp = GetVisibleViewport(app);
 	}
-	scrollBar->tl = p + DVector2(w - scrollBar->w, h_bar);
+	scrollBar->tl = p + DVector2(w - scrollBar->w, titleBarHeight);
 	scrollBar->visibleTop = p.y + contentOffset.y;
 }
 void FloatPanel::InitializeControl(App& app) {
@@ -85,31 +85,31 @@ void FloatPanel::InitializeControl(App& app) {
 void FloatPanel::InitializeScrollBar() {
 	scrollBar = std::make_shared<VerticalScrollBar>();
 	scrollBar->contentControl = contentControl;
-	scrollBar->h = h - h_bar;
-	scrollBar->tl = tl + DVector2(w - scrollBar->w, h_bar);
+	scrollBar->h = h - titleBarHeight;
+	scrollBar->tl = tl + DVector2(w - scrollBar->w, titleBarHeight);
 	scrollBar->visibleHeight = visibleHeight;
 	scrollBar->visibleTop = tl.y + contentOffset.y;
 }
 
 void FloatPanel::Hide(App& app) { shown = false; Discard(app); }
-void FloatPanel::Show(App& app) { shown = true; t_click = app.fps.dur(); }
+void FloatPanel::Show(App& app) { shown = true; lastClickTime = app.fps.dur(); }
 void FloatPanel::HandleCaption(App& app) {
-	hovered_close = hovered && isInside(app.input.msp, { GetCloseTopLeft(), s_close, s_close });
-	hovered_bar = hovered && !hovered_close && isInside(app.input.msp, { tl, w, h_bar });
+	closeButtonHovered = hovered && isInside(app.input.msp, { GetCloseTopLeft(), closeButtonSize, closeButtonSize });
+	titleBarHovered = hovered && !closeButtonHovered && isInside(app.input.msp, { tl, w, titleBarHeight });
 
-	if (dragged_bar) {
+	if (titleBarDragged) {
 		DVector2 tmp = tl + app.input.msp - app.input.msp_old;
 		tmp.x = clamp(tmp.x, 0, app.scr.width - w);
-		tmp.y = clamp(tmp.y, 0, app.scr.height - h_bar); SetTopLeft(app, tmp);
-		dragged_bar = app.input.msd[0];
+		tmp.y = clamp(tmp.y, 0, app.scr.height - titleBarHeight); SetTopLeft(app, tmp);
+		titleBarDragged = app.input.msd[0];
 	}
-	else { dragged_bar = hovered_bar && app.input.isMouseClickedDown(0); }
+	else { titleBarDragged = titleBarHovered && app.input.isMouseClickedDown(0); }
 
-	if (chosen_close) {
-		if (enabled_close && !app.input.msd[0]) { Hide(app); return; }
-		chosen_close = enabled_close && hovered_close && app.input.msd[0];
+	if (closeButtonChosen) {
+		if (closeButtonEnabled && !app.input.msd[0]) { Hide(app); return; }
+		closeButtonChosen = closeButtonEnabled && closeButtonHovered && app.input.msd[0];
 	}
-	else { chosen_close = enabled_close && hovered_close && app.input.isMouseClickedDown(0); }
+	else { closeButtonChosen = closeButtonEnabled && closeButtonHovered && app.input.isMouseClickedDown(0); }
 }
 void FloatPanel::HandleWheelAndClampContent(App& app) {
 	if (hasOverflow) {
@@ -122,26 +122,26 @@ void FloatPanel::HandleWheelAndClampContent(App& app) {
 
 void FloatPanel::RenderMain(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), panelColor, frameColor);
-	Color const& c_bar =
-		dragged_bar ? c_bar_dragged :
-		hovered_bar && (!app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? c_bar_hovered : c_bar_normal;
-	drawRectangleWithBorderRaw(app.scr, tl, w, h_bar, app.scr.Rect(), c_bar, frameColor);
+	Color const& titleBarColor =
+		titleBarDragged ? titleBarDraggedColor :
+		titleBarHovered && (!app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? titleBarHoveredColor : titleBarNormalColor;
+	drawRectangleWithBorderRaw(app.scr, tl, w, titleBarHeight, app.scr.Rect(), titleBarColor, frameColor);
 
-	DVector2 tl_title = tl + DVector2(margin_title, (h_bar - app.ft.h) / 2);
-	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_title, 0, app.scr.Rect());
+	DVector2 titleTopLeft = tl + DVector2(titleMargin, (titleBarHeight - app.ft.h) / 2);
+	DrawString(app.scr, app.dscr, depth, title, titleColor, app.ft, titleTopLeft, 0, app.scr.Rect());
 }
 void FloatPanel::RenderClose(App& app) {
-	Color const& c_close =
-		!enabled_close ? c_close_invalid :
-		chosen_close ? c_close_chosen :
-		hovered_close && (!app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? c_close_hovered : c_close_normal;
-	drawRectangleRaw(app.scr, GetCloseTopLeft(), s_close, s_close, app.scr.Rect(), c_close);
+	Color const& closeButtonColor =
+		!closeButtonEnabled ? closeButtonInvalidColor :
+		closeButtonChosen ? closeButtonChosenColor :
+		closeButtonHovered && (!app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? closeButtonHoveredColor : closeButtonNormalColor;
+	drawRectangleRaw(app.scr, GetCloseTopLeft(), closeButtonSize, closeButtonSize, app.scr.Rect(), closeButtonColor);
 
-	DVector2 mark_ct = GetCloseTopLeft() + DVector2(s_close, s_close) / 2;
-	DVector2 mark_arm = { half_s_mark , half_s_mark };
-	drawLineSegment(app.scr, app.dscr, mark_ct - mark_arm, mark_ct + mark_arm, depth, app.scr.Rect(), c_mark);
-	mark_arm = { -half_s_mark , half_s_mark };
-	drawLineSegment(app.scr, app.dscr, mark_ct - mark_arm, mark_ct + mark_arm, depth, app.scr.Rect(), c_mark);
+	DVector2 closeMarkCenter = GetCloseTopLeft() + DVector2(closeButtonSize, closeButtonSize) / 2;
+	DVector2 closeMarkArm = { closeMarkHalfSize , closeMarkHalfSize };
+	drawLineSegment(app.scr, app.dscr, closeMarkCenter - closeMarkArm, closeMarkCenter + closeMarkArm, depth, app.scr.Rect(), closeMarkColor);
+	closeMarkArm = { -closeMarkHalfSize , closeMarkHalfSize };
+	drawLineSegment(app.scr, app.dscr, closeMarkCenter - closeMarkArm, closeMarkCenter + closeMarkArm, depth, app.scr.Rect(), closeMarkColor);
 }
 void FloatPanel::Render(App& app) {
 	RenderMain(app); RenderClose(app);
@@ -156,7 +156,7 @@ void FloatPanel::Update(App& app) {
 	wheeled = (app.own.wheeled == this);
 
 	HandleWheelAndClampContent(app);
-	if (hovered && app.input.isMouseClickedDown(0)) { t_click = app.fps.dur(); }
+	if (hovered && app.input.isMouseClickedDown(0)) { lastClickTime = app.fps.dur(); }
 	// 这项摆在最后是因为他可能执行 hide 指令。
 	HandleCaption(app);
 
@@ -168,8 +168,8 @@ void FloatPanel::Update(App& app) {
 	}
 }
 void FloatPanel::Discard(App& app) {
-	chosen_close = hovered_close =
-		hovered = wheeled = hovered_bar = dragged_bar = false;
+	closeButtonChosen = closeButtonHovered =
+		hovered = wheeled = titleBarHovered = titleBarDragged = false;
 	app.own.remove(this); scrollBar->Discard(app);
 	if (contentControl) { contentControl->Discard(app); }
 }
@@ -188,13 +188,13 @@ void FloatPanel::PreUpdate(App& app) {
 }
 
 LocalizedFloatPanel::LocalizedFloatPanel(App& app, int w, int h, wstring const& id) :
-	FloatPanel(app, w, h), id_txt(id) {}
+	FloatPanel(app, w, h), titleLocalizationId(id) {}
 void LocalizedFloatPanel::Update(App& app) {
-	txt = app.getLocalizedString(id_txt); FloatPanel::Update(app);
+	title = app.getLocalizedString(titleLocalizationId); FloatPanel::Update(app);
 }
 
 bool CompareFloatPanels(FloatPanel* const fp0, FloatPanel* const fp1) {
-	return fp0->t_click < fp1->t_click;
+	return fp0->lastClickTime < fp1->lastClickTime;
 }
 
 

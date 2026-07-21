@@ -54,7 +54,7 @@ ShowFloatPanelButton::ShowFloatPanelButton(FloatPanel* floatPanel) : Button(150)
 void ShowFloatPanelButton::OnClick(App& app) { floatPanel->Show(app); }
 void ShowFloatPanelButton::Update(App& app) {
 	enabled = !floatPanel->shown;
-	text = floatPanel->txt; Button::Update(app);
+	text = floatPanel->title; Button::Update(app);
 }
 
 
