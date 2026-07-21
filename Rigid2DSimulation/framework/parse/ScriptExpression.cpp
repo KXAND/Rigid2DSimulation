@@ -136,23 +136,23 @@ ScriptExpression ParseCall(vector<BracketGroup> const& groups) {
 	if (!argumentGroups.empty()) { expression.arguments.push_back(ParseExpression(argumentGroups)); }
 	return expression;
 }
-ScriptExpression ParseBinaryExpressions(vector<BracketGroup> const& in) {
-	vector<BracketGroup> tmp;
-	vector<PreExpression> pres;
-	for (auto const& b : in) {
-		if (IsBinaryOperator(b.token)) {
-			if (!tmp.empty()) {
-				pres.push_back(ParseExpression(tmp));
-				tmp.clear();
+ScriptExpression ParseBinaryExpressions(vector<BracketGroup> const& groups) {
+	vector<BracketGroup> expressionGroups;
+	vector<PreExpression> preExpressions;
+	for (auto const& group : groups) {
+		if (IsBinaryOperator(group.token)) {
+			if (!expressionGroups.empty()) {
+				preExpressions.push_back(ParseExpression(expressionGroups));
+				expressionGroups.clear();
 			}
-			pres.push_back(b.token);
+			preExpressions.push_back(group.token);
 		}
 		else {
-			tmp.push_back(b);
+			expressionGroups.push_back(group);
 		}
 	}
-	if (!tmp.empty()) { pres.push_back(ParseExpression(tmp)); }
-	return ParsePreExpression(pres);
+	if (!expressionGroups.empty()) { preExpressions.push_back(ParseExpression(expressionGroups)); }
+	return ParsePreExpression(preExpressions);
 }
 ScriptExpression ParseVector(vector<BracketGroup> const& groups) {
 	ScriptExpression expression(L"vec");
@@ -169,41 +169,41 @@ ScriptExpression ParseVector(vector<BracketGroup> const& groups) {
 	if (!elementGroups.empty()) { expression.elements.push_back(ParseExpression(elementGroups)); }
 	return expression;
 }
-ScriptExpression ParseAccess(vector<BracketGroup> const& in) {
-	ScriptExpression ex(L"access");
-	ex.accessedExpression = ParseExpression(vector<BracketGroup>(in.begin(), in.end() - 1));
-	ex.indexExpression = ParseExpression(in.back().children);
-	return ex;
+ScriptExpression ParseAccess(vector<BracketGroup> const& groups) {
+	ScriptExpression expression(L"access");
+	expression.accessedExpression = ParseExpression(vector<BracketGroup>(groups.begin(), groups.end() - 1));
+	expression.indexExpression = ParseExpression(groups.back().children);
+	return expression;
 }
 
-ScriptExpression ParseExpression(vector<BracketGroup> const& in) {
-	if (in.empty()) { return ScriptExpression(L"error"); }
-	auto const& b = in[0];
-	if (in.size() == 1) {
-		if (b.type == 0) {
-			if (b.token.type == L"var") { return ScriptExpression::CreateVariable(b.token.variableName, b.token.isGlobal); }
-			else if (b.token.type == L"str") { return ScriptExpression::CreateString(b.token.stringValue); }
-			else if (b.token.type == L"num") { return ScriptExpression(b.token.number); }
-			else if (b.token.type == L"null") { return ScriptExpression(L"null"); }
+ScriptExpression ParseExpression(vector<BracketGroup> const& groups) {
+	if (groups.empty()) { return ScriptExpression(L"error"); }
+	auto const& firstGroup = groups[0];
+	if (groups.size() == 1) {
+		if (firstGroup.type == 0) {
+			if (firstGroup.token.type == L"var") { return ScriptExpression::CreateVariable(firstGroup.token.variableName, firstGroup.token.isGlobal); }
+			else if (firstGroup.token.type == L"str") { return ScriptExpression::CreateString(firstGroup.token.stringValue); }
+			else if (firstGroup.token.type == L"num") { return ScriptExpression(firstGroup.token.number); }
+			else if (firstGroup.token.type == L"null") { return ScriptExpression(L"null"); }
 			else { return ScriptExpression(L"error"); }
 		}
-		else if (b.type == 1) { return ParseExpression(b.children); }
-		else if (b.type == 3) { return ParseVector(in); }
+		else if (firstGroup.type == 1) { return ParseExpression(firstGroup.children); }
+		else if (firstGroup.type == 3) { return ParseVector(groups); }
 		else { return ScriptExpression(L"error"); }
 	}
 
-	bool call = in.size() == 2 &&
-		in[0].token.type == L"var" && in[1].type == 1;
-	if (call) { return ParseCall(in); }
+	bool isCall = groups.size() == 2 &&
+		groups[0].token.type == L"var" && groups[1].type == 1;
+	if (isCall) { return ParseCall(groups); }
 
-	bool uni = in.size() == 2 && IsUnaryOperator(b.token);
-	if (uni) { return ScriptExpression(b.token.type, { ParseExpression({ in[1] }) }); }
+	bool isUnary = groups.size() == 2 && IsUnaryOperator(firstGroup.token);
+	if (isUnary) { return ScriptExpression(firstGroup.token.type, { ParseExpression({ groups[1] }) }); }
 
-	for (auto const& br : in) {
-		if (IsBinaryOperator(br.token)) { return ParseBinaryExpressions(in); }
+	for (auto const& group : groups) {
+		if (IsBinaryOperator(group.token)) { return ParseBinaryExpressions(groups); }
 	}
 
-	if (in.back().type == 3) { return ParseAccess(in); }
+	if (groups.back().type == 3) { return ParseAccess(groups); }
 	return ScriptExpression(L"error");
 }
 
