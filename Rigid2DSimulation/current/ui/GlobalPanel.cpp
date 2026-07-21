@@ -4,9 +4,9 @@
 #include "Creator.h"
 
 
-BtSave::BtSave() : BtLan(80, L"bt_save") {}
+BtSave::BtSave() : LocalizedButton(80, L"bt_save") {}
 void BtSave::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Save(simulationApp.userInterface->fpn_global->tb_save->str); }
-BtLoad::BtLoad() : BtLan(80, L"bt_load") {}
+BtLoad::BtLoad() : LocalizedButton(80, L"bt_load") {}
 void BtLoad::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Load(simulationApp.userInterface->fpn_global->tb_load->str); }
 
 void RLbGlobal::Sync(App& app) {
@@ -36,19 +36,19 @@ void RLbGlobal::Sync(App& app) {
 	txt += simulationApp.getLocalizedString(L"creator_mode") + s + L"\n";
 }
 
-FPnGlobal::FPnGlobal(App& app) : FPnLan(app, 400, 600, L"fpn_global") {
+FPnGlobal::FPnGlobal(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_global") {
 	vector<Control*> tmp;
 	tb_save = std::make_shared<TextBox>(270); bt_save = std::make_shared<BtSave>();
 	tmp = { &*tb_save, &*bt_save };
-	clx_save = std::make_shared<CtrlListX>(tmp);
+	clx_save = std::make_shared<HorizontalControlList>(tmp);
 	tmp = {};
 	tb_load = std::make_shared<TextBox>(270); bt_load = std::make_shared<BtLoad>();
 	tmp = { &*tb_load, &*bt_load };
-	clx_load = std::make_shared<CtrlListX>(tmp);
+	clx_load = std::make_shared<HorizontalControlList>(tmp);
 	tmp = {};
-	spy = std::make_shared<SeparatorY>(400); rlb_global = std::make_shared<RLbGlobal>();
+	spy = std::make_shared<HorizontalSeparator>(400); rlb_global = std::make_shared<RLbGlobal>();
 	tmp = { &*clx_save, &*clx_load, &*spy, &*rlb_global };
-	cly = std::make_shared<CtrlListY>(tmp);
+	cly = std::make_shared<VerticalControlList>(tmp);
 	c = &*cly;
 	Init(app);
 }

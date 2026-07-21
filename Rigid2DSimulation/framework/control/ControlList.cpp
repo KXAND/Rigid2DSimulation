@@ -1,18 +1,18 @@
 #include "ControlList.h"
 
-CtrlListX::CtrlListX(vector<Control*> const& cs) : cs(cs) {}
-int CtrlListX::GetW() const {
+HorizontalControlList::HorizontalControlList(vector<Control*> const& cs) : cs(cs) {}
+int HorizontalControlList::GetW() const {
 	if (cs.empty()) { return 0; }
 	int w = 0;
 	for (auto c : cs) { w += c->GetW(); } return w;
 }
-int CtrlListX::GetH() const {
+int HorizontalControlList::GetH() const {
 	int h = 0;
 	for (auto c : cs) 
 	if (c->GetH() > h) { h = c->GetH(); } return h;
 }
 
-void CtrlListX::Update(App& app) {
+void HorizontalControlList::Update(App& app) {
 	int cur_x = tl.x;
 	for (auto c : cs) {
 		c->vp = vp;
@@ -21,22 +21,22 @@ void CtrlListX::Update(App& app) {
 		c->Update(app); cur_x += c->GetW();
 	}
 }
-void CtrlListX::Discard(App& app) { for (auto c : cs) { c->Discard(app); } }
-void CtrlListX::PreUpdate(App& app) { for (auto c : cs) { c->PreUpdate(app); } }
+void HorizontalControlList::Discard(App& app) { for (auto c : cs) { c->Discard(app); } }
+void HorizontalControlList::PreUpdate(App& app) { for (auto c : cs) { c->PreUpdate(app); } }
 
-CtrlListY::CtrlListY(vector<Control*> const& cs) : cs(cs) {}
-int CtrlListY::GetW() const {
+VerticalControlList::VerticalControlList(vector<Control*> const& cs) : cs(cs) {}
+int VerticalControlList::GetW() const {
 	int w = 0;
 	for (auto c : cs)
 	if (c->GetW() > w) { w = c->GetW(); } return w;
 }
-int CtrlListY::GetH() const {
+int VerticalControlList::GetH() const {
 	if (cs.empty()) { return 0; }
 	int h = 0;
 	for (auto c : cs) { h += c->GetH(); } return h;
 }
 
-void CtrlListY::Update(App& app) {
+void VerticalControlList::Update(App& app) {
 	int cur_y = tl.y;
 	for (auto c : cs) {
 		c->vp = vp;
@@ -44,6 +44,6 @@ void CtrlListY::Update(App& app) {
 		c->Update(app); cur_y += c->GetH();
 	}
 }
-void CtrlListY::Discard(App& app) { for (auto c : cs) { c->Discard(app); } }
-void CtrlListY::PreUpdate(App& app) { for (auto c : cs) { c->PreUpdate(app); } }
+void VerticalControlList::Discard(App& app) { for (auto c : cs) { c->Discard(app); } }
+void VerticalControlList::PreUpdate(App& app) { for (auto c : cs) { c->PreUpdate(app); } }
 

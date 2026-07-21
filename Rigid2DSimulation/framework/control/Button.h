@@ -24,18 +24,18 @@ struct Button : Control {
 	void Discard(App& app) override;
 	void PreUpdate(App& app) override;
 };
-struct BtLan : Button {
+struct LocalizedButton : Button {
 	wstring id_txt;
-	BtLan() = default;
-	BtLan(int w, wstring const& id);
+	LocalizedButton() = default;
+	LocalizedButton(int w, wstring const& id);
 	void Update(App& app) override;
 };
 
 struct FloatPanel;
-struct BtFPn : Button {
+struct ShowFloatPanelButton : Button {
 	FloatPanel* fpn = NULL;
-	BtFPn() = default;
-	BtFPn(FloatPanel* fpn);
+	ShowFloatPanelButton() = default;
+	ShowFloatPanelButton(FloatPanel* fpn);
 	void OnClick(App& app) override;
 	void Update(App& app) override;
 };

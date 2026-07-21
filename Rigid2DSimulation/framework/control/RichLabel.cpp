@@ -23,8 +23,8 @@ void RichLabel::Update(App& app) {
 	render(app);
 }
 
-RLbLan::RLbLan(int w, wstring const& id) : id_txt(id), RichLabel(w) {}
-void RLbLan::Sync(App& app) { txt = app.getLocalizedString(id_txt); }
+LocalizedRichLabel::LocalizedRichLabel(int w, wstring const& id) : id_txt(id), RichLabel(w) {}
+void LocalizedRichLabel::Sync(App& app) { txt = app.getLocalizedString(id_txt); }
 
 
 

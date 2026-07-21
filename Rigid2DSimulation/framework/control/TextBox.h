@@ -76,10 +76,10 @@ struct TextBox : Control {
 	void Discard(App& app) override;
 	void PreUpdate(App& app) override;
 };
-struct TbLan : TextBox {
+struct LocalizedTextBox : TextBox {
 	wstring id_txt;
-	TbLan() = default;
-	TbLan(wstring const& id, int w);
+	LocalizedTextBox() = default;
+	LocalizedTextBox(wstring const& id, int w);
 	void Update(App& app) override;
 };
 

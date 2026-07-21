@@ -3,9 +3,9 @@
 #include "RichLabel.h"
 #include "FloatPanel.h"
 
-struct FPnAbout : FPnLan {
-	std::shared_ptr<RLbLan> rtb_about;
-	std::shared_ptr<CtrlListY> cly;
+struct FPnAbout : LocalizedFloatPanel {
+	std::shared_ptr<LocalizedRichLabel> rtb_about;
+	std::shared_ptr<VerticalControlList> cly;
 	FPnAbout(App& app);
 };
 

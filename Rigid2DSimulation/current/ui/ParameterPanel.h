@@ -12,7 +12,7 @@ struct TbParNm : TextBox {
 	void Sync(App& app) override;
 	void OnDone(App& app) const override;
 };
-struct BtDelPar : BtLan {
+struct BtDelPar : LocalizedButton {
 	int id = 0;
 	BtDelPar(int id);
 	void OnClick(App& app) override;
@@ -30,29 +30,29 @@ struct TbParVal : TextBox {
 	void OnDone(App& app) const override;
 };
 
-struct ClyPar : CtrlListY {
+struct ClyPar : VerticalControlList {
 	std::shared_ptr<TbParNm> tb_nm;
 	std::shared_ptr<BtDelPar> bt_del;
-	std::shared_ptr<CtrlListX> clx_nm;
+	std::shared_ptr<HorizontalControlList> clx_nm;
 	std::shared_ptr<DbXParVal> dbx_val;
 	std::shared_ptr<TbParVal> tb_val;
-	std::shared_ptr<CtrlListX> clx_val;
-	std::shared_ptr<SeparatorY> spy;
+	std::shared_ptr<HorizontalControlList> clx_val;
+	std::shared_ptr<HorizontalSeparator> spy;
 	ClyPar(int id);
 };
-struct ClyPars : CtrlListY {
+struct ClyPars : VerticalControlList {
 	vector<std::shared_ptr<ClyPar>> mbs;
 	void Update(App& app) override;
 };
-struct BtAddPar : BtLan {
+struct BtAddPar : LocalizedButton {
 	BtAddPar();
 	void OnClick(App& app) override;
 };
 
-struct FPnPar : FPnLan {
+struct FPnPar : LocalizedFloatPanel {
 	std::shared_ptr<ClyPars> cly_pars;
 	std::shared_ptr<BtAddPar> bt_add_par;
-	std::shared_ptr<CtrlListY> cly;
+	std::shared_ptr<VerticalControlList> cly;
 	FPnPar(App& app);
 };
 

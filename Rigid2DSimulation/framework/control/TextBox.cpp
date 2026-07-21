@@ -252,8 +252,8 @@ void TextBox::PreUpdate(App& app) {
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
-TbLan::TbLan(wstring const& id, int w) : TextBox(w), id_txt(id) {}
-void TbLan::Update(App& app) { txt = app.getLocalizedString(id_txt); TextBox::Update(app); }
+LocalizedTextBox::LocalizedTextBox(wstring const& id, int w) : TextBox(w), id_txt(id) {}
+void LocalizedTextBox::Update(App& app) { txt = app.getLocalizedString(id_txt); TextBox::Update(app); }
 
 
 

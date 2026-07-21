@@ -21,10 +21,10 @@ struct RichLabel : Control {
 	virtual void Sync(App& app) {}
 	void Update(App& app);
 };
-struct RLbLan : RichLabel {
+struct LocalizedRichLabel : RichLabel {
 	wstring id_txt;
-	RLbLan() = default;
-	RLbLan(int w, wstring const& id);
+	LocalizedRichLabel() = default;
+	LocalizedRichLabel(int w, wstring const& id);
 	void Sync(App& app) override;
 };
 

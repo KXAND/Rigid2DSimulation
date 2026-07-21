@@ -54,8 +54,8 @@ void CheckBox::PreUpdate(App& app) {
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
-CbLan::CbLan(wstring const& id, bool big) : CheckBox(big), id_txt(id) {}
-void CbLan::Update(App& app) { txt = app.getLocalizedString(id_txt); CheckBox::Update(app); }
+LocalizedCheckBox::LocalizedCheckBox(wstring const& id, bool big) : CheckBox(big), id_txt(id) {}
+void LocalizedCheckBox::Update(App& app) { txt = app.getLocalizedString(id_txt); CheckBox::Update(app); }
 
 
 

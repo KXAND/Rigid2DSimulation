@@ -23,7 +23,7 @@ PnBottom::PnBottom(App& app) : Panel(Panel::bottom(app)) {
 	vector<Control*> tmp;
 	lb_fps = std::make_shared<LbFPS>(); lb_time = std::make_shared<LbTime>(); lb_mouse = std::make_shared<LbMouse>();
 	tmp = { &*lb_fps, &*lb_time, &*lb_mouse };
-	clx = std::make_shared<CtrlListX>(tmp);
+	clx = std::make_shared<HorizontalControlList>(tmp);
 	c = &*clx;
 	Init(app);
 }

@@ -19,7 +19,7 @@ void BtPause::Update(App& app) {
 }
 void BtPause::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.isPaused = !simulationApp.isPaused; }
 
-BtReset::BtReset() : BtLan(150, L"bt_reset") {}
+BtReset::BtReset() : LocalizedButton(150, L"bt_reset") {}
 void BtReset::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Reset(); }
 
 BtMute::BtMute() : Button(150) {}
@@ -67,18 +67,18 @@ PnMenu::PnMenu(App& app) : Panel(Panel::menu(app)) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	vector<Control*> tmp;
 	bt_pause = std::make_shared<BtPause>(); bt_reset = std::make_shared<BtReset>(); bt_mute = std::make_shared<BtMute>();
-	bt_global = std::make_shared<BtFPn>(&*simulationApp.userInterface->fpn_global);
-	bt_body = std::make_shared<BtFPn>(&*simulationApp.userInterface->fpn_body);
-	bt_con = std::make_shared<BtFPn>(&*simulationApp.userInterface->fpn_con);
+	bt_global = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_global);
+	bt_body = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_body);
+	bt_con = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_con);
 	bt_mode = std::make_shared<BtMode>(); bt_display = std::make_shared<BtDisplay>();
-	bt_cmd = std::make_shared<BtFPn>(&*simulationApp.userInterface->fpn_cmd);
-	bt_par = std::make_shared<BtFPn>(&*simulationApp.userInterface->fpn_par);
-	bt_lang = std::make_shared<BtFPn>(&*simulationApp.userInterface->fpn_lang);
-	bt_about = std::make_shared<BtFPn>(&*simulationApp.userInterface->fpn_about);
+	bt_cmd = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_cmd);
+	bt_par = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_par);
+	bt_lang = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_lang);
+	bt_about = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->fpn_about);
 	tmp = { &*bt_pause, &*bt_reset, &*bt_mute, &*bt_global, 
 		&*bt_body, &*bt_con, &*bt_mode, &*bt_display,
 		&*bt_cmd, &*bt_par, &*bt_lang, &*bt_about };
-	cly = std::make_shared<CtrlListY>(tmp);
+	cly = std::make_shared<VerticalControlList>(tmp);
 	c = &*cly;
 	Init(app);
 }

@@ -33,10 +33,10 @@ struct HorizontalDragBar : Control {
 	void Discard(App& app) override;
 	void PreUpdate(App& app) override;
 };
-struct DbXLan : HorizontalDragBar {
+struct LocalizedHorizontalDragBar : HorizontalDragBar {
 	wstring id_txt;
-	DbXLan() = default;
-	DbXLan(wstring const& id, int w);
+	LocalizedHorizontalDragBar() = default;
+	LocalizedHorizontalDragBar(wstring const& id, int w);
 	void Update(App& app) override;
 };
 

@@ -1,9 +1,9 @@
 #pragma once
 #include "Control.h"
 
-struct CtrlListX : Control {
+struct HorizontalControlList : Control {
 	vector<Control*> cs;
-	CtrlListX(vector<Control*> const& cs = {});
+	HorizontalControlList(vector<Control*> const& cs = {});
 	int GetW() const override;
 	int GetH() const override;
 
@@ -12,9 +12,9 @@ struct CtrlListX : Control {
 	void PreUpdate(App& app) override;
 };
 
-struct CtrlListY : Control {
+struct VerticalControlList : Control {
 	vector<Control*> cs;
-	CtrlListY(vector<Control*> const& cs = {});
+	VerticalControlList(vector<Control*> const& cs = {});
 	int GetW() const override;
 	int GetH() const override;
 

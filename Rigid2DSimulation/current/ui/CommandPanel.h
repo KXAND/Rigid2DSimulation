@@ -9,15 +9,15 @@ struct RTbCmd : RichTextBox {
 	void Sync(App& app) override;
 	void OnDone(App& app) const override;
 };
-struct BtCompile : BtLan {
+struct BtCompile : LocalizedButton {
 	BtCompile();
 	void OnClick(App& app) override;
 };
 
-struct FPnCmd : FPnLan {
+struct FPnCmd : LocalizedFloatPanel {
 	std::shared_ptr<RTbCmd> rtb;
 	std::shared_ptr<BtCompile> bt_compile;
-	std::shared_ptr<CtrlListY> cly;
+	std::shared_ptr<VerticalControlList> cly;
 	FPnCmd(App& app);
 };
 

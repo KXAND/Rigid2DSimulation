@@ -62,8 +62,8 @@ void HorizontalDragBar::PreUpdate(App& app) {
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
-DbXLan::DbXLan(wstring const& id, int w) : HorizontalDragBar(w), id_txt(id) {}
-void DbXLan::Update(App& app) { txt = app.getLocalizedString(id_txt); HorizontalDragBar::Update(app); }
+LocalizedHorizontalDragBar::LocalizedHorizontalDragBar(wstring const& id, int w) : HorizontalDragBar(w), id_txt(id) {}
+void LocalizedHorizontalDragBar::Update(App& app) { txt = app.getLocalizedString(id_txt); HorizontalDragBar::Update(app); }
 
 
 

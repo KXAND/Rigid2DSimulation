@@ -21,8 +21,8 @@ void Label::Update(App& app) {
 	render(app);
 }
 
-LbLan::LbLan(wstring const& id, bool big) : Label(big), id_txt(id) {}
-void LbLan::Sync(App& app) { txt = app.getLocalizedString(id_txt); }
+LocalizedLabel::LocalizedLabel(wstring const& id, bool big) : Label(big), id_txt(id) {}
+void LocalizedLabel::Sync(App& app) { txt = app.getLocalizedString(id_txt); }
 
 
 

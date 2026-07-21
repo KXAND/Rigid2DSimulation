@@ -12,10 +12,10 @@ struct BtEng : Button {
 	void OnClick(App& app) override;
 };
 
-struct FPnLang : FPnLan {
+struct FPnLang : LocalizedFloatPanel {
 	std::shared_ptr<BtChi> bt_chi;
 	std::shared_ptr<BtEng> bt_eng;
-	std::shared_ptr<CtrlListY> cly;
+	std::shared_ptr<VerticalControlList> cly;
 	FPnLang(App& app);
 };
 

@@ -7,14 +7,14 @@ RTbBody::RTbBody() : RichTextBox(360, 400) {}
 void RTbBody::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.bodySelecting->temporaryScriptText; }
 void RTbBody::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->temporaryScriptText = str; }
 
-BtBodyOK::BtBodyOK() : BtLan(70, L"bt_body_ok") {}
+BtBodyOK::BtBodyOK() : LocalizedButton(70, L"bt_body_ok") {}
 void BtBodyOK::OnClick(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto& selectedBody = *simulationApp.bodySelecting;
 	selectedBody.scriptText = selectedBody.temporaryScriptText;
 	selectedBody.RefreshFromScript(simulationApp);
 }
-BtBodyDel::BtBodyDel() : BtLan(70, L"bt_body_del") {}
+BtBodyDel::BtBodyDel() : LocalizedButton(70, L"bt_body_del") {}
 void BtBodyDel::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->isMarkedForDeletion = true; simulationApp.isSceneChanged = true; }
 
 
@@ -34,7 +34,7 @@ void LbBodyCon::Sync(App& app) {
 	txt = simulationApp.getLocalizedString(L"conn") + std::to_wstring(id) + L": " + type;
 }
 
-CbBodyCon::CbBodyCon(int id) : id(id), CbLan(L"cb_body_con") {}
+CbBodyCon::CbBodyCon(int id) : id(id), LocalizedCheckBox(L"cb_body_con") {}
 void CbBodyCon::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); checked = (simulationApp.connectionSelecting == simulationApp.bodySelecting->connections[id]); }
 void CbBodyCon::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting = checked ? simulationApp.bodySelecting->connections[id] : NULL; }
 
@@ -55,7 +55,7 @@ void ClYBodyCons::Update(App& app) {
 	for (int i = (selectedBody.connections.size()), iEnd = int(mbs.size()); i < iEnd; ++i) {
 		mbs[i]->Discard(app);
 	}
-	CtrlListY::Update(app);
+	VerticalControlList::Update(app);
 }
 
 ClyBody::ClyBody() {
@@ -63,9 +63,9 @@ ClyBody::ClyBody() {
 	rtb = std::make_shared<RTbBody>();
 	bt_ok = std::make_shared<BtBodyOK>(); bt_del = std::make_shared<BtBodyDel>();
 	tmp = { &*bt_ok, &*bt_del };
-	clx_bt = std::make_shared<CtrlListX>(tmp);
+	clx_bt = std::make_shared<HorizontalControlList>(tmp);
 	tmp = {};
-	cly_cons = std::make_shared<ClYBodyCons>(); spy = std::make_shared<SeparatorY>(400);
+	cly_cons = std::make_shared<ClYBodyCons>(); spy = std::make_shared<HorizontalSeparator>(400);
 }
 void ClyBody::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
@@ -76,10 +76,10 @@ void ClyBody::Update(App& app) {
 		if (bo) { cs = { &*cly_cons, &*rtb, &*clx_bt, &*spy }; }
 		else { cs = {}; }
 	}
-	CtrlListY::Update(app);
+	VerticalControlList::Update(app);
 }
 void ClyBody::Discard(App& app) {
-	CtrlListY::Discard(app);
+	VerticalControlList::Discard(app);
 	bo = NULL; cs = {};
 }
 
@@ -104,11 +104,11 @@ void RLbBody::Sync(App& app) {
 	txt += simulationApp.getLocalizedString(L"body_damp_v_ang") + FormatFixed2(body.dampCoeffAngular) + L"\n";
 }
 
-FPnBody :: FPnBody(App& app) : FPnLan(app, 400, 600, L"fpn_body") {
+FPnBody :: FPnBody(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_body") {
 	vector<Control*> tmp;
 	cly_body = std::make_shared<ClyBody>(); rlb_body = std::make_shared<RLbBody>();
 	tmp = { &*cly_body, &*rlb_body };
-	cly = std::make_shared<CtrlListY>(tmp);
+	cly = std::make_shared<VerticalControlList>(tmp);
 	c = &*cly;
 	Init(app);
 }

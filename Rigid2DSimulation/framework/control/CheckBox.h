@@ -28,10 +28,10 @@ struct CheckBox : Control {
 	void Discard(App& app) override;
 	void PreUpdate(App& app) override;
 };
-struct CbLan : CheckBox {
+struct LocalizedCheckBox : CheckBox {
 	wstring id_txt;
-	CbLan() = default;
-	CbLan(wstring const& id, bool big = false);
+	LocalizedCheckBox() = default;
+	LocalizedCheckBox(wstring const& id, bool big = false);
 	void Update(App& app) override;
 };
 

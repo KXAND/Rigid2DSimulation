@@ -2,8 +2,8 @@
 #include "Font.h"
 #include "Control.h"
 
-typedef function<wstring(int, App&)> DpNm;
-wstring dpnm_none(int id, App &app);
+typedef function<wstring(int, App&)> DropListItemNameProvider;
+wstring GetDefaultDropListItemName(int id, App &app);
 
 struct DropList : Control {
 	DVector2 gap;
@@ -16,7 +16,7 @@ struct DropList : Control {
 	int picked = 0;
 	int h_item = 0;
 	int n_item = 0;
-	DpNm nm = dpnm_none;
+	DropListItemNameProvider nm = GetDefaultDropListItemName;
 
 	double sign_r = 0;
 	int sign_margin = 0;
@@ -30,7 +30,7 @@ struct DropList : Control {
 	bool enabled = true;
 	bool hovered = false;
 
-	DropList(int w = 0, DpNm const &nm = dpnm_none);
+	DropList(int w = 0, DropListItemNameProvider const &nm = GetDefaultDropListItemName);
 	int GetW() const override;
 	int GetH() const override;
 
@@ -47,10 +47,10 @@ struct DropList : Control {
 	void Discard(App& app) override;
 	void PreUpdate(App& app) override;
 };
-struct DpLan : DropList {
+struct LocalizedDropList : DropList {
 	wstring id_txt;
-	DpLan() = default;
-	DpLan(wstring const& id, int w, DpNm const& nm = dpnm_none);
+	LocalizedDropList() = default;
+	LocalizedDropList(wstring const& id, int w, DropListItemNameProvider const& nm = GetDefaultDropListItemName);
 	void Update(App& app) override;
 };
 

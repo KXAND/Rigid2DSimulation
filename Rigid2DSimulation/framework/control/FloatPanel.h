@@ -63,10 +63,10 @@ struct FloatPanel {
 	virtual void Discard(App& app);
 	virtual void PreUpdate(App& app);
 };
-struct FPnLan : FloatPanel {
+struct LocalizedFloatPanel : FloatPanel {
 	wstring id_txt;
-	FPnLan() = default;
-	FPnLan(App& app, int w, int h, wstring const& id);
+	LocalizedFloatPanel() = default;
+	LocalizedFloatPanel(App& app, int w, int h, wstring const& id);
 	void Update(App& app) override;
 };
 

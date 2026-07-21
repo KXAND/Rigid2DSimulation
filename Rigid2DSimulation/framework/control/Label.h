@@ -19,10 +19,10 @@ struct Label : Control {
 	virtual void Sync(App& app) {}
 	void Update(App& app) override;
 };
-struct LbLan : Label {
+struct LocalizedLabel : Label {
 	wstring id_txt;
-	LbLan() = default;
-	LbLan(wstring const& id, bool big = false);
+	LocalizedLabel() = default;
+	LocalizedLabel(wstring const& id, bool big = false);
 	void Sync(App& app) override;
 };
 

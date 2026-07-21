@@ -47,12 +47,12 @@ void Button::PreUpdate(App& app) {
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
-BtLan::BtLan(int w, wstring const& id) : Button(w), id_txt(id) {}
-void BtLan::Update(App& app) { txt = app.getLocalizedString(id_txt); Button::Update(app); }
+LocalizedButton::LocalizedButton(int w, wstring const& id) : Button(w), id_txt(id) {}
+void LocalizedButton::Update(App& app) { txt = app.getLocalizedString(id_txt); Button::Update(app); }
 
-BtFPn::BtFPn(FloatPanel* fpn) : Button(150), fpn(fpn) {}
-void BtFPn::OnClick(App& app) { fpn->show(app); }
-void BtFPn::Update(App& app) {
+ShowFloatPanelButton::ShowFloatPanelButton(FloatPanel* fpn) : Button(150), fpn(fpn) {}
+void ShowFloatPanelButton::OnClick(App& app) { fpn->show(app); }
+void ShowFloatPanelButton::Update(App& app) {
 	enabled = !fpn->shown;
 	txt = fpn->txt; Button::Update(app);
 }

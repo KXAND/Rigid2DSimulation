@@ -6,14 +6,14 @@ RTbCon::RTbCon() : RichTextBox(360, 400) {}
 void RTbCon::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.connectionSelecting->temporaryScriptText; }
 void RTbCon::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->temporaryScriptText = str; }
 
-BtConOK::BtConOK() : BtLan(70, L"bt_con_ok") {}
+BtConOK::BtConOK() : LocalizedButton(70, L"bt_con_ok") {}
 void BtConOK::OnClick(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto& selectedConnection = *simulationApp.connectionSelecting;
 	selectedConnection.scriptText = selectedConnection.temporaryScriptText;
 	selectedConnection.RefreshFromScript(simulationApp);
 }
-BtConDel::BtConDel() : BtLan(70, L"bt_con_del") {}
+BtConDel::BtConDel() : LocalizedButton(70, L"bt_con_del") {}
 void BtConDel::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->isMarkedForDeletion = true; simulationApp.isSceneChanged = true; }
 
 ClyCon::ClyCon() {
@@ -21,9 +21,9 @@ ClyCon::ClyCon() {
 	rtb = std::make_shared<RTbCon>();
 	bt_ok = std::make_shared<BtConOK>(); bt_del = std::make_shared<BtConDel>();
 	tmp = { &*bt_ok, &*bt_del };
-	clx_bt = std::make_shared<CtrlListX>(tmp);
+	clx_bt = std::make_shared<HorizontalControlList>(tmp);
 	tmp = {};
-	spy = std::make_shared<SeparatorY>(400);
+	spy = std::make_shared<HorizontalSeparator>(400);
 }
 void ClyCon::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
@@ -34,10 +34,10 @@ void ClyCon::Update(App& app) {
 		if (con) { cs = { &*rtb, &*clx_bt, &*spy }; }
 		else { cs = {}; }
 	}
-	CtrlListY::Update(app);
+	VerticalControlList::Update(app);
 }
 void ClyCon::Discard(App& app) {
-	CtrlListY::Discard(app);
+	VerticalControlList::Discard(app);
 	con = NULL; cs = {};
 }
 
@@ -60,11 +60,11 @@ void RLbCon::Sync(App& app) {
 	txt += simulationApp.getLocalizedString(L"conn_hooke") + FormatFixed2(connection.hooke) + L"\n";
 }
 
-FPnCon::FPnCon(App& app) : FPnLan(app, 400, 600, L"fpn_con") {
+FPnCon::FPnCon(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_con") {
 	vector<Control*> tmp;
 	cly_con = std::make_shared<ClyCon>(); rlb_con = std::make_shared<RLbCon>();
 	tmp = { &*cly_con, &*rlb_con };
-	cly = std::make_shared<CtrlListY>(tmp);
+	cly = std::make_shared<VerticalControlList>(tmp);
 	c = &*cly;
 	Init(app);
 }

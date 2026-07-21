@@ -187,9 +187,9 @@ void FloatPanel::PreUpdate(App& app) {
 	if (use_sb) { sb->PreUpdate(app); }
 }
 
-FPnLan::FPnLan(App& app, int w, int h, wstring const& id) :
+LocalizedFloatPanel::LocalizedFloatPanel(App& app, int w, int h, wstring const& id) :
 	FloatPanel(app, w, h), id_txt(id) {}
-void FPnLan::Update(App& app) {
+void LocalizedFloatPanel::Update(App& app) {
 	txt = app.getLocalizedString(id_txt); FloatPanel::Update(app);
 }
 

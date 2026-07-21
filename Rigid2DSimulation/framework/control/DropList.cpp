@@ -6,7 +6,7 @@
 
 
 wstring nm_none(int id, App &app) { return L"Пе"; }
-DropList::DropList(int w, DpNm const& nm) : w(w), nm(nm) {
+DropList::DropList(int w, DropListItemNameProvider const& nm) : w(w), nm(nm) {
 	gap = { 10, 10 }; depth = 1000;
 	h_item = 25; h = 30;
 
@@ -97,8 +97,8 @@ void DropList::PreUpdate(App& app) {
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 
-DpLan::DpLan(wstring const& id, int w, DpNm const& nm) : DropList(w, nm), id_txt(id) {}
-void DpLan::Update(App& app) { txt = app.getLocalizedString(id_txt); DropList::Update(app); }
+LocalizedDropList::LocalizedDropList(wstring const& id, int w, DropListItemNameProvider const& nm) : DropList(w, nm), id_txt(id) {}
+void LocalizedDropList::Update(App& app) { txt = app.getLocalizedString(id_txt); DropList::Update(app); }
 
 
 

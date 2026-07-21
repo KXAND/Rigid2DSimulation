@@ -8,7 +8,7 @@ struct BtPause : Button {
 	void Update(App& app) override;
 	void OnClick(App& app) override;
 };
-struct BtReset : BtLan {
+struct BtReset : LocalizedButton {
 	BtReset();
 	void OnClick(App& app) override;
 };
@@ -32,16 +32,16 @@ struct PnMenu : Panel {
 	std::shared_ptr<BtPause> bt_pause;
 	std::shared_ptr<BtReset> bt_reset;
 	std::shared_ptr<BtMute> bt_mute;
-	std::shared_ptr<BtFPn> bt_global;
-	std::shared_ptr<BtFPn> bt_body;
-	std::shared_ptr<BtFPn> bt_con;
+	std::shared_ptr<ShowFloatPanelButton> bt_global;
+	std::shared_ptr<ShowFloatPanelButton> bt_body;
+	std::shared_ptr<ShowFloatPanelButton> bt_con;
 	std::shared_ptr<BtMode> bt_mode;
 	std::shared_ptr<BtDisplay> bt_display;
-	std::shared_ptr<BtFPn> bt_cmd;
-	std::shared_ptr<BtFPn> bt_par;
-	std::shared_ptr<BtFPn> bt_lang;
-	std::shared_ptr<BtFPn> bt_about;
-	std::shared_ptr<CtrlListY> cly;
+	std::shared_ptr<ShowFloatPanelButton> bt_cmd;
+	std::shared_ptr<ShowFloatPanelButton> bt_par;
+	std::shared_ptr<ShowFloatPanelButton> bt_lang;
+	std::shared_ptr<ShowFloatPanelButton> bt_about;
+	std::shared_ptr<VerticalControlList> cly;
 	PnMenu(App& app);
 };
 

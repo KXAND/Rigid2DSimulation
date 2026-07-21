@@ -2,12 +2,12 @@
 #include "Tile.h"
 #include "Control.h"
 
-struct SeparatorY : Control {
+struct HorizontalSeparator : Control {
 	int w = 0;
 	DVector2 gap;
 	Color c_mark;
 
-	SeparatorY(int w = 0);
+	HorizontalSeparator(int w = 0);
 	int GetW() const override;
 	int GetH() const override;
 
