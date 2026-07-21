@@ -37,19 +37,19 @@ DRect RichTextBox::GetTextViewport() const {
 	return getOverlapRect(vp, { textViewportTopLeft, textViewportWidth, textViewportHeight });
 }
 wstring RichTextBox::GetLeftText() const {
-	auto a = value.begin();
-	auto b = value.begin() + GetEditBegin();
-	return wstring(a, b);
+	auto valueBegin = value.begin();
+	auto selectionBegin = value.begin() + GetEditBegin();
+	return wstring(valueBegin, selectionBegin);
 }
 wstring RichTextBox::GetSelectedText() const {
-	auto a = value.begin() + GetEditBegin();
-	auto b = value.begin() + GetEditEnd();
-	return wstring(a, b);
+	auto selectionBegin = value.begin() + GetEditBegin();
+	auto selectionEnd = value.begin() + GetEditEnd();
+	return wstring(selectionBegin, selectionEnd);
 }
 wstring RichTextBox::GetRightText() const {
-	auto a = value.begin() + GetEditEnd();
-	auto b = value.end();
-	return wstring(a, b);
+	auto selectionEnd = value.begin() + GetEditEnd();
+	auto valueEnd = value.end();
+	return wstring(selectionEnd, valueEnd);
 }
 int RichTextBox::GetEditBegin() const { return min(selectionStart, selectionEnd); }
 int RichTextBox::GetEditEnd() const { return max(selectionStart, selectionEnd); }
@@ -117,8 +117,8 @@ void RichTextBox::HandleUp(App& app) {
 	if (HasSelection()) { selectionStart = selectionEnd = GetEditBegin(); }
 	else {
 		wstring selectedText(value.begin(), value.begin() + selectionEnd);
-		int y = GetStringSize(selectedText, app.ft, lineWidth).y - 2 * app.ft.h;
-		DVector2 cursorPosition(cursorXHistory, y);
+		int cursorY = GetStringSize(selectedText, app.ft, lineWidth).y - 2 * app.ft.h;
+		DVector2 cursorPosition(cursorXHistory, cursorY);
 		selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, cursorPosition, lineWidth);
 	}
 }
@@ -129,8 +129,8 @@ void RichTextBox::HandleDown(App& app) {
 	if (HasSelection()) { selectionStart = selectionEnd = GetEditEnd(); }
 	else {
 		wstring selectedText(value.begin(), value.begin() + selectionEnd);
-		int y = GetStringSize(selectedText, app.ft, lineWidth).y;
-		DVector2 cursorPosition(cursorXHistory, y);
+		int cursorY = GetStringSize(selectedText, app.ft, lineWidth).y;
+		DVector2 cursorPosition(cursorXHistory, cursorY);
 		selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, cursorPosition, lineWidth);
 	}
 }
@@ -142,9 +142,9 @@ void RichTextBox::HandleBackspace(App& app) {
 		value = GetLeftText() + GetRightText();
 		selectionStart = selectionEnd = GetEditBegin();
 	} else if (GetEditBegin() > 0) {
-		auto a = value.begin();
-		auto b = value.begin() + selectionStart - 1;
-		value = wstring(a, b) + GetRightText();
+		auto valueBegin = value.begin();
+		auto leftTextEnd = value.begin() + selectionStart - 1;
+		value = wstring(valueBegin, leftTextEnd) + GetRightText();
 		selectionEnd = --selectionStart;
 	} UpdateCursorXHistory(app);
 }
@@ -156,9 +156,9 @@ void RichTextBox::HandleDelete(App& app) {
 		value = GetLeftText() + GetRightText();
 		selectionStart = selectionEnd = GetEditBegin();
 	} else if (GetEditEnd() < value.size()) {
-		auto a = value.begin() + selectionStart + 1;
-		auto b = value.end();
-		value = GetLeftText() + wstring(a, b);
+		auto rightTextBegin = value.begin() + selectionStart + 1;
+		auto valueEnd = value.end();
+		value = GetLeftText() + wstring(rightTextBegin, valueEnd);
 	}
 	// 按道理 delete 不用更新的。
 	// UpdateCursorXHistory(app);
