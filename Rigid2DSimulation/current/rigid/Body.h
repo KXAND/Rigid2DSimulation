@@ -27,7 +27,7 @@ struct Body
 	vector<Connection*> connections;
 	Vector2 position, velocity;
 	Aabb box;
-	Matrix2 transform = Matrix2::I();
+	Matrix2 transform = Matrix2::Identity();
 	wstring scriptText, temporaryScriptText;
 	double radian = 0, velocityAngular = 0;
 	double invMass = 0;// 质量倒数，为0表示此物体不参与运动计算

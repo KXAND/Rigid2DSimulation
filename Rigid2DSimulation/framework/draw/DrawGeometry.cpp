@@ -40,8 +40,8 @@ void drawRectangle(Tile& targetTile, DepthBuffer& zBuffer, double depth,
 void drawRectangleWithTransform(Tile& targetTile, DepthBuffer& zBuffer, double depth,
 	Vector2 center, double width, double height, Matrix2 transformMatrix, DRect viewPort, Color color)
 {
-	Matrix2 transformInverse = transformMatrix.inverse();
-	Vector2 transformHalfWidthHeight = transformMatrix.abs() * Vector2(width, height) / 2;
+	Matrix2 transformInverse = transformMatrix.Inverse();
+	Vector2 transformHalfWidthHeight = transformMatrix.Abs() * Vector2(width, height) / 2;
 	// 这个 1 是经验公式。我没做严格论证。
 	int a = max(viewPort.GetLeft(), int(center.x - transformHalfWidthHeight.x) - 1);
 	int b = min(viewPort.GetRight(), int(center.x + transformHalfWidthHeight.x) + 1);

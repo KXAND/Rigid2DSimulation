@@ -50,8 +50,8 @@ void Camera::Calculate() {
 	Vector3 vy = (look - p).GetNormalized();
 	Vector3 vx = Cross(vy, Vector3(0, 0, 1)).GetNormalized();
 	Vector3 vz = Cross(vx, vy);
-	mt = Matrix3(vx, vy, vz).transpose();
-	mt = Matrix3::rotate(Vector3(0, 1, 0), psi) * mt;
+	mt = Matrix3(vx, vy, vz).Transpose();
+	mt = Matrix3::Rotation(Vector3(0, 1, 0), psi) * mt;
 	ct = vp.topLeftPosition + DVector2(vp.w, vp.h) / 2;
 }
 void Camera::CalculateFirstPerson() {
@@ -63,8 +63,8 @@ void Camera::CalculateFirstPerson() {
 	Vector3 vx = Cross(vy, Vector3(0, 0, 1)).GetNormalized();
 	Vector3 vz = Cross(vx, vy);
 
-	mt = Matrix3(vx, vy, vz).transpose();
-	mt = Matrix3::rotate(Vector3(0, 1, 0), psi) * mt;
+	mt = Matrix3(vx, vy, vz).Transpose();
+	mt = Matrix3::Rotation(Vector3(0, 1, 0), psi) * mt;
 	ct = vp.topLeftPosition + DVector2(vp.w, vp.h) / 2;
 }
 

@@ -68,7 +68,7 @@ void CreateConnection(SimulationApp& cur, Value const& cfg)
 		if (absolute)
 		{
 			connection->p0Relative -= connection->body0->position;
-			connection->p0Relative = connection->body0->transform.inverse() * connection->p0Relative;
+			connection->p0Relative = connection->body0->transform.Inverse() * connection->p0Relative;
 		}
 	}
 	if (auto value = FindConfigValue(cfg, L"point1"))
@@ -77,7 +77,7 @@ void CreateConnection(SimulationApp& cur, Value const& cfg)
 		if (absolute)
 		{
 			connection->p1Relative -= connection->body1->position;
-			connection->p1Relative = connection->body1->transform.inverse() * connection->p1Relative;
+			connection->p1Relative = connection->body1->transform.Inverse() * connection->p1Relative;
 		}
 	}
 	connection->SignUpToBodies();

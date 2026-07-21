@@ -12,12 +12,12 @@ struct Vector3 {
 	explicit Vector3(wstring const& s);
 
 	// @todo:for dColor,应该删除
-	double& r() { return x; }
-	double& g() { return y; }
-	double& b() { return z; }
-	double r() const { return x; }
-	double g() const { return y; }
-	double b() const { return z; }
+	double& GetRed() { return x; }
+	double& GetGreen() { return y; }
+	double& GetBlue() { return z; }
+	double GetRed() const { return x; }
+	double GetGreen() const { return y; }
+	double GetBlue() const { return z; }
 
 	Vector3 operator+() const { return *this; }
 	Vector3 operator-() const { return { -x, -y, -z }; }
@@ -83,7 +83,7 @@ struct Matrix3 {
 		v0.y, v1.y, v2.y,
 		v0.z, v1.z, v2.z) {}
 
-	static Matrix3 I() {
+	static Matrix3 Identity() {
 		return {
 			1, 0, 0,
 			0, 1, 0,
@@ -100,22 +100,22 @@ struct Matrix3 {
 
 	// 张量 b^T * A
 	// @todo: 参数换位置
-	static Matrix3 tensor(Vector3 a, Vector3 b) {
+	static Matrix3 OuterProduct(Vector3 a, Vector3 b) {
 		return Matrix3(b.x * a, b.y * a, b.z * a);
 	}
 
 	// 罗德里格斯旋转公式。
-	static Matrix3 rotate(Vector3 axis, double theta) {
+	static Matrix3 Rotation(Vector3 axis, double theta) {
 		// 这里假设了 axis 是单位的。
-		Matrix3 mz = tensor(axis, axis);
-		Matrix3 mx = Matrix3::I() - mz;
+		Matrix3 mz = OuterProduct(axis, axis);
+		Matrix3 mx = Matrix3::Identity() - mz;
 		Matrix3 my = Cross(axis);
 		return cos(theta) * mx + sin(theta) * my + mz;
 	}
 
-	Vector3 col0() const { return { a00, a10, a20 }; }
-	Vector3 col1() const { return { a01, a11, a21 }; }
-	Vector3 col2() const { return { a02, a12, a22 }; }
+	Vector3 GetColumn0() const { return { a00, a10, a20 }; }
+	Vector3 GetColumn1() const { return { a01, a11, a21 }; }
+	Vector3 GetColumn2() const { return { a02, a12, a22 }; }
 	Matrix3 operator+() const { return *this; }
 	Matrix3 operator-() const {
 		return {
@@ -138,7 +138,7 @@ struct Matrix3 {
 	Matrix3& operator/=(double a) { return *this *= 1 / a; }
 
 	// 矩阵转置
-	Matrix3 transpose() const
+	Matrix3 Transpose() const
 	{
 		return {
 			a00, a10, a20,
@@ -148,7 +148,7 @@ struct Matrix3 {
 	}
 
 	// 逆矩阵
-	Matrix3 inverse() const
+	Matrix3 Inverse() const
 	{
 		// m 是 a 的伴随矩阵的转置矩阵
 		// 伴随矩阵：元素的代数余子式构成的矩阵 代数余子式：去掉元素该行该列后做行列式计算得到的值
@@ -163,11 +163,11 @@ struct Matrix3 {
 		m.a02 = a01 * a12 - a02 * a11;
 		m.a12 = a02 * a10 - a00 * a12;
 		m.a22 = a00 * a11 - a01 * a10;
-		return m / det();
+		return m / Determinant();
 	}
 
 	// 行列式运算
-	double det() const {
+	double Determinant() const {
 		return
 			a00 * (a11 * a22 - a12 * a21) +
 			a01 * (a12 * a20 - a10 * a22) +

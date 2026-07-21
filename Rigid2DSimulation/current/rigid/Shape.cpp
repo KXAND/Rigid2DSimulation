@@ -54,7 +54,7 @@ Vector2 Shape::GenerateRandomPointInside() const
 		auto q = verticesRelative[j];
 
 		// 利用二维空矩阵行列式结果等于两个向量（op，oq）构成的平行四边形的面积得
-		randomArea -= Matrix2(p - relativePosition, q - relativePosition).det() / 2;
+		randomArea -= Matrix2(p - relativePosition, q - relativePosition).Determinant() / 2;
 
 		// 在第一个令面积为负的区域中随机
 		if (randomArea < 0 || i == vertices.size() - 1)
@@ -112,7 +112,7 @@ bool Shape::IsInsideTriangle(Vector2 v, Vector2 v0, Vector2 v1, Vector2 v2) cons
 	Vector3 u0(v0.x, v0.y, 1);
 	Vector3 u1(v1.x, v1.y, 1);
 	Vector3 u2(v2.x, v2.y, 1);
-	Vector3 t = Matrix3(u0, u1, u2).inverse() * u;
+	Vector3 t = Matrix3(u0, u1, u2).Inverse() * u;
 	return
 		IsBetween(t.x, 0.0, 1.0) &&
 		IsBetween(t.y, 0.0, 1.0) &&

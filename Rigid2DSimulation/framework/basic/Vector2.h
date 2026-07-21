@@ -85,12 +85,12 @@ struct Matrix2
 	}
 	Matrix2(Vector2 v0, Vector2 v1) : Matrix2(v0.x, v1.x, v0.y, v1.y) { }
 
-	static Matrix2 rotate(double rad)
+	static Matrix2 Rotation(double rad)
 	{
 		double c = cos(rad), s = sin(rad);
 		return { c, -s, s, c };
 	}
-	static Matrix2 I() { return { 1, 0, 0, 1 }; }
+	static Matrix2 Identity() { return { 1, 0, 0, 1 }; }
 
 	Matrix2 operator+() const { return *this; }
 	Matrix2 operator-() const { return { -a00, -a01, -a10, -a11 }; }
@@ -107,14 +107,14 @@ struct Matrix2
 	}
 	Matrix2& operator/=(double a) { return *this *= 1 / a; }
 
-	Matrix2 transpose() const { return { a00, a10, a01, a11 }; }
-	Matrix2 inverse() const { return Matrix2(a11, -a01, -a10, a00) / det(); }
-	Matrix2 abs() const
+	Matrix2 Transpose() const { return { a00, a10, a01, a11 }; }
+	Matrix2 Inverse() const { return Matrix2(a11, -a01, -a10, a00) / Determinant(); }
+	Matrix2 Abs() const
 	{
 		return Matrix2(::abs(a00), ::abs(a01), ::abs(a10), ::abs(a11));
 	}
 	// 行列式运算
-	double det() const { return a00 * a11 - a01 * a10; }
+	double Determinant() const { return a00 * a11 - a01 * a10; }
 };
 inline Matrix2 operator+(Matrix2 a, Matrix2 b) { return a += b; }
 inline Matrix2 operator-(Matrix2 a, Matrix2 b) { return a -= b; }

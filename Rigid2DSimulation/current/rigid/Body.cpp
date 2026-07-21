@@ -160,7 +160,7 @@ Vector2 Body::GenerateRandomPointInside() const
 
 void Body::UpdateShapesPositionAndAABB()
 {
-	transform = Matrix2::rotate(radian);
+	transform = Matrix2::Rotation(radian);
 	for (auto& shape : shapes)
 	{
 		shape->position = position + transform * shape->relativePosition;
@@ -238,7 +238,7 @@ void Body::Init(bool repos_o)
 			{
 				int j = (i + 1) % shapes->verticesRelative.size();
 				auto p = shapes->verticesRelative[i], q = shapes->verticesRelative[j];
-				double tri_area = Matrix2(p, q).det() / 2;
+				double tri_area = Matrix2(p, q).Determinant() / 2;
 				double tri_inertia = Dot(p, p) + Dot(p, q) + Dot(q, q);
 				tri_inertia *= tri_area / 6;
 
@@ -524,7 +524,7 @@ void Body::Update(SimulationApp& cur)
 		if (dragged)
 		{
 			// p移到m，那么mo = 变换*原距离 = 变换*原相对位置=po，故有。
-			relativeDragPoint = transform.inverse() * ((Vector2) cur.input.mousePosition - position);
+			relativeDragPoint = transform.Inverse() * ((Vector2) cur.input.mousePosition - position);
 			UpdateDragAngle(cur);
 		}
 	}
@@ -548,12 +548,12 @@ void Body::Update(SimulationApp& cur)
 		if (cur.input.IsMouseClickedDown(0) && !cur.creator->active)
 		{
 			cur.creator->body0 = this;
-			cur.creator->p0Relative = transform.inverse() * ((Vector2) cur.input.mousePosition - position);
+			cur.creator->p0Relative = transform.Inverse() * ((Vector2) cur.input.mousePosition - position);
 		}
 		else if (!cur.input.mouseButtonDown[0] && cur.input.previousMouseButtonDown[0] && cur.creator->active)
 		{
 			cur.creator->body1 = this;
-			cur.creator->p1Relative = transform.inverse() * ((Vector2) cur.input.mousePosition - position);
+			cur.creator->p1Relative = transform.Inverse() * ((Vector2) cur.input.mousePosition - position);
 		}
 	}
 }
