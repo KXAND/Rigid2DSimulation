@@ -40,10 +40,10 @@ void ClipLineEndpointAtY(DVector2& endpoint, DVector2 const& otherEndpoint,
 // 好像这里经常发生溢出问题，不知能不能处理一下。
 // 把 int 换成 long long 了，应该会有帮助。
 bool preDrawLineSegment(DVector2& pa, DVector2& pb, DRect viewPort) {
-	long long x0 = viewPort.left();
-	long long x1 = viewPort.right() - 1;
-	long long y0 = viewPort.top();
-	long long y1 = viewPort.bottom() - 1;
+	long long x0 = viewPort.GetLeft();
+	long long x1 = viewPort.GetRight() - 1;
+	long long y0 = viewPort.GetTop();
+	long long y1 = viewPort.GetBottom() - 1;
 
 	// 线性插值
 	// 下面假设了不会发生除以 0 的问题。

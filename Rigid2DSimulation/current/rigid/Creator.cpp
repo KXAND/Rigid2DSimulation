@@ -88,7 +88,7 @@ void Creator::UpdateBall(SimulationApp& cur)
 {
 	if (active)
 	{
-		double r = sqrt((creationStartPoint - cur.input.mousePosition).lensqr());
+		double r = sqrt((creationStartPoint - cur.input.mousePosition).GetLengthSquared());
 		double min_r = 7.5;
 		if (r > min_r)
 		{
@@ -124,7 +124,7 @@ void Creator::UpdatePlate(SimulationApp& cur)
 		double thk = thick;
 		double min_len = 5;
 		DVector2 v = creationStartPoint - cur.input.mousePosition;
-		double len = sqrt(v.lensqr());
+		double len = sqrt(v.GetLengthSquared());
 		if (len > min_len)
 		{
 			body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(len + thk, thk)));
@@ -264,7 +264,7 @@ void Creator::Discard(SimulationApp& cur)
 }
 void Creator::PreUpdate(SimulationApp& cur)
 {
-	if (cur.inputOwners.hoveredDepth <= Depth() && isInside(cur.input.mousePosition, cur.background->ViewPort()))
+	if (cur.inputOwners.hoveredDepth <= Depth() && IsInside(cur.input.mousePosition, cur.background->ViewPort()))
 	{
 		cur.inputOwners.hoveredDepth = Depth();
 		cur.inputOwners.hovered = this;

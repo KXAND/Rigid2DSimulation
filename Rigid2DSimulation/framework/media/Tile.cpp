@@ -45,7 +45,7 @@ Tile::Tile(int w, int h, Tile const& src, DRect vp_src) : Tile(w, h)
 		DVector2 s_pnt = d_pnt * DVector2(vp_src.w, vp_src.h) / DVector2(w, h);
 
 		int dp = d_pnt.y * w + d_pnt.x;
-		int sp = (s_pnt.y + vp_src.top()) * src.width + s_pnt.x + vp_src.left();
+		int sp = (s_pnt.y + vp_src.GetTop()) * src.width + s_pnt.x + vp_src.GetLeft();
 		colors[dp] = src.colors[sp]; as[dp] = src.as[sp];
 	}
 }

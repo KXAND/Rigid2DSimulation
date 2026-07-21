@@ -9,7 +9,7 @@ struct DVector2 {
 	DVector2(int x, int y) : x(x), y(y) {}
 	explicit DVector2(wstring const& s);
 
-	int lensqr() const { return x * x + y * y; }
+	int GetLengthSquared() const { return x * x + y * y; }
 	DVector2 const& operator+() const { return *this; }
 	DVector2 operator-() const { return { -x, -y }; }
 	DVector2& operator+=(DVector2 a) { x += a.x; y += a.y; return *this; }
@@ -39,13 +39,13 @@ struct DRect {
 	DRect(int w, int h) : DRect({}, w, h) {}
 	DRect(DVector2 tl, int w, int h) : topLeftPosition(tl), w(w), h(h) {}
 
-	int left() const { return topLeftPosition.x; }
-	int top() const { return topLeftPosition.y; }
-	int right() const { return left() + w; }
-	int bottom() const { return top() + h; }
-	DVector2 center() const { return topLeftPosition + DVector2(w, h) / 2; }
+	int GetLeft() const { return topLeftPosition.x; }
+	int GetTop() const { return topLeftPosition.y; }
+	int GetRight() const { return GetLeft() + w; }
+	int GetBottom() const { return GetTop() + h; }
+	DVector2 GetCenter() const { return topLeftPosition + DVector2(w, h) / 2; }
 };
-bool isInside(DVector2 v, DRect r);
+bool IsInside(DVector2 v, DRect r);
 // 这里可能会出现负的 DRect。
-DRect getOverlapRect(DRect a, DRect b);
+DRect GetOverlapRect(DRect a, DRect b);
 

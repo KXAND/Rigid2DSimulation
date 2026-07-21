@@ -98,7 +98,7 @@ double Body::GetDepth() const
 }
 bool Body::IsInside(Vector2 p) const
 {
-	if (point) { return (p - position).lensqr() < pointRadius * pointRadius; }
+	if (point) { return (p - position).GetLengthSquared() < pointRadius * pointRadius; }
 
 	for (auto sh : shapes)
 	{
@@ -188,10 +188,10 @@ void Body::Warp(DRect rc)
 {
 	if (invMass == 0 || dragged) { return; }
 
-	if (position.x < rc.left()) { position.x += rc.w; }
-	else if (position.x > rc.right()) { position.x -= rc.w; }
-	if (position.y < rc.top()) { position.y += rc.h; }
-	else if (position.y > rc.bottom()) { position.y -= rc.h; }
+	if (position.x < rc.GetLeft()) { position.x += rc.w; }
+	else if (position.x > rc.GetRight()) { position.x -= rc.w; }
+	if (position.y < rc.GetTop()) { position.y += rc.h; }
+	else if (position.y > rc.GetBottom()) { position.y -= rc.h; }
 }
 
 void Body::RegisterGrid(SimulationApp& cur)
@@ -278,7 +278,7 @@ void Body::Render(SimulationApp& cur) const
 			if (point) { break; }
 		case DISPLAY_ENERGY:
 		{
-			double energy = velocity.lensqr() + velocityAngular * velocityAngular * inertia / area;
+			double energy = velocity.GetLengthSquared() + velocityAngular * velocityAngular * inertia / area;
 			normalColor = (Color) Vector3(energy * cur.energyMultiplier, 0, 0);
 			break;
 		}
@@ -560,13 +560,13 @@ void Body::Update(SimulationApp& cur)
 void Body::PreUpdate(SimulationApp& cur)
 {
 	bool ok = cur.inputOwners.hoveredDepth <= GetDepth() &&
-		IsInside((Vector2) cur.input.mousePosition) && isInside(cur.input.mousePosition, cur.background->ViewPort());
+		IsInside((Vector2) cur.input.mousePosition) && ::IsInside(cur.input.mousePosition, cur.background->ViewPort());
 	if (ok) { cur.inputOwners.hoveredDepth = GetDepth(); cur.inputOwners.hovered = this; }
 }
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulomb)
 {
-	double dsqr = (b1.position - b0.position).lensqr();
+	double dsqr = (b1.position - b0.position).GetLengthSquared();
 	Vector2 d = (b1.position - b0.position).normalize();
 	Vector2 je = -b0.charge * b1.charge * d / dsqr * sdt * coulomb;
 	b0.velocity += je * b0.invMass;

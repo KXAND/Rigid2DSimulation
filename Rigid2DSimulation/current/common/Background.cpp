@@ -31,10 +31,10 @@ void Background::Update(SimulationApp& cur)
 }
 void Background::PreUpdate(SimulationApp& cur)
 {
-	bool haveDeeperValue = ((cur.inputOwners).hoveredDepth) <= depth && isInside(cur.input.mousePosition, ViewPort());
+	bool haveDeeperValue = ((cur.inputOwners).hoveredDepth) <= depth && IsInside(cur.input.mousePosition, ViewPort());
 	if (haveDeeperValue) { ((cur.inputOwners).hoveredDepth) = depth; ((cur.inputOwners).hovered) = this; }
 
-	haveDeeperValue = (cur.inputOwners.wheeledDepth) <= depth && isInside(cur.input.mousePosition, ViewPort());
+	haveDeeperValue = (cur.inputOwners.wheeledDepth) <= depth && IsInside(cur.input.mousePosition, ViewPort());
 	if (haveDeeperValue) { (cur.inputOwners.wheeledDepth) = depth; (cur.inputOwners.wheeled) = this; }
 }
 

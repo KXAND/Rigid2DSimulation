@@ -43,7 +43,7 @@ void Button::Update(App& app) {
 void Button::Discard(App& app) { app.inputOwners.Remove(this); chosen = hovered = false; }
 void Button::PreUpdate(App& app) {
 	bool ok = app.inputOwners.hoveredDepth <= depth &&
-		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, vp);
+		IsInside(app.input.mousePosition, { tl, w, h }) && IsInside(app.input.mousePosition, vp);
 	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 

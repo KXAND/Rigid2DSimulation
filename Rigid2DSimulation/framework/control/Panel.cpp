@@ -45,7 +45,7 @@ int Panel::GetMinY() const {
 }
 DRect Panel::GetVisibleViewport(App& app) const {
 	DRect visibleViewport = contentViewport;
-	visibleViewport.topLeftPosition += tl; return getOverlapRect(app.screen.Rect(), visibleViewport);
+	visibleViewport.topLeftPosition += tl; return GetOverlapRect(app.screen.Rect(), visibleViewport);
 }
 void Panel::SetControl(App& app, Control* newContentControl) {
 	if (contentControl != newContentControl) {
@@ -100,11 +100,11 @@ void Panel::Discard(App& app) {
 }
 void Panel::PreUpdate(App& app) {
 	bool canOwnInput = app.inputOwners.hoveredDepth <= depth &&
-		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.screen.Rect());
+		IsInside(app.input.mousePosition, { tl, w, h }) && IsInside(app.input.mousePosition, app.screen.Rect());
 	if (canOwnInput) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 
 	canOwnInput = app.inputOwners.wheeledDepth <= depth &&
-		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.screen.Rect());
+		IsInside(app.input.mousePosition, { tl, w, h }) && IsInside(app.input.mousePosition, app.screen.Rect());
 	if (canOwnInput) { app.inputOwners.wheeledDepth = depth; app.inputOwners.wheeled = this; }
 
 	if (contentControl) { contentControl->PreUpdate(app); }

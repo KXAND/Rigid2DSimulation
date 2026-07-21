@@ -93,7 +93,7 @@ void DropList::Discard(App& app) {
 void DropList::PreUpdate(App& app) {
 	int visibleHeight = h + (edit ? itemCount * itemHeight : 0);
 	bool ok = app.inputOwners.hoveredDepth <= depth &&
-		isInside(app.input.mousePosition, { GetBoxTopLeft(), w, visibleHeight}) && isInside(app.input.mousePosition, vp);
+		IsInside(app.input.mousePosition, { GetBoxTopLeft(), w, visibleHeight}) && IsInside(app.input.mousePosition, vp);
 	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 

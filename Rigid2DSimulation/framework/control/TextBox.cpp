@@ -33,7 +33,7 @@ DVector2 TextBox::GetBoxTopLeft() const { return tl + DVector2(labelTextWidth, 0
 DRect TextBox::GetTextViewport() const {
 	DVector2 textViewportTopLeft = GetBoxTopLeft() + DVector2(textViewportMarginWidth, 0);
 	int textViewportWidth = w - 2 * textViewportMarginWidth;
-	return getOverlapRect(vp, { textViewportTopLeft, textViewportWidth, h });
+	return GetOverlapRect(vp, { textViewportTopLeft, textViewportWidth, h });
 }
 wstring TextBox::GetLeftText() const {
 	auto a = value.begin();
@@ -248,7 +248,7 @@ void TextBox::PreUpdate(App& app) {
 	if (edit) { app.inputOwners.keyboardOwner = this; }
 
 	bool ok = app.inputOwners.hoveredDepth <= depth &&
-		isInside(app.input.mousePosition, { GetBoxTopLeft(), w, h }) && isInside(app.input.mousePosition, vp);
+		IsInside(app.input.mousePosition, { GetBoxTopLeft(), w, h }) && IsInside(app.input.mousePosition, vp);
 	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 

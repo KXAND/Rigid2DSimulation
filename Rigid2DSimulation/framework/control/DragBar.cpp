@@ -58,7 +58,7 @@ void HorizontalDragBar::Discard(App& app) {
 }
 void HorizontalDragBar::PreUpdate(App& app) {
 	bool ok = app.inputOwners.hoveredDepth <= depth &&
-		isInside(app.input.mousePosition, { GetNodeTopLeft(), nodeWidth, nodeHeight }) && isInside(app.input.mousePosition, vp);
+		IsInside(app.input.mousePosition, { GetNodeTopLeft(), nodeWidth, nodeHeight }) && IsInside(app.input.mousePosition, vp);
 	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 

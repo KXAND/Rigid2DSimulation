@@ -9,16 +9,16 @@ wstring ToWString(DVector2 v) {
 	return L"(" + std::to_wstring(v.x) + L"," + std::to_wstring(v.y) + L")";
 }
 
-bool isInside(DVector2 v, DRect r) {
+bool IsInside(DVector2 v, DRect r) {
 	return
-		IsBetween(v.x, r.left(), r.right()) &&
-		IsBetween(v.y, r.top(), r.bottom());
+		IsBetween(v.x, r.GetLeft(), r.GetRight()) &&
+		IsBetween(v.y, r.GetTop(), r.GetBottom());
 }
-DRect getOverlapRect(DRect a, DRect b) {
-	int left = max(a.left(), b.left());
-	int right = min(a.right(), b.right());
-	int top = max(a.top(), b.top());
-	int bottom = min(a.bottom(), b.bottom());
+DRect GetOverlapRect(DRect a, DRect b) {
+	int left = max(a.GetLeft(), b.GetLeft());
+	int right = min(a.GetRight(), b.GetRight());
+	int top = max(a.GetTop(), b.GetTop());
+	int bottom = min(a.GetBottom(), b.GetBottom());
 	return DRect({ left, top }, right - left, bottom - top);
 }
 

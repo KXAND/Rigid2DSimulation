@@ -11,11 +11,11 @@ wstring ToWString(Vector2 v)
 	return L"(" + FormatFixed2(v.x) + L"," + FormatFixed2(v.y) + L")";
 }
 
-bool isInside(Vector2 v, Rect r)
+bool IsInside(Vector2 v, Rect r)
 {
 	return
-		IsBetween(v.x, r.left(), r.right()) &&
-		IsBetween(v.y, r.top(), r.bottom());
+		IsBetween(v.x, r.GetLeft(), r.GetRight()) &&
+		IsBetween(v.y, r.GetTop(), r.GetBottom());
 }
 /// <summary>
 /// 递归计算获取任意次贝塞尔曲线上的点
@@ -39,11 +39,11 @@ Vector2 GetPositionOnBezier(vector<Vector2> controlPoints, double t)
 
 double GetDistanceSquare(Vector2 a, Vector2 b, Vector2 p)
 {
-	if (a == b) { return (a - p).lensqr(); }
+	if (a == b) { return (a - p).GetLengthSquared(); }
 
-	double ap = (p - a).lensqr();
-	double bp = (p - b).lensqr();
-	double ab = (a - b).lensqr();
+	double ap = (p - a).GetLengthSquared();
+	double bp = (p - b).GetLengthSquared();
+	double ab = (a - b).GetLengthSquared();
 	double diff = ap - bp;
 	return
 		ab + bp < ap ? bp : // bp 太短，无法构成三角形，下同

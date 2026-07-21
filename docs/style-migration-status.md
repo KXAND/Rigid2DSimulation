@@ -51,6 +51,7 @@
 - `AudioClip` 的采样率、样本、播放位置、循环标志、文件名和加载状态已迁移为完整 lower camel；其接口已统一为 PascalCase。
 - `Font` 的加载、初始化和随机文本生成接口已迁移为 `LoadFont`、`Initialize`、`GenerateRandomText`；应用初始化调用点已同步。
 - `Vector3::near_zero` 已迁移为 PascalCase 的 `IsNearZero`，不改变其数值判定逻辑。
+- `DVector2`、`Vector2` 及其矩形类型的长度平方、边界、包含与重叠查询接口已迁移为 PascalCase，并同步更新绘制、控件和刚体调用点。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。

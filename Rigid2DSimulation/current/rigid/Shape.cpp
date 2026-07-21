@@ -67,7 +67,7 @@ Vector2 Shape::GenerateRandomPointInside() const
 bool Shape::IsInside(Vector2 p) const
 {
 	if (isCircle)
-		return (p - position).lensqr() < r * r;
+		return (p - position).GetLengthSquared() < r * r;
 
 	for (int i = (0), iEnd = int(vertices.size()); i < iEnd; ++i)
 	{

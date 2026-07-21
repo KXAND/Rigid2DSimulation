@@ -3,10 +3,10 @@
 
 void DrawCharacter(Tile& dest, DepthBuffer& ds, double depth,
 	DVector2 tl, DRect vp_dest, Tile const& src, Color col) {
-	int a = max(vp_dest.left(), tl.x);
-	int b = min(vp_dest.right(), tl.x + src.width);
-	int c = max(vp_dest.top(), tl.y);
-	int d = min(vp_dest.bottom(), tl.y + src.height);
+	int a = max(vp_dest.GetLeft(), tl.x);
+	int b = min(vp_dest.GetRight(), tl.x + src.width);
+	int c = max(vp_dest.GetTop(), tl.y);
+	int d = min(vp_dest.GetBottom(), tl.y + src.height);
 	if (a >= b || c >= d) { return; }
 
 	for (int j = (c), jEnd = int(d); j < jEnd; ++j) {

@@ -48,8 +48,8 @@ struct Vector2
 		return abs(x) <= eps && abs(y) <= eps;
 	}
 	Vector2 normalize() const { return zero() ? Vector2{} : *this / len(); }
-	double len() const { return sqrt(lensqr()); }
-	double lensqr() const { return x * x + y * y; }
+	double len() const { return sqrt(GetLengthSquared()); }
+	double GetLengthSquared() const { return x * x + y * y; }
 };
 inline double dot(const Vector2& a, const Vector2& b) { return a.x * b.x + a.y * b.y; }
 //Ë³ĞòÎÊÌâ
@@ -66,12 +66,12 @@ struct Rect
 	Rect(double w, double h) : Rect({}, w, h) { }
 	Rect(Vector2 tl, double w, double h) : tl(tl), w(w), h(h) { }
 
-	double left() const { return tl.x; }
-	double top() const { return tl.y; }
-	double right() const { return left() + w; }
-	double bottom() const { return top() + h; }
+	double GetLeft() const { return tl.x; }
+	double GetTop() const { return tl.y; }
+	double GetRight() const { return GetLeft() + w; }
+	double GetBottom() const { return GetTop() + h; }
 };
-bool isInside(Vector2 v, Rect r);
+bool IsInside(Vector2 v, Rect r);
 
 struct Matrix2;
 inline Matrix2 operator/(Matrix2 a, double b);

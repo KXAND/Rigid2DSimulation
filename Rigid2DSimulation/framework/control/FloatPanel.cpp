@@ -51,7 +51,7 @@ int FloatPanel::GetMinY() const {
 }
 DRect FloatPanel::GetVisibleViewport(App& app) const {
 	DRect visibleViewport = contentViewport;
-	visibleViewport.topLeftPosition += tl; return getOverlapRect(app.screen.Rect(), visibleViewport);
+	visibleViewport.topLeftPosition += tl; return GetOverlapRect(app.screen.Rect(), visibleViewport);
 }
 DVector2 FloatPanel::GetCloseTopLeft() const {
 	int closeX = w - closeButtonMargin - closeButtonSize;
@@ -94,8 +94,8 @@ void FloatPanel::InitializeScrollBar() {
 void FloatPanel::Hide(App& app) { shown = false; Discard(app); }
 void FloatPanel::Show(App& app) { shown = true; lastClickTime = app.frameRate.GetElapsedTime(); }
 void FloatPanel::HandleCaption(App& app) {
-	closeButtonHovered = hovered && isInside(app.input.mousePosition, { GetCloseTopLeft(), closeButtonSize, closeButtonSize });
-	titleBarHovered = hovered && !closeButtonHovered && isInside(app.input.mousePosition, { tl, w, titleBarHeight });
+	closeButtonHovered = hovered && IsInside(app.input.mousePosition, { GetCloseTopLeft(), closeButtonSize, closeButtonSize });
+	titleBarHovered = hovered && !closeButtonHovered && IsInside(app.input.mousePosition, { tl, w, titleBarHeight });
 
 	if (titleBarDragged) {
 		DVector2 newTopLeft = tl + app.input.mousePosition - app.input.previousMousePosition;
@@ -176,11 +176,11 @@ void FloatPanel::Discard(App& app) {
 void FloatPanel::PreUpdate(App& app) {
 	if (!shown) return;
 	bool canOwnInput = app.inputOwners.hoveredDepth <= depth &&
-		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.screen.Rect());
+		IsInside(app.input.mousePosition, { tl, w, h }) && IsInside(app.input.mousePosition, app.screen.Rect());
 	if (canOwnInput) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 
 	canOwnInput = app.inputOwners.wheeledDepth <= depth &&
-		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.screen.Rect());
+		IsInside(app.input.mousePosition, { tl, w, h }) && IsInside(app.input.mousePosition, app.screen.Rect());
 	if (canOwnInput) { app.inputOwners.wheeledDepth = depth; app.inputOwners.wheeled = this; }
 
 	if (contentControl) { contentControl->PreUpdate(app); }

@@ -95,13 +95,13 @@ void drawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
 
 	// ÓÃÆÁÄ»±ßÇÐ¸îÍ¼ÐÎ
 	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, pa, pb,
-		pc, depth, color, (long long)viewPort.right() - 1,
+		pc, depth, color, (long long)viewPort.GetRight() - 1,
 		BoundarySide::Maximum))
 	{
 		return;
 	}
 	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, pc, pb,
-		pa, depth, color, (long long)viewPort.left(), BoundarySide::Minimum))
+		pa, depth, color, (long long)viewPort.GetLeft(), BoundarySide::Minimum))
 	{
 		return;
 	}
@@ -112,13 +112,13 @@ void drawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
 	if (pa.y == pc.y) { return; }
 	int dy = pa.y - pc.y;
 	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, pa, pb,
-		pc, depth, color, (long long)viewPort.bottom() - 1,
+		pc, depth, color, (long long)viewPort.GetBottom() - 1,
 		BoundarySide::Maximum))
 	{
 		return;
 	}
 	if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewPort, pc, pb,
-		pa, depth, color, (long long)viewPort.top(), BoundarySide::Minimum))
+		pa, depth, color, (long long)viewPort.GetTop(), BoundarySide::Minimum))
 	{
 		return;
 	}

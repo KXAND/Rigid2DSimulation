@@ -34,7 +34,7 @@ DRect RichTextBox::GetTextViewport() const {
 	DVector2 textViewportTopLeft = tl + textViewportMargin;
 	int textViewportWidth = w - 2 * textViewportMargin.x;
 	int textViewportHeight = h - 2 * textViewportMargin.y;
-	return getOverlapRect(vp, { textViewportTopLeft, textViewportWidth, textViewportHeight });
+	return GetOverlapRect(vp, { textViewportTopLeft, textViewportWidth, textViewportHeight });
 }
 wstring RichTextBox::GetLeftText() const {
 	auto valueBegin = value.begin();
@@ -299,11 +299,11 @@ void RichTextBox::PreUpdate(App& app) {
 	if (edit) { app.inputOwners.keyboardOwner = this; }
 
 	bool ok = app.inputOwners.hoveredDepth <= depth &&
-		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, vp);
+		IsInside(app.input.mousePosition, { tl, w, h }) && IsInside(app.input.mousePosition, vp);
 	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 
 	ok = app.inputOwners.wheeledDepth <= depth &&
-		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, vp);
+		IsInside(app.input.mousePosition, { tl, w, h }) && IsInside(app.input.mousePosition, vp);
 	if (ok) { app.inputOwners.wheeledDepth = depth; app.inputOwners.wheeled = this; }
 }
 

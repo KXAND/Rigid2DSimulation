@@ -11,25 +11,25 @@ void Group::Warp(DRect Rect)
 
 	isInRect = true;
 	for (auto b : bodies)
-		if (b->position.x > Rect.left()) { isInRect = false; break; }
+		if (b->position.x > Rect.GetLeft()) { isInRect = false; break; }
 	if (isInRect)
 		for (auto b : bodies) { b->position.x += Rect.w; b->track.clear(); }
 
 	isInRect = true;
 	for (auto b : bodies)
-		if (b->position.x < Rect.right()) { isInRect = false; break; }
+		if (b->position.x < Rect.GetRight()) { isInRect = false; break; }
 	if (isInRect)
 		for (auto b : bodies) { b->position.x -= Rect.w; b->track.clear(); }
 
 	isInRect = true;
 	for (auto b : bodies)
-		if (b->position.y > Rect.top()) { isInRect = false; break; }
+		if (b->position.y > Rect.GetTop()) { isInRect = false; break; }
 	if (isInRect)
 		for (auto b : bodies) { b->position.y += Rect.h;  b->track.clear(); }
 
 	isInRect = true;
 	for (auto b : bodies)
-		if (b->position.y < Rect.bottom()) { isInRect = false; break; }
+		if (b->position.y < Rect.GetBottom()) { isInRect = false; break; }
 	if (isInRect)
 		for (auto b : bodies) { b->position.y -= Rect.h; b->track.clear(); }
 }

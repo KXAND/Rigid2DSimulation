@@ -28,7 +28,7 @@ void VerticalScrollBar::Render(App& app) {
 void VerticalScrollBar::Update(App& app) {
 	hasOverflow = (contentControl != NULL) && visibleHeight < contentControl->GetH();
 	hovered = (app.inputOwners.hovered == this);
-	hoveredThumb = hovered && isInside(app.input.mousePosition, { tl + DVector2(0, thumbY), w, thumbHeight });
+	hoveredThumb = hovered && IsInside(app.input.mousePosition, { tl + DVector2(0, thumbY), w, thumbHeight });
 
 	// 这个状态变化比一般的控件是要复杂的。
 	if (hasOverflow) {
@@ -50,7 +50,7 @@ void VerticalScrollBar::Discard(App& app) {
 }
 void VerticalScrollBar::PreUpdate(App& app) {
 	bool ok = app.inputOwners.hoveredDepth <= depth &&
-		isInside(app.input.mousePosition, { tl, w, h }) && isInside(app.input.mousePosition, app.screen.Rect());
+		IsInside(app.input.mousePosition, { tl, w, h }) && IsInside(app.input.mousePosition, app.screen.Rect());
 	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 

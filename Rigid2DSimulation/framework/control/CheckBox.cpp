@@ -50,7 +50,7 @@ void CheckBox::Discard(App& app) {
 }
 void CheckBox::PreUpdate(App& app) {
 	bool ok = app.inputOwners.hoveredDepth <= depth &&
-		isInside(app.input.mousePosition, { GetBoxTopLeft(), boxSize, boxSize }) && isInside(app.input.mousePosition, vp);
+		IsInside(app.input.mousePosition, { GetBoxTopLeft(), boxSize, boxSize }) && IsInside(app.input.mousePosition, vp);
 	if (ok) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
 }
 
