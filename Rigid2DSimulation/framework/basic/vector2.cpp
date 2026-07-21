@@ -1,17 +1,17 @@
 #include "vector2.h"
 
-vector2::vector2(wstring const& s)
+Vector2::Vector2(wstring const& s)
 {
 	int i = 0;
 	x = fetch_num(i, s);
 	y = fetch_num(i, s);
 }
-wstring ToWString(vector2 v)
+wstring ToWString(Vector2 v)
 {
 	return L"(" + FormatFixed2(v.x) + L"," + FormatFixed2(v.y) + L")";
 }
 
-bool isInside(vector2 v, rect r)
+bool isInside(Vector2 v, Rect r)
 {
 	return
 		isBetween(v.x, r.left(), r.right()) &&
@@ -23,12 +23,12 @@ bool isInside(vector2 v, rect r)
 /// <param name="controlPoints">控制点集</param>
 /// <param name="t">[0,1]，结果点对应的参数</param>
 /// <returns></returns>
-vector2 GetPositionOnBezier(vector<vector2> controlPoints, double t)
+Vector2 GetPositionOnBezier(vector<Vector2> controlPoints, double t)
 {
 // @todo：不知道能不能优化，同时二次和三次应该有单独的实现。
 	if (controlPoints.size() == 2) { return controlPoints[0] * (1 - t) + controlPoints[1] * t; }
 
-	vector<vector2> ps0, ps1;
+	vector<Vector2> ps0, ps1;
 	for (int i = (0), iEnd = int(controlPoints.size()); i < iEnd; ++i)
 	{
 		if (i != 0) { ps1.push_back(controlPoints[i]); }
@@ -37,7 +37,7 @@ vector2 GetPositionOnBezier(vector<vector2> controlPoints, double t)
 	return GetPositionOnBezier(ps0, t) * (1 - t) + GetPositionOnBezier(ps1, t) * t;
 }
 
-double GetDistanceSquare(vector2 a, vector2 b, vector2 p)
+double GetDistanceSquare(Vector2 a, Vector2 b, Vector2 p)
 {
 	if (a == b) { return (a - p).lensqr(); }
 

@@ -1,9 +1,9 @@
 #include "draw_tile.h"
 
-void drawBasedTile(tile& dest, dVector2 tl, tile const& src)
+void drawBasedTile(tile& dest, DVector2 tl, tile const& src)
 {
-	auto viewportDest = dest.rect();
-	auto viewportSrc = src.rect();
+	auto viewportDest = dest.Rect();
+	auto viewportSrc = src.Rect();
 
 	int l = max(viewportDest.left(), tl.x);
 	int r = min(viewportDest.right(), tl.x + viewportSrc.w);
@@ -21,8 +21,8 @@ void drawBasedTile(tile& dest, dVector2 tl, tile const& src)
 	}
 }
 
-void drawTile(tile& dest, dbuf& zBuffer, double depth, dVector2 tl,
-	dRect vp_dest, tile const& src, dRect viewportSrc)
+void drawTile(tile& dest, dbuf& zBuffer, double depth, DVector2 tl,
+	DRect vp_dest, tile const& src, DRect viewportSrc)
 {
 	int l = max(vp_dest.left(), tl.x);
 	int r = min(vp_dest.right(), tl.x + viewportSrc.w);
@@ -48,10 +48,10 @@ void drawTile(tile& dest, dbuf& zBuffer, double depth, dVector2 tl,
 }
 
 // 疑似弃用
-bool hitTile(dVector2 p, dVector2 tl, tile const& tileSrc, dRect viewportSrc)
+bool hitTile(DVector2 p, DVector2 tl, tile const& tileSrc, DRect viewportSrc)
 {
 	// 假设了vpsrc和 tilesrc 左上角对齐
-	dVector2 pSrc = viewportSrc.topLeftPosition + p - tl;
+	DVector2 pSrc = viewportSrc.topLeftPosition + p - tl;
 	int pxl = pSrc.y * tileSrc.width + pSrc.x;
 	return isInside(pSrc, viewportSrc) && tileSrc.as[pxl] != 0;
 }

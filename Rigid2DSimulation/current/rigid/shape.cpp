@@ -1,13 +1,13 @@
 #include "shape.h"
 
-Shape::Shape(double _r, vector2 _o_rel)
+Shape::Shape(double _r, Vector2 _o_rel)
 {
 	isCircle = true;
 	r = _r;
 	relativePosition = _o_rel;
 }
 
-Shape::Shape(vector<vector2> const& _verticesRelative)
+Shape::Shape(vector<Vector2> const& _verticesRelative)
 {
 	verticesRelative = _verticesRelative;
 	vertices.resize(verticesRelative.size());
@@ -37,13 +37,13 @@ Shape::Shape(FILE* file)
 	vertices.resize(verticesRelative.size());
 }
 
-vector2 Shape::GenerateRandomPointInside() const
+Vector2 Shape::GenerateRandomPointInside() const
 {
 	if (isCircle)
 	{
 		double randomRadian = GenerateRandomFloat(2 * PI);
 		double randomRadius = sqrt(GenerateRandomFloat(1)) * r;
-		return vector2(cos(randomRadian), sin(randomRadian)) * randomRadius;
+		return Vector2(cos(randomRadian), sin(randomRadian)) * randomRadius;
 	}
 
 	double randomArea = GenerateRandomFloat(area);
@@ -54,7 +54,7 @@ vector2 Shape::GenerateRandomPointInside() const
 		auto q = verticesRelative[j];
 
 		// 利用二维空矩阵行列式结果等于两个向量（op，oq）构成的平行四边形的面积得
-		randomArea -= matrix2(p - relativePosition, q - relativePosition).det() / 2;
+		randomArea -= Matrix2(p - relativePosition, q - relativePosition).det() / 2;
 
 		// 在第一个令面积为负的区域中随机
 		if (randomArea < 0 || i == vertices.size() - 1)
@@ -64,7 +64,7 @@ vector2 Shape::GenerateRandomPointInside() const
 	return {};
 }
 
-bool Shape::IsInside(vector2 p) const
+bool Shape::IsInside(Vector2 p) const
 {
 	if (isCircle)
 		return (p - position).lensqr() < r * r;
@@ -91,7 +91,7 @@ aabb Shape::GetBoundingBox() const
 	return box;
 }
 
-vector2 Shape::GenerateRandomPointInTriangle(vector2 v0, vector2 v1, vector2 v2) const
+Vector2 Shape::GenerateRandomPointInTriangle(Vector2 v0, Vector2 v1, Vector2 v2) const
 {
 	double x0 = GenerateRandomFloat(1);
 	double x1 = GenerateRandomFloat(1);
@@ -105,27 +105,27 @@ vector2 Shape::GenerateRandomPointInTriangle(vector2 v0, vector2 v1, vector2 v2)
 	return x0 * v0 + x1 * v1 + (1 - x0 - x1) * v2;
 }
 
-bool Shape::IsInsideTriangle(vector2 v, vector2 v0, vector2 v1, vector2 v2) const
+bool Shape::IsInsideTriangle(Vector2 v, Vector2 v0, Vector2 v1, Vector2 v2) const
 {
 	// 齐次坐标
-	vector3 u(v.x, v.y, 1);
-	vector3 u0(v0.x, v0.y, 1);
-	vector3 u1(v1.x, v1.y, 1);
-	vector3 u2(v2.x, v2.y, 1);
-	vector3 t = matrix3(u0, u1, u2).inverse() * u;
+	Vector3 u(v.x, v.y, 1);
+	Vector3 u0(v0.x, v0.y, 1);
+	Vector3 u1(v1.x, v1.y, 1);
+	Vector3 u2(v2.x, v2.y, 1);
+	Vector3 t = Matrix3(u0, u1, u2).inverse() * u;
 	return
 		isBetween(t.x, 0.0, 1.0) &&
 		isBetween(t.y, 0.0, 1.0) &&
 		isBetween(t.z, 0.0, 1.0);
 }
 
-vector<vector2> GetRectVerticesByCenter(double halfWidth, double halfHeight)
+vector<Vector2> GetRectVerticesByCenter(double halfWidth, double halfHeight)
 {
-	vector<vector2> vertices;
-	vertices.push_back(vector2(+halfWidth, +halfHeight) / 2);
-	vertices.push_back(vector2(-halfWidth, +halfHeight) / 2);
-	vertices.push_back(vector2(-halfWidth, -halfHeight) / 2);
-	vertices.push_back(vector2(+halfWidth, -halfHeight) / 2);
+	vector<Vector2> vertices;
+	vertices.push_back(Vector2(+halfWidth, +halfHeight) / 2);
+	vertices.push_back(Vector2(-halfWidth, +halfHeight) / 2);
+	vertices.push_back(Vector2(-halfWidth, -halfHeight) / 2);
+	vertices.push_back(Vector2(+halfWidth, -halfHeight) / 2);
 	return vertices;
 }
 

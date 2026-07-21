@@ -4,7 +4,7 @@
 
 struct Checkbox : Control {
 	int h = 0;
-	dVector2 gap;
+	DVector2 gap;
 	double depth = 0;
 	wstring txt;
 	int s_box = 0, s_box_in = 0;
@@ -19,7 +19,7 @@ struct Checkbox : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	dVector2 tl_box() const;
+	DVector2 tl_box() const;
 	void render(App& app);
 	virtual void Sync(App& app) {}
 	virtual void Upload(App& app) const {}

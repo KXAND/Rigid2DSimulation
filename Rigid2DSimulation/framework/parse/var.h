@@ -25,10 +25,10 @@ struct Var {
 	Var(Program const& ps, vector<wstring> const& pars);
 };
 
-struct vector2;
-struct vector3;
-vector2 ToVector2(Var const& v);
-vector3 ToVector3(Var const& v);
+struct Vector2;
+struct Vector3;
+Vector2 ToVector2(Var const& v);
+Vector3 ToVector3(Var const& v);
 
 typedef map<wstring, std::shared_ptr<Var>> Scope;
 std::shared_ptr<Var> FindVariable(Scope& curScope, Scope& sc, wstring nm, bool isgl);

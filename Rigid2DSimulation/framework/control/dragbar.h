@@ -3,7 +3,7 @@
 #include "control.h"
 
 struct DragbarX : Control {
-	dVector2 gap;
+	DVector2 gap;
 	double depth = 0;
 	wstring txt;
 	int bw = 0, bh = 0;
@@ -22,7 +22,7 @@ struct DragbarX : Control {
 
 	double uval() const;
 	void set_nx_rel(double uv);
-	dVector2 tl_node() const;
+	DVector2 tl_node() const;
 
 	void render(App& app);
 	virtual void Sync(App& app) {}

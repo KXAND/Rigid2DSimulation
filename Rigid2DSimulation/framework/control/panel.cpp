@@ -20,8 +20,8 @@ Panel Panel::menu(App& app) {
 	pn.h = app.h - 40;
 	pn.h_show = pn.h - 20;
 
-	dRect tmp;
-	tmp.topLeftPosition = dVector2(10 - 2, 10 - 2);
+	DRect tmp;
+	tmp.topLeftPosition = DVector2(10 - 2, 10 - 2);
 	tmp.w = pn.w - 20 + 4;
 	tmp.h = pn.h - 20 + 4;
 	pn.vp_show_rel = tmp; return pn;
@@ -33,8 +33,8 @@ Panel Panel::bottom(App& app) {
 	pn.tl.y = app.h - pn.h;
 	pn.h_show = pn.h;
 
-	dRect tmp;
-	tmp.topLeftPosition = dVector2(10 - 2, 10 - 2);
+	DRect tmp;
+	tmp.topLeftPosition = DVector2(10 - 2, 10 - 2);
 	tmp.w = pn.w - 20 + 4;
 	tmp.h = pn.h - 20 + 4;
 	pn.vp_show_rel = tmp; return pn;
@@ -43,9 +43,9 @@ Panel Panel::bottom(App& app) {
 int Panel::min_y() const {
 	return tl.y + tl_show_rel.y + h_show - c->GetH();
 }
-dRect Panel::vp_show(App& app) const {
-	dRect vp = vp_show_rel;
-	vp.topLeftPosition += tl; return getOverlapRect(app.scr.rect(), vp);
+DRect Panel::vp_show(App& app) const {
+	DRect vp = vp_show_rel;
+	vp.topLeftPosition += tl; return getOverlapRect(app.scr.Rect(), vp);
 }
 void Panel::set_c(App& app, Control* _c) {
 	if (c != _c) {
@@ -66,12 +66,12 @@ void Panel::init_sb() {
 	sb = std::make_shared<ScrollbarY>();
 	sb->c = c;
 	sb->h = h;
-	sb->tl = tl + dVector2(w - sb->w, 0);
+	sb->tl = tl + DVector2(w - sb->w, 0);
 	sb->h_show = h_show;
 	sb->top_show = tl.y + tl_show_rel.y;
 }
 void Panel::render(App& app) {
-	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.rect(), c_panel, c_frame);
+	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), c_panel, c_frame);
 }
 
 void Panel::Init(App& app) { init_c(app); init_sb(); }
@@ -100,11 +100,11 @@ void Panel::Discard(App& app) {
 }
 void Panel::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.rect());
+		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 
 	ok = app.own.wheeledDepth <= depth &&
-		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.rect());
+		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
 	if (ok) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
 
 	if (c) { c->PreUpdate(app); }

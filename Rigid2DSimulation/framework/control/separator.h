@@ -4,7 +4,7 @@
 
 struct SeparatorY : Control {
 	int w = 0;
-	dVector2 gap;
+	DVector2 gap;
 	dColor c_mark;
 
 	SeparatorY(int w = 0);

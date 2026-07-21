@@ -6,7 +6,7 @@ aabb::aabb(aabb const& b0, aabb const& b1) {
 	y0 = min(b0.y0, b1.y0);
 	y1 = max(b0.y1, b1.y1);
 }
-void aabb::Expand(vector2 v) {
+void aabb::Expand(Vector2 v) {
 	x0 = min(v.x, x0);
 	x1 = max(v.x, x1);
 	y0 = min(v.y, y0);

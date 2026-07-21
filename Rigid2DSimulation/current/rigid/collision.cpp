@@ -22,12 +22,12 @@ void Collision::Simulate(bool equalResponse)
 	double frictionStatic = min(body0->frictionStatic, body1->frictionStatic);
 
 	// c 点处两个物体的切向量（tangent vector）和对应速度
-	vector2 tanC1 = c - body0->position;
-	vector2 tanC2 = c - body1->position;
-	tanC1 = vector2(-tanC1.y, tanC1.x);//逆时针转90度
-	tanC2 = vector2(-tanC2.y, tanC2.x);
-	vector2 velocity0 = body0->velocity + body0->velocityAngular * tanC1;
-	vector2 velocity1 = body1->velocity + body1->velocityAngular * tanC2;
+	Vector2 tanC1 = c - body0->position;
+	Vector2 tanC2 = c - body1->position;
+	tanC1 = Vector2(-tanC1.y, tanC1.x);//逆时针转90度
+	tanC2 = Vector2(-tanC2.y, tanC2.x);
+	Vector2 velocity0 = body0->velocity + body0->velocityAngular * tanC1;
+	Vector2 velocity1 = body1->velocity + body1->velocityAngular * tanC2;
 
 	// 法线方向
 	// @todo：这里需要补物理知识
@@ -37,22 +37,22 @@ void Collision::Simulate(bool equalResponse)
 	double inverse_i1 = body1->invMass + tanC1normal * tanC1normal * body1->invInertia;
 	double impulseNormal = (1 + elasticity) * max(0.0, dot(velocity0 - velocity1, n)) / (inverse_i0 + inverse_i1); // 法向方向的冲量
 
-	vector2 impulse;
+	Vector2 impulse;
 	impulse = -impulseNormal * n;
 	body0->velocity += impulse * body0->invMass;
 	body1->velocity -= impulse * body1->invMass;
 	body0->velocityAngular += dot(impulse, tanC1) * body0->invInertia;
 	body1->velocityAngular -= dot(impulse, tanC2) * body1->invInertia;
 
-	vector2 updatedVelocity0 = body0->velocity + body0->velocityAngular * tanC1;
-	vector2 updatedVelocity1 = body1->velocity + body1->velocityAngular * tanC2;
+	Vector2 updatedVelocity0 = body0->velocity + body0->velocityAngular * tanC1;
+	Vector2 updatedVelocity1 = body1->velocity + body1->velocityAngular * tanC2;
 
 	double staticFrictionImpulse = frictionStatic * impulseNormal;
 	double dynamicFrictionImpulse = frictionDynamic * impulseNormal;
 
 
 	// 切线方向
-	vector2 tangentDirection = vector2(-n.y, n.x);
+	Vector2 tangentDirection = Vector2(-n.y, n.x);
 	double impulseTangential = dot(updatedVelocity0 - updatedVelocity1, tangentDirection);
 	if (impulseTangential < 0)
 	{
@@ -135,13 +135,13 @@ void Collide(Body& b0, Body& b1, vector<std::shared_ptr<Collision>>& out, double
 
 bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 {
-	vector2 c;
+	Vector2 c;
 	if (sh0.isCircle)
 	{
 		for (int i = (0), iEnd = int(sh1.vertices.size()); i < iEnd; ++i)
 		{
-			vector2 n = (sh1.vertices[i] - sh0.position).normalize();
-			if (n.zero()) { n = vector2(0, 1); }
+			Vector2 n = (sh1.vertices[i] - sh0.position).normalize();
+			if (n.zero()) { n = Vector2(0, 1); }
 			auto d = CalculatePolygonCollisionDepth(n, sh0.position + n * sh0.r, sh1, c);
 			if (d < 0) { return false; }
 			if (d < out.d)
@@ -158,8 +158,8 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 	for (int i = (0), iEnd = int(sh0.vertices.size()); i < iEnd; ++i)
 	{
 		int j = (i + 1) % sh0.vertices.size();
-		vector2 n = sh0.vertices[j] - sh0.vertices[i];
-		n = vector2(n.y, -n.x).normalize();
+		Vector2 n = sh0.vertices[j] - sh0.vertices[i];
+		n = Vector2(n.y, -n.x).normalize();
 		auto d = sh1.isCircle ?
 			CalculateBallCollisionDepth(n, sh0.vertices[i], sh1, c) :
 			CalculatePolygonCollisionDepth(n, sh0.vertices[i], sh1, c);
@@ -173,7 +173,7 @@ bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse)
 		}
 	} return true;
 }
-void FindClosestContactVertex(Shape& shape0, Shape& shape1, vector2& contactP, double& closestDistanceSqr)
+void FindClosestContactVertex(Shape& shape0, Shape& shape1, Vector2& contactP, double& closestDistanceSqr)
 {
 	for (int i = (0), iEnd = int(shape0.vertices.size()); i < iEnd; ++i)
 	{
@@ -192,11 +192,11 @@ void FindClosestContactVertex(Shape& shape0, Shape& shape1, vector2& contactP, d
 }
 bool CollideBalls(Shape& sh0, Shape& sh1, Collision& out)
 {
-	vector2 o10 = sh1.position - sh0.position;
+	Vector2 o10 = sh1.position - sh0.position;
 	double d = sh0.r + sh1.r - o10.len();
 	if (d < 0) { return false; }
 	out.d = d;
-	out.n = o10.zero() ? vector2(0, 1) : o10.normalize();
+	out.n = o10.zero() ? Vector2(0, 1) : o10.normalize();
 	if (sh0.r < sh1.r)
 	{
 		out.c = sh0.position + sh0.r * out.n;
@@ -206,12 +206,12 @@ bool CollideBalls(Shape& sh0, Shape& sh1, Collision& out)
 		out.c = sh1.position - sh1.r * out.n;
 	} return true;
 }
-double CalculateBallCollisionDepth(vector2 n, vector2 o, Shape const& sh, vector2& c)
+double CalculateBallCollisionDepth(Vector2 n, Vector2 o, Shape const& sh, Vector2& c)
 {
 	auto tmp = dot(sh.position - o, n) - sh.r;
 	c = sh.position - sh.r * n; return -tmp;
 }
-double CalculatePolygonCollisionDepth(vector2 n, vector2 o, Shape const& sh, vector2& c)
+double CalculatePolygonCollisionDepth(Vector2 n, Vector2 o, Shape const& sh, Vector2& c)
 {
 	double out = DBL_MAX;
 	for (auto v : sh.vertices)

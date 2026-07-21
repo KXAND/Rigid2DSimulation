@@ -4,7 +4,7 @@
 #include "control.h"
 
 struct RichTextbox : Control {
-	dVector2 gap;
+	DVector2 gap;
 	int w_str = 0;
 	double depth = 0;
 	int w = 0, h = 0;
@@ -12,15 +12,15 @@ struct RichTextbox : Control {
 	dColor c_str, c_edit, c_frame, c_normal,
 		c_cursor, hoveredColor, c_invalid, selectedColor;
 
-	dVector2 edit_mg;
-	dVector2 show_txt_mg;
+	DVector2 edit_mg;
+	DVector2 show_txt_mg;
 	double slide_mtp = 0;
 	double wheel_mtp = 0;
 	double twinkle_mtp = 0;
 	int w_cursor = 0, h_cursor = 0;
 
 	wstring str;
-	vector2 tl_str_rel;
+	Vector2 tl_str_rel;
 	int edit_a = 0, edit_b = 0;
 	// 下面的 rel 是相对于 tl_str_rel 的。
 	int x_cs_rel_hist = 0;
@@ -36,7 +36,7 @@ struct RichTextbox : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	dRect vp_show_txt() const;
+	DRect vp_show_txt() const;
 	wstring left() const;
 	wstring mid() const;
 	wstring right() const;
@@ -45,7 +45,7 @@ struct RichTextbox : Control {
 	bool selected() const;
 	int max_x_cs_rel() const;
 	int max_y_cs_rel() const;
-	dVector2 p_cs_rel(App& app) const;
+	DVector2 p_cs_rel(App& app) const;
 
 	void select_a(App& app);
 	void select_b(App& app);

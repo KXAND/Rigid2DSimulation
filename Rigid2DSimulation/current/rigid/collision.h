@@ -10,7 +10,7 @@ struct Collision
 	Body* body1 = NULL;
 	double d = DBL_MAX;
 	double diff = DBL_MAX;
-	vector2 n, c;
+	Vector2 n, c;
 	void Render(SimulationApp& cur) const;
 	void Simulate(bool useEqualPositionCorrection);
 };
@@ -19,9 +19,9 @@ void Collide(Body& b0, Body& b1, vector<std::shared_ptr<Collision>>& out, double
 // 假设 b0, b1 已经被填入了。
 /***need be move to private↓***/
 bool collide(Shape& sh0, Shape& sh1, Collision& out, bool reverse);
-void FindClosestContactVertex(Shape& sh0, Shape& sh1, vector2& c, double& dsqr_close);
+void FindClosestContactVertex(Shape& sh0, Shape& sh1, Vector2& c, double& dsqr_close);
 bool CollideBalls(Shape& sh0, Shape& sh1, Collision& out);
-double CalculateBallCollisionDepth(vector2 n, vector2 o, Shape const& sh, vector2& c);
-double CalculatePolygonCollisionDepth(vector2 n, vector2 o, Shape const& sh, vector2& c);
+double CalculateBallCollisionDepth(Vector2 n, Vector2 o, Shape const& sh, Vector2& c);
+double CalculatePolygonCollisionDepth(Vector2 n, Vector2 o, Shape const& sh, Vector2& c);
 
 

@@ -17,7 +17,7 @@ void RichLabel::render(App& app) {
 }
 void RichLabel::Update(App& app) {
 	Sync(app);
-	dVector2 wh = str_wh(txt, app.ft, w_line());
+	DVector2 wh = str_wh(txt, app.ft, w_line());
 	if (!fixed_w) { w = wh.x; }
 	if (!fixed_h) { h = wh.y; }
 	render(app);

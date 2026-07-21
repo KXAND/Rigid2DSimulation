@@ -8,7 +8,7 @@ enum class BoundarySide
     Maximum
 };
 
-bool IsOutsideBoundary(dVector2 const& point, long long boundary,
+bool IsOutsideBoundary(DVector2 const& point, long long boundary,
     BoundarySide boundarySide)
 {
     return boundarySide == BoundarySide::Minimum
@@ -17,8 +17,8 @@ bool IsOutsideBoundary(dVector2 const& point, long long boundary,
 }
 
 bool ClipTriangleAtHorizontalBoundary(tile& targetTile, dbuf& zBuffer,
-    dRect const& viewPort, dVector2 const& firstPoint,
-    dVector2 const& middlePoint, dVector2 const& lastPoint, double depth,
+    DRect const& viewPort, DVector2 const& firstPoint,
+    DVector2 const& middlePoint, DVector2 const& lastPoint, double depth,
     dColor color, long long boundary, BoundarySide boundarySide)
 {
     if (IsOutsideBoundary(lastPoint, boundary, boundarySide))
@@ -31,14 +31,14 @@ bool ClipTriangleAtHorizontalBoundary(tile& targetTile, dbuf& zBuffer,
         return false;
     }
 
-    dVector2 firstLastIntersection = lastPoint;
+    DVector2 firstLastIntersection = lastPoint;
     firstLastIntersection.y = boundary;
     firstLastIntersection.x += (firstPoint.x - lastPoint.x)
         * (boundary - lastPoint.y) / (firstPoint.y - lastPoint.y);
 
     if (IsOutsideBoundary(middlePoint, boundary, boundarySide))
     {
-        dVector2 middleLastIntersection = lastPoint;
+        DVector2 middleLastIntersection = lastPoint;
         middleLastIntersection.y = boundary;
         middleLastIntersection.x += (middlePoint.x - lastPoint.x)
             * (boundary - lastPoint.y) / (middlePoint.y - lastPoint.y);
@@ -47,7 +47,7 @@ bool ClipTriangleAtHorizontalBoundary(tile& targetTile, dbuf& zBuffer,
         return true;
     }
 
-    dVector2 firstMiddleIntersection = middlePoint;
+    DVector2 firstMiddleIntersection = middlePoint;
     firstMiddleIntersection.y = boundary;
     firstMiddleIntersection.x += (firstPoint.x - middlePoint.x)
         * (boundary - middlePoint.y) / (firstPoint.y - middlePoint.y);
@@ -60,7 +60,7 @@ bool ClipTriangleAtHorizontalBoundary(tile& targetTile, dbuf& zBuffer,
 }
 
 void subDrawTriangle(tile& dest, dbuf& zBuffer,
-	dVector2 pa, dVector2 pb, dVector2 pc, double depth, dColor color, bool same_y)
+	DVector2 pa, DVector2 pb, DVector2 pc, double depth, dColor color, bool same_y)
 {
 	// 假设 pa, pb, pc  已经交换过了。
 	// 用它画斜的长方形有的时候会出现裂痕，不知道能不能修复。
@@ -78,8 +78,8 @@ void subDrawTriangle(tile& dest, dbuf& zBuffer,
 		}
 	}
 }
-void drawTriangle(tile& targetTile, dbuf& zBuffer, dRect const& viewPort,
-	dVector2 pa, dVector2 pb, dVector2 pc, double depth, dColor color)
+void drawTriangle(tile& targetTile, dbuf& zBuffer, DRect const& viewPort,
+	DVector2 pa, DVector2 pb, DVector2 pc, double depth, dColor color)
 {
 	// 如果可以让这里写得好看有条理，容易修改且不容易出 bug 就好了。
 	// @todo:考虑笔记中的 SH 算法
@@ -132,15 +132,15 @@ void drawTriangle(tile& targetTile, dbuf& zBuffer, dRect const& viewPort,
 		if (pb.x < pc.x) { swap(pb, pc); }
 		swap(pa.x, pa.y); swap(pb.x, pb.y); swap(pc.x, pc.y);
 	}
-	dVector2 pd = pb;
+	DVector2 pd = pb;
 	pd.x = pa.x * (pb.y - pc.y) + pc.x * (pa.y - pb.y); pd.x /= pa.y - pc.y;
 	// @ques：不是很理解这里问什么要做两遍
 	subDrawTriangle(targetTile, zBuffer, pa, pb, pd, depth, color, y_big);
 	subDrawTriangle(targetTile, zBuffer, pc, pb, pd, depth, color, y_big);
 }
-void drawTriangle(tile& targetTile, dbuf& zBuffer, dRect const& viewPort,
-	vector2 pa, vector2 pb, vector2 pc, double depth, dColor color)
+void drawTriangle(tile& targetTile, dbuf& zBuffer, DRect const& viewPort,
+	Vector2 pa, Vector2 pb, Vector2 pc, double depth, dColor color)
 {
-	drawTriangle(targetTile, zBuffer, viewPort, (dVector2) pa, (dVector2) pb, (dVector2) pc, depth, color);
+	drawTriangle(targetTile, zBuffer, viewPort, (DVector2) pa, (DVector2) pb, (DVector2) pc, depth, color);
 }
 

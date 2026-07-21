@@ -24,16 +24,16 @@ void DragbarX::set_nx_rel(double uv) {
 	int tmp = uv * (bw - nw);
 	nx_rel = clamp(tmp, 0, bw - nw);
 }
-dVector2 DragbarX::tl_node() const { return tl + dVector2(w_txt + nx_rel, 0); }
+DVector2 DragbarX::tl_node() const { return tl + DVector2(w_txt + nx_rel, 0); }
 void DragbarX::render(App& app) {
-	dVector2 tl_txt = tl + dVector2(0, (nh - app.ft.h) / 2);
+	DVector2 tl_txt = tl + DVector2(0, (nh - app.ft.h) / 2);
 	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
 	dColor const& c =
 		!enabled ? c_invalid :
 		dragged ? draggedColor :
 		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
-	dVector2 tl_bar = tl + dVector2(w_txt, (nh - bh) / 2);
+	DVector2 tl_bar = tl + DVector2(w_txt, (nh - bh) / 2);
 	drawRectangleRaw(app.scr, tl_bar, bw, bh, vp, c_bar);
 	drawRectangleRaw(app.scr, tl_node(), nw, nh, vp, c);
 }

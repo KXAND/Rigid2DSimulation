@@ -8,7 +8,7 @@ struct SimulationApp;
 /// </summary>
 struct Background
 {
-	dVector2 topLeft;
+	DVector2 topLeft;
 	double depth = 0;
 	tile backgroundTile;
 	int width = 0, height = 0;
@@ -17,7 +17,7 @@ struct Background
 	bool wheeled = false;
 
 	Background(SimulationApp& cur);
-	dRect ViewPort() const { return { topLeft, width, height }; }
+	DRect ViewPort() const { return { topLeft, width, height }; }
 	
 	/// <summary>
 	/// @todo:将该函数的调用从update中移动到了cur中，执行的顺序依然远在其他render函数之前，理由有待明确

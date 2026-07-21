@@ -19,14 +19,14 @@ void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 		if (v->vec[0]->num)
 		{
 			if (v->vec.size() < 2) { continue; }
-			vector2 o_rel;
+			Vector2 o_rel;
 			if (v->vec.size() >= 3) { o_rel = ToVector2(*v->vec[2]); }
 			sh = std::make_shared<Shape>(v->vec[1]->num, o_rel);
 		}
 		else
 		{
 			if (v->vec.size() < 2) { continue; }
-			vector<vector2> vs;
+			vector<Vector2> vs;
 			for (auto w : v->vec[1]->vec)
 			{
 				vs.push_back(ToVector2(*w));
@@ -35,7 +35,7 @@ void CreateBody(SimulationApp& cur, Var const& shs_cfg, Var const& cfg)
 		}
 		shs.push_back(sh);
 	}
-	if (point) { bo = std::make_shared<Body>(vector2()); }
+	if (point) { bo = std::make_shared<Body>(Vector2()); }
 	else { bo = std::make_shared<Body>(shs); }
 	bo->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	bo->ReadCfg(cfg);
@@ -96,28 +96,28 @@ void Boundary(SimulationApp& cur, Var const& thk, Var const& cfg)
 	std::shared_ptr<Body> body;
 	dColor color = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thk.num, bh)));
-	body->position = vector2(bx0, (by0 + by1) / 2);
+	body->position = Vector2(bx0, (by0 + by1) / 2);
 	body->fixed = true;
 	body->innerColor = color;
 	body->ReadCfg(cfg);
 	body->Init();
 	cur.bodies.push_back(body);
 	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thk.num, bh)));
-	body->position = vector2(bx1, (by0 + by1) / 2);
+	body->position = Vector2(bx1, (by0 + by1) / 2);
 	body->fixed = true;
 	body->innerColor = color;
 	body->ReadCfg(cfg);
 	body->Init();
 	cur.bodies.push_back(body);
 	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(bw, thk.num)));
-	body->position = vector2((bx0 + bx1) / 2, by0);
+	body->position = Vector2((bx0 + bx1) / 2, by0);
 	body->fixed = true;
 	body->innerColor = color;
 	body->ReadCfg(cfg);
 	body->Init();
 	cur.bodies.push_back(body);
 	body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(bw, thk.num)));
-	body->position = vector2((bx0 + bx1) / 2, by1);
+	body->position = Vector2((bx0 + bx1) / 2, by1);
 	body->fixed = true;
 	body->innerColor = color;
 	body->ReadCfg(cfg);
@@ -134,10 +134,10 @@ void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var cons
 		double phi0 = 2 * PI * i / (int)n.num;
 		double phi1 = 2 * PI * (i + 1) / (int)n.num;
 		double phi = (phi0 + phi1) / 2;
-		vector2 v = vector2(cos(phi), sin(phi)) * (r.num + h.num);
-		vector2 v0 = vector2(cos(phi0), sin(phi0)) * r.num;
-		vector2 v1 = vector2(cos(phi1), sin(phi1)) * r.num;
-		shs.push_back(std::make_shared<Shape>(vector<vector2>{ v0, v, v1 }));
+		Vector2 v = Vector2(cos(phi), sin(phi)) * (r.num + h.num);
+		Vector2 v0 = Vector2(cos(phi0), sin(phi0)) * r.num;
+		Vector2 v1 = Vector2(cos(phi1), sin(phi1)) * r.num;
+		shs.push_back(std::make_shared<Shape>(vector<Vector2>{ v0, v, v1 }));
 	}
 	auto wheel = std::make_shared<Body>(shs);
 	wheel->innerColor = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
@@ -160,7 +160,7 @@ void Gear(SimulationApp& cur, Var const& r, Var const& n, Var const& h, Var cons
 void Strand(SimulationApp& cur, Var const& _p0, Var const& _p1,
 	Var const& _n, Var const& ratio, Var const& bodyConfiguration, Var const& cfg_conn)
 {
-	vector2 p0 = ToVector2(_p0), p1 = ToVector2(_p1);
+	Vector2 p0 = ToVector2(_p0), p1 = ToVector2(_p1);
 	int n = _n.num;
 	std::shared_ptr<Body> b0, b1;
 	std::shared_ptr<Connection> connection;
@@ -201,7 +201,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 {
 	std::shared_ptr<Body> beg, b0, b1;
 	int n = _n.num;
-	vector2 o = ToVector2(_o);
+	Vector2 o = ToVector2(_o);
 	std::shared_ptr<Connection> connection;
 	double len = 2 * PI * rad.num / n;
 	double ball_rad = 0.5 * ratio.num * len;
@@ -209,7 +209,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 	dColor col = dColor(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 	b0 = std::make_shared<Body>(std::make_shared<Shape>(ball_rad));
 	b0->innerColor = col;
-	b0->position = o + vector2(rad.num, 0);
+	b0->position = o + Vector2(rad.num, 0);
 	b0->ReadCfg(bodyConfiguration);
 	b0->Init();
 	cur.bodies.push_back(b0);
@@ -219,7 +219,7 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 		double phi = 2 * PI * i / n;
 		b1 = std::make_shared<Body>(std::make_shared<Shape>(ball_rad));
 		b1->innerColor = col;
-		b1->position = o + vector2(cos(phi), sin(phi)) * rad.num;
+		b1->position = o + Vector2(cos(phi), sin(phi)) * rad.num;
 		b1->ReadCfg(bodyConfiguration);
 		b1->Init();
 		cur.bodies.push_back(b1);
@@ -227,9 +227,9 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 		connection->body0 = &*b0;
 		connection->body1 = &*b1;
 		connection->len = gap;
-		connection->p1Relative = ball_rad * vector2(+sin(phi), -cos(phi));
+		connection->p1Relative = ball_rad * Vector2(+sin(phi), -cos(phi));
 		phi = 2 * PI * (i - 1) / n;
-		connection->p0Relative = ball_rad * vector2(-sin(phi), +cos(phi));
+		connection->p0Relative = ball_rad * Vector2(-sin(phi), +cos(phi));
 		connection->ReadCfg(cfg_conn);
 		connection->SignUpToBodies();
 		connection->UpdatePosition();
@@ -242,9 +242,9 @@ void Necklace(SimulationApp& cur, Var const& _o, Var const& rad,
 	connection->body0 = &*b0;
 	connection->body1 = &*b1;
 	connection->len = gap;
-	connection->p1Relative = ball_rad * vector2(+sin(phi), -cos(phi));
+	connection->p1Relative = ball_rad * Vector2(+sin(phi), -cos(phi));
 	phi = 2 * PI * (n - 1) / n;
-	connection->p0Relative = ball_rad * vector2(-sin(phi), +cos(phi));
+	connection->p0Relative = ball_rad * Vector2(-sin(phi), +cos(phi));
 	connection->ReadCfg(cfg_conn);
 	connection->SignUpToBodies();
 	connection->UpdatePosition();

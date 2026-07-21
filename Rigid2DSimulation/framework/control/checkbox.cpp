@@ -21,9 +21,9 @@ Checkbox::Checkbox(bool big) {
 int Checkbox::GetW() const { return s_box + gap.x + w_txt; }
 int Checkbox::GetH() const { return h + gap.y; }
 
-dVector2 Checkbox::tl_box() const { return tl + dVector2(w_txt, (h - s_box) / 2); }
+DVector2 Checkbox::tl_box() const { return tl + DVector2(w_txt, (h - s_box) / 2); }
 void Checkbox::render(App& app) {
-	dVector2 tl_txt = tl + dVector2(0, (h - app.ft.h) / 2);
+	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
 	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
 	dColor const& c =
@@ -32,7 +32,7 @@ void Checkbox::render(App& app) {
 	drawRectangleRaw(app.scr, tl_box(), s_box, s_box, vp, c);
 	if (checked) {
 		int hs = (s_box - s_box_in) / 2;
-		dVector2 tl_box_in = tl_box() + dVector2(hs, hs);
+		DVector2 tl_box_in = tl_box() + DVector2(hs, hs);
 		drawRectangleRaw(app.scr, tl_box_in, s_box_in, s_box_in, vp, innerColor);
 	}
 }

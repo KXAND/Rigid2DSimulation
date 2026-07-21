@@ -98,15 +98,15 @@ void Connection::SimulateRopeOrLink(bool equalReponse)
 	if (body0 == body1) { return; }
 	if (body0->invMass == 0 && body1->invMass == 0) { return; }
 
-	vector2 r0 = p0 - body0->position;
-	vector2 r1 = p1 - body1->position;
+	Vector2 r0 = p0 - body0->position;
+	Vector2 r1 = p1 - body1->position;
 	//逆时针旋转90度
-	r0 = vector2(-r0.y, r0.x);
-	r1 = vector2(-r1.y, r1.x);
-	vector2 v0 = body0->velocity + body0->velocityAngular * r0;
-	vector2 v1 = body1->velocity + body1->velocityAngular * r1;
+	r0 = Vector2(-r0.y, r0.x);
+	r1 = Vector2(-r1.y, r1.x);
+	Vector2 v0 = body0->velocity + body0->velocityAngular * r0;
+	Vector2 v1 = body1->velocity + body1->velocityAngular * r1;
 
-	vector2 d = p1 - p0;
+	Vector2 d = p1 - p0;
 	double currLenth = d.len();
 	d = d.normalize();
 	isTight = currLenth > len;
@@ -118,7 +118,7 @@ void Connection::SimulateRopeOrLink(bool equalReponse)
 	double accelFactor1 = body1->invMass + torque1 * torque1 * body1->invInertia;
 	double velocityDiffOnD = dot(v0 - v1, d);
 	if (type == CON_ROPE) { velocityDiffOnD = min(0.0, velocityDiffOnD); }
-	vector2 impulse = -velocityDiffOnD / (accelFactor0 + accelFactor1) * d;
+	Vector2 impulse = -velocityDiffOnD / (accelFactor0 + accelFactor1) * d;
 
 	body0->velocity += impulse * body0->invMass;
 	body1->velocity -= impulse * body1->invMass;
@@ -152,18 +152,18 @@ void Connection::SimulateCordOrSpring(double deltaTime)
 	if (body0 == body1) { return; }
 	if (body0->invMass == 0 && body1->invMass == 0) { return; }
 
-	vector2 r0 = p0 - body0->position;
-	vector2 r1 = p1 - body1->position;
+	Vector2 r0 = p0 - body0->position;
+	Vector2 r1 = p1 - body1->position;
 	//逆时针旋转90度
-	r0 = vector2(-r0.y, r0.x);
-	r1 = vector2(-r1.y, r1.x);
-	vector2 v0 = body0->velocity + body0->velocityAngular * r0;
-	vector2 v1 = body1->velocity + body1->velocityAngular * r1;
+	r0 = Vector2(-r0.y, r0.x);
+	r1 = Vector2(-r1.y, r1.x);
+	Vector2 v0 = body0->velocity + body0->velocityAngular * r0;
+	Vector2 v1 = body1->velocity + body1->velocityAngular * r1;
 
-	vector2 p0p1Vec = p1 - p0;
+	Vector2 p0p1Vec = p1 - p0;
 	double currLenth = p0p1Vec.len();
 	p0p1Vec = p0p1Vec.normalize();
-	if (p0p1Vec.zero()) { p0p1Vec = vector2(1, 0); }
+	if (p0p1Vec.zero()) { p0p1Vec = Vector2(1, 0); }
 
 	isTight = currLenth > len;
 	if (!isTight && type == CON_CORD) { return; }// cord在压缩不受力，拉伸和spring一样
@@ -171,7 +171,7 @@ void Connection::SimulateCordOrSpring(double deltaTime)
 	// @todo:关于力矩的公式我已经忘了，需要再推导
 	double torgue0 = dot(r0, p0p1Vec);
 	double torgue1 = dot(r1, p0p1Vec);
-	vector2 springsForce = (currLenth - len) * hooke * deltaTime * p0p1Vec;
+	Vector2 springsForce = (currLenth - len) * hooke * deltaTime * p0p1Vec;
 
 	// 每 dt内计算一次，可以直接加上加速度
 	body0->velocity += springsForce * body0->invMass;

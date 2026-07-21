@@ -94,22 +94,22 @@ std::shared_ptr<Var> Cross(Var const& s, Var const& thk)
 }
 std::shared_ptr<Var> FramedBox(Var const& w, Var const& h, Var const& thk)
 {
-	vector2 a0(+w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
-	vector2 a1(-w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
-	vector2 a2(-w.num / 2 - thk.num / 2, +h.num / 2 - thk.num / 2);
-	vector2 a3(+w.num / 2 + thk.num / 2, +h.num / 2 - thk.num / 2);
-	vector2 b0(+w.num / 2 + thk.num / 2, -h.num / 2 + thk.num / 2);
-	vector2 b1(-w.num / 2 - thk.num / 2, -h.num / 2 + thk.num / 2);
-	vector2 b2(-w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
-	vector2 b3(+w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
-	vector2 c0(+w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
-	vector2 c1(+w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
-	vector2 c2(+w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
-	vector2 c3(+w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
-	vector2 d0(-w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
-	vector2 d1(-w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
-	vector2 d2(-w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
-	vector2 d3(-w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
+	Vector2 a0(+w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
+	Vector2 a1(-w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
+	Vector2 a2(-w.num / 2 - thk.num / 2, +h.num / 2 - thk.num / 2);
+	Vector2 a3(+w.num / 2 + thk.num / 2, +h.num / 2 - thk.num / 2);
+	Vector2 b0(+w.num / 2 + thk.num / 2, -h.num / 2 + thk.num / 2);
+	Vector2 b1(-w.num / 2 - thk.num / 2, -h.num / 2 + thk.num / 2);
+	Vector2 b2(-w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
+	Vector2 b3(+w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
+	Vector2 c0(+w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
+	Vector2 c1(+w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
+	Vector2 c2(+w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
+	Vector2 c3(+w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
+	Vector2 d0(-w.num / 2 + thk.num / 2, +h.num / 2 + thk.num / 2);
+	Vector2 d1(-w.num / 2 + thk.num / 2, -h.num / 2 - thk.num / 2);
+	Vector2 d2(-w.num / 2 - thk.num / 2, -h.num / 2 - thk.num / 2);
+	Vector2 d3(-w.num / 2 - thk.num / 2, +h.num / 2 + thk.num / 2);
 	vector<std::shared_ptr<Var>> vs;
 	vector<std::shared_ptr<Var>> v;
 	v.push_back(std::make_shared<Var>(0));

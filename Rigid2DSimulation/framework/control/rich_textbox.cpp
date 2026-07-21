@@ -30,8 +30,8 @@ RichTextbox::RichTextbox(int w, int h, bool newline) : w(w), h(h) {
 int RichTextbox::GetW() const { return w + gap.x; }
 int RichTextbox::GetH() const { return h + gap.y; }
 
-dRect RichTextbox::vp_show_txt() const {
-	dVector2 tl_show_txt = tl + show_txt_mg;
+DRect RichTextbox::vp_show_txt() const {
+	DVector2 tl_show_txt = tl + show_txt_mg;
 	int w_show_txt = w - 2 * show_txt_mg.x;
 	int h_show_txt = h - 2 * show_txt_mg.y;
 	return getOverlapRect(vp, { tl_show_txt, w_show_txt, h_show_txt });
@@ -56,21 +56,21 @@ int RichTextbox::edit_end() const { return max(edit_a, edit_b); }
 bool RichTextbox::selected() const { return edit_a != edit_b; }
 int RichTextbox::max_x_cs_rel() const { return w - edit_mg.x; }
 int RichTextbox::max_y_cs_rel() const { return h - edit_mg.y; }
-dVector2 RichTextbox::p_cs_rel(App& app) const {
+DVector2 RichTextbox::p_cs_rel(App& app) const {
 	wstring tmp(str.begin(), str.begin() + edit_b);
-	int x = 0; dVector2 p = str_wh(tmp, app.ft, w_str, &x);
+	int x = 0; DVector2 p = str_wh(tmp, app.ft, w_str, &x);
 	p.x = x; p.y -= app.ft.h;
-	return (dVector2)tl_str_rel + p;
+	return (DVector2)tl_str_rel + p;
 }
 
 void RichTextbox::select_a(App& app) {
 	selecting = true;
-	dVector2 p = app.input.msp - (tl + (dVector2)tl_str_rel);
+	DVector2 p = app.input.msp - (tl + (DVector2)tl_str_rel);
 	edit_a = edit_b = str_index_at_pos(str, app.ft, p, w_str);
 	update_x_cs_rel_hist(app);
 }
 void RichTextbox::select_b(App& app) {
-	dVector2 p = app.input.msp - (tl + (dVector2)tl_str_rel);
+	DVector2 p = app.input.msp - (tl + (DVector2)tl_str_rel);
 	edit_b = str_index_at_pos(str, app.ft, p, w_str);
 	update_x_cs_rel_hist(app);
 }
@@ -118,7 +118,7 @@ void RichTextbox::hdl_up(App& app) {
 	else {
 		wstring tmp(str.begin(), str.begin() + edit_b);
 		int y = str_wh(tmp, app.ft, w_str).y - 2 * app.ft.h;
-		dVector2 p(x_cs_rel_hist, y);
+		DVector2 p(x_cs_rel_hist, y);
 		edit_a = edit_b = str_index_at_pos(str, app.ft, p, w_str);
 	}
 }
@@ -130,7 +130,7 @@ void RichTextbox::hdl_down(App& app) {
 	else {
 		wstring tmp(str.begin(), str.begin() + edit_b);
 		int y = str_wh(tmp, app.ft, w_str).y;
-		dVector2 p(x_cs_rel_hist, y);
+		DVector2 p(x_cs_rel_hist, y);
 		edit_a = edit_b = str_index_at_pos(str, app.ft, p, w_str);
 	}
 }
@@ -225,7 +225,7 @@ void RichTextbox::clamp_cursor(App& app) {
 }
 void RichTextbox::clamp_str(App& app) {
 	// 除了文字过少以外，clamp_selecting 和 wheel 后也需要这一步。
-	dVector2 p_end_rel = (dVector2)tl_str_rel + str_wh(str, app.ft, w_str);
+	DVector2 p_end_rel = (DVector2)tl_str_rel + str_wh(str, app.ft, w_str);
 	if (p_end_rel.x < max_x_cs_rel()) {
 		tl_str_rel.x += max_x_cs_rel() - p_end_rel.x;
 	}
@@ -245,7 +245,7 @@ void RichTextbox::render_main(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, vp, c, c_frame);
 
 	int x_cur = 0;
-	dVector2 tl_txt = tl + (dVector2)tl_str_rel;
+	DVector2 tl_txt = tl + (DVector2)tl_str_rel;
 	draw_str(app.scr, app.dscr, depth, left(), c_str, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
 	draw_str(app.scr, app.dscr, depth, mid(), selectedColor, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
 	draw_str(app.scr, app.dscr, depth, right(), c_str, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
@@ -254,7 +254,7 @@ void RichTextbox::render_cursor(App& app) {
 	bool show_cursor = edit &&
 		(sin(app.fps.dur() * twinkle_mtp) > 0 || cursor_change);
 	if (show_cursor) {
-		dVector2 tl_cs = tl + p_cs_rel(app) + dVector2(-w_cursor, app.ft.h - h_cursor) / 2;
+		DVector2 tl_cs = tl + p_cs_rel(app) + DVector2(-w_cursor, app.ft.h - h_cursor) / 2;
 		drawRectangleRaw(app.scr, tl_cs, w_cursor, h_cursor, vp_show_txt(), c_cursor);
 	}
 }

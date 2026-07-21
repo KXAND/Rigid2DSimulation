@@ -28,10 +28,10 @@ int Droplist::GetH() const {
 	return h + gap.y + (edit ? n_item * h_item : 0);
 }
 
-dVector2 Droplist::tl_box() const { return tl + dVector2(w_txt, 0); }
-dVector2 Droplist::tl_item() const { return tl_box() + dVector2(0, h); }
+DVector2 Droplist::tl_box() const { return tl + DVector2(w_txt, 0); }
+DVector2 Droplist::tl_item() const { return tl_box() + DVector2(0, h); }
 void Droplist::render_main(App& app) {
-	dVector2 tl_txt = tl + dVector2(0, (h - app.ft.h) / 2);
+	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
 	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
 	dColor const& c =
@@ -40,10 +40,10 @@ void Droplist::render_main(App& app) {
 		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
 	drawRectangleWithBorder(app.scr, app.dscr, depth, tl_box(), w, h, vp, c, c_frame);
 
-	vector2 ct_sign = (vector2)tl_box() + vector2(w - sign_margin, h / 2);
+	Vector2 ct_sign = (Vector2)tl_box() + Vector2(w - sign_margin, h / 2);
 	drawEllipse(app.scr, app.dscr, depth, ct_sign, sign_r, sign_r, vp, c_mark);
 
-	dVector2 tl_item = tl + dVector2(x_txt_margin, (h - app.ft.h) / 2);
+	DVector2 tl_item = tl + DVector2(x_txt_margin, (h - app.ft.h) / 2);
 	draw_str(app.scr, app.dscr, depth, nm(picked, app), c_txt, app.ft, tl_txt, 0, vp);
 }
 void Droplist::render_items(App& app) {
@@ -51,14 +51,14 @@ void Droplist::render_items(App& app) {
 		drawRectangleWithBorder(app.scr, app.dscr, depth, 
 			tl_item(), w, h_item * n_item, vp, c_normal, c_frame);
 		if (item_hv != -1) {
-			dVector2 tl_hovered = tl_box() + dVector2(0, h + h_item * item_hv);
+			DVector2 tl_hovered = tl_box() + DVector2(0, h + h_item * item_hv);
 			drawRectangleWithBorder(app.scr, app.dscr, depth,
 				tl_hovered, w, h_item, vp, hoveredColor, c_frame);
 		}
 		for (int i = (0), iEnd = int(n_item); i < iEnd; ++i) {
-			dVector2 tl_txt_item = tl_box() +
-				dVector2(0, h + h_item * i) +
-				dVector2(x_txt_margin, (h_item - app.ft.h) / 2);
+			DVector2 tl_txt_item = tl_box() +
+				DVector2(0, h + h_item * i) +
+				DVector2(x_txt_margin, (h_item - app.ft.h) / 2);
 			draw_str(app.scr, app.dscr, depth, nm(i, app), c_txt, app.ft, tl_txt_item, 0, vp);
 		}
 	}

@@ -20,11 +20,11 @@ struct Creator
 	double DepthConnection = 0;
 	double thick = 0;
 	double rad = 0;
-	dVector2 creationStartPoint;
+	DVector2 creationStartPoint;
 	Body* body0 = NULL;
 	Body* body1 = NULL;
 	std::shared_ptr<Var> bodyConfiguration, connectionConfiguration;
-	vector2 p0Relative, p1Relative;
+	Vector2 p0Relative, p1Relative;
 
 	std::shared_ptr<Body> body;
 	std::shared_ptr<Connection> connection;

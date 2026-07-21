@@ -25,7 +25,7 @@ Body::Body()
 	selectedColor = { 255, 0, 255 };
 	selectedConColor = { 255, 255, 0 };
 }
-Body::Body(vector2 const& _o) : Body()
+Body::Body(Vector2 const& _o) : Body()
 {
 	point = true;
 	position = _o;
@@ -96,7 +96,7 @@ double Body::GetDepth() const
 {
 	return point ? depthPoint : depthShape;
 }
-bool Body::IsInside(vector2 p) const
+bool Body::IsInside(Vector2 p) const
 {
 	if (point) { return (p - position).lensqr() < pointRadius * pointRadius; }
 
@@ -142,7 +142,7 @@ void Body::ReadCfg(Var const& cfg)
 	TryReadConfigNumber(cfg, L"chargeDensity", chargeDensity);
 }
 
-vector2 Body::GenerateRandomPointInside() const
+Vector2 Body::GenerateRandomPointInside() const
 {
 	if (point) { return {}; }
 
@@ -160,7 +160,7 @@ vector2 Body::GenerateRandomPointInside() const
 
 void Body::UpdateShapesPositionAndAABB()
 {
-	transform = matrix2::rotate(radian);
+	transform = Matrix2::rotate(radian);
 	for (auto& shape : shapes)
 	{
 		shape->position = position + transform * shape->relativePosition;
@@ -184,7 +184,7 @@ void Body::UpdateAABB()
 }
 
 // 这个方法已经过时了。
-void Body::Warp(dRect rc)
+void Body::Warp(DRect rc)
 {
 	if (invMass == 0 || dragged) { return; }
 
@@ -221,11 +221,11 @@ void Body::Init(bool repos_o)
 	// 这里假设是之前没有乱改成员。
 	if (point) { return; }
 
-	area = 0; vector2 center;
+	area = 0; Vector2 center;
 	inertia = 0;
 	for (auto shapes : shapes)
 	{
-		shapes->area = 0; vector2 sub_center;
+		shapes->area = 0; Vector2 sub_center;
 		if (shapes->isCircle)
 		{
 			shapes->area = PI * shapes->r * shapes->r;
@@ -238,7 +238,7 @@ void Body::Init(bool repos_o)
 			{
 				int j = (i + 1) % shapes->verticesRelative.size();
 				auto p = shapes->verticesRelative[i], q = shapes->verticesRelative[j];
-				double tri_area = matrix2(p, q).det() / 2;
+				double tri_area = Matrix2(p, q).det() / 2;
 				double tri_inertia = dot(p, p) + dot(p, q) + dot(q, q);
 				tri_inertia *= tri_area / 6;
 
@@ -279,14 +279,14 @@ void Body::Render(SimulationApp& cur) const
 		case DISPLAY_ENERGY:
 		{
 			double energy = velocity.lensqr() + velocityAngular * velocityAngular * inertia / area;
-			normalColor = (dColor) vector3(energy * cur.energyMultiplier, 0, 0);
+			normalColor = (dColor) Vector3(energy * cur.energyMultiplier, 0, 0);
 			break;
 		}
 		case DISPLAY_CHARGES:
 		{
 			normalColor = chargeDensity > 0 ?
-				(dColor) vector3(chargeDensity * cur.chargeMultiplier, 0, 0) :
-				(dColor) vector3(0, 0, -chargeDensity * cur.chargeMultiplier);
+				(dColor) Vector3(chargeDensity * cur.chargeMultiplier, 0, 0) :
+				(dColor) Vector3(0, 0, -chargeDensity * cur.chargeMultiplier);
 			break;
 		}
 		default:
@@ -315,7 +315,7 @@ void Body::Render(SimulationApp& cur) const
 				shape->position, shape->r, shape->r, cur.background->ViewPort(), borderColor, 30);
 
 			// 显示一条半径以便于我们判断圆的旋转角度
-			auto peakPoint = vector2(cos(shape->radian), sin(shape->radian)) * shape->r + shape->position;
+			auto peakPoint = Vector2(cos(shape->radian), sin(shape->radian)) * shape->r + shape->position;
 			drawLineSegment(cur.scr, cur.dscr, shape->position, peakPoint, GetDepth(), cur.background->ViewPort(), borderColor);
 			continue;
 		}
@@ -334,14 +334,14 @@ void Body::Render(SimulationApp& cur) const
 
 	if (dragged)
 	{
-		vector2 p1 = vector2(cur.input.msp);
-		vector2 p0 = position + transform * relativeDragPoint;
+		Vector2 p1 = Vector2(cur.input.msp);
+		Vector2 p0 = position + transform * relativeDragPoint;
 		drawLineSegment(cur.scr, cur.dscr, p0, p1, GetDepth(), cur.background->ViewPort(), dColor(0, 255, 255));
 	}
 
 	if (!track.empty())
 	{
-		vector2 p0 = track.front();
+		Vector2 p0 = track.front();
 		for (auto p1 : track)
 		{
 			drawLineSegment(cur.scr, cur.dscr, p0, p1, 10, cur.background->ViewPort(), dColor(255, 0, 255));
@@ -440,18 +440,18 @@ void Body::UpdateDragAngle(SimulationApp& cur)
 void Body::HandleDragPoint(SimulationApp& cur)
 {
 	// 下列命名指定o,p,m三点为body中心、被拖拽点及鼠标现在点
-	vector2 mousePos = vector2(cur.input.msp);
-	vector2 pPos = position + transform * relativeDragPoint;
-	vector2 mouseVelocity = vector2(cur.input.msp - cur.input.msp_old) / cur.realDeltaTime;
-	vector2 pmDir = (mousePos - pPos).normalize();
+	Vector2 mousePos = Vector2(cur.input.msp);
+	Vector2 pPos = position + transform * relativeDragPoint;
+	Vector2 mouseVelocity = Vector2(cur.input.msp - cur.input.msp_old) / cur.realDeltaTime;
+	Vector2 pmDir = (mousePos - pPos).normalize();
 
-	vector2 opDir = pPos - position;
-	opDir = vector2(-opDir.y, opDir.x);
-	vector2 pVelocity = velocity + velocityAngular * opDir;
+	Vector2 opDir = pPos - position;
+	opDir = Vector2(-opDir.y, opDir.x);
+	Vector2 pVelocity = velocity + velocityAngular * opDir;
 	double rd0 = dot(opDir, pmDir);
 	double inv_i0 = invMass + rd0 * rd0 * invInertia;
 
-	vector2 impulse = dot(mouseVelocity - pVelocity, pmDir) * pmDir / inv_i0;
+	Vector2 impulse = dot(mouseVelocity - pVelocity, pmDir) * pmDir / inv_i0;
 
 	velocity += impulse * invMass;
 	velocityAngular += dot(impulse, opDir) * invInertia;
@@ -464,9 +464,9 @@ void Body::HandleDragPoint(SimulationApp& cur)
 /// <param name="cur"></param>
 void Body::HandleDragWhole(SimulationApp& cur)
 {
-	vector2 mousePos = vector2(cur.input.msp);
-	vector2 dragPointPos = position + transform * relativeDragPoint;
-	vector2 newVelocity = vector2(cur.input.msp - cur.input.msp_old) / cur.realDeltaTime;
+	Vector2 mousePos = Vector2(cur.input.msp);
+	Vector2 dragPointPos = position + transform * relativeDragPoint;
+	Vector2 newVelocity = Vector2(cur.input.msp - cur.input.msp_old) / cur.realDeltaTime;
 
 	velocity = newVelocity;
 	radian = radianDrag;
@@ -477,17 +477,17 @@ void Body::HandleDragWhole(SimulationApp& cur)
 void Body::HandleDragForce(SimulationApp& cur, double deltaTime)
 {
 	// 运动路径方向
-	vector2 p1 = vector2(cur.input.msp);
-	vector2 p0 = position + transform * relativeDragPoint;
-	vector2 d = (p1 - p0).normalize();
+	Vector2 p1 = Vector2(cur.input.msp);
+	Vector2 p0 = position + transform * relativeDragPoint;
+	Vector2 d = (p1 - p0).normalize();
 
 	// 力
 	double k = 1e6;
-	vector2 impulse = k * (p1 - p0).len() * deltaTime * d;
+	Vector2 impulse = k * (p1 - p0).len() * deltaTime * d;
 
 	// 刚体半径
-	vector2 r0 = p0 - position;
-	r0 = vector2(-r0.y, r0.x);
+	Vector2 r0 = p0 - position;
+	r0 = Vector2(-r0.y, r0.x);
 
 	velocity += impulse * invMass;
 	velocityAngular += dot(impulse, r0) * invInertia;
@@ -524,7 +524,7 @@ void Body::Update(SimulationApp& cur)
 		if (dragged)
 		{
 			// p移到m，那么mo = 变换*原距离 = 变换*原相对位置=po，故有。
-			relativeDragPoint = transform.inverse() * ((vector2) cur.input.msp - position);
+			relativeDragPoint = transform.inverse() * ((Vector2) cur.input.msp - position);
 			UpdateDragAngle(cur);
 		}
 	}
@@ -548,27 +548,27 @@ void Body::Update(SimulationApp& cur)
 		if (cur.input.isMouseClickedDown(0) && !cur.creator->active)
 		{
 			cur.creator->body0 = this;
-			cur.creator->p0Relative = transform.inverse() * ((vector2) cur.input.msp - position);
+			cur.creator->p0Relative = transform.inverse() * ((Vector2) cur.input.msp - position);
 		}
 		else if (!cur.input.msd[0] && cur.input.msd_old[0] && cur.creator->active)
 		{
 			cur.creator->body1 = this;
-			cur.creator->p1Relative = transform.inverse() * ((vector2) cur.input.msp - position);
+			cur.creator->p1Relative = transform.inverse() * ((Vector2) cur.input.msp - position);
 		}
 	}
 }
 void Body::PreUpdate(SimulationApp& cur)
 {
 	bool ok = cur.own.hoveredDepth <= GetDepth() &&
-		IsInside((vector2) cur.input.msp) && isInside(cur.input.msp, cur.background->ViewPort());
+		IsInside((Vector2) cur.input.msp) && isInside(cur.input.msp, cur.background->ViewPort());
 	if (ok) { cur.own.hoveredDepth = GetDepth(); cur.own.hovered = this; }
 }
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulomb)
 {
 	double dsqr = (b1.position - b0.position).lensqr();
-	vector2 d = (b1.position - b0.position).normalize();
-	vector2 je = -b0.charge * b1.charge * d / dsqr * sdt * coulomb;
+	Vector2 d = (b1.position - b0.position).normalize();
+	Vector2 je = -b0.charge * b1.charge * d / dsqr * sdt * coulomb;
 	b0.velocity += je * b0.invMass;
 	b1.velocity -= je * b1.invMass;
 }

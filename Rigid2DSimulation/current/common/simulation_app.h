@@ -44,13 +44,13 @@ struct SimulationApp : App
 	bool isMuted = false;
 	bool isPaused = false;
 	bool isSceneChanged = false;
-	vector2 gravity;
+	Vector2 gravity;
 	double coulomb = 0;
 	bool hasElectrostatic = false;
 	double maxRealDeltaTime = 0;
 	double realDeltaTime = 0, t = 0;
 	int stepNum = 0;
-	dRect rectScene;
+	DRect rectScene;
 	std::shared_ptr<Creator> creator;
 	Body* bodySelecting = NULL;
 	Connection* connectionSelecting = NULL;

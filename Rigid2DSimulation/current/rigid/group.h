@@ -13,8 +13,8 @@ struct Group {
 	/// <summary>
 	/// @todo
 	/// </summary>
-	/// <param name="rect"></param>
-	void Warp(dRect rect);
+	/// <param name="Rect"></param>
+	void Warp(DRect Rect);
 };
 
 void findBodiesInGroup(vector<Body*>& out, Body* b);

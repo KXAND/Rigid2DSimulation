@@ -15,7 +15,7 @@ void Background::Render(SimulationApp& cur)
 {
 	drawBasedTile((cur.scr), topLeft,  backgroundTile);
 	draw_str((cur.scr), (cur.dscr), 999, (cur.debugString),
-		dColor(110), (cur.ft), topLeft + dVector2(10, 10), width - 20, cur.background->ViewPort());
+		dColor(110), (cur.ft), topLeft + DVector2(10, 10), width - 20, cur.background->ViewPort());
 }
 
 void Background::Update(SimulationApp& cur)

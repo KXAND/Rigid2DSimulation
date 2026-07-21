@@ -24,8 +24,8 @@ void Button::render(App& app) {
 		!enabled ? c_invalid :
 		chosen ? c_chosen :
 		(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
-	dVector2 wh = str_wh(txt, app.ft, 0);
-	dVector2 tl_txt = tl + dVector2(w, h) / 2 - wh / 2;
+	DVector2 wh = str_wh(txt, app.ft, 0);
+	DVector2 tl_txt = tl + DVector2(w, h) / 2 - wh / 2;
 
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, vp, c, c_frame);
 	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);

@@ -16,7 +16,7 @@ struct ScriptExpr {
 	wstring fun;
 	vector<ScriptExpr> pars;
 	vector<ScriptExpr> vec;
-	vptr<ScriptExpr> getLocalizedString, ind;
+	ValuePtr<ScriptExpr> getLocalizedString, ind;
 
 	ScriptExpr() = default;
 	ScriptExpr(wstring const& typ);

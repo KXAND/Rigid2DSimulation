@@ -3,7 +3,7 @@
 #include "control.h"
 
 struct Textbox : Control {
-	dVector2 gap;
+	DVector2 gap;
 	double depth = 0;
 	wstring txt;
 	int w = 0, h = 0;
@@ -34,8 +34,8 @@ struct Textbox : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	dVector2 tl_box() const;
-	dRect vp_show_txt() const;
+	DVector2 tl_box() const;
+	DRect vp_show_txt() const;
 	wstring left() const;
 	wstring mid() const;
 	wstring right() const;

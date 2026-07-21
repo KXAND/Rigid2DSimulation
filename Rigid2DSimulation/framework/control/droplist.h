@@ -6,7 +6,7 @@ typedef function<wstring(int, App&)> DpNm;
 wstring dpnm_none(int id, App &app);
 
 struct Droplist : Control {
-	dVector2 gap;
+	DVector2 gap;
 	double depth = 0;
 	wstring txt;
 	int w = 0, h = 0;
@@ -34,8 +34,8 @@ struct Droplist : Control {
 	int GetW() const override;
 	int GetH() const override;
 
-	dVector2 tl_box() const;
-	dVector2 tl_item() const;
+	DVector2 tl_box() const;
+	DVector2 tl_item() const;
 	void render_main(App& app);
 	void render_items(App& app);
 	void render(App& app);

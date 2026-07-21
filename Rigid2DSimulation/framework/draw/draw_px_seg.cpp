@@ -8,7 +8,7 @@ enum class BoundarySide
     Maximum
 };
 
-void ClipLineEndpointAtX(dVector2& endpoint, dVector2 const& otherEndpoint,
+void ClipLineEndpointAtX(DVector2& endpoint, DVector2 const& otherEndpoint,
     long long boundary, BoundarySide boundarySide)
 {
     bool const isOutside = boundarySide == BoundarySide::Minimum
@@ -22,7 +22,7 @@ void ClipLineEndpointAtX(dVector2& endpoint, dVector2 const& otherEndpoint,
     }
 }
 
-void ClipLineEndpointAtY(dVector2& endpoint, dVector2 const& otherEndpoint,
+void ClipLineEndpointAtY(DVector2& endpoint, DVector2 const& otherEndpoint,
     long long boundary, BoundarySide boundarySide)
 {
     bool const isOutside = boundarySide == BoundarySide::Minimum
@@ -39,7 +39,7 @@ void ClipLineEndpointAtY(dVector2& endpoint, dVector2 const& otherEndpoint,
 
 // 好像这里经常发生溢出问题，不知能不能处理一下。
 // 把 int 换成 long long 了，应该会有帮助。
-bool preDrawLineSegment(dVector2& pa, dVector2& pb, dRect viewPort) {
+bool preDrawLineSegment(DVector2& pa, DVector2& pb, DRect viewPort) {
 	long long x0 = viewPort.left();
 	long long x1 = viewPort.right() - 1;
 	long long y0 = viewPort.top();
@@ -65,7 +65,7 @@ bool preDrawLineSegment(dVector2& pa, dVector2& pb, dRect viewPort) {
 	return true;
 }
 void drawLineSegment(tile& targetTile, dbuf& zBuffer,
-	dVector2 pa, dVector2 pb, double d, dRect viewPort, dColor color) 
+	DVector2 pa, DVector2 pb, double d, DRect viewPort, dColor color)
 {
 	if (viewPort.w <= 0 || viewPort.h <= 0) { return; }
 	if (!preDrawLineSegment(pa, pb, viewPort)) { return; }
@@ -96,8 +96,8 @@ void drawLineSegment(tile& targetTile, dbuf& zBuffer,
 	}
 }
 void drawLineSegment(tile& targetTile, dbuf& zBuffer,
-	vector2 pa, vector2 pb, double depth, dRect viewPort, dColor color)
+	Vector2 pa, Vector2 pb, double depth, DRect viewPort, dColor color)
 {
-	drawLineSegment(targetTile, zBuffer, (dVector2)pa, (dVector2)pb, depth, viewPort, color);
+	drawLineSegment(targetTile, zBuffer, (DVector2)pa, (DVector2)pb, depth, viewPort, color);
 }
 

@@ -90,7 +90,7 @@ void SimulationApp::Reset()
 	bodySelecting = NULL;
 	connectionSelecting = NULL;
 	isSceneChanged = false;
-	gravity = vector2();
+	gravity = Vector2();
 	maxRealDeltaTime = 0.05;
 	t = 0; stepNum = 60;
 	rectScene.topLeftPosition = background->topLeft;

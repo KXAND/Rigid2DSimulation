@@ -29,9 +29,9 @@ Textbox::Textbox(int w) : w(w) {
 int Textbox::GetW() const { return w + gap.x + w_txt; }
 int Textbox::GetH() const { return h + gap.y; }
 
-dVector2 Textbox::tl_box() const { return tl + dVector2(w_txt, 0); }
-dRect Textbox::vp_show_txt() const {
-	dVector2 tl_show_txt = tl_box() + dVector2(w_show_txt_mg, 0);
+DVector2 Textbox::tl_box() const { return tl + DVector2(w_txt, 0); }
+DRect Textbox::vp_show_txt() const {
+	DVector2 tl_show_txt = tl_box() + DVector2(w_show_txt_mg, 0);
 	int w_show_txt = w - 2 * w_show_txt_mg;
 	return getOverlapRect(vp, { tl_show_txt, w_show_txt, h });
 }
@@ -187,7 +187,7 @@ void Textbox::clamp_str(App& app) {
 }
 
 void Textbox::render_main(App& app) {
-	dVector2 tl_txt = tl + dVector2(0, (h - app.ft.h) / 2);
+	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
 	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
 	dColor const& c =
@@ -197,7 +197,7 @@ void Textbox::render_main(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl_box(), w, h, vp, c, c_frame);
 
 	int x_cur = 0;
-	dVector2 tl_str = tl_box() + dVector2(x_str_rel, (h - app.ft.h) / 2);
+	DVector2 tl_str = tl_box() + DVector2(x_str_rel, (h - app.ft.h) / 2);
 	draw_str(app.scr, app.dscr, depth, left(), c_str, app.ft, tl_str, x_cur, 0, vp_show_txt());
 	draw_str(app.scr, app.dscr, depth, mid(), selectedColor, app.ft, tl_str, x_cur, 0, vp_show_txt());
 	draw_str(app.scr, app.dscr, depth, right(), c_str, app.ft, tl_str, x_cur, 0, vp_show_txt());

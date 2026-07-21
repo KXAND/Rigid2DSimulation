@@ -10,27 +10,27 @@ struct Shape
 {
 private:
 
-	vector2 GenerateRandomPointInTriangle(vector2 v0, vector2 v1, vector2 v2) const;
-	bool IsInsideTriangle(vector2 v, vector2 v0, vector2 v1, vector2 v2) const;
+	Vector2 GenerateRandomPointInTriangle(Vector2 v0, Vector2 v1, Vector2 v2) const;
+	bool IsInsideTriangle(Vector2 v, Vector2 v0, Vector2 v1, Vector2 v2) const;
 public:
 	bool isCircle = false;
 	double r = 0;
 	double radian = 0;
 	double area = 0;
-	vector2 relativePosition;
-	vector2 position;
-	vector<vector2> verticesRelative, vertices;
+	Vector2 relativePosition;
+	Vector2 position;
+	vector<Vector2> verticesRelative, vertices;
 
-	Shape(double _r, vector2 _o_rel = {});
-	Shape(vector<vector2> const& _verticesRelative);
+	Shape(double _r, Vector2 _o_rel = {});
+	Shape(vector<Vector2> const& _verticesRelative);
 	Shape(FILE* file);
 	void Save(FILE* file) const;
 
-	vector2 GenerateRandomPointInside() const;
-	bool IsInside(vector2 p) const;
+	Vector2 GenerateRandomPointInside() const;
+	bool IsInside(Vector2 p) const;
 	aabb GetBoundingBox() const;
 };
 
-vector<vector2> GetRectVerticesByCenter(double w, double h);
+vector<Vector2> GetRectVerticesByCenter(double w, double h);
 
 

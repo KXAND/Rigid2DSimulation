@@ -3,7 +3,7 @@
 #include "control.h"
 
 struct Button : Control {
-	dVector2 gap;
+	DVector2 gap;
 	double depth = 0;
 	wstring txt;
 	int w = 0, h = 0;

@@ -18,8 +18,8 @@ struct Connection {
 	wstring scriptText, temporaryScriptText;
 	Body* body0 = NULL;
 	Body* body1 = NULL;
-	vector2 p0Relative, p1Relative;
-	vector2 p0, p1;
+	Vector2 p0Relative, p1Relative;
+	Vector2 p0, p1;
 	double len = 0;
 	double hooke = 0;
 	bool isTight = false;

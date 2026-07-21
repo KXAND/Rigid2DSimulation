@@ -15,20 +15,20 @@ ScrollbarY::ScrollbarY() {
 	c_invalid = { 0, 0, 0 };
 }
 void ScrollbarY::render(App& app) {
-	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.rect(), c_bar, c_frame);
+	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), c_bar, c_frame);
 	if (full) {
 		dColor const& c =
 			!enabled ? c_invalid :
 			dragged ? draggedColor :
 			(hovered && !app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? hoveredColor : c_normal;
-		drawRectangleWithBorderRaw(app.scr, tl + dVector2(0, ny_rel), w, nh, app.scr.rect(), c, c_frame);
+		drawRectangleWithBorderRaw(app.scr, tl + DVector2(0, ny_rel), w, nh, app.scr.Rect(), c, c_frame);
 	}
 }
 
 void ScrollbarY::Update(App& app) {
 	full = (c != NULL) && h_show < c->GetH();
 	hovered = (app.own.hovered == this);
-	hovered_node = hovered && isInside(app.input.msp, { tl + dVector2(0, ny_rel), w, nh });
+	hovered_node = hovered && isInside(app.input.msp, { tl + DVector2(0, ny_rel), w, nh });
 
 	// 这个状态变化比一般的控件是要复杂的。
 	if (full) {
@@ -50,7 +50,7 @@ void ScrollbarY::Discard(App& app) {
 }
 void ScrollbarY::PreUpdate(App& app) {
 	bool ok = app.own.hoveredDepth <= depth &&
-		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.rect());
+		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
 	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 }
 

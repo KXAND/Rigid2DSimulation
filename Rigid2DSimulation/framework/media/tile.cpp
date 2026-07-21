@@ -37,12 +37,12 @@ tile::tile(int w, int h, dColor color, BYTE a) :
 	width(w), height(h), colors(area(), color), as(area(), a)
 {
 }
-tile::tile(int w, int h, tile const& src, dRect vp_src) : tile(w, h)
+tile::tile(int w, int h, tile const& src, DRect vp_src) : tile(w, h)
 {
 	for (int i = (0), iEnd = int(w); i < iEnd; ++i) for (int j = (0), jEnd = int(h); j < jEnd; ++j)
 	{
-		dVector2 d_pnt(i, j);
-		dVector2 s_pnt = d_pnt * dVector2(vp_src.w, vp_src.h) / dVector2(w, h);
+		DVector2 d_pnt(i, j);
+		DVector2 s_pnt = d_pnt * DVector2(vp_src.w, vp_src.h) / DVector2(w, h);
 
 		int dp = d_pnt.y * w + d_pnt.x;
 		int sp = (s_pnt.y + vp_src.top()) * src.width + s_pnt.x + vp_src.left();
@@ -73,7 +73,7 @@ tile::tile(wstring const& fileName, bool* ok)
 }
 
 int tile::area() const { return width * height; }
-dRect tile::rect() const { return { width, height }; }
+DRect tile::Rect() const { return { width, height }; }
 void tile::fill(dColor color, BYTE a)
 {
 	for (int i = (0), iEnd = int(area()); i < iEnd; ++i) { colors[i] = color; }

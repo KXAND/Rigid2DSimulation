@@ -22,12 +22,12 @@ struct Body
 	bool hasPositionPreset = false;
 	bool hasAnglePreset = false;
 	bool hasAngularVelocityPreset = false;
-	vector<vector2> track;
+	vector<Vector2> track;
 	vector<std::shared_ptr<Shape>> shapes;
 	vector<Connection*> connections;
-	vector2 position, velocity;
+	Vector2 position, velocity;
 	aabb box;
-	matrix2 transform = matrix2::I();
+	Matrix2 transform = Matrix2::I();
 	wstring scriptText, temporaryScriptText;
 	double radian = 0, velocityAngular = 0;
 	double invMass = 0;// 质量倒数，为0表示此物体不参与运动计算
@@ -42,7 +42,7 @@ struct Body
 	bool hovered = false;
 	bool dragged = false;
 	double radianDrag = 0, velocityAngularDrag = 0;
-	vector2 relativeDragPoint;
+	Vector2 relativeDragPoint;
 	double depthShape = 0, depthPoint = 0;
 	double pointRadius = 0;
 
@@ -54,18 +54,18 @@ struct Body
 	dColor selectedConColor;
 
 	Body();
-	Body(vector2 const& _o);
+	Body(Vector2 const& _o);
 	Body(std::shared_ptr<Shape> sh);
 	Body(vector<std::shared_ptr<Shape>> const& _shs);
 	Body(SimulationApp& cur, FILE* file);
 	void Save(FILE* file) const;
 
-	vector2 GenerateRandomPointInside() const;
-	bool IsInside(vector2 p) const;
+	Vector2 GenerateRandomPointInside() const;
+	bool IsInside(Vector2 p) const;
 	void RefreshFromScript(SimulationApp& cur);
 	void ReadCfg(Var const& cfg);
 	void UpdateShapesPositionAndAABB();
-	void Warp(dRect rc);
+	void Warp(DRect rc);
 	void RegisterGrid(SimulationApp& cur);
 private:
 	double GetDepth() const;

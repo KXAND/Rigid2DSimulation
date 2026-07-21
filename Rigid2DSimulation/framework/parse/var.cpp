@@ -16,17 +16,17 @@ Var::Var(Program const& ps, vector<wstring>const& pars) :
 	typ = L"fun";
 }
 
-vector2 ToVector2(Var const& v)
+Vector2 ToVector2(Var const& v)
 {
-	vector2 out;
+	Vector2 out;
 	if (v.vec.size() < 2) { return {}; }
 	out.x = v.vec[0]->num;
 	out.y = v.vec[1]->num;
 	return out;
 }
-vector3 ToVector3(Var const& v)
+Vector3 ToVector3(Var const& v)
 {
-	vector3 out;
+	Vector3 out;
 	if (v.vec.size() < 3) { return {}; }
 	out.x = v.vec[0]->num;
 	out.y = v.vec[1]->num;

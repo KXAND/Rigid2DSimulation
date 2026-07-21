@@ -3,7 +3,7 @@
 #include "control.h"
 
 struct RichLabel : Control {
-	dVector2 gap;
+	DVector2 gap;
 	double depth = 0;
 	int w = 0, h = 0;
 	bool fixed_w = false;
