@@ -14,14 +14,14 @@ struct ScriptExpression {
 	wstring stringValue;
 	wstring variableName;
 	wstring fun;
-	vector<ScriptExpression> pars;
+	vector<ScriptExpression> arguments;
 	vector<ScriptExpression> vec;
 	ValuePtr<ScriptExpression> getLocalizedString, ind;
 
 	ScriptExpression() = default;
 	ScriptExpression(wstring const& type);
 	ScriptExpression(double number);
-	ScriptExpression(wstring const& fun, vector<ScriptExpression> const& pars);
+	ScriptExpression(wstring const& fun, vector<ScriptExpression> const& arguments);
 	static ScriptExpression CreateString(wstring const& text);
 	static ScriptExpression CreateVariable(wstring const& value, bool isGlobal);
 };

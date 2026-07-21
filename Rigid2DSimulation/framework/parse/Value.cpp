@@ -10,8 +10,8 @@ Value::Value(double number) : number(number) { type = L"num"; }
 Value::Value(wstring const& text) : stringValue(text) { type = L"ToString"; }
 Value::Value(decltype(fun) const& user) : fun(user) { type = L"user"; }
 Value::Value(vector<std::shared_ptr<Value>> const& vec) : vec(vec) { type = L"vec"; }
-Value::Value(Program const& ps, vector<wstring>const& pars) :
-	procs(ps), pars(pars)
+Value::Value(Program const& ps, vector<wstring>const& arguments) :
+	procs(ps), arguments(arguments)
 {
 	type = L"fun";
 }
@@ -51,8 +51,8 @@ bool TryEvaluateDefaultFunction(Scope& gl, Scope& sc, ScriptExpression const& ex
 {
 	auto const& f = ex.fun;
 	// 保持按需 Evaluate，避免在确定运算符前提前计算所有参数。
-	auto numArg = [&](int index) { return Evaluate(gl, sc, ex.pars[index])->number; };
-	auto stringArg = [&](int index) -> wstring const& { return Evaluate(gl, sc, ex.pars[index])->stringValue; };
+	auto numArg = [&](int index) { return Evaluate(gl, sc, ex.arguments[index])->number; };
+	auto stringArg = [&](int index) -> wstring const& { return Evaluate(gl, sc, ex.arguments[index])->stringValue; };
 
 	if (f == L"!") { out = Value(!numArg(0)); return true; }
 	if (f == L"++") { out = Value(numArg(0)); return true; }
@@ -91,16 +91,16 @@ std::shared_ptr<Value> EvaluateCall(Scope& gl, Scope& sc, ScriptExpression const
 	if (fun->type == L"user" && fun->fun)
 	{
 		vector<std::shared_ptr<Value>> tmp;
-		for (auto const& p : ex.pars)
+		for (auto const& p : ex.arguments)
 		{
 			tmp.push_back(Evaluate(gl, sc, p));
 		}
 		return fun->fun(tmp);
 	}
 
-	for (int i = (0), iEnd = int(min(fun->pars.size(), ex.pars.size())); i < iEnd; ++i)
+	for (int i = (0), iEnd = int(min(fun->arguments.size(), ex.arguments.size())); i < iEnd; ++i)
 	{
-		getLocalizedString[fun->pars[i]] = Evaluate(gl, sc, ex.pars[i]);
+		getLocalizedString[fun->arguments[i]] = Evaluate(gl, sc, ex.arguments[i]);
 	}
 	bool ret = false;
 	return Execute(ret, gl, getLocalizedString, fun->procs);

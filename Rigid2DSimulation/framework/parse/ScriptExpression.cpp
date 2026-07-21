@@ -3,8 +3,8 @@
 
 ScriptExpression::ScriptExpression(wstring const& type) : type(type) {}
 ScriptExpression::ScriptExpression(double number) : number(number) { type = L"num"; }
-ScriptExpression::ScriptExpression(wstring const& fun, vector<ScriptExpression> const& pars) :
-	fun(fun), pars(pars) {
+ScriptExpression::ScriptExpression(wstring const& fun, vector<ScriptExpression> const& arguments) :
+	fun(fun), arguments(arguments) {
 	type = L"call";
 }
 ScriptExpression ScriptExpression::CreateString(wstring const& text) {
@@ -34,7 +34,7 @@ wstring ToWString(ScriptExpression const& ex) {
 	}
 	else if (ex.type == L"call") {
 		tmp += L":" + ex.fun + L",";
-		for (auto const& par : ex.pars) { tmp += ToWString(par) + L","; }
+		for (auto const& argument : ex.arguments) { tmp += ToWString(argument) + L","; }
 	}
 	tmp += L"]";
 	return tmp;
@@ -126,14 +126,14 @@ ScriptExpression ParseCall(vector<BracketGroup> const& in) {
 	vector<BracketGroup> tmp;
 	for (auto const& b : in[1].bras) {
 		if (b.tk.type == L",") {
-			ex.pars.push_back(ParseExpression(tmp));
+			ex.arguments.push_back(ParseExpression(tmp));
 			tmp.clear();
 		}
 		else {
 			tmp.push_back(b);
 		}
 	}
-	if (!tmp.empty()) { ex.pars.push_back(ParseExpression(tmp)); }
+	if (!tmp.empty()) { ex.arguments.push_back(ParseExpression(tmp)); }
 	return ex;
 }
 ScriptExpression ParseBinaryExpressions(vector<BracketGroup> const& in) {

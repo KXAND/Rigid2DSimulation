@@ -13,7 +13,7 @@ struct Value {
 	wstring stringValue;
 	Function fun;
 	Program procs;
-	vector<wstring> pars;
+	vector<wstring> arguments;
 	vector<std::shared_ptr<Value>> vec;
 	map<wstring, std::shared_ptr<Value>> dic;
 
@@ -22,7 +22,7 @@ struct Value {
 	Value(wstring const& text);
 	Value(Function const& fun);
 	Value(vector<std::shared_ptr<Value>> const& vec);
-	Value(Program const& ps, vector<wstring> const& pars);
+	Value(Program const& ps, vector<wstring> const& arguments);
 };
 
 struct Vector2;
