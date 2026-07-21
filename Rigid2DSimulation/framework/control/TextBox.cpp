@@ -211,7 +211,7 @@ void TextBox::RenderCursor(App& app) {
 		drawRectangleRaw(app.scr, { x_cs, y_cs }, w_cursor, h_cursor, GetTextViewport(), c_cursor);
 	}
 }
-void TextBox::render(App& app) {
+void TextBox::Render(App& app) {
 	RenderMain(app); RenderCursor(app);
 }
 
@@ -236,7 +236,7 @@ void TextBox::Update(App& app) {
 			if (clr_upon_edit) { str.clear(); }
 			SelectStart(app); edit = true;
 		}
-	} ClampTextPosition(app); render(app);
+	} ClampTextPosition(app); Render(app);
 }
 void TextBox::Discard(App& app) {
 	app.own.remove(this); app.own.ReleaseKeyboard(this);

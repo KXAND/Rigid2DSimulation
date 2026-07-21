@@ -66,7 +66,7 @@ struct TextBox : Control {
 
 	void RenderMain(App& app);
 	void RenderCursor(App& app);
-	void render(App& app);
+	void Render(App& app);
 
 	virtual void Sync(App& app) {}
 	virtual void OnDone(App& app) const {}
