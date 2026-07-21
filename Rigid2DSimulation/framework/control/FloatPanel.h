@@ -41,21 +41,21 @@ struct FloatPanel {
 	FloatPanel();
 	FloatPanel(App& app, int _w, int _h);
 
-	int min_y() const;
-	DRect vp_show(App& app) const;
-	DVector2 tl_close() const;
-	void set_c(App& app, Control* _c);
-	void set_tl(App& app, DVector2 const& p);
-	void init_c(App& app);
-	void init_sb();
+	int GetMinY() const;
+	DRect GetVisibleViewport(App& app) const;
+	DVector2 GetCloseTopLeft() const;
+	void SetControl(App& app, Control* _c);
+	void SetTopLeft(App& app, DVector2 const& p);
+	void InitializeControl(App& app);
+	void InitializeScrollBar();
 
 	void hide(App& app);
 	void show(App& app);
-	void deal_caption(App& app);
-	void wheel_and_clamp_cy(App& app);
+	void HandleCaption(App& app);
+	void HandleWheelAndClampContent(App& app);
 
-	void render_main(App& app);
-	void render_close(App& app);
+	void RenderMain(App& app);
+	void RenderClose(App& app);
 	void render(App& app);
 
 	void Init(App& app);
@@ -70,6 +70,6 @@ struct LocalizedFloatPanel : FloatPanel {
 	void Update(App& app) override;
 };
 
-bool less_fpn(FloatPanel* const fp0, FloatPanel* const fp1);
+bool CompareFloatPanels(FloatPanel* const fp0, FloatPanel* const fp1);
 
 

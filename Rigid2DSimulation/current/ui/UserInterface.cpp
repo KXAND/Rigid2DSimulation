@@ -12,7 +12,7 @@
 #include "BottomPanel.h"
 
 
-void UserInterface::SortFloatPanels() { sort(fpns.begin(), fpns.end(), less_fpn); }
+void UserInterface::SortFloatPanels() { sort(fpns.begin(), fpns.end(), CompareFloatPanels); }
 void UserInterface::Init(SimulationApp& cur) {
 	globalPanel = std::make_shared<GlobalPanel>(cur); fpns.push_back(&*globalPanel);
 	bodyPanel = std::make_shared<BodyPanel>(cur); fpns.push_back(&*bodyPanel);
