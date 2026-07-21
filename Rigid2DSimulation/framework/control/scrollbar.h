@@ -1,5 +1,5 @@
 #pragma once
-#include "tile.h"
+#include "Tile.h"
 
 struct App;
 struct Control;

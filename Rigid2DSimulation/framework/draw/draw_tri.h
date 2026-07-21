@@ -1,5 +1,5 @@
 #pragma once
-#include "tile.h"
+#include "Tile.h"
 
 void subDrawTriangle(tile& dest, dbuf& ds,
 	DVector2 pa, DVector2 pb, DVector2 pc, double d, dColor col, bool same_y);

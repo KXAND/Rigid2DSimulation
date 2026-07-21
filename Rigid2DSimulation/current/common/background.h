@@ -1,6 +1,6 @@
 #pragma once
 #include "Vector3.h"
-#include "tile.h"
+#include "Tile.h"
 
 struct SimulationApp;
 /// <summary>

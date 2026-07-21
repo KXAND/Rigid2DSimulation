@@ -7,7 +7,7 @@
 #include "body.h"
 #include "shape_builtins.h"
 #include "scene_builders.h"
-#include "clip.h"
+#include "AudioClip.h"
 #include "group.h"
 #include "creator.h"
 #include "collision.h"

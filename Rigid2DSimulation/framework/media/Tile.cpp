@@ -1,4 +1,4 @@
-#include "tile.h"
+#include "Tile.h"
 
 const dColor dColor::RED = dColor(255, 0, 0);
 const dColor dColor::GREEN = dColor(0, 255, 0);

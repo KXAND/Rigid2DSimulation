@@ -143,7 +143,7 @@
     <ClCompile Include="framework\parse\bracket_group.cpp" />
     <ClCompile Include="framework\control\button.cpp" />
     <ClCompile Include="framework\control\checkbox.cpp" />
-    <ClCompile Include="framework\media\clip.cpp" />
+    <ClCompile Include="framework\media\AudioClip.cpp" />
     <ClCompile Include="current\rigid\collision.cpp" />
     <ClCompile Include="current\rigid\scene_builders.cpp" />
     <ClCompile Include="current\rigid\shape_builtins.cpp" />
@@ -164,7 +164,7 @@
     <ClCompile Include="framework\basic\DVector2.cpp" />
     <ClCompile Include="framework\parse\script_expr.cpp" />
     <ClCompile Include="framework\control\float_panel.cpp" />
-    <ClCompile Include="framework\media\font.cpp" />
+    <ClCompile Include="framework\media\Font.cpp" />
     <ClCompile Include="current\ui\fpn_about.cpp" />
     <ClCompile Include="current\ui\fpn_body.cpp" />
     <ClCompile Include="current\ui\fpn_cmd.cpp" />
@@ -172,7 +172,7 @@
     <ClCompile Include="current\ui\fpn_global.cpp" />
     <ClCompile Include="current\ui\fpn_lang.cpp" />
     <ClCompile Include="current\ui\fpn_par.cpp" />
-    <ClCompile Include="framework\media\ft_constant.cpp" />
+    <ClCompile Include="framework\media\FontCharacters.cpp" />
     <ClCompile Include="current\rigid\group.cpp" />
     <ClCompile Include="framework\control\label.cpp" />
     <ClCompile Include="main.cpp" />
@@ -187,7 +187,7 @@
     <ClCompile Include="framework\control\separator.cpp" />
     <ClCompile Include="current\rigid\shape.cpp" />
     <ClCompile Include="framework\control\textbox.cpp" />
-    <ClCompile Include="framework\media\tile.cpp" />
+    <ClCompile Include="framework\media\Tile.cpp" />
     <ClCompile Include="framework\parse\token.cpp" />
     <ClCompile Include="current\ui\ui.cpp" />
     <ClCompile Include="framework\basic\Utils.cpp" />
@@ -205,7 +205,7 @@
     <ClInclude Include="framework\parse\bracket_group.h" />
     <ClInclude Include="framework\control\button.h" />
     <ClInclude Include="framework\control\checkbox.h" />
-    <ClInclude Include="framework\media\clip.h" />
+    <ClInclude Include="framework\media\AudioClip.h" />
     <ClInclude Include="current\rigid\collision.h" />
     <ClInclude Include="current\common\utils.h" />
     <ClInclude Include="current\rigid\scene_builders.h" />
@@ -227,7 +227,7 @@
     <ClInclude Include="framework\basic\DVector2.h" />
     <ClInclude Include="framework\parse\script_expr.h" />
     <ClInclude Include="framework\control\float_panel.h" />
-    <ClInclude Include="framework\media\font.h" />
+    <ClInclude Include="framework\media\Font.h" />
     <ClInclude Include="current\ui\fpn_about.h" />
     <ClInclude Include="current\ui\fpn_body.h" />
     <ClInclude Include="current\ui\fpn_cmd.h" />
@@ -249,7 +249,7 @@
     <ClInclude Include="framework\control\separator.h" />
     <ClInclude Include="current\rigid\shape.h" />
     <ClInclude Include="framework\control\textbox.h" />
-    <ClInclude Include="framework\media\tile.h" />
+    <ClInclude Include="framework\media\Tile.h" />
     <ClInclude Include="framework\parse\token.h" />
     <ClInclude Include="current\ui\ui.h" />
     <ClInclude Include="framework\basic\Utils.h" />

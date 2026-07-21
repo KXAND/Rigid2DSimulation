@@ -1,5 +1,5 @@
 #include "draw_str.h"
-#include "font.h"
+#include "Font.h"
 
 void draw_char(tile& dest, dbuf& ds, double depth,
 	DVector2 tl, DRect vp_dest, tile const& src, dColor col) {

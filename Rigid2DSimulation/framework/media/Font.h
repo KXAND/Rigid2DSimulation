@@ -1,5 +1,5 @@
 #pragma once
-#include "tile.h"
+#include "Tile.h"
 
 wchar_t extern CHINESE_CHARS[];
 wchar_t extern NUMBERS[];

@@ -1,5 +1,5 @@
 #pragma once
-#include "tile.h"
+#include "Tile.h"
 #include "control.h"
 
 struct DragbarX : Control {

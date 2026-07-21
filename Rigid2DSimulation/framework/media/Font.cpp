@@ -1,4 +1,4 @@
-#include "font.h"
+#include "Font.h"
 
 font::font() : font(20) {}
 font::font(int h) : h(h) {}

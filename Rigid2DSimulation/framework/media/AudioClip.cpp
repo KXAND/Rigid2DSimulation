@@ -1,4 +1,4 @@
-#include "clip.h"
+#include "AudioClip.h"
 
 clip::clip(wstring const& nm, bool *ok) {
 	FILE* file = wfopen(nm, L"rb");

@@ -49,13 +49,13 @@
     <ClCompile Include="framework\basic\Vector3.cpp">
       <Filter>framework\basic</Filter>
     </ClCompile>
-    <ClCompile Include="framework\media\ft_constant.cpp">
+    <ClCompile Include="framework\media\FontCharacters.cpp">
       <Filter>framework\media</Filter>
     </ClCompile>
-    <ClCompile Include="framework\media\font.cpp">
+    <ClCompile Include="framework\media\Font.cpp">
       <Filter>framework\media</Filter>
     </ClCompile>
-    <ClCompile Include="framework\media\tile.cpp">
+    <ClCompile Include="framework\media\Tile.cpp">
       <Filter>framework\media</Filter>
     </ClCompile>
     <ClCompile Include="framework\app\App.cpp">
@@ -214,7 +214,7 @@
     <ClCompile Include="current\rigid\group.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="framework\media\clip.cpp">
+    <ClCompile Include="framework\media\AudioClip.cpp">
       <Filter>framework\media</Filter>
     </ClCompile>
   </ItemGroup>
@@ -237,10 +237,10 @@
     <ClInclude Include="framework\basic\ValuePtr.h">
       <Filter>framework\basic</Filter>
     </ClInclude>
-    <ClInclude Include="framework\media\font.h">
+    <ClInclude Include="framework\media\Font.h">
       <Filter>framework\media</Filter>
     </ClInclude>
-    <ClInclude Include="framework\media\tile.h">
+    <ClInclude Include="framework\media\Tile.h">
       <Filter>framework\media</Filter>
     </ClInclude>
     <ClInclude Include="framework\app\App.h">
@@ -399,7 +399,7 @@
     <ClInclude Include="current\rigid\group.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="framework\media\clip.h">
+    <ClInclude Include="framework\media\AudioClip.h">
       <Filter>framework\media</Filter>
     </ClInclude>
   </ItemGroup>

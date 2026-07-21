@@ -1,6 +1,6 @@
 #pragma once
 #include "Vector2.h"
-#include "font.h"
+#include "Font.h"
 #include "control.h"
 
 struct RichTextbox : Control {

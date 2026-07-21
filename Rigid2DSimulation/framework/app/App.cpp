@@ -1,5 +1,5 @@
 #include "App.h"
-#include "tile.h"
+#include "Tile.h"
 
 App::App()
 {

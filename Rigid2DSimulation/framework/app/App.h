@@ -1,5 +1,5 @@
 #pragma once
-#include "font.h"
+#include "Font.h"
 #include "WaveOutput.h"
 #include "AppItem.h"
 

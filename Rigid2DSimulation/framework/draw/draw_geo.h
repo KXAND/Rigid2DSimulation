@@ -1,6 +1,6 @@
 #pragma once
 #include "Vector2.h"
-#include "tile.h"
+#include "Tile.h"
 
 // @todo: 把两个 drawRectangle 移到别的文件中
 void drawRectangleRaw(tile& targetTile, DVector2 topLeft, int w, int h, DRect viewPort, dColor color);
