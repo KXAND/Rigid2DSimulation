@@ -18,27 +18,27 @@ void DeleteConnectionButton::OnClick(App& app) { auto& simulationApp = static_ca
 
 ConnectionEditorControls::ConnectionEditorControls() {
 	vector<Control*> tmp;
-	rtb = std::make_shared<ConnectionScriptEditor>();
-	bt_ok = std::make_shared<ApplyConnectionButton>(); bt_del = std::make_shared<DeleteConnectionButton>();
-	tmp = { &*bt_ok, &*bt_del };
-	clx_bt = std::make_shared<HorizontalControlList>(tmp);
+	scriptEditor = std::make_shared<ConnectionScriptEditor>();
+	applyButton = std::make_shared<ApplyConnectionButton>(); deleteButton = std::make_shared<DeleteConnectionButton>();
+	tmp = { &*applyButton, &*deleteButton };
+	actionButtons = std::make_shared<HorizontalControlList>(tmp);
 	tmp = {};
-	spy = std::make_shared<HorizontalSeparator>(400);
+	separator = std::make_shared<HorizontalSeparator>(400);
 }
 void ConnectionEditorControls::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto* selectedConnection = simulationApp.connectionSelecting;
-	if (con != selectedConnection) {
-		con = selectedConnection;
+	if (selectedConnection != selectedConnection) {
+		selectedConnection = selectedConnection;
 		for (auto c : cs) { c->Discard(app); }
-		if (con) { cs = { &*rtb, &*clx_bt, &*spy }; }
+		if (selectedConnection) { cs = { &*scriptEditor, &*actionButtons, &*separator }; }
 		else { cs = {}; }
 	}
 	VerticalControlList::Update(app);
 }
 void ConnectionEditorControls::Discard(App& app) {
 	VerticalControlList::Discard(app);
-	con = NULL; cs = {};
+	selectedConnection = NULL; cs = {};
 }
 
 void ConnectionDetailsLabel::Sync(App& app) {
@@ -62,10 +62,10 @@ void ConnectionDetailsLabel::Sync(App& app) {
 
 ConnectionPanel::ConnectionPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_con") {
 	vector<Control*> tmp;
-	cly_con = std::make_shared<ConnectionEditorControls>(); rlb_con = std::make_shared<ConnectionDetailsLabel>();
-	tmp = { &*cly_con, &*rlb_con };
-	cly = std::make_shared<VerticalControlList>(tmp);
-	c = &*cly;
+	editorControls = std::make_shared<ConnectionEditorControls>(); detailsLabel = std::make_shared<ConnectionDetailsLabel>();
+	tmp = { &*editorControls, &*detailsLabel };
+	controls = std::make_shared<VerticalControlList>(tmp);
+	c = &*controls;
 	Init(app);
 }
 
