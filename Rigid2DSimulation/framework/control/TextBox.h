@@ -19,7 +19,7 @@ struct TextBox : Control {
 	double twinkle_mtp = 0;
 	int w_cursor = 0, h_cursor = 0;
 
-	wstring str;
+	wstring value;
 	double x_str_rel = 0;
 	int edit_a = 0, edit_b = 0;
 

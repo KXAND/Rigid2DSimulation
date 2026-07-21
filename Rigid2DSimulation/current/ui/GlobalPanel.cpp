@@ -5,9 +5,9 @@
 
 
 SaveButton::SaveButton() : LocalizedButton(80, L"saveButton") {}
-void SaveButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Save(simulationApp.userInterface->globalPanel->savePathTextBox->str); }
+void SaveButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Save(simulationApp.userInterface->globalPanel->savePathTextBox->value); }
 LoadButton::LoadButton() : LocalizedButton(80, L"loadButton") {}
-void LoadButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Load(simulationApp.userInterface->globalPanel->loadPathTextBox->str); }
+void LoadButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.Load(simulationApp.userInterface->globalPanel->loadPathTextBox->value); }
 
 void GlobalDetailsLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);

@@ -3,16 +3,16 @@
 #include "SceneParameter.h"
 
 ParameterNameTextBox::ParameterNameTextBox(int id) : id(id), TextBox(270) {};
-void ParameterNameTextBox::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.parameters[id]->name; }
-void ParameterNameTextBox::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->name = str; }
+void ParameterNameTextBox::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); value = simulationApp.parameters[id]->name; }
+void ParameterNameTextBox::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->name = value; }
 DeleteParameterButton::DeleteParameterButton(int id) : id(id), LocalizedButton(80, L"bt_del_par") {}
 void DeleteParameterButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->isMarkedForDeletion = true; }
 ParameterValueDragBar::ParameterValueDragBar(int id) : id(id), HorizontalDragBar(270) {}
 void ParameterValueDragBar::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); SetNormalizedNodePosition(simulationApp.parameters[id]->value); }
 void ParameterValueDragBar::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = GetNormalizedValue(); }
 ParameterValueTextBox::ParameterValueTextBox(int id) : id(id), TextBox(80) {};
-void ParameterValueTextBox::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = FormatFixed2(simulationApp.parameters[id]->value); }
-void ParameterValueTextBox::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = wtof(str); }
+void ParameterValueTextBox::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); value = FormatFixed2(simulationApp.parameters[id]->value); }
+void ParameterValueTextBox::OnDone(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.parameters[id]->value = wtof(value); }
 
 ParameterControlRow::ParameterControlRow(int id) {
 	vector<Control*> tmp;

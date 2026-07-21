@@ -36,18 +36,18 @@ DRect TextBox::GetTextViewport() const {
 	return getOverlapRect(vp, { tl_show_txt, w_show_txt, h });
 }
 wstring TextBox::GetLeftText() const {
-	auto a = str.begin();
-	auto b = str.begin() + GetEditBegin();
+	auto a = value.begin();
+	auto b = value.begin() + GetEditBegin();
 	return wstring(a, b);
 }
 wstring TextBox::GetSelectedText() const {
-	auto a = str.begin() + GetEditBegin();
-	auto b = str.begin() + GetEditEnd();
+	auto a = value.begin() + GetEditBegin();
+	auto b = value.begin() + GetEditEnd();
 	return wstring(a, b);
 }
 wstring TextBox::GetRightText() const {
-	auto a = str.begin() + GetEditEnd();
-	auto b = str.end();
+	auto a = value.begin() + GetEditEnd();
+	auto b = value.end();
 	return wstring(a, b);
 }
 int TextBox::GetEditBegin() const { return min(edit_a, edit_b); }
@@ -56,25 +56,25 @@ bool TextBox::HasSelection() const { return edit_a != edit_b; }
 // 下面是对的，不需要加一减一什么的。
 int TextBox::GetMaxCursorX() const { return w - w_edit_mg; }
 int TextBox::GetCursorX(App& app) const {
-	wstring tmp(str.begin(), str.begin() + edit_b);
+	wstring tmp(value.begin(), value.begin() + edit_b);
 	return x_str_rel + GetStringSize(tmp, app.ft, 0).x;
 }
 
 void TextBox::SelectStart(App& app) {
 	selecting = true;
 	int x = app.input.msp.x - (GetBoxTopLeft().x + x_str_rel);
-	edit_a = edit_b = GetStringIndexAtPosition(str, app.ft, { x, 0 }, 0);
+	edit_a = edit_b = GetStringIndexAtPosition(value, app.ft, { x, 0 }, 0);
 }
 void TextBox::SelectEnd(App& app) {
 	int x = app.input.msp.x - (GetBoxTopLeft().x + x_str_rel);
-	edit_b = GetStringIndexAtPosition(str, app.ft, { x, 0 }, 0);
+	edit_b = GetStringIndexAtPosition(value, app.ft, { x, 0 }, 0);
 }
 
 void TextBox::AddCharacters(App& app) {
 	wstring sifted = FilterCharacters(app.input.chs, true);
 	if (!sifted.empty()) {
 		selecting = false;
-		str = GetLeftText() + sifted + GetRightText();
+		value = GetLeftText() + sifted + GetRightText();
 		edit_a = edit_b = GetEditBegin() + sifted.size();
 	}
 }
@@ -95,7 +95,7 @@ void TextBox::HandleRight(App& app) {
 	if (HasSelection()) { edit_a = edit_b = GetEditEnd(); }
 	else {
 		// 下面不要减一。
-		if (++edit_a > str.size()) { edit_a = str.size(); }
+		if (++edit_a > value.size()) { edit_a = value.size(); }
 		edit_b = edit_a;
 	}
 }
@@ -104,14 +104,14 @@ void TextBox::HandleBackspace(App& app) {
 	cursor_change = true;
 
 	if (HasSelection()) {
-		str = GetLeftText() + GetRightText();
+		value = GetLeftText() + GetRightText();
 		edit_a = edit_b = GetEditBegin();
 	} else if (GetEditBegin() > 0) {
-		x_str_rel += app.ft[str[edit_a]].width;
+		x_str_rel += app.ft[value[edit_a]].width;
 		x_str_rel = min<double>(x_str_rel, w_edit_mg);
-		auto a = str.begin();
-		auto b = str.begin() + edit_a - 1;
-		str = wstring(a, b) + GetRightText();
+		auto a = value.begin();
+		auto b = value.begin() + edit_a - 1;
+		value = wstring(a, b) + GetRightText();
 		edit_b = --edit_a;
 	}
 }
@@ -120,30 +120,30 @@ void TextBox::HandleDelete(App& app) {
 	cursor_change = true;
 
 	if (HasSelection()) {
-		str = GetLeftText() + GetRightText();
+		value = GetLeftText() + GetRightText();
 		edit_a = edit_b = GetEditBegin();
-	} else if (GetEditEnd() < str.size()) {
-		auto a = str.begin() + edit_a + 1;
-		auto b = str.end();
-		str = GetLeftText() + wstring(a, b);
+	} else if (GetEditEnd() < value.size()) {
+		auto a = value.begin() + edit_a + 1;
+		auto b = value.end();
+		value = GetLeftText() + wstring(a, b);
 	}
 }
 void TextBox::HandleCut(App& app) {
 	selecting = false;
 	SetClipboard(GetSelectedText());
-	str = GetLeftText() + GetRightText();
+	value = GetLeftText() + GetRightText();
 	edit_a = edit_b = GetEditBegin();
 }
 void TextBox::HandleCopy(App& app) { SetClipboard(GetSelectedText()); }
 void TextBox::HandlePaste(App& app) {
 	selecting = false;
 	wstring sifted = FilterCharacters(GetClipboard(), true);
-	str = GetLeftText() + sifted + GetRightText();
+	value = GetLeftText() + sifted + GetRightText();
 	edit_a = edit_b = GetEditBegin() + sifted.size();
 }
 void TextBox::HandleSelectAll(App& app) {
 	selecting = false;
-	edit_a = 0; edit_b = str.size();
+	edit_a = 0; edit_b = value.size();
 }
 void TextBox::HandleKey(App& app) {
 	cursor_change = false;
@@ -179,7 +179,7 @@ void TextBox::ClampCursorPosition(App& app) {
 	else { ClampCursor(app); }
 }
 void TextBox::ClampTextPosition(App& app) {
-	int x_end_rel = x_str_rel + GetStringSize(str, app.ft, 0).x;
+	int x_end_rel = x_str_rel + GetStringSize(value, app.ft, 0).x;
 	if (x_end_rel < GetMaxCursorX()) {
 		x_str_rel += GetMaxCursorX() - x_end_rel;
 	}
@@ -233,7 +233,7 @@ void TextBox::Update(App& app) {
 	} else {
 		Sync(app);
 		if (enabled && hovered && app.input.isMouseClickedDown(0)) {
-			if (clr_upon_edit) { str.clear(); }
+			if (clr_upon_edit) { value.clear(); }
 			SelectStart(app); edit = true;
 		}
 	} ClampTextPosition(app); Render(app);
