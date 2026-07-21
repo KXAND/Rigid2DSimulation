@@ -47,6 +47,9 @@
 - `RichTextBox` 的滚动、闪烁和光标尺寸字段、局部文本视区、选区、光标与迭代器变量已迁移为完整 lower camel。
 - `Panel` 与 `FloatPanel` 的内容控件、滚动条、内容视区、溢出状态和面板颜色字段已迁移为完整 lower camel，并同步更新各 UI 面板构造函数。
 - `FloatPanel` 的标题、标题栏、关闭按钮、颜色、交互状态和排序时间字段已迁移为完整 lower camel；显示浮动面板按钮已同步读取标题字段。
+- `SimulationApp` 的构造函数已按初始化阶段采用 4 空格缩进和逻辑空行；音量与模拟时间状态已迁移为 `volume`、`simulationTime`，DSL 键保持不变。
+- `AudioClip` 的采样率、样本、播放位置、循环标志、文件名和加载状态已迁移为完整 lower camel；其接口已统一为 PascalCase。
+- `WaveBlock`、`WaveOutput` 及 `App::waveOutput` 的音频输出字段和接口已迁移为完整 lower camel 与 PascalCase，并同步更新应用初始化和模拟层调用点。
 - 已完成的提交保持文件改名、类型名改名、宏替换和纯排版互相分离。
 
 ## 3. 下一批
