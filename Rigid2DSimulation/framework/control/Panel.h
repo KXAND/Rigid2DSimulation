@@ -7,19 +7,19 @@ struct VerticalScrollBar;
 struct Panel {
 	DVector2 tl;
 	double depth = 0;
-	Control* c = NULL;
+	Control* contentControl = NULL;
 	int w = 0, h = 0;
-	double wheel_mtp = 0;
-	DVector2 tl_show_rel;
-	DRect vp_show_rel;
-	Color c_frame, c_panel;
+	double wheelMultiplier = 0;
+	DVector2 contentOffset;
+	DRect contentViewport;
+	Color frameColor, panelColor;
 
-	bool use_sb = false;
+	bool useScrollBar = false;
 	// 我也不清楚为啥要用指针。有点惯性的感觉了。
-	std::shared_ptr<VerticalScrollBar> sb;
+	std::shared_ptr<VerticalScrollBar> scrollBar;
 
-	int h_show = 0;
-	bool full = false;
+	int visibleHeight = 0;
+	bool hasOverflow = false;
 	bool hovered = false;
 	bool wheeled = false;
 

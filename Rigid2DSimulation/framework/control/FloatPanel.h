@@ -7,28 +7,28 @@ struct VerticalScrollBar;
 struct FloatPanel {
 	DVector2 tl;
 	double depth = 0;
-	Control* c = NULL;
+	Control* contentControl = NULL;
 	wstring txt;
 	int w = 0, h = 0;
-	double wheel_mtp = 0;
-	DVector2 tl_show_rel;
-	DRect vp_show_rel;
+	double wheelMultiplier = 0;
+	DVector2 contentOffset;
+	DRect contentViewport;
 
-	bool use_sb = false;
-	std::shared_ptr<VerticalScrollBar> sb;
+	bool useScrollBar = false;
+	std::shared_ptr<VerticalScrollBar> scrollBar;
 
 	int h_bar = 0;
 	int s_close = 0;
 	int half_s_mark = 0;
 	int margin_close = 0;
 	int margin_title = 0;
-	Color c_txt, c_mark, c_frame, c_panel;
+	Color c_txt, c_mark, frameColor, panelColor;
 	Color c_bar_normal, c_bar_dragged, c_bar_hovered;
 	Color c_close_normal, c_close_chosen, c_close_hovered, c_close_invalid;
 
-	int h_show = 0;
+	int visibleHeight = 0;
 	double t_click = 0;
-	bool full = false;
+	bool hasOverflow = false;
 	bool shown = false;
 	bool hovered = false;
 	bool wheeled = false;

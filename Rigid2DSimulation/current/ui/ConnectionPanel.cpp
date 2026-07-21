@@ -65,7 +65,7 @@ ConnectionPanel::ConnectionPanel(App& app) : LocalizedFloatPanel(app, 400, 600, 
 	editorControls = std::make_shared<ConnectionEditorControls>(); detailsLabel = std::make_shared<ConnectionDetailsLabel>();
 	tmp = { &*editorControls, &*detailsLabel };
 	controls = std::make_shared<VerticalControlList>(tmp);
-	c = &*controls;
+	contentControl = &*controls;
 	Init(app);
 }
 

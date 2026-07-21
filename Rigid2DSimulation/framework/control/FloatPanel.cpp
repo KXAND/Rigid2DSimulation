@@ -11,8 +11,8 @@
 FloatPanel::FloatPanel() {
 	depth = 1000;
 	txt = L"窗口";
-	wheel_mtp = 40;
-	tl_show_rel = { 10, 40 };
+	wheelMultiplier = 40;
+	contentOffset = { 10, 40 };
 
 	h_bar = 30;
 	s_close = 20;
@@ -22,8 +22,8 @@ FloatPanel::FloatPanel() {
 
 	c_txt = { 255, 255, 255 };
 	c_mark = { 255, 255, 255 };
-	c_frame = { 150, 150, 150 };
-	c_panel = { 0, 0, 0 };
+	frameColor = { 150, 150, 150 };
+	panelColor = { 0, 0, 0 };
 
 	c_bar_normal = { 40, 40, 40 };
 	c_bar_dragged = { 80, 40, 40 };
@@ -37,20 +37,20 @@ FloatPanel::FloatPanel() {
 FloatPanel::FloatPanel(App& app, int _w, int _h) : FloatPanel() {
 	w = _w; h = _h;
 	tl = DVector2(app.scr.width - w, app.scr.height - h) / 2;
-	h_show = h - 50; use_sb = true;
+	visibleHeight = h - 50; useScrollBar = true;
 
 	DRect tmp;
 	tmp.topLeftPosition = DVector2(10 - 2, 40 - 2);
 	tmp.w = w - 40 + 4;
 	tmp.h = h - 50 + 4;
-	vp_show_rel = tmp;
+	contentViewport = tmp;
 }
 
 int FloatPanel::GetMinY() const {
-	return tl.y + tl_show_rel.y + h_show - c->GetH();
+	return tl.y + contentOffset.y + visibleHeight - contentControl->GetH();
 }
 DRect FloatPanel::GetVisibleViewport(App& app) const {
-	DRect vp = vp_show_rel;
+	DRect vp = contentViewport;
 	vp.topLeftPosition += tl; return getOverlapRect(app.scr.Rect(), vp);
 }
 DVector2 FloatPanel::GetCloseTopLeft() const {
@@ -59,36 +59,36 @@ DVector2 FloatPanel::GetCloseTopLeft() const {
 	return tl + DVector2(x_rel, y_rel);
 }
 void FloatPanel::SetControl(App& app, Control* _c) {
-	if (c != _c) {
-		if (c) { c->Discard(app); }
-		if (c = _c) {
-			c->tl = tl + tl_show_rel;
-			c->vp = GetVisibleViewport(app);
-		} sb->contentControl = c;
+	if (contentControl != _c) {
+		if (contentControl) { contentControl->Discard(app); }
+		if (contentControl = _c) {
+			contentControl->tl = tl + contentOffset;
+			contentControl->vp = GetVisibleViewport(app);
+		} scrollBar->contentControl = contentControl;
 	}
 }
 void FloatPanel::SetTopLeft(App& app, DVector2 const& p) {
-	if (c) {
-		c->tl += p - tl;
+	if (contentControl) {
+		contentControl->tl += p - tl;
 		// 在调用 GetVisibleViewport 之前需要先更新 tl。
-		tl = p; c->vp = GetVisibleViewport(app);
+		tl = p; contentControl->vp = GetVisibleViewport(app);
 	}
-	sb->tl = p + DVector2(w - sb->w, h_bar);
-	sb->visibleTop = p.y + tl_show_rel.y;
+	scrollBar->tl = p + DVector2(w - scrollBar->w, h_bar);
+	scrollBar->visibleTop = p.y + contentOffset.y;
 }
 void FloatPanel::InitializeControl(App& app) {
-	if (c) {
-		c->tl = tl + tl_show_rel;
-		c->vp = GetVisibleViewport(app);
+	if (contentControl) {
+		contentControl->tl = tl + contentOffset;
+		contentControl->vp = GetVisibleViewport(app);
 	}
 }
 void FloatPanel::InitializeScrollBar() {
-	sb = std::make_shared<VerticalScrollBar>();
-	sb->contentControl = c;
-	sb->h = h - h_bar;
-	sb->tl = tl + DVector2(w - sb->w, h_bar);
-	sb->visibleHeight = h_show;
-	sb->visibleTop = tl.y + tl_show_rel.y;
+	scrollBar = std::make_shared<VerticalScrollBar>();
+	scrollBar->contentControl = contentControl;
+	scrollBar->h = h - h_bar;
+	scrollBar->tl = tl + DVector2(w - scrollBar->w, h_bar);
+	scrollBar->visibleHeight = visibleHeight;
+	scrollBar->visibleTop = tl.y + contentOffset.y;
 }
 
 void FloatPanel::Hide(App& app) { shown = false; Discard(app); }
@@ -112,20 +112,20 @@ void FloatPanel::HandleCaption(App& app) {
 	else { chosen_close = enabled_close && hovered_close && app.input.isMouseClickedDown(0); }
 }
 void FloatPanel::HandleWheelAndClampContent(App& app) {
-	if (full) {
-		int cy = c->tl.y;
-		if (wheeled) { cy += app.input.msw * wheel_mtp; }
-		c->tl.y = clamp(cy, GetMinY(), tl.y + tl_show_rel.y);
+	if (hasOverflow) {
+		int cy = contentControl->tl.y;
+		if (wheeled) { cy += app.input.msw * wheelMultiplier; }
+		contentControl->tl.y = clamp(cy, GetMinY(), tl.y + contentOffset.y);
 	}
-	else if (c) { c->tl.y = tl.y + tl_show_rel.y; }
+	else if (contentControl) { contentControl->tl.y = tl.y + contentOffset.y; }
 }
 
 void FloatPanel::RenderMain(App& app) {
-	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), c_panel, c_frame);
+	drawRectangleWithBorderRaw(app.scr, tl, w, h, app.scr.Rect(), panelColor, frameColor);
 	Color const& c_bar =
 		dragged_bar ? c_bar_dragged :
 		hovered_bar && (!app.input.msd[0] && !app.input.msd[1] && !app.input.msd[2]) ? c_bar_hovered : c_bar_normal;
-	drawRectangleWithBorderRaw(app.scr, tl, w, h_bar, app.scr.Rect(), c_bar, c_frame);
+	drawRectangleWithBorderRaw(app.scr, tl, w, h_bar, app.scr.Rect(), c_bar, frameColor);
 
 	DVector2 tl_title = tl + DVector2(margin_title, (h_bar - app.ft.h) / 2);
 	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_title, 0, app.scr.Rect());
@@ -151,7 +151,7 @@ void FloatPanel::Init(App& app) { InitializeControl(app); InitializeScrollBar();
 // 这也是比较特殊，相当于要处理自己的 Discard。
 void FloatPanel::Update(App& app) {
 	if (!shown) { return; }
-	full = (c != NULL) && h_show < c->GetH();
+	hasOverflow = (contentControl != NULL) && visibleHeight < contentControl->GetH();
 	hovered = (app.own.hovered == this);
 	wheeled = (app.own.wheeled == this);
 
@@ -163,15 +163,15 @@ void FloatPanel::Update(App& app) {
 	// 我觉得这里乱掉了。但是为了这个重构好像不值得。
 	if (shown) {
 		Render(app);
-		if (c) { c->Update(app); }
-		if (use_sb) { sb->Update(app); }
+		if (contentControl) { contentControl->Update(app); }
+		if (useScrollBar) { scrollBar->Update(app); }
 	}
 }
 void FloatPanel::Discard(App& app) {
 	chosen_close = hovered_close =
 		hovered = wheeled = hovered_bar = dragged_bar = false;
-	app.own.remove(this); sb->Discard(app);
-	if (c) { c->Discard(app); }
+	app.own.remove(this); scrollBar->Discard(app);
+	if (contentControl) { contentControl->Discard(app); }
 }
 void FloatPanel::PreUpdate(App& app) {
 	if (!shown) return;
@@ -183,8 +183,8 @@ void FloatPanel::PreUpdate(App& app) {
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
 	if (ok) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
 
-	if (c) { c->PreUpdate(app); }
-	if (use_sb) { sb->PreUpdate(app); }
+	if (contentControl) { contentControl->PreUpdate(app); }
+	if (useScrollBar) { scrollBar->PreUpdate(app); }
 }
 
 LocalizedFloatPanel::LocalizedFloatPanel(App& app, int w, int h, wstring const& id) :

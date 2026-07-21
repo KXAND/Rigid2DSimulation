@@ -19,7 +19,7 @@ CommandPanel::CommandPanel(App& app) : LocalizedFloatPanel(app, 600, 600, L"fpn_
 	compileButton = std::make_shared<CompileButton>();
 	tmp = { &*scriptEditor, &*compileButton };
 	controls = std::make_shared<VerticalControlList>(tmp);
-	c = &*controls;
+	contentControl = &*controls;
 	Init(app);
 }
 

@@ -79,7 +79,7 @@ MenuPanel::MenuPanel(App& app) : Panel(Panel::CreateMenuPanel(app)) {
 		&*bodyPanelButton, &*connectionPanelButton, &*modeButton, &*displayButton,
 		&*commandPanelButton, &*parameterPanelButton, &*languagePanelButton, &*aboutPanelButton };
 	controls = std::make_shared<VerticalControlList>(tmp);
-	c = &*controls;
+	contentControl = &*controls;
 	Init(app);
 }
 

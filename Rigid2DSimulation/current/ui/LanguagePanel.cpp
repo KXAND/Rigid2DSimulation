@@ -14,7 +14,7 @@ LanguagePanel::LanguagePanel(App& app) : LocalizedFloatPanel(app, 200, 200, L"fp
 	englishButton = std::make_shared<EnglishLanguageButton>();
 	tmp = { &*chineseButton, &*englishButton };
 	controls = std::make_shared<VerticalControlList>(tmp);
-	c = &*controls;
+	contentControl = &*controls;
 	Init(app);
 }
 

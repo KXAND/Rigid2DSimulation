@@ -45,7 +45,7 @@ ParameterPanel::ParameterPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"
 	addButton = std::make_shared<AddParameterButton>();
 	tmp = { &*parameterList, &*addButton };
 	controls = std::make_shared<VerticalControlList>(tmp);
-	c = &*controls;
+	contentControl = &*controls;
 	Init(app);
 }
 

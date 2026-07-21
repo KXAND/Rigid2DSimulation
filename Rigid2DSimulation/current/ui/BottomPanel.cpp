@@ -24,7 +24,7 @@ BottomPanel::BottomPanel(App& app) : Panel(Panel::CreateBottomPanel(app)) {
 	frameRateLabel = std::make_shared<FrameRateLabel>(); timeLabel = std::make_shared<TimeLabel>(); mousePositionLabel = std::make_shared<MousePositionLabel>();
 	tmp = { &*frameRateLabel, &*timeLabel, &*mousePositionLabel };
 	controls = std::make_shared<HorizontalControlList>(tmp);
-	c = &*controls;
+	contentControl = &*controls;
 	Init(app);
 }
 
