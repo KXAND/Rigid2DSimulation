@@ -22,8 +22,8 @@ struct ScriptExpression {
 	ScriptExpression(wstring const& typ);
 	ScriptExpression(double num);
 	ScriptExpression(wstring const& fun, vector<ScriptExpression> const& pars);
-	static ScriptExpression mkstr(wstring const& str);
-	static ScriptExpression mkvar(wstring const& Value, bool gl);
+	static ScriptExpression CreateString(wstring const& text);
+	static ScriptExpression CreateVariable(wstring const& value, bool isGlobal);
 };
 wstring ToWString(ScriptExpression const& ex);
 

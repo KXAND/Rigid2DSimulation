@@ -11,8 +11,8 @@ struct Token {
 	Token() = default;
 	Token(wstring const& typ);
 	Token(double num);
-	static Token mkstr(wstring const& str);
-	static Token mkvar(wstring const& Value, bool gl);
+	static Token CreateString(wstring const& text);
+	static Token CreateVariable(wstring const& value, bool isGlobal);
 };
 wstring ToWString(Token const& tk);
 

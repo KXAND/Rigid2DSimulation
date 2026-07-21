@@ -2,13 +2,13 @@
 
 Token::Token(wstring const& typ) : typ(typ) {}
 Token::Token(double num) : num(num) { typ = L"num"; }
-Token Token::mkstr(wstring const& str) {
+Token Token::CreateString(wstring const& text) {
 	Token tk(L"str");
-	tk.str = str; return tk;
+	tk.str = text; return tk;
 }
-Token Token::mkvar(wstring const& Value, bool gl) {
+Token Token::CreateVariable(wstring const& value, bool isGlobal) {
 	Token tk(L"var");
-	tk.Value = Value; tk.global = gl; return tk;
+	tk.Value = value; tk.global = isGlobal; return tk;
 }
 wstring ToWString(Token const& tk) {
 	wstring tmp = L"[" + tk.typ;
@@ -46,7 +46,7 @@ Token ParseStringToken(wstring const& in, int& id) {
 		} else { escape = (c == L'\\'); ok = (c != L'\"'); }
 		if (ok && !escape) { tmp += c; }
 	} ++id;
-	return Token::mkstr(tmp);
+	return Token::CreateString(tmp);
 }
 Token ParseMarkToken(wstring const& in, int& id) {
 	vector<wstring> two = {
@@ -68,7 +68,7 @@ Token ParseGlobalVariableToken(wstring const& in, int& id) {
 		auto c = in[id];
 		ok = iswalpha(c) || c == L'_' || iswdigit(c);
 		if (ok) { tmp += c; }
-	} return Token::mkvar(tmp, true);
+	} return Token::CreateVariable(tmp, true);
 }
 Token ParseVariableOrReservedToken(wstring const& in, int& id) {
 	wstring tmp = { in[id] }; bool ok = true;
@@ -82,7 +82,7 @@ Token ParseVariableOrReservedToken(wstring const& in, int& id) {
 		tmp == L"def" || tmp == L"return" || tmp == L"if" ||
 		tmp == L"else" || tmp == L"while" || tmp == L"null";
 	if (reserved) { return Token(tmp); }
-	return Token::mkvar(tmp, false);
+	return Token::CreateVariable(tmp, false);
 }
 Token ParseToken(wstring const& in, int& id) {
 	auto c = in[id];

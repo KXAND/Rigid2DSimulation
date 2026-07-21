@@ -7,15 +7,15 @@ ScriptExpression::ScriptExpression(wstring const& fun, vector<ScriptExpression> 
 	fun(fun), pars(pars) {
 	typ = L"call";
 }
-ScriptExpression ScriptExpression::mkstr(wstring const& str) {
+ScriptExpression ScriptExpression::CreateString(wstring const& text) {
 	auto ex = ScriptExpression(L"str");
-	ex.str = str;
+	ex.str = text;
 	return ex;
 }
-ScriptExpression ScriptExpression::mkvar(wstring const& Value, bool gl) {
+ScriptExpression ScriptExpression::CreateVariable(wstring const& value, bool isGlobal) {
 	auto ex = ScriptExpression(L"var");
-	ex.Value = Value;
-	ex.global = gl;
+	ex.Value = value;
+	ex.global = isGlobal;
 	return ex;
 }
 
@@ -181,8 +181,8 @@ ScriptExpression ParseExpression(vector<BracketGroup> const& in) {
 	auto const& b = in[0];
 	if (in.size() == 1) {
 		if (b.typ == 0) {
-			if (b.tk.typ == L"var") { return ScriptExpression::mkvar(b.tk.Value, b.tk.global); }
-			else if (b.tk.typ == L"str") { return ScriptExpression::mkstr(b.tk.str); }
+			if (b.tk.typ == L"var") { return ScriptExpression::CreateVariable(b.tk.Value, b.tk.global); }
+			else if (b.tk.typ == L"str") { return ScriptExpression::CreateString(b.tk.str); }
 			else if (b.tk.typ == L"num") { return ScriptExpression(b.tk.num); }
 			else if (b.tk.typ == L"null") { return ScriptExpression(L"null"); }
 			else { return ScriptExpression(L"error"); }
