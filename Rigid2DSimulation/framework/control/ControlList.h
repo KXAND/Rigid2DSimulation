@@ -2,8 +2,8 @@
 #include "Control.h"
 
 struct HorizontalControlList : Control {
-	vector<Control*> cs;
-	HorizontalControlList(vector<Control*> const& cs = {});
+	vector<Control*> controls;
+	HorizontalControlList(vector<Control*> const& controls = {});
 	int GetW() const override;
 	int GetH() const override;
 
@@ -13,8 +13,8 @@ struct HorizontalControlList : Control {
 };
 
 struct VerticalControlList : Control {
-	vector<Control*> cs;
-	VerticalControlList(vector<Control*> const& cs = {});
+	vector<Control*> controls;
+	VerticalControlList(vector<Control*> const& controls = {});
 	int GetW() const override;
 	int GetH() const override;
 

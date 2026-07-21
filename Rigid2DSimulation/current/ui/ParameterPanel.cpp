@@ -25,13 +25,13 @@ ParameterControlRow::ParameterControlRow(int id) {
 	valueControls = std::make_shared<HorizontalControlList>(tmp);
 	tmp = {};
 	separator = std::make_shared<HorizontalSeparator>(400);
-	cs = { &*nameControls, &*valueControls, &*separator };
+	controls = { &*nameControls, &*valueControls, &*separator };
 }
 void ParameterControlList::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
-	cs.clear();
+	controls.clear();
 	for (int i = (parameterRows.size()), iEnd = int(simulationApp.parameters.size()); i < iEnd; ++i) { parameterRows.push_back(std::make_shared<ParameterControlRow>(i)); }
-	for (int i = (0), iEnd = int(simulationApp.parameters.size()); i < iEnd; ++i) { cs.push_back(&*parameterRows[i]); }
+	for (int i = (0), iEnd = int(simulationApp.parameters.size()); i < iEnd; ++i) { controls.push_back(&*parameterRows[i]); }
 	for (int i = (simulationApp.parameters.size()), iEnd = int(parameterRows.size()); i < iEnd; ++i) { parameterRows[i]->Discard(app); }
 	VerticalControlList::Update(app);
 }

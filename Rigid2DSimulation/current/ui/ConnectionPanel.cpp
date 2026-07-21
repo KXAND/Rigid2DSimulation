@@ -30,15 +30,15 @@ void ConnectionEditorControls::Update(App& app) {
 	auto* selectedConnection = simulationApp.connectionSelecting;
 	if (selectedConnection != selectedConnection) {
 		selectedConnection = selectedConnection;
-		for (auto c : cs) { c->Discard(app); }
-		if (selectedConnection) { cs = { &*scriptEditor, &*actionButtons, &*separator }; }
-		else { cs = {}; }
+		for (auto c : controls) { c->Discard(app); }
+		if (selectedConnection) { controls = { &*scriptEditor, &*actionButtons, &*separator }; }
+		else { controls = {}; }
 	}
 	VerticalControlList::Update(app);
 }
 void ConnectionEditorControls::Discard(App& app) {
 	VerticalControlList::Discard(app);
-	selectedConnection = NULL; cs = {};
+	selectedConnection = NULL; controls = {};
 }
 
 void ConnectionDetailsLabel::Sync(App& app) {

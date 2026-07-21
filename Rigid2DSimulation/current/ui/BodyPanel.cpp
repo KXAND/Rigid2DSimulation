@@ -40,7 +40,7 @@ void SelectBodyConnectionCheckBox::Upload(App& app) const { auto& simulationApp 
 
 BodyConnectionControlRow::BodyConnectionControlRow(int id) {
 	selectCheckBox = std::make_shared<SelectBodyConnectionCheckBox>(id); connectionLabel = std::make_shared<BodyConnectionLabel>(id);
-	cs = { &*connectionLabel, &*selectCheckBox };
+	controls = { &*connectionLabel, &*selectCheckBox };
 }
 void BodyConnectionControlList::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
@@ -48,9 +48,9 @@ void BodyConnectionControlList::Update(App& app) {
 	for (int i = (connectionRows.size()), iEnd = int(selectedBody.connections.size()); i < iEnd; ++i) {
 		connectionRows.push_back(std::make_shared<BodyConnectionControlRow>(i));
 	}
-	cs.clear();
+	controls.clear();
 	for (int i = (0), iEnd = int(selectedBody.connections.size()); i < iEnd; ++i) {
-		cs.push_back(&*connectionRows[i]);
+		controls.push_back(&*connectionRows[i]);
 	}
 	for (int i = (selectedBody.connections.size()), iEnd = int(connectionRows.size()); i < iEnd; ++i) {
 		connectionRows[i]->Discard(app);
@@ -72,15 +72,15 @@ void BodyEditorControls::Update(App& app) {
 	auto* selectedBody = simulationApp.bodySelecting;
 	if (selectedBody != selectedBody) {
 		selectedBody = selectedBody;
-		for (auto c : cs) { c->Discard(app); }
-		if (selectedBody) { cs = { &*connectionList, &*scriptEditor, &*actionButtons, &*separator }; }
-		else { cs = {}; }
+		for (auto c : controls) { c->Discard(app); }
+		if (selectedBody) { controls = { &*connectionList, &*scriptEditor, &*actionButtons, &*separator }; }
+		else { controls = {}; }
 	}
 	VerticalControlList::Update(app);
 }
 void BodyEditorControls::Discard(App& app) {
 	VerticalControlList::Discard(app);
-	selectedBody = NULL; cs = {};
+	selectedBody = NULL; controls = {};
 }
 
 void BodyDetailsLabel::Sync(App& app) {
