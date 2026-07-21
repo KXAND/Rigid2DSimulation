@@ -5,28 +5,28 @@ ScriptStatement::ScriptStatement(wstring const& type) : type(type) {}
 wstring ToWString(ScriptStatement const& p) {
 	wstring tmp = p.type;
 	if (p.type == L"define") {
-		tmp += L":" + p.def_fun + L",(";
-		for (auto& s : p.def_pars) { tmp += s + L","; }
+		tmp += L":" + p.functionName + L",(";
+		for (auto& s : p.parameterNames) { tmp += s + L","; }
 		tmp += L"),{";
-		for (auto& pp : p.procs) { tmp += L"\n" + ToWString(pp) + L","; }
+		for (auto& pp : p.bodyStatements) { tmp += L"\n" + ToWString(pp) + L","; }
 		tmp += L"}";
 	}
 	else if (p.type == L"if") {
-		tmp += L":" + ToWString(p.if_con) + L",{";
-		for (auto& pp : p.if_procs) { tmp += L"\n" + ToWString(pp) + L","; }
+		tmp += L":" + ToWString(p.condition) + L",{";
+		for (auto& pp : p.thenStatements) { tmp += L"\n" + ToWString(pp) + L","; }
 		tmp += L"}{";
-		for (auto& pp : p.else_procs) { tmp += L"\n" + ToWString(pp) + L","; }
+		for (auto& pp : p.elseStatements) { tmp += L"\n" + ToWString(pp) + L","; }
 		tmp += L"}";
 	}
 	else if (p.type == L"while") {
-		tmp += L":" + ToWString(p.lp_con) + L",{";
-		for (auto& pp : p.lp) { tmp += L"\n" + ToWString(pp) + L","; }
+		tmp += L":" + ToWString(p.loopCondition) + L",{";
+		for (auto& pp : p.loopStatements) { tmp += L"\n" + ToWString(pp) + L","; }
 		tmp += L"}";
 	}
-	else if (p.type == L"return") { tmp += L":" + ToWString(p.ret); }
-	else if (p.type == L"single") { tmp += L":" + ToWString(p.single); }
+	else if (p.type == L"return") { tmp += L":" + ToWString(p.returnExpression); }
+	else if (p.type == L"single") { tmp += L":" + ToWString(p.expression); }
 	else if (p.type == L"assign") {
-		tmp += L":" + ToWString(p.left) + L"," + ToWString(p.right);
+		tmp += L":" + ToWString(p.leftExpression) + L"," + ToWString(p.rightExpression);
 	}
 	return tmp;
 }
@@ -36,32 +36,32 @@ ScriptStatement ParseDefinition(vector<BracketGroup> const& in) {
 	// 不想让这里的函数和参数也牵扯到 global 里面去，感觉完全不必要。
 	if (in[1].tk.type != L"var" || in[1].tk.isGlobal) { return ScriptStatement(L"error"); }
 	ScriptStatement p(L"define");
-	p.def_fun = in[1].tk.variableName;
+	p.functionName = in[1].tk.variableName;
 	bool comma = true;
 
 	for (auto const& b : in[2].bras) {
 		if (comma) {
-			p.def_pars.push_back(b.tk.variableName);
+			p.parameterNames.push_back(b.tk.variableName);
 			if (b.tk.type != L"var" || b.tk.isGlobal) { return ScriptStatement(L"error"); }
 		}
 		else if (b.tk.type != L",") { return ScriptStatement(L"error"); }
 		comma = !comma;
 	}
-	p.procs = ParseStatements(in[3].bras);
+	p.bodyStatements = ParseStatements(in[3].bras);
 	return p;
 }
 ScriptStatement ParseReturn(vector<BracketGroup> const& in) {
 	ScriptStatement p(L"return");
 	auto tmp = vector<BracketGroup>(in.begin() + 1, in.end());
-	p.ret = tmp.empty() ? ScriptExpression(L"null") : ParseExpression(tmp);
+	p.returnExpression = tmp.empty() ? ScriptExpression(L"null") : ParseExpression(tmp);
 	return p;
 }
 ScriptStatement ParseAssignment(vector<BracketGroup> const& in) {
 	ScriptStatement p(L"assign");
 	auto it = in.begin();
 	for (; it != in.end() && it->tk.type != L"="; ++it);
-	p.left = ParseExpression(vector<BracketGroup>(in.begin(), it));
-	p.right = ParseExpression(vector<BracketGroup>(it + 1, in.end()));
+	p.leftExpression = ParseExpression(vector<BracketGroup>(in.begin(), it));
+	p.rightExpression = ParseExpression(vector<BracketGroup>(it + 1, in.end()));
 	return p;
 }
 ScriptStatement ParseIf(vector<BracketGroup> const& in) {
@@ -69,12 +69,12 @@ ScriptStatement ParseIf(vector<BracketGroup> const& in) {
 	if (in[1].type != 1 || in[2].type != 2) { return ScriptStatement(L"error"); }
 
 	ScriptStatement p(L"if");
-	p.if_con = ParseExpression(in[1].bras);
-	p.if_procs = ParseStatements(in[2].bras);
+	p.condition = ParseExpression(in[1].bras);
+	p.thenStatements = ParseStatements(in[2].bras);
 	if (in.size() != 3) {
 		if (in.size() != 5) { return ScriptStatement(L"error"); }
 		if (in[3].tk.type != L"else" || in[4].type != 2) { return ScriptStatement(L"error"); }
-		p.else_procs = ParseStatements(in[4].bras);
+		p.elseStatements = ParseStatements(in[4].bras);
 	}
 	return p;
 }
@@ -82,8 +82,8 @@ ScriptStatement ParseWhile(vector<BracketGroup> const& in) {
 	if (in.size() != 3) { return ScriptStatement(L"error"); }
 	if (in[1].type != 1 || in[2].type != 2) { return ScriptStatement(L"error"); }
 	ScriptStatement p(L"while");
-	p.lp_con = ParseExpression(in[1].bras);
-	p.lp = ParseStatements(in[2].bras);
+	p.loopCondition = ParseExpression(in[1].bras);
+	p.loopStatements = ParseStatements(in[2].bras);
 	return p;
 }
 
@@ -97,7 +97,7 @@ ScriptStatement ParseStatement(vector<BracketGroup> const& in) {
 		if (b.tk.type == L"=") { return ParseAssignment(in); }
 	}
 	ScriptStatement p(L"single");
-	p.single = ParseExpression(in);
+	p.expression = ParseExpression(in);
 	return p;
 }
 vector<ScriptStatement> ParseStatements(vector<BracketGroup> const& in) {

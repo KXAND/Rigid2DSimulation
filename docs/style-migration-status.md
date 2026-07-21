@@ -67,6 +67,7 @@
 - 解析器表达式和运行时值的向量元素容器已迁移为 `elements`，并同步更新刚体脚本和场景构造读取点。
 - 运行时值的字符串索引映射已迁移为 `dictionary`，并同步更新配置读取与访问表达式求值。
 - 解析器访问表达式的被访问对象与索引字段已迁移为 `accessedExpression`、`indexExpression`；求值局部变量同步使用完整职责名称。
+- 解析器语句的返回、赋值、函数定义、条件分支与循环字段已迁移为完整 lower camel 名称；运行时函数体字段同步迁移为 `bodyStatements`。
 - `Camera` 的保存、投影计算和第一人称投影计算接口已迁移为 `Save`、`Calculate`、`CalculateFirstPerson`。
 - 基础数学工具的区间判断、截断、非负模和弧度归一接口已迁移为 PascalCase；数学常量已迁移为 `kPi`、`kEulerNumber`。
 - `AppInput`、`FrameRate` 与 `InputOwners` 的查询、生命周期和时间访问接口已迁移为 PascalCase；`dt`、`dur` 分别明确为 `GetDeltaTime`、`GetElapsedTime`，调用点已同步。

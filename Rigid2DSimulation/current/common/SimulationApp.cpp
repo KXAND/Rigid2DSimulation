@@ -133,7 +133,7 @@ void SimulationApp::Update()
 	if (currentScope.find(L"Update") != currentScope.end())
 	{
 		auto tmp = *currentScope[L"Update"];
-		Execute(currentScope, tmp.procs);
+		Execute(currentScope, tmp.bodyStatements);
 	}
 	
 	// ÒôÀÖ
@@ -450,7 +450,7 @@ void SimulationApp::UpdateBasicState()
 {
 	title = GetLocalizedString(L"title");
 	if (currentScope.find(L"cur.debugString") != currentScope.end()) { debugString = currentScope[L"cur.debugString"]->stringValue; }
-	if (currentScope.find(L"Update") != currentScope.end()) { auto file = currentScope[L"Update"];  Execute(currentScope, file->procs); }
+	if (currentScope.find(L"Update") != currentScope.end()) { auto file = currentScope[L"Update"];  Execute(currentScope, file->bodyStatements); }
 
 	// É¾³ý±ê¼ÇÎªÉ¾³ýµÄ¼ü
 	parameters.erase(

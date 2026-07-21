@@ -12,7 +12,7 @@ struct Value {
 	double number = 0;
 	wstring stringValue;
 	Function nativeFunction;
-	Program procs;
+	Program bodyStatements;
 	vector<wstring> arguments;
 	vector<std::shared_ptr<Value>> elements;
 	map<wstring, std::shared_ptr<Value>> dictionary;

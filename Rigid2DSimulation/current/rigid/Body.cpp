@@ -119,9 +119,9 @@ void Body::RefreshFromScript(SimulationApp& cur)
 	TryReadConfigNumber(body_cfg, L"hasPositionPreset", hasPositionPreset);
 	TryReadConfigNumber(body_cfg, L"hasAnglePreset", hasAnglePreset);
 	TryReadConfigNumber(body_cfg, L"hasAngularVelocityPreset", hasAngularVelocityPreset);
-	if (auto value = FindConfigValue(body_cfg, L"positionProgram")) { positionProgram = std::make_shared<Program>(value->procs); }
-	if (auto value = FindConfigValue(body_cfg, L"angleProgram")) { angleProgram = std::make_shared<Program>(value->procs); }
-	if (auto value = FindConfigValue(body_cfg, L"angularVelocityProgram")) { angularVelocityProgram = std::make_shared<Program>(value->procs); }
+	if (auto value = FindConfigValue(body_cfg, L"positionProgram")) { positionProgram = std::make_shared<Program>(value->bodyStatements); }
+	if (auto value = FindConfigValue(body_cfg, L"angleProgram")) { angleProgram = std::make_shared<Program>(value->bodyStatements); }
+	if (auto value = FindConfigValue(body_cfg, L"angularVelocityProgram")) { angularVelocityProgram = std::make_shared<Program>(value->bodyStatements); }
 	Init();
 }
 

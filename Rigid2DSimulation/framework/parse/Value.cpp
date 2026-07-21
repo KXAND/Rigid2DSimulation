@@ -11,7 +11,7 @@ Value::Value(wstring const& text) : stringValue(text) { type = L"ToString"; }
 Value::Value(Function const& nativeFunction) : nativeFunction(nativeFunction) { type = L"user"; }
 Value::Value(vector<std::shared_ptr<Value>> const& elements) : elements(elements) { type = L"vec"; }
 Value::Value(Program const& ps, vector<wstring>const& arguments) :
-	procs(ps), arguments(arguments)
+	bodyStatements(ps), arguments(arguments)
 {
 	type = L"fun";
 }
@@ -103,7 +103,7 @@ std::shared_ptr<Value> EvaluateCall(Scope& gl, Scope& sc, ScriptExpression const
 		localScope[functionValue->arguments[i]] = Evaluate(gl, sc, ex.arguments[i]);
 	}
 	bool ret = false;
-	return Execute(ret, gl, localScope, functionValue->procs);
+	return Execute(ret, gl, localScope, functionValue->bodyStatements);
 }
 std::shared_ptr<Value> EvaluateAccess(Scope& gl, Scope& sc, ScriptExpression const& ex)
 {
@@ -166,24 +166,24 @@ std::shared_ptr<Value> Execute(bool& ret, Scope& gl, Scope& sc, Program const& p
 {
 	for (auto const& p : ps)
 	{
-		if (p.type == L"single") { Evaluate(gl, sc, p.single); }
-		else if (p.type == L"return") { ret = true; return Evaluate(gl, sc, p.ret); }
+		if (p.type == L"single") { Evaluate(gl, sc, p.expression); }
+		else if (p.type == L"return") { ret = true; return Evaluate(gl, sc, p.returnExpression); }
 		else if (p.type == L"define")
 		{
-			*FindVariable(gl, sc, p.def_fun, false) = Value(p.procs, p.def_pars);
+			*FindVariable(gl, sc, p.functionName, false) = Value(p.bodyStatements, p.parameterNames);
 		}
-		else if (p.type == L"assign") { *Evaluate(gl, sc, p.left) = *Evaluate(gl, sc, p.right); }
+		else if (p.type == L"assign") { *Evaluate(gl, sc, p.leftExpression) = *Evaluate(gl, sc, p.rightExpression); }
 		else if (p.type == L"if")
 		{
-			auto& ps = Evaluate(gl, sc, p.if_con)->number ? p.if_procs : p.else_procs;
+			auto& ps = Evaluate(gl, sc, p.condition)->number ? p.thenStatements : p.elseStatements;
 			auto v = Execute(ret, gl, sc, ps);
 			if (ret) { return v; }
 		}
 		else if (p.type == L"while")
 		{
-			while (Evaluate(gl, sc, p.lp_con)->number)
+			while (Evaluate(gl, sc, p.loopCondition)->number)
 			{
-				auto v = Execute(ret, sc, gl, p.lp);
+				auto v = Execute(ret, sc, gl, p.loopStatements);
 				if (ret) { return v; }
 			}
 		}

@@ -4,18 +4,18 @@
 struct ScriptStatement {
 	wstring type = L"empty";
 	// assign, single, define, return, if, while
-	ScriptExpression ret;
-	ScriptExpression single;
-	ScriptExpression left, right;
+	ScriptExpression returnExpression;
+	ScriptExpression expression;
+	ScriptExpression leftExpression, rightExpression;
 
-	wstring def_fun;
-	vector<ScriptStatement> procs;
-	vector<wstring> def_pars;
+	wstring functionName;
+	vector<ScriptStatement> bodyStatements;
+	vector<wstring> parameterNames;
 
-	ScriptExpression lp_con;
-	vector<ScriptStatement> lp;
-	ScriptExpression if_con;
-	vector<ScriptStatement> if_procs, else_procs;
+	ScriptExpression loopCondition;
+	vector<ScriptStatement> loopStatements;
+	ScriptExpression condition;
+	vector<ScriptStatement> thenStatements, elseStatements;
 
 	ScriptStatement() = default;
 	ScriptStatement(wstring const& type);
