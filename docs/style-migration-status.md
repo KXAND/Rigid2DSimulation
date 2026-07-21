@@ -30,6 +30,8 @@
 - `UserInterface` 的面板成员已从 `fpn_*`、`pn_*` 迁移为 lower camel；资源字符串键保持原样。
 - `BodyPanel` 的选择对象、脚本编辑器、连接行、动作按钮和布局成员已迁移为 lower camel 职责名称。
 - `ConnectionPanel` 的选中连接、脚本编辑器、动作按钮、详情标签和布局成员已迁移为 lower camel 职责名称。
+- `GlobalPanel`、`MenuPanel` 及命令、语言、底部状态、关于面板的成员已迁移为 lower camel 职责名称。
+- Win32 消息分发函数和 `framework/basic` 项目工具函数已迁移为 PascalCase；标准库和 C 库接口保持原拼写。
 - 已完成的提交保持文件改名、类型名改名、宏替换和纯排版互相分离。
 
 ## 3. 下一批
