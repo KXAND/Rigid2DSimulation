@@ -51,13 +51,13 @@ wstring RichTextBox::GetRightText() const {
 	auto b = value.end();
 	return wstring(a, b);
 }
-int RichTextBox::GetEditBegin() const { return min(edit_a, edit_b); }
-int RichTextBox::GetEditEnd() const { return max(edit_a, edit_b); }
-bool RichTextBox::HasSelection() const { return edit_a != edit_b; }
+int RichTextBox::GetEditBegin() const { return min(selectionStart, selectionEnd); }
+int RichTextBox::GetEditEnd() const { return max(selectionStart, selectionEnd); }
+bool RichTextBox::HasSelection() const { return selectionStart != selectionEnd; }
 int RichTextBox::GetMaxCursorX() const { return w - edit_mg.x; }
 int RichTextBox::GetMaxCursorY() const { return h - edit_mg.y; }
 DVector2 RichTextBox::GetCursorPosition(App& app) const {
-	wstring tmp(value.begin(), value.begin() + edit_b);
+	wstring tmp(value.begin(), value.begin() + selectionEnd);
 	int x = 0; DVector2 p = GetStringSize(tmp, app.ft, lineWidth, &x);
 	p.x = x; p.y -= app.ft.h;
 	return (DVector2)tl_str_rel + p;
@@ -66,16 +66,16 @@ DVector2 RichTextBox::GetCursorPosition(App& app) const {
 void RichTextBox::SelectStart(App& app) {
 	selecting = true;
 	DVector2 p = app.input.msp - (tl + (DVector2)tl_str_rel);
-	edit_a = edit_b = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
+	selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
 	UpdateCursorXHistory(app);
 }
 void RichTextBox::SelectEnd(App& app) {
 	DVector2 p = app.input.msp - (tl + (DVector2)tl_str_rel);
-	edit_b = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
+	selectionEnd = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
 	UpdateCursorXHistory(app);
 }
 void RichTextBox::UpdateCursorXHistory(App& app) {
-	auto s = wstring(value.begin(), value.begin() + edit_b);
+	auto s = wstring(value.begin(), value.begin() + selectionEnd);
 	int tmp = 0; GetStringSize(s, app.ft, lineWidth, &tmp);
 	x_cs_rel_hist = tmp;
 }
@@ -85,7 +85,7 @@ void RichTextBox::AddCharacters(App& app) {
 	if (!sifted.empty()) {
 		selecting = false;
 		value = GetLeftText() + sifted + GetRightText();
-		edit_a = edit_b = GetEditBegin() + sifted.size();
+		selectionStart = selectionEnd = GetEditBegin() + sifted.size();
 		UpdateCursorXHistory(app);
 	}
 }
@@ -93,45 +93,45 @@ void RichTextBox::HandleLeft(App& app) {
 	selecting = false;
 	cursor_change = true;
 
-	if (HasSelection()) { edit_a = edit_b = GetEditBegin(); }
+	if (HasSelection()) { selectionStart = selectionEnd = GetEditBegin(); }
 	else {
-		if (--edit_a < 0) { edit_a = 0; }
-		edit_b = edit_a;
+		if (--selectionStart < 0) { selectionStart = 0; }
+		selectionEnd = selectionStart;
 	} UpdateCursorXHistory(app);
 }
 void RichTextBox::HandleRight(App& app) {
 	selecting = false;
 	cursor_change = true;
 
-	if (HasSelection()) { edit_a = edit_b = GetEditEnd(); }
+	if (HasSelection()) { selectionStart = selectionEnd = GetEditEnd(); }
 	else {
 		// 下面不要减一。
-		if (++edit_a > value.size()) { edit_a = value.size(); }
-		edit_b = edit_a;
+		if (++selectionStart > value.size()) { selectionStart = value.size(); }
+		selectionEnd = selectionStart;
 	} UpdateCursorXHistory(app);
 }
 void RichTextBox::HandleUp(App& app) {
 	selecting = false;
 	cursor_change = true;
 
-	if (HasSelection()) { edit_a = edit_b = GetEditBegin(); }
+	if (HasSelection()) { selectionStart = selectionEnd = GetEditBegin(); }
 	else {
-		wstring tmp(value.begin(), value.begin() + edit_b);
+		wstring tmp(value.begin(), value.begin() + selectionEnd);
 		int y = GetStringSize(tmp, app.ft, lineWidth).y - 2 * app.ft.h;
 		DVector2 p(x_cs_rel_hist, y);
-		edit_a = edit_b = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
+		selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
 	}
 }
 void RichTextBox::HandleDown(App& app) {
 	selecting = false;
 	cursor_change = true;
 
-	if (HasSelection()) { edit_a = edit_b = GetEditEnd(); }
+	if (HasSelection()) { selectionStart = selectionEnd = GetEditEnd(); }
 	else {
-		wstring tmp(value.begin(), value.begin() + edit_b);
+		wstring tmp(value.begin(), value.begin() + selectionEnd);
 		int y = GetStringSize(tmp, app.ft, lineWidth).y;
 		DVector2 p(x_cs_rel_hist, y);
-		edit_a = edit_b = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
+		selectionStart = selectionEnd = GetStringIndexAtPosition(value, app.ft, p, lineWidth);
 	}
 }
 void RichTextBox::HandleBackspace(App& app) {
@@ -140,12 +140,12 @@ void RichTextBox::HandleBackspace(App& app) {
 
 	if (HasSelection()) {
 		value = GetLeftText() + GetRightText();
-		edit_a = edit_b = GetEditBegin();
+		selectionStart = selectionEnd = GetEditBegin();
 	} else if (GetEditBegin() > 0) {
 		auto a = value.begin();
-		auto b = value.begin() + edit_a - 1;
+		auto b = value.begin() + selectionStart - 1;
 		value = wstring(a, b) + GetRightText();
-		edit_b = --edit_a;
+		selectionEnd = --selectionStart;
 	} UpdateCursorXHistory(app);
 }
 void RichTextBox::HandleDelete(App& app) {
@@ -154,9 +154,9 @@ void RichTextBox::HandleDelete(App& app) {
 
 	if (HasSelection()) {
 		value = GetLeftText() + GetRightText();
-		edit_a = edit_b = GetEditBegin();
+		selectionStart = selectionEnd = GetEditBegin();
 	} else if (GetEditEnd() < value.size()) {
-		auto a = value.begin() + edit_a + 1;
+		auto a = value.begin() + selectionStart + 1;
 		auto b = value.end();
 		value = GetLeftText() + wstring(a, b);
 	}
@@ -167,7 +167,7 @@ void RichTextBox::HandleCut(App& app) {
 	selecting = false;
 	SetClipboard(GetSelectedText());
 	value = GetLeftText() + GetRightText();
-	edit_a = edit_b = GetEditBegin();
+	selectionStart = selectionEnd = GetEditBegin();
 	UpdateCursorXHistory(app);
 }
 void RichTextBox::HandleCopy(App& app) { SetClipboard(GetSelectedText()); }
@@ -175,12 +175,12 @@ void RichTextBox::HandlePaste(App& app) {
 	selecting = false;
 	wstring sifted = FilterCharacters(GetClipboard(), false);
 	value = GetLeftText() + sifted + GetRightText();
-	edit_a = edit_b = GetEditBegin() + sifted.size();
+	selectionStart = selectionEnd = GetEditBegin() + sifted.size();
 	UpdateCursorXHistory(app);
 }
 void RichTextBox::HandleSelectAll(App& app) {
 	selecting = false;
-	edit_a = 0; edit_b = value.size();
+	selectionStart = 0; selectionEnd = value.size();
 	UpdateCursorXHistory(app);
 }
 void RichTextBox::HandleKey(App& app) {
@@ -277,7 +277,7 @@ void RichTextBox::Update(App& app) {
 		if (!enabled || !hovered && app.input.isMouseClickedDown(0)) {
 			// 请注意 kb_owner 的登记在 PreUpdate 中进行。
 			app.own.ReleaseKeyboard(this); edit = selecting = false;
-			edit_a = edit_b = 0; x_cs_rel_hist = 0;
+			selectionStart = selectionEnd = 0; x_cs_rel_hist = 0;
 		}
 	} else {
 		Sync(app);
@@ -293,7 +293,7 @@ void RichTextBox::Update(App& app) {
 void RichTextBox::Discard(App& app) {
 	app.own.remove(this); app.own.ReleaseKeyboard(this);
 	edit = hovered = false; selecting = false;
-	edit_a = edit_b = 0; x_cs_rel_hist = 0;
+	selectionStart = selectionEnd = 0; x_cs_rel_hist = 0;
 }
 void RichTextBox::PreUpdate(App& app) {
 	if (edit) { app.own.keyboardOwner = this; }

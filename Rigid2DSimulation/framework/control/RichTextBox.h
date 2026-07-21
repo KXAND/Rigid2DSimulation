@@ -21,7 +21,7 @@ struct RichTextBox : Control {
 
 	wstring value;
 	Vector2 tl_str_rel;
-	int edit_a = 0, edit_b = 0;
+	int selectionStart = 0, selectionEnd = 0;
 	// 下面的 rel 是相对于 tl_str_rel 的。
 	int x_cs_rel_hist = 0;
 
