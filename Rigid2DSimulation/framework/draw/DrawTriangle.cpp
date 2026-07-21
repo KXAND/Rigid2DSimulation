@@ -42,7 +42,7 @@ bool ClipTriangleAtHorizontalBoundary(Tile& targetTile, DepthBuffer& zBuffer,
         middleLastIntersection.y = boundary;
         middleLastIntersection.x += (middlePoint.x - lastPoint.x)
             * (boundary - lastPoint.y) / (middlePoint.y - lastPoint.y);
-        drawTriangle(targetTile, zBuffer, viewPort, firstLastIntersection,
+        DrawTriangle(targetTile, zBuffer, viewPort, firstLastIntersection,
             middleLastIntersection, lastPoint, depth, color);
         return true;
     }
@@ -51,15 +51,15 @@ bool ClipTriangleAtHorizontalBoundary(Tile& targetTile, DepthBuffer& zBuffer,
     firstMiddleIntersection.y = boundary;
     firstMiddleIntersection.x += (firstPoint.x - middlePoint.x)
         * (boundary - middlePoint.y) / (firstPoint.y - middlePoint.y);
-    drawTriangle(targetTile, zBuffer, viewPort, firstLastIntersection,
+    DrawTriangle(targetTile, zBuffer, viewPort, firstLastIntersection,
         middlePoint, lastPoint, depth, color);
-    drawTriangle(targetTile, zBuffer, viewPort, firstLastIntersection,
+    DrawTriangle(targetTile, zBuffer, viewPort, firstLastIntersection,
         middlePoint, firstMiddleIntersection, depth, color);
     return true;
 }
 }
 
-void subDrawTriangle(Tile& dest, DepthBuffer& zBuffer,
+void DrawTriangleHalf(Tile& dest, DepthBuffer& zBuffer,
 	DVector2 pa, DVector2 pb, DVector2 pc, double depth, Color color, bool same_y)
 {
 	// 假设 pa, pb, pc  已经交换过了。
@@ -78,7 +78,7 @@ void subDrawTriangle(Tile& dest, DepthBuffer& zBuffer,
 		}
 	}
 }
-void drawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
+void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
 	DVector2 pa, DVector2 pb, DVector2 pc, double depth, Color color)
 {
 	// 如果可以让这里写得好看有条理，容易修改且不容易出 bug 就好了。
@@ -135,12 +135,12 @@ void drawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
 	DVector2 pd = pb;
 	pd.x = pa.x * (pb.y - pc.y) + pc.x * (pa.y - pb.y); pd.x /= pa.y - pc.y;
 	// @ques：不是很理解这里问什么要做两遍
-	subDrawTriangle(targetTile, zBuffer, pa, pb, pd, depth, color, y_big);
-	subDrawTriangle(targetTile, zBuffer, pc, pb, pd, depth, color, y_big);
+	DrawTriangleHalf(targetTile, zBuffer, pa, pb, pd, depth, color, y_big);
+	DrawTriangleHalf(targetTile, zBuffer, pc, pb, pd, depth, color, y_big);
 }
-void drawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
+void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewPort,
 	Vector2 pa, Vector2 pb, Vector2 pc, double depth, Color color)
 {
-	drawTriangle(targetTile, zBuffer, viewPort, (DVector2) pa, (DVector2) pb, (DVector2) pc, depth, color);
+	DrawTriangle(targetTile, zBuffer, viewPort, (DVector2) pa, (DVector2) pb, (DVector2) pc, depth, color);
 }
 

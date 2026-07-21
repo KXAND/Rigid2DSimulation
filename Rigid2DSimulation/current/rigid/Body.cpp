@@ -323,7 +323,7 @@ void Body::Render(SimulationApp& cur) const
 		for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
 		{
 			int j = (i + 1) % shape->vertices.size();
-			drawTriangle(cur.screen, cur.depthBuffer, cur.background->ViewPort(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
+			DrawTriangle(cur.screen, cur.depthBuffer, cur.background->ViewPort(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
 		}
 		for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
 		{
