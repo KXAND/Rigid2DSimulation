@@ -39,13 +39,13 @@ struct FloatPanel {
 	bool closeButtonEnabled = true;
 
 	FloatPanel();
-	FloatPanel(App& app, int _w, int _h);
+	FloatPanel(App& app, int width, int height);
 
 	int GetMinY() const;
 	DRect GetVisibleViewport(App& app) const;
 	DVector2 GetCloseTopLeft() const;
-	void SetControl(App& app, Control* _c);
-	void SetTopLeft(App& app, DVector2 const& p);
+	void SetControl(App& app, Control* newContentControl);
+	void SetTopLeft(App& app, DVector2 const& topLeft);
 	void InitializeControl(App& app);
 	void InitializeScrollBar();
 
@@ -70,6 +70,6 @@ struct LocalizedFloatPanel : FloatPanel {
 	void Update(App& app) override;
 };
 
-bool CompareFloatPanels(FloatPanel* const fp0, FloatPanel* const fp1);
+bool CompareFloatPanels(FloatPanel* const firstPanel, FloatPanel* const secondPanel);
 
 

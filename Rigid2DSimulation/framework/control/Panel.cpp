@@ -15,42 +15,42 @@ Panel::Panel() {
 }
 // 菜单按钮的宽度: 150.
 Panel Panel::CreateMenuPanel(App& app) {
-	Panel pn;
-	pn.w = 169;
-	pn.h = app.h - 40;
-	pn.visibleHeight = pn.h - 20;
+	Panel panel;
+	panel.w = 169;
+	panel.h = app.h - 40;
+	panel.visibleHeight = panel.h - 20;
 
-	DRect tmp;
-	tmp.topLeftPosition = DVector2(10 - 2, 10 - 2);
-	tmp.w = pn.w - 20 + 4;
-	tmp.h = pn.h - 20 + 4;
-	pn.contentViewport = tmp; return pn;
+	DRect contentViewportRelative;
+	contentViewportRelative.topLeftPosition = DVector2(10 - 2, 10 - 2);
+	contentViewportRelative.w = panel.w - 20 + 4;
+	contentViewportRelative.h = panel.h - 20 + 4;
+	panel.contentViewport = contentViewportRelative; return panel;
 }
 Panel Panel::CreateBottomPanel(App& app) {
-	Panel pn;
-	pn.w = app.w;
-	pn.h = 40;
-	pn.tl.y = app.h - pn.h;
-	pn.visibleHeight = pn.h;
+	Panel panel;
+	panel.w = app.w;
+	panel.h = 40;
+	panel.tl.y = app.h - panel.h;
+	panel.visibleHeight = panel.h;
 
-	DRect tmp;
-	tmp.topLeftPosition = DVector2(10 - 2, 10 - 2);
-	tmp.w = pn.w - 20 + 4;
-	tmp.h = pn.h - 20 + 4;
-	pn.contentViewport = tmp; return pn;
+	DRect contentViewportRelative;
+	contentViewportRelative.topLeftPosition = DVector2(10 - 2, 10 - 2);
+	contentViewportRelative.w = panel.w - 20 + 4;
+	contentViewportRelative.h = panel.h - 20 + 4;
+	panel.contentViewport = contentViewportRelative; return panel;
 }
 
 int Panel::GetMinY() const {
 	return tl.y + contentOffset.y + visibleHeight - contentControl->GetH();
 }
 DRect Panel::GetVisibleViewport(App& app) const {
-	DRect vp = contentViewport;
-	vp.topLeftPosition += tl; return getOverlapRect(app.scr.Rect(), vp);
+	DRect visibleViewport = contentViewport;
+	visibleViewport.topLeftPosition += tl; return getOverlapRect(app.scr.Rect(), visibleViewport);
 }
-void Panel::SetControl(App& app, Control* _c) {
-	if (contentControl != _c) {
+void Panel::SetControl(App& app, Control* newContentControl) {
+	if (contentControl != newContentControl) {
 		if (contentControl) { contentControl->Discard(app); }
-		if (contentControl = _c) {
+		if (contentControl = newContentControl) {
 			contentControl->tl = tl + contentOffset;
 			contentControl->vp = GetVisibleViewport(app);
 		} scrollBar->contentControl = contentControl;
@@ -81,9 +81,9 @@ void Panel::Update(App& app) {
 	wheeled = (app.own.wheeled == this);
 
 	if (hasOverflow) {
-		int cy = contentControl->tl.y;
-		if (wheeled) { cy += app.input.msw * wheelMultiplier; }
-		contentControl->tl.y = clamp(cy, GetMinY(), tl.y + contentOffset.y);
+		int contentY = contentControl->tl.y;
+		if (wheeled) { contentY += app.input.msw * wheelMultiplier; }
+		contentControl->tl.y = clamp(contentY, GetMinY(), tl.y + contentOffset.y);
 	}
 	else if (contentControl) { contentControl->tl.y = tl.y + contentOffset.y; }
 
@@ -99,13 +99,13 @@ void Panel::Discard(App& app) {
 	if (contentControl) { contentControl->Discard(app); }
 }
 void Panel::PreUpdate(App& app) {
-	bool ok = app.own.hoveredDepth <= depth &&
+	bool canOwnInput = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
-	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
+	if (canOwnInput) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 
-	ok = app.own.wheeledDepth <= depth &&
+	canOwnInput = app.own.wheeledDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
-	if (ok) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
+	if (canOwnInput) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
 
 	if (contentControl) { contentControl->PreUpdate(app); }
 	if (useScrollBar) { scrollBar->PreUpdate(app); }

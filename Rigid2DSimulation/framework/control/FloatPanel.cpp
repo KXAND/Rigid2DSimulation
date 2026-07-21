@@ -34,47 +34,47 @@ FloatPanel::FloatPanel() {
 	closeButtonHoveredColor = { 20, 20, 255 };
 	closeButtonInvalidColor = { 255, 255, 255 };
 }
-FloatPanel::FloatPanel(App& app, int _w, int _h) : FloatPanel() {
-	w = _w; h = _h;
+FloatPanel::FloatPanel(App& app, int width, int height) : FloatPanel() {
+	w = width; h = height;
 	tl = DVector2(app.scr.width - w, app.scr.height - h) / 2;
 	visibleHeight = h - 50; useScrollBar = true;
 
-	DRect tmp;
-	tmp.topLeftPosition = DVector2(10 - 2, 40 - 2);
-	tmp.w = w - 40 + 4;
-	tmp.h = h - 50 + 4;
-	contentViewport = tmp;
+	DRect contentViewportRelative;
+	contentViewportRelative.topLeftPosition = DVector2(10 - 2, 40 - 2);
+	contentViewportRelative.w = w - 40 + 4;
+	contentViewportRelative.h = h - 50 + 4;
+	contentViewport = contentViewportRelative;
 }
 
 int FloatPanel::GetMinY() const {
 	return tl.y + contentOffset.y + visibleHeight - contentControl->GetH();
 }
 DRect FloatPanel::GetVisibleViewport(App& app) const {
-	DRect vp = contentViewport;
-	vp.topLeftPosition += tl; return getOverlapRect(app.scr.Rect(), vp);
+	DRect visibleViewport = contentViewport;
+	visibleViewport.topLeftPosition += tl; return getOverlapRect(app.scr.Rect(), visibleViewport);
 }
 DVector2 FloatPanel::GetCloseTopLeft() const {
 	int closeX = w - closeButtonMargin - closeButtonSize;
 	int closeY = (titleBarHeight - closeButtonSize) / 2;
 	return tl + DVector2(closeX, closeY);
 }
-void FloatPanel::SetControl(App& app, Control* _c) {
-	if (contentControl != _c) {
+void FloatPanel::SetControl(App& app, Control* newContentControl) {
+	if (contentControl != newContentControl) {
 		if (contentControl) { contentControl->Discard(app); }
-		if (contentControl = _c) {
+		if (contentControl = newContentControl) {
 			contentControl->tl = tl + contentOffset;
 			contentControl->vp = GetVisibleViewport(app);
 		} scrollBar->contentControl = contentControl;
 	}
 }
-void FloatPanel::SetTopLeft(App& app, DVector2 const& p) {
+void FloatPanel::SetTopLeft(App& app, DVector2 const& topLeft) {
 	if (contentControl) {
-		contentControl->tl += p - tl;
+		contentControl->tl += topLeft - tl;
 		// 在调用 GetVisibleViewport 之前需要先更新 tl。
-		tl = p; contentControl->vp = GetVisibleViewport(app);
+		tl = topLeft; contentControl->vp = GetVisibleViewport(app);
 	}
-	scrollBar->tl = p + DVector2(w - scrollBar->w, titleBarHeight);
-	scrollBar->visibleTop = p.y + contentOffset.y;
+	scrollBar->tl = topLeft + DVector2(w - scrollBar->w, titleBarHeight);
+	scrollBar->visibleTop = topLeft.y + contentOffset.y;
 }
 void FloatPanel::InitializeControl(App& app) {
 	if (contentControl) {
@@ -98,9 +98,9 @@ void FloatPanel::HandleCaption(App& app) {
 	titleBarHovered = hovered && !closeButtonHovered && isInside(app.input.msp, { tl, w, titleBarHeight });
 
 	if (titleBarDragged) {
-		DVector2 tmp = tl + app.input.msp - app.input.msp_old;
-		tmp.x = clamp(tmp.x, 0, app.scr.width - w);
-		tmp.y = clamp(tmp.y, 0, app.scr.height - titleBarHeight); SetTopLeft(app, tmp);
+		DVector2 newTopLeft = tl + app.input.msp - app.input.msp_old;
+		newTopLeft.x = clamp(newTopLeft.x, 0, app.scr.width - w);
+		newTopLeft.y = clamp(newTopLeft.y, 0, app.scr.height - titleBarHeight); SetTopLeft(app, newTopLeft);
 		titleBarDragged = app.input.msd[0];
 	}
 	else { titleBarDragged = titleBarHovered && app.input.isMouseClickedDown(0); }
@@ -113,9 +113,9 @@ void FloatPanel::HandleCaption(App& app) {
 }
 void FloatPanel::HandleWheelAndClampContent(App& app) {
 	if (hasOverflow) {
-		int cy = contentControl->tl.y;
-		if (wheeled) { cy += app.input.msw * wheelMultiplier; }
-		contentControl->tl.y = clamp(cy, GetMinY(), tl.y + contentOffset.y);
+		int contentY = contentControl->tl.y;
+		if (wheeled) { contentY += app.input.msw * wheelMultiplier; }
+		contentControl->tl.y = clamp(contentY, GetMinY(), tl.y + contentOffset.y);
 	}
 	else if (contentControl) { contentControl->tl.y = tl.y + contentOffset.y; }
 }
@@ -175,13 +175,13 @@ void FloatPanel::Discard(App& app) {
 }
 void FloatPanel::PreUpdate(App& app) {
 	if (!shown) return;
-	bool ok = app.own.hoveredDepth <= depth &&
+	bool canOwnInput = app.own.hoveredDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
-	if (ok) { app.own.hoveredDepth = depth; app.own.hovered = this; }
+	if (canOwnInput) { app.own.hoveredDepth = depth; app.own.hovered = this; }
 
-	ok = app.own.wheeledDepth <= depth &&
+	canOwnInput = app.own.wheeledDepth <= depth &&
 		isInside(app.input.msp, { tl, w, h }) && isInside(app.input.msp, app.scr.Rect());
-	if (ok) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
+	if (canOwnInput) { app.own.wheeledDepth = depth; app.own.wheeled = this; }
 
 	if (contentControl) { contentControl->PreUpdate(app); }
 	if (useScrollBar) { scrollBar->PreUpdate(app); }
@@ -193,8 +193,8 @@ void LocalizedFloatPanel::Update(App& app) {
 	title = app.getLocalizedString(titleLocalizationId); FloatPanel::Update(app);
 }
 
-bool CompareFloatPanels(FloatPanel* const fp0, FloatPanel* const fp1) {
-	return fp0->lastClickTime < fp1->lastClickTime;
+bool CompareFloatPanels(FloatPanel* const firstPanel, FloatPanel* const secondPanel) {
+	return firstPanel->lastClickTime < secondPanel->lastClickTime;
 }
 
 

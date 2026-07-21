@@ -30,7 +30,7 @@ struct Panel {
 	int GetMinY() const;
 	DRect GetVisibleViewport(App& app) const;
 	// 不用 delegate 而用专门的 SetControl 主要是希望能重置滚动。
-	void SetControl(App& app, Control* _c);
+	void SetControl(App& app, Control* newContentControl);
 	void InitializeControl(App& app);
 	void InitializeScrollBar();
 	void Render(App& app);
