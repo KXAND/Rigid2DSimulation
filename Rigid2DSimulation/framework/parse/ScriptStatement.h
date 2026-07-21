@@ -2,23 +2,23 @@
 #include "ScriptExpression.h"
 
 struct ScriptStatement {
-	wstring type = L"empty";
-	// assign, single, define, return, if, while
-	ScriptExpression returnExpression;
-	ScriptExpression expression;
-	ScriptExpression leftExpression, rightExpression;
+    wstring type = L"empty";
+    // assign, single, define, return, if, while
+    ScriptExpression returnExpression;
+    ScriptExpression expression;
+    ScriptExpression leftExpression, rightExpression;
 
-	wstring functionName;
-	vector<ScriptStatement> bodyStatements;
-	vector<wstring> parameterNames;
+    wstring functionName;
+    vector<ScriptStatement> bodyStatements;
+    vector<wstring> parameterNames;
 
-	ScriptExpression loopCondition;
-	vector<ScriptStatement> loopStatements;
-	ScriptExpression condition;
-	vector<ScriptStatement> thenStatements, elseStatements;
+    ScriptExpression loopCondition;
+    vector<ScriptStatement> loopStatements;
+    ScriptExpression condition;
+    vector<ScriptStatement> thenStatements, elseStatements;
 
-	ScriptStatement() = default;
-	ScriptStatement(wstring const& type);
+    ScriptStatement() = default;
+    ScriptStatement(wstring const& type);
 };
 wstring ToWString(ScriptStatement const& statement);
 
