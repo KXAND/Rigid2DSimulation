@@ -1,5 +1,5 @@
 #include "fpn_about.h"
-#include "simulation_app.h"
+#include "SimulationApp.h"
 
 
 FPnAbout::FPnAbout(App& app) : FPnLan(app, 600, 540, L"fpn_about") {

@@ -1,5 +1,5 @@
 #include "pn_bottom.h"
-#include "simulation_app.h"
+#include "SimulationApp.h"
 
 LbFPS::LbFPS() { w = 450; fixed_w = true; }
 void LbFPS::Sync(App& app) {

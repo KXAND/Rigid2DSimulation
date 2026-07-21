@@ -1,6 +1,6 @@
 #include "fpn_lang.h"
 #include "ui.h"
-#include "simulation_app.h"
+#include "SimulationApp.h"
 
 
 BtChi::BtChi() : Button(150) { txt = L"жпнд"; }

@@ -1,5 +1,5 @@
 #include "fpn_cmd.h"
-#include "simulation_app.h"
+#include "SimulationApp.h"
 #include "Value.h"
 
 RTbCmd::RTbCmd() : RichTextbox(560, 500) {}

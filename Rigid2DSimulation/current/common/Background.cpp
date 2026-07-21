@@ -1,5 +1,5 @@
-#include "background.h"
-#include "simulation_app.h"
+#include "Background.h"
+#include "SimulationApp.h"
 #include "draw_str.h"
 #include "draw_tile.h"
 

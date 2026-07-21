@@ -1,6 +1,6 @@
 #include "pn_menu.h"
 #include "ui.h"
-#include "simulation_app.h"
+#include "SimulationApp.h"
 #include "fpn_global.h"
 #include "fpn_body.h"
 #include "fpn_con.h"

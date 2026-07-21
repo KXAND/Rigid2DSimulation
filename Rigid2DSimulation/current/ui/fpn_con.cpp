@@ -1,5 +1,5 @@
 #include "fpn_con.h"
-#include "simulation_app.h"
+#include "SimulationApp.h"
 #include "connection.h"
 
 RTbCon::RTbCon() : RichTextbox(360, 400) {}

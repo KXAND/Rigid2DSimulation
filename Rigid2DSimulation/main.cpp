@@ -1,4 +1,4 @@
-#include "simulation_app.h"
+#include "SimulationApp.h"
 
 int main() {
 	SimulationApp().Run();

@@ -1,4 +1,4 @@
-#include "scene_parameter.h"
+#include "SceneParameter.h"
 
 SceneParameter::SceneParameter(wstring const& name) : name(name) {}
 void SceneParameter::Save(FILE* file) {

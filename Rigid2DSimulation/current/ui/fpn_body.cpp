@@ -1,5 +1,5 @@
 #include "fpn_body.h"
-#include "simulation_app.h"
+#include "SimulationApp.h"
 #include "body.h"
 #include "connection.h"
 

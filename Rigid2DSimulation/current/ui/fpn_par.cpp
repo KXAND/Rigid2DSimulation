@@ -1,6 +1,6 @@
 #include "fpn_par.h"
-#include "simulation_app.h"
-#include "scene_parameter.h"
+#include "SimulationApp.h"
+#include "SceneParameter.h"
 
 TbParNm::TbParNm(int id) : id(id), Textbox(270) {};
 void TbParNm::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.parameters[id]->name; }

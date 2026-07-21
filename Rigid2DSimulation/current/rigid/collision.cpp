@@ -1,6 +1,6 @@
 #include "collision.h"
-#include "simulation_app.h"
-#include "background.h"
+#include "SimulationApp.h"
+#include "Background.h"
 #include "body.h"
 #include "shape.h"
 #include "draw_geo.h"

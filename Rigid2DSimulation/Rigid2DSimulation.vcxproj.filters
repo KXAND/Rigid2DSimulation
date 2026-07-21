@@ -166,13 +166,13 @@
     <ClCompile Include="current\ui\ui.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
-    <ClCompile Include="current\common\background.cpp">
+    <ClCompile Include="current\common\Background.cpp">
       <Filter>current\common</Filter>
     </ClCompile>
-    <ClCompile Include="current\common\simulation_app.cpp">
+    <ClCompile Include="current\common\SimulationApp.cpp">
       <Filter>current\common</Filter>
     </ClCompile>
-    <ClCompile Include="current\common\scene_parameter.cpp">
+    <ClCompile Include="current\common\SceneParameter.cpp">
       <Filter>current\common</Filter>
     </ClCompile>
     <ClCompile Include="framework\draw\draw_tri.cpp">
@@ -348,13 +348,13 @@
     <ClInclude Include="current\ui\ui.h">
       <Filter>current\ui</Filter>
     </ClInclude>
-    <ClInclude Include="current\common\background.h">
+    <ClInclude Include="current\common\Background.h">
       <Filter>current\common</Filter>
     </ClInclude>
-    <ClInclude Include="current\common\simulation_app.h">
+    <ClInclude Include="current\common\SimulationApp.h">
       <Filter>current\common</Filter>
     </ClInclude>
-    <ClInclude Include="current\common\scene_parameter.h">
+    <ClInclude Include="current\common\SceneParameter.h">
       <Filter>current\common</Filter>
     </ClInclude>
     <ClInclude Include="framework\draw\draw_tri.h">
@@ -378,7 +378,7 @@
     <ClInclude Include="framework\draw\draw_curve.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
-    <ClInclude Include="current\common\utils.h">
+    <ClInclude Include="current\common\Utils.h">
       <Filter>current\common</Filter>
     </ClInclude>
     <ClInclude Include="current\rigid\scene_builders.h">

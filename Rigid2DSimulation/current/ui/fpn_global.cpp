@@ -1,6 +1,6 @@
 #include "fpn_global.h"
 #include "ui.h"
-#include "simulation_app.h"
+#include "SimulationApp.h"
 #include "creator.h"
 
 
