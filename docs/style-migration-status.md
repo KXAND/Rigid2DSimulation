@@ -50,6 +50,7 @@
 - `SimulationApp` 的构造函数已按初始化阶段采用 4 空格缩进和逻辑空行；音量与模拟时间状态已迁移为 `volume`、`simulationTime`，DSL 键保持不变。
 - `AudioClip` 的采样率、样本、播放位置、循环标志、文件名和加载状态已迁移为完整 lower camel；其接口已统一为 PascalCase。
 - `Font` 的加载、初始化和随机文本生成接口已迁移为 `LoadFont`、`Initialize`、`GenerateRandomText`；应用初始化调用点已同步。
+- `Vector3::near_zero` 已迁移为 PascalCase 的 `IsNearZero`，不改变其数值判定逻辑。
 - `WaveBlock`、`WaveOutput` 及 `App::waveOutput` 的音频输出字段和接口已迁移为完整 lower camel 与 PascalCase，并同步更新应用初始化和模拟层调用点。
 - `App` 的日志、国际化查询和本地化文件加载接口已迁移为 PascalCase；仅更新应用与界面调用链，解析器中的同名数据字段保持不变。
 - 已完成的提交保持文件改名、类型名改名、宏替换和纯排版互相分离。

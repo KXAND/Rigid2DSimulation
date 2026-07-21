@@ -29,7 +29,7 @@ struct Vector3 {
 	Vector3& operator/=(double a) { return *this *= 1 / a; }
 
 	bool zero() const { return x == 0 && y == 0 && z == 0; }
-	bool near_zero(double eps) const {
+	bool IsNearZero(double eps) const {
 		return abs(x) <= eps && abs(y) <= eps && abs(z) <= eps;
 	}
 	Vector3 normalize() const { return zero() ? Vector3{} : *this / len(); }
