@@ -25,21 +25,21 @@ double GenerateNormalRandomFloat(double mean, double stddev);
 
 wstring FormatFixed2(double d);
 wstring ToWString(string const& s);
-string to_string(wstring const& s);
+string ToString(wstring const& s);
 double atof(string const& s);
 double wtof(wstring const& s);
 FILE* wfopen(wstring const& nm, wstring const& arg);
 
-void hide_console();
-void show_console();
-void hide_console_cursor();
-void print_console(wstring const& s, bool newline = false, int width = 80);
+void HideConsole();
+void ShowConsole();
+void HideConsoleCursor();
+void PrintConsole(wstring const& s, bool newline = false, int width = 80);
 
-void set_locale();
-wstring get_clipboard();
-void set_clipboard(wstring const& s);
+void SetLocale();
+wstring GetClipboard();
+void SetClipboard(wstring const& s);
 
-double get_val(double x, vector<double> const& ys);
-double fetch_num(int& i, wstring const& s);
-wstring sift_chs(wstring const& chs, bool ignore_newline = false);
+double GetValue(double x, vector<double> const& ys);
+double FetchNumber(int& i, wstring const& s);
+wstring FilterCharacters(wstring const& chs, bool ignore_newline = false);
 

@@ -12,9 +12,9 @@ const Color Color::BLACK = Color(0, 0, 0);
 Color::Color(wstring const& s)
 {
 	int i = 0;
-	r = fetch_num(i, s);
-	g = fetch_num(i, s);
-	b = fetch_num(i, s);
+	r = FetchNumber(i, s);
+	g = FetchNumber(i, s);
+	b = FetchNumber(i, s);
 }
 wstring ToWString(Color c)
 {

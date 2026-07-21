@@ -2,8 +2,8 @@
 
 DVector2::DVector2(wstring const& s) {
 	int i = 0;
-	x = fetch_num(i, s);
-	y = fetch_num(i, s);
+	x = FetchNumber(i, s);
+	y = FetchNumber(i, s);
 }
 wstring ToWString(DVector2 v) {
 	return L"(" + std::to_wstring(v.x) + L"," + std::to_wstring(v.y) + L")";

@@ -34,7 +34,7 @@ struct App {
 	App();
 	void Init();
 	virtual void Update() {}
-	void Run(bool show_console = false);
+	void Run(bool ShowConsole = false);
 
 	void reset_dscr();
 	void present_scr();

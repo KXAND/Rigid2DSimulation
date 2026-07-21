@@ -81,7 +81,7 @@ void RichTextBox::update_x_cs_rel_hist(App& app) {
 }
 
 void RichTextBox::add_chs(App& app) {
-	wstring sifted = sift_chs(app.input.chs, false);
+	wstring sifted = FilterCharacters(app.input.chs, false);
 	if (!sifted.empty()) {
 		selecting = false;
 		str = left() + sifted + right();
@@ -165,15 +165,15 @@ void RichTextBox::hdl_delete(App& app) {
 }
 void RichTextBox::hdl_clip(App& app) {
 	selecting = false;
-	set_clipboard(mid());
+	SetClipboard(mid());
 	str = left() + right();
 	edit_a = edit_b = edit_begin();
 	update_x_cs_rel_hist(app);
 }
-void RichTextBox::hdl_copy(App& app) { set_clipboard(mid()); }
+void RichTextBox::hdl_copy(App& app) { SetClipboard(mid()); }
 void RichTextBox::hdl_paste(App& app) {
 	selecting = false;
-	wstring sifted = sift_chs(get_clipboard(), false);
+	wstring sifted = FilterCharacters(GetClipboard(), false);
 	str = left() + sifted + right();
 	edit_a = edit_b = edit_begin() + sifted.size();
 	update_x_cs_rel_hist(app);

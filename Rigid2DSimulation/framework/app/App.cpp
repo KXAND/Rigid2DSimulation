@@ -9,7 +9,7 @@ App::App()
 void App::Init()
 {
 	addLog(L"开始加载程序.\n");
-	set_locale(); scr = Tile(w, h);
+	SetLocale(); scr = Tile(w, h);
 	dscr = ini_dscr = DepthBuffer(w * h, -DBL_MAX);
 	bool ret = ft.init();
 	addLog(ret ? L"成功加载字体模块.\n" : L"加载字体模块失败.\n");
@@ -30,7 +30,7 @@ void App::Init()
 }
 void App::Run(bool console)
 {
-	if (!console) { hide_console(); }
+	if (!console) { HideConsole(); }
 	MSG msg{}; fps.run(); ShowWindow(hwnd, SW_SHOW);
 
 	while (true)
@@ -70,7 +70,7 @@ void App::present_scr()
 void App::addLog(wstring const& s)
 {
 	FILE* f_log = wfopen(L"运行记录.log", L"a");
-	if (!f_log) { print_console(L"运行记录打开失败。", true); }
+	if (!f_log) { PrintConsole(L"运行记录打开失败。", true); }
 	else { fwprintf(f_log, s.c_str()); fclose(f_log); }
 }
 wstring App::getLocalizedString(wstring const& id) const

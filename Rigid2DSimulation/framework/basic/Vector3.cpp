@@ -2,9 +2,9 @@
 
 Vector3::Vector3(wstring const& s) {
 	int i = 0;
-	x = fetch_num(i, s);
-	y = fetch_num(i, s);
-	z = fetch_num(i, s);
+	x = FetchNumber(i, s);
+	y = FetchNumber(i, s);
+	z = FetchNumber(i, s);
 }
 wstring FormatFixed2(Vector3 v) {
 	return L"(" + FormatFixed2(v.x) + L"," + FormatFixed2(v.y) + L"," + FormatFixed2(v.z) + L")";

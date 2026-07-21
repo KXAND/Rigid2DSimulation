@@ -3,8 +3,8 @@
 Vector2::Vector2(wstring const& s)
 {
 	int i = 0;
-	x = fetch_num(i, s);
-	y = fetch_num(i, s);
+	x = FetchNumber(i, s);
+	y = FetchNumber(i, s);
 }
 wstring ToWString(Vector2 v)
 {

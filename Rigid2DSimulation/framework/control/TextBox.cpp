@@ -71,7 +71,7 @@ void TextBox::select_b(App& app) {
 }
 
 void TextBox::add_chs(App& app) {
-	wstring sifted = sift_chs(app.input.chs, true);
+	wstring sifted = FilterCharacters(app.input.chs, true);
 	if (!sifted.empty()) {
 		selecting = false;
 		str = left() + sifted + right();
@@ -130,14 +130,14 @@ void TextBox::hdl_delete(App& app) {
 }
 void TextBox::hdl_clip(App& app) {
 	selecting = false;
-	set_clipboard(mid());
+	SetClipboard(mid());
 	str = left() + right();
 	edit_a = edit_b = edit_begin();
 }
-void TextBox::hdl_copy(App& app) { set_clipboard(mid()); }
+void TextBox::hdl_copy(App& app) { SetClipboard(mid()); }
 void TextBox::hdl_paste(App& app) {
 	selecting = false;
-	wstring sifted = sift_chs(get_clipboard(), true);
+	wstring sifted = FilterCharacters(GetClipboard(), true);
 	str = left() + sifted + right();
 	edit_a = edit_b = edit_begin() + sifted.size();
 }

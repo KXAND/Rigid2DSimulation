@@ -49,7 +49,7 @@ wstring ToWString(string const& s)
 	swprintf_s(tmp.data(), tmp.size(), L"%S", s.c_str());
 	return tmp.data();
 }
-string to_string(wstring const& s)
+string ToString(wstring const& s)
 {
 	// 我忘了有没有核实过一定是这个大小了。
 	vector<char> tmp(2 * s.size() + 2);
@@ -57,7 +57,7 @@ string to_string(wstring const& s)
 	return tmp.data();
 }
 double atof(string const& s) { return atof(s.c_str()); }
-double wtof(wstring const& s) { return atof(to_string(s)); }
+double wtof(wstring const& s) { return atof(ToString(s)); }
 // 必须用 _wfopen，否则有编码问题。
 FILE* wfopen(wstring const& nm, wstring const& arg)
 {
@@ -65,9 +65,9 @@ FILE* wfopen(wstring const& nm, wstring const& arg)
 	_wfopen_s(&f, nm.c_str(), arg.c_str()); return f;
 }
 
-void hide_console() { ShowWindow(GetConsoleWindow(), SW_HIDE); }
-void show_console() { ShowWindow(GetConsoleWindow(), SW_SHOW); }
-void hide_console_cursor()
+void HideConsole() { ShowWindow(GetConsoleWindow(), SW_HIDE); }
+void ShowConsole() { ShowWindow(GetConsoleWindow(), SW_SHOW); }
+void HideConsoleCursor()
 {
 	HANDLE hdl = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO info;
@@ -76,9 +76,9 @@ void hide_console_cursor()
 	info.bVisible = false;
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
 }
-void print_console(wstring const& s, bool newline, int width)
+void PrintConsole(wstring const& s, bool newline, int width)
 {
-	hide_console_cursor();
+	HideConsoleCursor();
 
 	auto hdl = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO info;
@@ -91,9 +91,9 @@ void print_console(wstring const& s, bool newline, int width)
 	if (newline) { printf("\n"); }
 }
 
-void set_locale() { setlocale(LC_ALL, "zh-CN"); }
+void SetLocale() { setlocale(LC_ALL, "zh-CN"); }
 // 我不懂下面的 Lock 和 Unlock 是什么意思。
-wstring get_clipboard()
+wstring GetClipboard()
 {
 	wstring AudioClip;
 	if (OpenClipboard(NULL))
@@ -107,7 +107,7 @@ wstring get_clipboard()
 	} return AudioClip;
 }
 // 从 MSDN 的例子改的，不太懂，可能有错。
-void set_clipboard(wstring const& s)
+void SetClipboard(wstring const& s)
 {
 	if (OpenClipboard(NULL))
 	{
@@ -124,14 +124,14 @@ void set_clipboard(wstring const& s)
 	}
 }
 
-double get_val(double x, vector<double> const& ys)
+double GetValue(double x, vector<double> const& ys)
 {
 	x = clamp(x * (ys.size() - 1), 0.0, ys.size() - 1.0);
 	int x0 = floor(x), x1 = ceil(x);
 	if (x0 == x1) { return ys[x0]; }
 	return ys[x0] * (x1 - x) + ys[x1] * (x - x0);
 }
-double fetch_num(int& i, wstring const& s)
+double FetchNumber(int& i, wstring const& s)
 {
 	wstring tmp;
 	while (i != s.size())
@@ -144,7 +144,7 @@ double fetch_num(int& i, wstring const& s)
 		}
 	} return wtof(tmp);
 }
-wstring sift_chs(wstring const& chs, bool ignore_newline)
+wstring FilterCharacters(wstring const& chs, bool ignore_newline)
 {
 	wstringstream s; bool cr = false;
 	for (auto c : chs) if (c == L'\r') { cr = true; }

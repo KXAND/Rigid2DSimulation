@@ -15,21 +15,21 @@
 
 SimulationApp::SimulationApp()
 {
-	w = 1800; h = 900; set_locale(); wv.len_block = 4 * 5e-4;
-	print_console(L"正在加载字体...");
+	w = 1800; h = 900; SetLocale(); wv.len_block = 4 * 5e-4;
+	PrintConsole(L"正在加载字体...");
 	App::Init();
-	print_console(L"字体加载完成.", true);
-	print_console(L"正在加载控件...");
+	PrintConsole(L"字体加载完成.", true);
+	PrintConsole(L"正在加载控件...");
 	userInterface = std::make_shared<UserInterface>(*this); userInterface->Init(*this);
 	background = std::make_shared<Background>(*this); Reset();
-	print_console(L"控件加载完成.", true);
-	print_console(L"正在加载音乐...");
+	PrintConsole(L"控件加载完成.", true);
+	PrintConsole(L"正在加载音乐...");
 	bool ok = false;
 	musicClip0 = std::make_shared<AudioClip>(L"sound/bgm0.clip", &ok);
 	if (!ok) { musicClip0 = NULL; }
 	musicClip1 = std::make_shared<AudioClip>(L"sound/bgm1.clip", &ok);
 	if (!ok) { musicClip1 = NULL; }
-	print_console(L"音乐加载完成.", true);
+	PrintConsole(L"音乐加载完成.", true);
 	vol = 1;
 	currentMusicClip = GenerateRandomFloat(1) < 0.5 ? &*musicClip0 : &*musicClip1;
 }
