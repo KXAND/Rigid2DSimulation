@@ -36,6 +36,9 @@
 - `Delegate` 的受委派控件成员、参数和设置函数已迁移为完整 lower camel 与 PascalCase 名称。
 - `RichLabel` 的行宽和渲染辅助函数已迁移为 PascalCase。
 - `framework/control` 中剩余控件的渲染辅助函数已统一为 `Render`、`RenderMain` 或 `RenderItems`。
+- `CheckBox`、`HorizontalDragBar` 和 `DropList` 的布局、选区和归一化值辅助函数已迁移为完整 PascalCase 名称。
+- `Panel` 的静态构造方法及 `FloatPanel` 的可见性方法已迁移为 PascalCase；所有项目调用点已同步。
+- `Button` 的文本、颜色、资源键、几何局部变量和浮动面板指针已迁移为表达职责的 lower camel 名称。
 - 已完成的提交保持文件改名、类型名改名、宏替换和纯排版互相分离。
 
 ## 3. 下一批
