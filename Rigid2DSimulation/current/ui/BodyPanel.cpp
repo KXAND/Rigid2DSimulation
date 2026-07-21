@@ -3,25 +3,25 @@
 #include "Body.h"
 #include "Connection.h"
 
-RTbBody::RTbBody() : RichTextBox(360, 400) {}
-void RTbBody::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.bodySelecting->temporaryScriptText; }
-void RTbBody::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->temporaryScriptText = str; }
+BodyScriptEditor::BodyScriptEditor() : RichTextBox(360, 400) {}
+void BodyScriptEditor::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.bodySelecting->temporaryScriptText; }
+void BodyScriptEditor::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->temporaryScriptText = str; }
 
-BtBodyOK::BtBodyOK() : LocalizedButton(70, L"bt_body_ok") {}
-void BtBodyOK::OnClick(App& app) {
+ApplyBodyButton::ApplyBodyButton() : LocalizedButton(70, L"bt_body_ok") {}
+void ApplyBodyButton::OnClick(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto& selectedBody = *simulationApp.bodySelecting;
 	selectedBody.scriptText = selectedBody.temporaryScriptText;
 	selectedBody.RefreshFromScript(simulationApp);
 }
-BtBodyDel::BtBodyDel() : LocalizedButton(70, L"bt_body_del") {}
-void BtBodyDel::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->isMarkedForDeletion = true; simulationApp.isSceneChanged = true; }
+DeleteBodyButton::DeleteBodyButton() : LocalizedButton(70, L"bt_body_del") {}
+void DeleteBodyButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.bodySelecting->isMarkedForDeletion = true; simulationApp.isSceneChanged = true; }
 
 
-LbBodyCon::LbBodyCon(int id) : id(id), Label() {
+BodyConnectionLabel::BodyConnectionLabel(int id) : id(id), Label() {
 	fixed_w = true; w = 270;
 }
-void LbBodyCon::Sync(App& app) {
+void BodyConnectionLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto* connection = simulationApp.bodySelecting->connections[id];
 	wstring type;
@@ -34,19 +34,19 @@ void LbBodyCon::Sync(App& app) {
 	txt = simulationApp.getLocalizedString(L"conn") + std::to_wstring(id) + L": " + type;
 }
 
-CbBodyCon::CbBodyCon(int id) : id(id), LocalizedCheckBox(L"cb_body_con") {}
-void CbBodyCon::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); checked = (simulationApp.connectionSelecting == simulationApp.bodySelecting->connections[id]); }
-void CbBodyCon::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting = checked ? simulationApp.bodySelecting->connections[id] : NULL; }
+SelectBodyConnectionCheckBox::SelectBodyConnectionCheckBox(int id) : id(id), LocalizedCheckBox(L"cb_body_con") {}
+void SelectBodyConnectionCheckBox::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); checked = (simulationApp.connectionSelecting == simulationApp.bodySelecting->connections[id]); }
+void SelectBodyConnectionCheckBox::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting = checked ? simulationApp.bodySelecting->connections[id] : NULL; }
 
-ClXBodyCon::ClXBodyCon(int id) {
-	cb = std::make_shared<CbBodyCon>(id); lb = std::make_shared<LbBodyCon>(id);
+BodyConnectionControlRow::BodyConnectionControlRow(int id) {
+	cb = std::make_shared<SelectBodyConnectionCheckBox>(id); lb = std::make_shared<BodyConnectionLabel>(id);
 	cs = { &*lb, &*cb };
 }
-void ClYBodyCons::Update(App& app) {
+void BodyConnectionControlList::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto& selectedBody = *simulationApp.bodySelecting;
 	for (int i = (mbs.size()), iEnd = int(selectedBody.connections.size()); i < iEnd; ++i) {
-		mbs.push_back(std::make_shared<ClXBodyCon>(i));
+		mbs.push_back(std::make_shared<BodyConnectionControlRow>(i));
 	}
 	cs.clear();
 	for (int i = (0), iEnd = int(selectedBody.connections.size()); i < iEnd; ++i) {
@@ -58,16 +58,16 @@ void ClYBodyCons::Update(App& app) {
 	VerticalControlList::Update(app);
 }
 
-ClyBody::ClyBody() {
+BodyEditorControls::BodyEditorControls() {
 	vector<Control*> tmp;
-	rtb = std::make_shared<RTbBody>();
-	bt_ok = std::make_shared<BtBodyOK>(); bt_del = std::make_shared<BtBodyDel>();
+	rtb = std::make_shared<BodyScriptEditor>();
+	bt_ok = std::make_shared<ApplyBodyButton>(); bt_del = std::make_shared<DeleteBodyButton>();
 	tmp = { &*bt_ok, &*bt_del };
 	clx_bt = std::make_shared<HorizontalControlList>(tmp);
 	tmp = {};
-	cly_cons = std::make_shared<ClYBodyCons>(); spy = std::make_shared<HorizontalSeparator>(400);
+	cly_cons = std::make_shared<BodyConnectionControlList>(); spy = std::make_shared<HorizontalSeparator>(400);
 }
-void ClyBody::Update(App& app) {
+void BodyEditorControls::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto* selectedBody = simulationApp.bodySelecting;
 	if (bo != selectedBody) {
@@ -78,12 +78,12 @@ void ClyBody::Update(App& app) {
 	}
 	VerticalControlList::Update(app);
 }
-void ClyBody::Discard(App& app) {
+void BodyEditorControls::Discard(App& app) {
 	VerticalControlList::Discard(app);
 	bo = NULL; cs = {};
 }
 
-void RLbBody::Sync(App& app) {
+void BodyDetailsLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto* selectedBody = simulationApp.bodySelecting;
 	if (!selectedBody) { txt = simulationApp.getLocalizedString(L"body_not_sel"); return; }
@@ -106,7 +106,7 @@ void RLbBody::Sync(App& app) {
 
 BodyPanel :: BodyPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_body") {
 	vector<Control*> tmp;
-	cly_body = std::make_shared<ClyBody>(); rlb_body = std::make_shared<RLbBody>();
+	cly_body = std::make_shared<BodyEditorControls>(); rlb_body = std::make_shared<BodyDetailsLabel>();
 	tmp = { &*cly_body, &*rlb_body };
 	cly = std::make_shared<VerticalControlList>(tmp);
 	c = &*cly;

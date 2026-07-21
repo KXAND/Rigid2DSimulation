@@ -6,52 +6,52 @@
 #include "Separator.h"
 #include "FloatPanel.h"
 
-struct TbParNm : TextBox {
+struct ParameterNameTextBox : TextBox {
 	int id = 0;
-	TbParNm(int id);
+	ParameterNameTextBox(int id);
 	void Sync(App& app) override;
 	void OnDone(App& app) const override;
 };
-struct BtDelPar : LocalizedButton {
+struct DeleteParameterButton : LocalizedButton {
 	int id = 0;
-	BtDelPar(int id);
+	DeleteParameterButton(int id);
 	void OnClick(App& app) override;
 };
-struct DbXParVal : HorizontalDragBar {
+struct ParameterValueDragBar : HorizontalDragBar {
 	int id = 0;
-	DbXParVal(int id);
+	ParameterValueDragBar(int id);
 	void Sync(App& app) override;
 	void Upload(App& app) const override;
 };
-struct TbParVal : TextBox {
+struct ParameterValueTextBox : TextBox {
 	int id = 0;
-	TbParVal(int id);
+	ParameterValueTextBox(int id);
 	void Sync(App& app) override;
 	void OnDone(App& app) const override;
 };
 
-struct ClyPar : VerticalControlList {
-	std::shared_ptr<TbParNm> tb_nm;
-	std::shared_ptr<BtDelPar> bt_del;
+struct ParameterControlRow : VerticalControlList {
+	std::shared_ptr<ParameterNameTextBox> tb_nm;
+	std::shared_ptr<DeleteParameterButton> bt_del;
 	std::shared_ptr<HorizontalControlList> clx_nm;
-	std::shared_ptr<DbXParVal> dbx_val;
-	std::shared_ptr<TbParVal> tb_val;
+	std::shared_ptr<ParameterValueDragBar> dbx_val;
+	std::shared_ptr<ParameterValueTextBox> tb_val;
 	std::shared_ptr<HorizontalControlList> clx_val;
 	std::shared_ptr<HorizontalSeparator> spy;
-	ClyPar(int id);
+	ParameterControlRow(int id);
 };
-struct ClyPars : VerticalControlList {
-	vector<std::shared_ptr<ClyPar>> mbs;
+struct ParameterControlList : VerticalControlList {
+	vector<std::shared_ptr<ParameterControlRow>> mbs;
 	void Update(App& app) override;
 };
-struct BtAddPar : LocalizedButton {
-	BtAddPar();
+struct AddParameterButton : LocalizedButton {
+	AddParameterButton();
 	void OnClick(App& app) override;
 };
 
 struct ParameterPanel : LocalizedFloatPanel {
-	std::shared_ptr<ClyPars> cly_pars;
-	std::shared_ptr<BtAddPar> bt_add_par;
+	std::shared_ptr<ParameterControlList> cly_pars;
+	std::shared_ptr<AddParameterButton> bt_add_par;
 	std::shared_ptr<VerticalControlList> cly;
 	ParameterPanel(App& app);
 };

@@ -2,30 +2,30 @@
 #include "SimulationApp.h"
 #include "Connection.h"
 
-RTbCon::RTbCon() : RichTextBox(360, 400) {}
-void RTbCon::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.connectionSelecting->temporaryScriptText; }
-void RTbCon::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->temporaryScriptText = str; }
+ConnectionScriptEditor::ConnectionScriptEditor() : RichTextBox(360, 400) {}
+void ConnectionScriptEditor::Sync(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); str = simulationApp.connectionSelecting->temporaryScriptText; }
+void ConnectionScriptEditor::Upload(App& app) const { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->temporaryScriptText = str; }
 
-BtConOK::BtConOK() : LocalizedButton(70, L"bt_con_ok") {}
-void BtConOK::OnClick(App& app) {
+ApplyConnectionButton::ApplyConnectionButton() : LocalizedButton(70, L"bt_con_ok") {}
+void ApplyConnectionButton::OnClick(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto& selectedConnection = *simulationApp.connectionSelecting;
 	selectedConnection.scriptText = selectedConnection.temporaryScriptText;
 	selectedConnection.RefreshFromScript(simulationApp);
 }
-BtConDel::BtConDel() : LocalizedButton(70, L"bt_con_del") {}
-void BtConDel::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->isMarkedForDeletion = true; simulationApp.isSceneChanged = true; }
+DeleteConnectionButton::DeleteConnectionButton() : LocalizedButton(70, L"bt_con_del") {}
+void DeleteConnectionButton::OnClick(App& app) { auto& simulationApp = static_cast<SimulationApp&>(app); simulationApp.connectionSelecting->isMarkedForDeletion = true; simulationApp.isSceneChanged = true; }
 
-ClyCon::ClyCon() {
+ConnectionEditorControls::ConnectionEditorControls() {
 	vector<Control*> tmp;
-	rtb = std::make_shared<RTbCon>();
-	bt_ok = std::make_shared<BtConOK>(); bt_del = std::make_shared<BtConDel>();
+	rtb = std::make_shared<ConnectionScriptEditor>();
+	bt_ok = std::make_shared<ApplyConnectionButton>(); bt_del = std::make_shared<DeleteConnectionButton>();
 	tmp = { &*bt_ok, &*bt_del };
 	clx_bt = std::make_shared<HorizontalControlList>(tmp);
 	tmp = {};
 	spy = std::make_shared<HorizontalSeparator>(400);
 }
-void ClyCon::Update(App& app) {
+void ConnectionEditorControls::Update(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto* selectedConnection = simulationApp.connectionSelecting;
 	if (con != selectedConnection) {
@@ -36,12 +36,12 @@ void ClyCon::Update(App& app) {
 	}
 	VerticalControlList::Update(app);
 }
-void ClyCon::Discard(App& app) {
+void ConnectionEditorControls::Discard(App& app) {
 	VerticalControlList::Discard(app);
 	con = NULL; cs = {};
 }
 
-void RLbCon::Sync(App& app) {
+void ConnectionDetailsLabel::Sync(App& app) {
 	auto& simulationApp = static_cast<SimulationApp&>(app);
 	auto* selectedConnection = simulationApp.connectionSelecting;
 	if (!selectedConnection) { txt = simulationApp.getLocalizedString(L"conn_not_sel"); return; }
@@ -62,7 +62,7 @@ void RLbCon::Sync(App& app) {
 
 ConnectionPanel::ConnectionPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"fpn_con") {
 	vector<Control*> tmp;
-	cly_con = std::make_shared<ClyCon>(); rlb_con = std::make_shared<RLbCon>();
+	cly_con = std::make_shared<ConnectionEditorControls>(); rlb_con = std::make_shared<ConnectionDetailsLabel>();
 	tmp = { &*cly_con, &*rlb_con };
 	cly = std::make_shared<VerticalControlList>(tmp);
 	c = &*cly;

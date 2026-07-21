@@ -9,63 +9,63 @@
 #include "RichLabel.h"
 
 struct Body;
-struct RTbBody : RichTextBox {
-	RTbBody();
+struct BodyScriptEditor : RichTextBox {
+	BodyScriptEditor();
 	void Sync(App& app) override;
 	void Upload(App& app) const override;
 };
-struct BtBodyOK : LocalizedButton {
-	BtBodyOK();
+struct ApplyBodyButton : LocalizedButton {
+	ApplyBodyButton();
 	void OnClick(App& app) override;
 };
-struct BtBodyDel : LocalizedButton {
-	BtBodyDel();
+struct DeleteBodyButton : LocalizedButton {
+	DeleteBodyButton();
 	void OnClick(App& app) override;
 };
 
-struct LbBodyCon : Label {
+struct BodyConnectionLabel : Label {
 	int id = 0;
-	LbBodyCon(int id);
+	BodyConnectionLabel(int id);
 	void Sync(App& app) override;
 };
-struct CbBodyCon : LocalizedCheckBox {
+struct SelectBodyConnectionCheckBox : LocalizedCheckBox {
 	int id = 0;
-	CbBodyCon(int id);
+	SelectBodyConnectionCheckBox(int id);
 	void Sync(App& app) override;
 	void Upload(App& app) const override;
 };
-struct ClXBodyCon : HorizontalControlList {
-	std::shared_ptr<LbBodyCon> lb;
-	std::shared_ptr<CbBodyCon> cb;
-	ClXBodyCon(int id);
+struct BodyConnectionControlRow : HorizontalControlList {
+	std::shared_ptr<BodyConnectionLabel> lb;
+	std::shared_ptr<SelectBodyConnectionCheckBox> cb;
+	BodyConnectionControlRow(int id);
 };
-struct ClYBodyCons : VerticalControlList {
-	vector<std::shared_ptr<ClXBodyCon>> mbs;
+struct BodyConnectionControlList : VerticalControlList {
+	vector<std::shared_ptr<BodyConnectionControlRow>> mbs;
 	void Update(App& app) override;
 };
 
-struct RLbBody : RichLabel {
+struct BodyDetailsLabel : RichLabel {
 	void Sync(App& app) override;
 };
 
 // 我觉得 delegate 没有啥价值了。
 // 其实 Panel 的 set_c 方法也没啥价值了吧。
-struct ClyBody : VerticalControlList {
+struct BodyEditorControls : VerticalControlList {
 	Body* bo = NULL;
-	std::shared_ptr<ClYBodyCons> cly_cons;
-	std::shared_ptr<RTbBody> rtb;
-	std::shared_ptr<BtBodyOK> bt_ok;
-	std::shared_ptr<BtBodyDel> bt_del;
+	std::shared_ptr<BodyConnectionControlList> cly_cons;
+	std::shared_ptr<BodyScriptEditor> rtb;
+	std::shared_ptr<ApplyBodyButton> bt_ok;
+	std::shared_ptr<DeleteBodyButton> bt_del;
 	std::shared_ptr<HorizontalControlList> clx_bt;
 	std::shared_ptr<HorizontalSeparator> spy;
-	ClyBody();
+	BodyEditorControls();
 	void Update(App& app) override;
 	void Discard(App& app) override;
 };
 
 struct BodyPanel : LocalizedFloatPanel {
-	std::shared_ptr<ClyBody> cly_body;
-	std::shared_ptr<RLbBody> rlb_body;
+	std::shared_ptr<BodyEditorControls> cly_body;
+	std::shared_ptr<BodyDetailsLabel> rlb_body;
 	std::shared_ptr<VerticalControlList> cly;
 	BodyPanel(App& app);
 };
