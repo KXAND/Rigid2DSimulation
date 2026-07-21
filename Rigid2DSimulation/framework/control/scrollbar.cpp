@@ -1,7 +1,7 @@
 #include "scrollbar.h"
 #include "App.h"
 #include "control.h"
-#include "draw_comp.h"
+#include "DrawBorderedRectangle.h"
 
 
 ScrollbarY::ScrollbarY() {

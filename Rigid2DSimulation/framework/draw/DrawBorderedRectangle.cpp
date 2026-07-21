@@ -1,5 +1,5 @@
-#include "draw_comp.h"
-#include "draw_geo.h"
+#include "DrawBorderedRectangle.h"
+#include "DrawGeometry.h"
 
 void drawRectangleWithBorderRaw(tile& targetTile, 
 	DVector2 topLeft, int width, int height, DRect viewPort, dColor color, dColor borderColor)

@@ -1,7 +1,7 @@
 #include "Background.h"
 #include "SimulationApp.h"
-#include "draw_str.h"
-#include "draw_tile.h"
+#include "DrawString.h"
+#include "DrawTile.h"
 
 Background::Background(SimulationApp& cur)
 {
@@ -14,7 +14,7 @@ Background::Background(SimulationApp& cur)
 void Background::Render(SimulationApp& cur)
 {
 	drawBasedTile((cur.scr), topLeft,  backgroundTile);
-	draw_str((cur.scr), (cur.dscr), 999, (cur.debugString),
+	DrawString((cur.scr), (cur.dscr), 999, (cur.debugString),
 		dColor(110), (cur.ft), topLeft + DVector2(10, 10), width - 20, cur.background->ViewPort());
 }
 

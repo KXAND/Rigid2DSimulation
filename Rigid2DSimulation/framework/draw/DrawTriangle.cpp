@@ -1,4 +1,4 @@
-#include "draw_tri.h"
+#include "DrawTriangle.h"
 
 namespace
 {

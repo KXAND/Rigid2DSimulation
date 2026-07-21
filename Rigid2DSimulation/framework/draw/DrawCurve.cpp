@@ -1,5 +1,5 @@
-#include "draw_curve.h"
-#include "draw_px_seg.h"
+#include "DrawCurve.h"
+#include "DrawLineSegment.h"
 
 void drawEllipseBorder(tile& targetTile, dbuf& zBuffer, double depth,
 	Vector2 center, double a, double b, DRect viewPort, dColor color, int n)

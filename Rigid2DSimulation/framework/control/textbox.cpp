@@ -1,8 +1,8 @@
 #include "textbox.h"
 #include "App.h"
-#include "draw_geo.h"
-#include "draw_str.h"
-#include "draw_comp.h"
+#include "DrawGeometry.h"
+#include "DrawString.h"
+#include "DrawBorderedRectangle.h"
 #include "rich_textbox.h"
 
 
@@ -188,7 +188,7 @@ void Textbox::clamp_str(App& app) {
 
 void Textbox::render_main(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
+	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
 	dColor const& c =
 		!enabled ? c_invalid :
@@ -198,9 +198,9 @@ void Textbox::render_main(App& app) {
 
 	int x_cur = 0;
 	DVector2 tl_str = tl_box() + DVector2(x_str_rel, (h - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, depth, left(), c_str, app.ft, tl_str, x_cur, 0, vp_show_txt());
-	draw_str(app.scr, app.dscr, depth, mid(), selectedColor, app.ft, tl_str, x_cur, 0, vp_show_txt());
-	draw_str(app.scr, app.dscr, depth, right(), c_str, app.ft, tl_str, x_cur, 0, vp_show_txt());
+	DrawString(app.scr, app.dscr, depth, left(), c_str, app.ft, tl_str, x_cur, 0, vp_show_txt());
+	DrawString(app.scr, app.dscr, depth, mid(), selectedColor, app.ft, tl_str, x_cur, 0, vp_show_txt());
+	DrawString(app.scr, app.dscr, depth, right(), c_str, app.ft, tl_str, x_cur, 0, vp_show_txt());
 }
 void Textbox::render_cursor(App& app) {
 	bool show_cursor = edit &&

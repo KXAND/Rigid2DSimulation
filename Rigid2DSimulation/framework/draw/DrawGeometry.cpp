@@ -1,5 +1,5 @@
-#include "draw_geo.h"
-#include "draw_px_seg.h"
+#include "DrawGeometry.h"
+#include "DrawLineSegment.h"
 
 void drawRectangleRaw(tile& targetTile, DVector2 topLeft, int w, int h, DRect viewPort, dColor color)
 {

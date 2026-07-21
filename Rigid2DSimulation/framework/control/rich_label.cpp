@@ -1,6 +1,6 @@
 #include "rich_label.h"
 #include "App.h"
-#include "draw_str.h"
+#include "DrawString.h"
 
 
 RichLabel::RichLabel(int w) : w(w) {
@@ -13,7 +13,7 @@ int RichLabel::GetH() const { return h + gap.y; }
 
 int RichLabel::w_line() const { return fixed_w ? w : 0; }
 void RichLabel::render(App& app) {
-	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl, w_line(), vp);
+	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl, w_line(), vp);
 }
 void RichLabel::Update(App& app) {
 	Sync(app);

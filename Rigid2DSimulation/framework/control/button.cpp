@@ -1,7 +1,7 @@
 #include "button.h"
 #include "App.h"
-#include "draw_str.h"
-#include "draw_comp.h"
+#include "DrawString.h"
+#include "DrawBorderedRectangle.h"
 #include "float_panel.h"
 
 
@@ -28,7 +28,7 @@ void Button::render(App& app) {
 	DVector2 tl_txt = tl + DVector2(w, h) / 2 - wh / 2;
 
 	drawRectangleWithBorderRaw(app.scr, tl, w, h, vp, c, c_frame);
-	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
+	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 }
 
 void Button::Update(App& app) {

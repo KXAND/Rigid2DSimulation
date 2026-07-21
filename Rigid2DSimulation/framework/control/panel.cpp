@@ -1,7 +1,7 @@
 #include "panel.h"
 #include "App.h"
 #include "control.h"
-#include "draw_comp.h"
+#include "DrawBorderedRectangle.h"
 #include "scrollbar.h"
 
 

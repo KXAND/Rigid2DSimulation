@@ -85,19 +85,19 @@
     <ClCompile Include="framework\parse\Value.cpp">
       <Filter>framework\parse</Filter>
     </ClCompile>
-    <ClCompile Include="framework\draw\draw_str.cpp">
+    <ClCompile Include="framework\draw\DrawString.cpp">
       <Filter>framework\draw</Filter>
     </ClCompile>
-    <ClCompile Include="framework\draw\draw_tile.cpp">
+    <ClCompile Include="framework\draw\DrawTile.cpp">
       <Filter>framework\draw</Filter>
     </ClCompile>
-    <ClCompile Include="framework\draw\draw_comp.cpp">
+    <ClCompile Include="framework\draw\DrawBorderedRectangle.cpp">
       <Filter>framework\draw</Filter>
     </ClCompile>
-    <ClCompile Include="framework\draw\draw_geo.cpp">
+    <ClCompile Include="framework\draw\DrawGeometry.cpp">
       <Filter>framework\draw</Filter>
     </ClCompile>
-    <ClCompile Include="framework\draw\draw_px_seg.cpp">
+    <ClCompile Include="framework\draw\DrawLineSegment.cpp">
       <Filter>framework\draw</Filter>
     </ClCompile>
     <ClCompile Include="framework\control\control.cpp">
@@ -175,7 +175,7 @@
     <ClCompile Include="current\common\SceneParameter.cpp">
       <Filter>current\common</Filter>
     </ClCompile>
-    <ClCompile Include="framework\draw\draw_tri.cpp">
+    <ClCompile Include="framework\draw\DrawTriangle.cpp">
       <Filter>framework\draw</Filter>
     </ClCompile>
     <ClCompile Include="current\rigid\Body.cpp">
@@ -193,7 +193,7 @@
     <ClCompile Include="current\rigid\Aabb.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="framework\draw\draw_curve.cpp">
+    <ClCompile Include="framework\draw\DrawCurve.cpp">
       <Filter>framework\draw</Filter>
     </ClCompile>
     <ClCompile Include="current\rigid\SceneBuilders.cpp">
@@ -267,19 +267,19 @@
     <ClInclude Include="framework\parse\Value.h">
       <Filter>framework\parse</Filter>
     </ClInclude>
-    <ClInclude Include="framework\draw\draw_tile.h">
+    <ClInclude Include="framework\draw\DrawTile.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
-    <ClInclude Include="framework\draw\draw_comp.h">
+    <ClInclude Include="framework\draw\DrawBorderedRectangle.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
-    <ClInclude Include="framework\draw\draw_geo.h">
+    <ClInclude Include="framework\draw\DrawGeometry.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
-    <ClInclude Include="framework\draw\draw_px_seg.h">
+    <ClInclude Include="framework\draw\DrawLineSegment.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
-    <ClInclude Include="framework\draw\draw_str.h">
+    <ClInclude Include="framework\draw\DrawString.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
     <ClInclude Include="framework\control\control.h">
@@ -357,7 +357,7 @@
     <ClInclude Include="current\common\SceneParameter.h">
       <Filter>current\common</Filter>
     </ClInclude>
-    <ClInclude Include="framework\draw\draw_tri.h">
+    <ClInclude Include="framework\draw\DrawTriangle.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
     <ClInclude Include="current\rigid\Body.h">
@@ -375,7 +375,7 @@
     <ClInclude Include="current\rigid\Aabb.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="framework\draw\draw_curve.h">
+    <ClInclude Include="framework\draw\DrawCurve.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
     <ClInclude Include="current\common\Utils.h">

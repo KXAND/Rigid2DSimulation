@@ -1,8 +1,8 @@
 #include "rich_textbox.h"
 #include "App.h"
-#include "draw_geo.h"
-#include "draw_str.h"
-#include "draw_comp.h"
+#include "DrawGeometry.h"
+#include "DrawString.h"
+#include "DrawBorderedRectangle.h"
 
 
 RichTextbox::RichTextbox() : RichTextbox(0, 0) {}
@@ -246,9 +246,9 @@ void RichTextbox::render_main(App& app) {
 
 	int x_cur = 0;
 	DVector2 tl_txt = tl + (DVector2)tl_str_rel;
-	draw_str(app.scr, app.dscr, depth, left(), c_str, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
-	draw_str(app.scr, app.dscr, depth, mid(), selectedColor, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
-	draw_str(app.scr, app.dscr, depth, right(), c_str, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
+	DrawString(app.scr, app.dscr, depth, left(), c_str, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
+	DrawString(app.scr, app.dscr, depth, mid(), selectedColor, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
+	DrawString(app.scr, app.dscr, depth, right(), c_str, app.ft, tl_txt, x_cur, w_str, vp_show_txt());
 }
 void RichTextbox::render_cursor(App& app) {
 	bool show_cursor = edit &&

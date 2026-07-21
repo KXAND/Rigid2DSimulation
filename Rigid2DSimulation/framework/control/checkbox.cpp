@@ -1,7 +1,7 @@
 #include "checkbox.h"
 #include "App.h"
-#include "draw_geo.h"
-#include "draw_str.h"
+#include "DrawGeometry.h"
+#include "DrawString.h"
 
 
 Checkbox::Checkbox(bool big) {
@@ -24,7 +24,7 @@ int Checkbox::GetH() const { return h + gap.y; }
 DVector2 Checkbox::tl_box() const { return tl + DVector2(w_txt, (h - s_box) / 2); }
 void Checkbox::render(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
+	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
 	dColor const& c =
 		!enabled ? c_invalid :

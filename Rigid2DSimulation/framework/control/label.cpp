@@ -1,6 +1,6 @@
 #include "label.h"
 #include "App.h"
-#include "draw_str.h"
+#include "DrawString.h"
 
 
 Label::Label(bool big) {
@@ -13,7 +13,7 @@ int Label::GetH() const { return h + gap.y; }
 
 void Label::render(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, h - app.ft.h) / 2;
-	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
+	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 }
 void Label::Update(App& app) {
 	Sync(app);

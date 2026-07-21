@@ -3,7 +3,7 @@
 #include "Background.h"
 #include "Body.h"
 #include "Shape.h"
-#include "draw_geo.h"
+#include "DrawGeometry.h"
 
 //	ÒÉËÆ·ÏÆú
 void Collision::Render(SimulationApp& cur) const

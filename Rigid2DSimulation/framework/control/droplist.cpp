@@ -1,8 +1,8 @@
 #include "droplist.h"
 #include "App.h"
-#include "draw_geo.h"
-#include "draw_str.h"
-#include "draw_comp.h"
+#include "DrawGeometry.h"
+#include "DrawString.h"
+#include "DrawBorderedRectangle.h"
 
 
 wstring nm_none(int id, App &app) { return L"Пе"; }
@@ -32,7 +32,7 @@ DVector2 Droplist::tl_box() const { return tl + DVector2(w_txt, 0); }
 DVector2 Droplist::tl_item() const { return tl_box() + DVector2(0, h); }
 void Droplist::render_main(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (h - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
+	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
 	dColor const& c =
 		!enabled ? c_invalid :
@@ -44,7 +44,7 @@ void Droplist::render_main(App& app) {
 	drawEllipse(app.scr, app.dscr, depth, ct_sign, sign_r, sign_r, vp, c_mark);
 
 	DVector2 tl_item = tl + DVector2(x_txt_margin, (h - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, depth, nm(picked, app), c_txt, app.ft, tl_txt, 0, vp);
+	DrawString(app.scr, app.dscr, depth, nm(picked, app), c_txt, app.ft, tl_txt, 0, vp);
 }
 void Droplist::render_items(App& app) {
 	if (edit) {
@@ -59,7 +59,7 @@ void Droplist::render_items(App& app) {
 			DVector2 tl_txt_item = tl_box() +
 				DVector2(0, h + h_item * i) +
 				DVector2(x_txt_margin, (h_item - app.ft.h) / 2);
-			draw_str(app.scr, app.dscr, depth, nm(i, app), c_txt, app.ft, tl_txt_item, 0, vp);
+			DrawString(app.scr, app.dscr, depth, nm(i, app), c_txt, app.ft, tl_txt_item, 0, vp);
 		}
 	}
 }

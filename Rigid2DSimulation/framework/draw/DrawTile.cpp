@@ -1,4 +1,4 @@
-#include "draw_tile.h"
+#include "DrawTile.h"
 
 void drawBasedTile(tile& dest, DVector2 tl, tile const& src)
 {

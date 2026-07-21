@@ -1,7 +1,7 @@
 #include "dragbar.h"
 #include "App.h"
-#include "draw_geo.h"
-#include "draw_str.h"
+#include "DrawGeometry.h"
+#include "DrawString.h"
 
 
 DragbarX::DragbarX(int w) : bw(w) {
@@ -27,7 +27,7 @@ void DragbarX::set_nx_rel(double uv) {
 DVector2 DragbarX::tl_node() const { return tl + DVector2(w_txt + nx_rel, 0); }
 void DragbarX::render(App& app) {
 	DVector2 tl_txt = tl + DVector2(0, (nh - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
+	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_txt, 0, vp);
 
 	dColor const& c =
 		!enabled ? c_invalid :

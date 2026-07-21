@@ -1,6 +1,6 @@
 #include "separator.h"
 #include "App.h"
-#include "draw_geo.h"
+#include "DrawGeometry.h"
 
 
 SeparatorY::SeparatorY(int w) : w(w) {

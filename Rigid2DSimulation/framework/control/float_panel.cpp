@@ -2,10 +2,10 @@
 #include "App.h"
 #include "control.h"
 #include "scrollbar.h"
-#include "draw_str.h"
-#include "draw_geo.h"
-#include "draw_comp.h"
-#include "draw_px_seg.h"
+#include "DrawString.h"
+#include "DrawGeometry.h"
+#include "DrawBorderedRectangle.h"
+#include "DrawLineSegment.h"
 
 
 FloatPanel::FloatPanel() {
@@ -128,7 +128,7 @@ void FloatPanel::render_main(App& app) {
 	drawRectangleWithBorderRaw(app.scr, tl, w, h_bar, app.scr.Rect(), c_bar, c_frame);
 
 	DVector2 tl_title = tl + DVector2(margin_title, (h_bar - app.ft.h) / 2);
-	draw_str(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_title, 0, app.scr.Rect());
+	DrawString(app.scr, app.dscr, depth, txt, c_txt, app.ft, tl_title, 0, app.scr.Rect());
 }
 void FloatPanel::render_close(App& app) {
 	dColor const& c_close =
