@@ -223,34 +223,34 @@ void Body::Init(bool resetPosition)
 
 	area = 0; Vector2 center;
 	inertia = 0;
-	for (auto shapes : shapes)
+	for (auto shape : shapes)
 	{
-		shapes->area = 0; Vector2 shapeCenter;
-		if (shapes->isCircle)
+		shape->area = 0; Vector2 shapeCenter;
+		if (shape->isCircle)
 		{
-			shapes->area = kPi * shapes->radius * shapes->radius;
-			shapeCenter = shapes->area * shapes->relativePosition;
-			inertia += shapes->area * (shapes->radius * shapes->radius) / 2;
+			shape->area = kPi * shape->radius * shape->radius;
+			shapeCenter = shape->area * shape->relativePosition;
+			inertia += shape->area * (shape->radius * shape->radius) / 2;
 		}
 		else
 		{
-			for (int i = (0), iEnd = int(shapes->verticesRelative.size( )); i < iEnd; ++i)
+			for (int i = (0), iEnd = int(shape->verticesRelative.size( )); i < iEnd; ++i)
 			{
-				int j = (i + 1) % shapes->verticesRelative.size( );
-				auto p = shapes->verticesRelative[i], q = shapes->verticesRelative[j];
+				int j = (i + 1) % shape->verticesRelative.size( );
+				auto p = shape->verticesRelative[i], q = shape->verticesRelative[j];
 				double triangleArea = Matrix2(p, q).Determinant( ) / 2;
 				double triangleInertia = Dot(p, p) + Dot(p, q) + Dot(q, q);
 				triangleInertia *= triangleArea / 6;
 
 				shapeCenter += triangleArea * (p + q) / 3;
-				shapes->area += triangleArea;
+				shape->area += triangleArea;
 				inertia += triangleInertia;
 			}
 		}
 
-		area += shapes->area;
+		area += shape->area;
 		center += shapeCenter;
-		shapes->relativePosition = shapeCenter / shapes->area;
+		shape->relativePosition = shapeCenter / shape->area;
 	}
 
 	center /= area;

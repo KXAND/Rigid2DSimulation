@@ -30,7 +30,7 @@ void ConnectionEditorControls::Update(App& app) {
 	auto* appSelectedConnection = simulationApp.connectionSelecting;
 	if (selectedConnection != appSelectedConnection) {
 		selectedConnection = appSelectedConnection;
-		for (auto c : controls) { c->Discard(app); }
+		for (auto control : controls) { control->Discard(app); }
 		if (selectedConnection) { controls = { &*scriptEditor, &*actionButtons, &*separator }; }
 		else { controls = {}; }
 	}

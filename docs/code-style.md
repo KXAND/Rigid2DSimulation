@@ -27,7 +27,7 @@
 | 文件、类、结构体、枚举、类型别名 | PascalCase | `SimulationApp`、`ShapeBuiltins.cpp` |
 | C++ 函数、项目 DSL 可调用函数 | PascalCase | `UpdatePosition`、`CreateBody` |
 | 变量、成员、参数、项目 DSL 变量和配置键 | lower camel | `selectedBody`、`energyMultiplier` |
-| 命名空间或类作用域的 `constexpr` 常量 | `kPascalCase` | `kPi` |
+| 命名空间或类作用域的具名常量 | `kPascalCase` | `kPi`、`Color::kRed` |
 
 - 函数内普通 `const` 变量仍使用 lower camel。
 - 允许上下文清晰的数学或通用缩写：`x`、`y`、`dx`、`dy`、`id`、`ui`、`rgb`、`size`、`cnt`。

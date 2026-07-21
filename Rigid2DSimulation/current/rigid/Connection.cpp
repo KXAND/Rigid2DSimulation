@@ -8,13 +8,13 @@
 
 Connection::Connection()
 {
-	colorRope = Color::WHITE;
-	colorRopeTight = Color::RED;
-	colorLink = Color::BLUE;
-	colorSpringCompress = Color::GREEN;
-	colorSpringStretch = Color::YELLOW;
-	colorCord = Color::CYAN;
-	colorCordTight = Color::MAGENTA;
+	colorRope = Color::kWhite;
+	colorRopeTight = Color::kRed;
+	colorLink = Color::kBlue;
+	colorSpringCompress = Color::kGreen;
+	colorSpringStretch = Color::kYellow;
+	colorCord = Color::kCyan;
+	colorCordTight = Color::kMagenta;
 }
 void Connection::Save(SimulationApp const& simulationApp, FILE* file) const
 {

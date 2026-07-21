@@ -4,20 +4,20 @@ struct Color
 {
 	BYTE blue = 0, green = 0, red = 0;
 
-	static const Color RED;
-	static const Color GREEN;
-	static const Color BLUE;
-	static const Color CYAN;
-	static const Color YELLOW;
-	static const Color MAGENTA;
-	static const Color WHITE;
-	static const Color BLACK;
+	static const Color kRed;
+	static const Color kGreen;
+	static const Color kBlue;
+	static const Color kCyan;
+	static const Color kYellow;
+	static const Color kMagenta;
+	static const Color kWhite;
+	static const Color kBlack;
 
 
 	Color() = default;
 	Color(BYTE red, BYTE green, BYTE blue) : red(red), green(green), blue(blue) { }
 	explicit Color(BYTE alpha) : Color(alpha, alpha, alpha) { }
-	explicit Color(wstring const& s);
+	explicit Color(wstring const& text);
 	explicit Color(Vector3 color)
 	{
 		red = Clamp<int>(0, 255, (int) color.GetRed() * 255);

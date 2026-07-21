@@ -72,7 +72,7 @@ void BodyEditorControls::Update(App& app) {
 	auto* appSelectedBody = simulationApp.bodySelecting;
 	if (selectedBody != appSelectedBody) {
 		selectedBody = appSelectedBody;
-		for (auto c : controls) { c->Discard(app); }
+		for (auto control : controls) { control->Discard(app); }
 		if (selectedBody) { controls = { &*connectionList, &*scriptEditor, &*actionButtons, &*separator }; }
 		else { controls = {}; }
 	}

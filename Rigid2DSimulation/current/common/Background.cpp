@@ -8,7 +8,7 @@ Background::Background(SimulationApp& simulationApp)
 	width = 1630; height = 860;
 	topLeft = { 170, 0 }; // tile的原点坐标位置，170的余量用于左侧UI显示
 	depth = -100000;
-	backgroundTile = Tile(width, height, Color::BLACK, 255);
+	backgroundTile = Tile(width, height, Color::kBlack, 255);
 }
 
 void Background::Render(SimulationApp& simulationApp)

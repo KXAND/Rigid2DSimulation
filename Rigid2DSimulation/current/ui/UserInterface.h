@@ -13,7 +13,7 @@ struct AboutPanel;
 struct MenuPanel;
 struct BottomPanel;
 struct UserInterface {
-	vector<FloatPanel*> fpns;
+	vector<FloatPanel*> floatPanels;
 	std::shared_ptr<GlobalPanel> globalPanel;
 	std::shared_ptr<BodyPanel> bodyPanel;
 	std::shared_ptr<ConnectionPanel> connectionPanel;

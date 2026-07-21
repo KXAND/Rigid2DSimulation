@@ -85,7 +85,11 @@
 | 绘制 | `framework/draw` 的公开函数及三角形裁剪辅助函数 | `viewPort` | 13 | `viewport` | 统一为单词 `viewport`；同步头文件、实现和调用点 |
 | 绘制 | `framework/draw/DrawTriangle.h` | `DrawTriangleHalf` 的 `d` | 1 | `depth` | 与实现和调用点的参数名一致 |
 | 媒体 | `framework/media/Font.cpp` | `s` | 1 | `text` | 随机生成的文本 |
-| 媒体 | `framework/media/Tile.cpp` | `Color` 构造函数的 `s`、`i` | 2 | `text`、`position` | 颜色文本及其读取位置 |
+| 媒体 | `framework/media/Tile.h/.cpp` | `Color` 构造函数的 `s`、`i` | 2 | `text`、`position` | 颜色文本及其读取位置 |
+| 媒体 | `framework/media/Tile.h/.cpp` 及调用点 | `Color::RED` 等八个全大写具名常量 | 8 | `Color::kRed` 至 `Color::kBlack` | 与具名常量的 `kPascalCase` 规则一致 |
+| 用户界面 | `current/ui/UserInterface.h/.cpp` | `fpns`、`fp` | 16 | `floatPanels`、`floatPanel` | 浮动面板集合及其遍历元素 |
+| 刚体 | `current/rigid/Body.cpp` | `Body::Init` 的 `shapes` | 1 | `shape` | 形状集合中的单个元素，避免与容器同名 |
+| 用户界面 | `current/ui/BodyPanel.cpp`、`ConnectionPanel.cpp` | 遍历控件的 `c` | 2 | `control` | 控件集合中的单个元素 |
 | 形状内建 | `current/rigid/ShapeBuiltins.cpp` | `a0` 至 `a3` | 4 | `topOuterRight`、`topOuterLeft`、`topInnerLeft`、`topInnerRight` | 框架盒上边多边形的四个顶点 |
 | 形状内建 | `current/rigid/ShapeBuiltins.cpp` | `b0` 至 `b3` | 4 | `bottomInnerRight`、`bottomInnerLeft`、`bottomOuterLeft`、`bottomOuterRight` | 框架盒下边多边形的四个顶点 |
 | 形状内建 | `current/rigid/ShapeBuiltins.cpp` | `c0` 至 `c3` | 4 | `rightOuterTop`、`rightOuterBottom`、`rightInnerBottom`、`rightInnerTop` | 框架盒右边多边形的四个顶点 |
@@ -182,7 +186,7 @@ about_txt -> aboutText
 
 ## 5. 候选审阅结论
 
-此前待确认的 34 个绑定均已审阅：13 个已移入第 2 节，另 21 个因属于公式局部量或成对端点记号而移入第 4 节。本次审阅还核对了 `Shape::IsInside` 的 `p` 以及 `Connection` 的 `p0Relative`、`p1Relative`，两者同样属于第 4 节的明确豁免范围。当前没有未确认的 C++ 命名候选。
+此前待确认的 34 个绑定均已审阅：13 个已移入第 2 节，另 21 个因属于公式局部量或成对端点记号而移入第 4 节。本次审阅还核对了 `Shape::IsInside` 的 `p` 以及 `Connection` 的 `p0Relative`、`p1Relative`，两者同样属于第 4 节的明确豁免范围。后续复查发现的 `Color` 具名常量、浮动面板集合和循环元素名已补入第 2 节；当前没有未确认的 C++ 命名候选。
 
 ## 6. 实施边界与验收
 

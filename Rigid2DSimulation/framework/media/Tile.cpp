@@ -1,13 +1,13 @@
 #include "Tile.h"
 
-const Color Color::RED = Color(255, 0, 0);
-const Color Color::GREEN = Color(0, 255, 0);
-const Color Color::BLUE = Color(0, 0, 255);
-const Color Color::CYAN = Color(0, 255, 255);
-const Color Color::MAGENTA = Color(255, 0, 255);
-const Color Color::YELLOW = Color(255, 255, 0);
-const Color Color::WHITE = Color(255, 255, 255);
-const Color Color::BLACK = Color(0, 0, 0);
+const Color Color::kRed = Color(255, 0, 0);
+const Color Color::kGreen = Color(0, 255, 0);
+const Color Color::kBlue = Color(0, 0, 255);
+const Color Color::kCyan = Color(0, 255, 255);
+const Color Color::kMagenta = Color(255, 0, 255);
+const Color Color::kYellow = Color(255, 255, 0);
+const Color Color::kWhite = Color(255, 255, 255);
+const Color Color::kBlack = Color(0, 0, 0);
 
 Color::Color(wstring const& text)
 {

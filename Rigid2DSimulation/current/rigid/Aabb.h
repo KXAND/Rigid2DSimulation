@@ -11,9 +11,9 @@ struct Aabb {
 	Aabb() = default;
 	Aabb(double x0, double x1, double y0, double y1) :
 		x0(x0), x1(x1), y0(y0), y1(y1) {}
-	Aabb(Aabb const& b0, Aabb const& b1);
+	Aabb(Aabb const& firstBox, Aabb const& secondBox);
 
-	void Expand(Vector2 v);
+	void Expand(Vector2 point);
 };
 bool IsOverlap(Aabb const& box0, Aabb const& box1);
 
