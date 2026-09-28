@@ -1,4 +1,4 @@
-#include "BracketGroup.h"
+ï»¿#include "BracketGroup.h"
 
 wstring ToWString(BracketGroup const& group)
 {
@@ -94,7 +94,7 @@ vector<BracketGroup> AnalyzeBrackets(vector<Token> const& tokens)
             }
             groups.push_back(group);
             group = {};
-            // ÆäËü²»Ïà¹ØµÄµØ·½ĞèÒªÊÇÁãÖµ£¬ºóÃæÎªÁËÊ¡ÊÂÓĞÊ±»áÀûÓÃÕâÒ»µã¡£
+            // å…¶å®ƒä¸ç›¸å…³çš„åœ°æ–¹éœ€è¦æ˜¯é›¶å€¼ï¼Œåé¢ä¸ºäº†çœäº‹æœ‰æ—¶ä¼šåˆ©ç”¨è¿™ä¸€ç‚¹ã€‚
         }
         else
         {

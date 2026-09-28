@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "DVector2.h"
 
 struct Vector2
@@ -22,11 +22,10 @@ struct Vector2
         return DVector2(int(x), int(y));
     }
 
-
-    // ²»Ê¹ÓÃ operator+ ¿ÉÒÔ±ÜÃâ¶îÍâµÄÁÙÊ±±äÁ¿¹¹Ôì
-    // inline ÎŞ·¨½â¾ö·µ»ØÖµ²úÉúµÄ¿½±´¹¹Ôì
-    // ¶¨ÒåÔÚÀàÍâ¿ÉÒÔ±ÜÃâÒ»´ÎÁÙÊ±±äÁ¿µÄ¹¹Ôì£¬µ«ÊÇĞèÒªÓÑÔªÆÆ»µÀàµÄ·â×°ĞÔ
-    /* ÔËËã·ûÖØÔØ */
+    // ä¸ä½¿ç”¨ operator+ å¯ä»¥é¿å…é¢å¤–çš„ä¸´æ—¶å˜é‡æ„é€ 
+    // inline æ— æ³•è§£å†³è¿”å›å€¼äº§ç”Ÿçš„æ‹·è´æ„é€ 
+    // å®šä¹‰åœ¨ç±»å¤–å¯ä»¥é¿å…ä¸€æ¬¡ä¸´æ—¶å˜é‡çš„æ„é€ ï¼Œä½†æ˜¯éœ€è¦å‹å…ƒç ´åç±»çš„å°è£…æ€§
+    /* è¿ç®—ç¬¦é‡è½½ */
     Vector2 operator+() const
     {
         return *this;
@@ -154,7 +153,7 @@ inline double Dot(const Vector2& a, const Vector2& b)
     return a.x * b.x + a.y * b.y;
 }
 
-    //Ë³ĞòÎÊÌâ
+//é¡ºåºé—®é¢˜
 inline Vector2 operator*(const double& scale, const Vector2& vector)
 {
     return Vector2(vector.x * scale, vector.y * scale);
@@ -207,11 +206,10 @@ struct Matrix2
     double a11 = 0;
 
     Matrix2() = default;
-    Matrix2(double a00, double a01, double a10, double a11) :
-        a00(a00),
-        a01(a01),
-        a10(a10),
-        a11(a11)
+    Matrix2(double a00, double a01, double a10, double a11) : a00(a00),
+                                                              a01(a01),
+                                                              a10(a10),
+                                                              a11(a11)
     {
     }
     Matrix2(Vector2 v0, Vector2 v1) : Matrix2(v0.x, v1.x, v0.y, v1.y)
@@ -222,11 +220,11 @@ struct Matrix2
     {
         double c = cos(rad);
         double s = sin(rad);
-        return { c, -s, s, c };
+        return {c, -s, s, c};
     }
     static Matrix2 Identity()
     {
-        return { 1, 0, 0, 1 };
+        return {1, 0, 0, 1};
     }
 
     Matrix2 operator+() const
@@ -235,7 +233,7 @@ struct Matrix2
     }
     Matrix2 operator-() const
     {
-        return { -a00, -a01, -a10, -a11 };
+        return {-a00, -a01, -a10, -a11};
     }
     Matrix2& operator+=(Matrix2 a)
     {
@@ -264,7 +262,7 @@ struct Matrix2
 
     Matrix2 Transpose() const
     {
-        return { a00, a10, a01, a11 };
+        return {a00, a10, a01, a11};
     }
     Matrix2 Inverse() const
     {
@@ -275,7 +273,7 @@ struct Matrix2
         return Matrix2(::abs(a00), ::abs(a01), ::abs(a10), ::abs(a11));
     }
 
-    // ĞĞÁĞÊ½ÔËËã
+    // è¡Œåˆ—å¼è¿ç®—
     double Determinant() const
     {
         return a00 * a11 - a01 * a10;
@@ -306,8 +304,7 @@ inline Vector2 operator*(Matrix2 a, Vector2 b)
 {
     return {
         a.a00 * b.x + a.a01 * b.y,
-        a.a10 * b.x + a.a11 * b.y
-    };
+        a.a10 * b.x + a.a11 * b.y};
 }
 inline Matrix2 operator*(Matrix2 a, Matrix2 b)
 {
@@ -315,10 +312,9 @@ inline Matrix2 operator*(Matrix2 a, Matrix2 b)
         a.a00 * b.a00 + a.a01 * b.a10,
         a.a00 * b.a01 + a.a01 * b.a11,
         a.a10 * b.a00 + a.a11 * b.a10,
-        a.a10 * b.a01 + a.a11 * b.a11
-    };
+        a.a10 * b.a01 + a.a11 * b.a11};
 }
 
-Vector2 GetPositionOnBezier(vector<Vector2> controlPoints, double t); // @todo£ºÃ»ÓĞÒıÓÃ
+Vector2 GetPositionOnBezier(vector<Vector2> controlPoints, double t); // @todoï¼šæ²¡æœ‰å¼•ç”¨
 
 double GetDistanceSquare(Vector2 firstPoint, Vector2 secondPoint, Vector2 point);

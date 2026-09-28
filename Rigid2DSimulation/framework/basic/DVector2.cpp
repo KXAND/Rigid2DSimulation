@@ -1,4 +1,4 @@
-#include "DVector2.h"
+﻿#include "DVector2.h"
 
 DVector2::DVector2(wstring const& text)
 {
@@ -14,9 +14,8 @@ wstring ToWString(DVector2 vector)
 
 bool IsInside(DVector2 vector, DRect rectangle)
 {
-    return
-        IsBetween(vector.x, rectangle.GetLeft(), rectangle.GetRight()) &&
-        IsBetween(vector.y, rectangle.GetTop(), rectangle.GetBottom());
+    return IsBetween(vector.x, rectangle.GetLeft(), rectangle.GetRight()) &&
+           IsBetween(vector.y, rectangle.GetTop(), rectangle.GetBottom());
 }
 
 DRect GetOverlapRect(DRect first, DRect second)
@@ -25,5 +24,5 @@ DRect GetOverlapRect(DRect first, DRect second)
     int right = min(first.GetRight(), second.GetRight());
     int top = max(first.GetTop(), second.GetTop());
     int bottom = min(first.GetBottom(), second.GetBottom());
-    return DRect({ left, top }, right - left, bottom - top);
+    return DRect({left, top}, right - left, bottom - top);
 }

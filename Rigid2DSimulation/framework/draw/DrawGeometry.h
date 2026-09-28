@@ -1,16 +1,15 @@
-#pragma once
+ï»¿#pragma once
 #include "Vector2.h"
 #include "Tile.h"
 
-// @todo: °ÑÁ½¸ö DrawRectangle ÒÆµ½±ðµÄÎÄ¼þÖÐ
+// @todo: æŠŠä¸¤ä¸ª DrawRectangle ç§»åˆ°åˆ«çš„æ–‡ä»¶ä¸­
 void DrawRectangleRaw(Tile& targetTile, DVector2 topLeft, int width, int height, DRect viewport, Color color);
 
 void DrawRectangle(Tile& targetTile, DepthBuffer& zBuffer, double depth,
-	DVector2 topLeft, int width, int height, DRect viewport, Color color);
+                   DVector2 topLeft, int width, int height, DRect viewport, Color color);
 
 void DrawRectangleWithTransform(Tile& targetTile, DepthBuffer& zBuffer, double depth,
-	Vector2 center, double width, double height, Matrix2 transformMatrix, DRect viewport, Color color);
+                                Vector2 center, double width, double height, Matrix2 transformMatrix, DRect viewport, Color color);
 
 void DrawEllipse(Tile& targetTile, DepthBuffer& zBuffer, double depth,
-	Vector2 center, double horizontalRadius, double verticalRadius, DRect viewport, Color color);
-
+                 Vector2 center, double horizontalRadius, double verticalRadius, DRect viewport, Color color);

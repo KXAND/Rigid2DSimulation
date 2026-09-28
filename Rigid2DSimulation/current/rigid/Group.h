@@ -1,28 +1,27 @@
-#pragma once
+ï»¿#pragma once
 #include "DVector2.h"
 
 struct SimulationApp;
 struct Body;
 struct Connection;
 /// <summary>
-/// Group ÊÇÒ»ÏµÁÐÍ¨¹ý connection Á¬½ÓµÄÍ¼ÐÎ
+/// Group æ˜¯ä¸€ç³»åˆ—é€šè¿‡ connection è¿žæŽ¥çš„å›¾å½¢
 /// </summary>
-struct Group {
-	vector<Body*> bodies;
-	Group(vector<Body*> const& bodies) : bodies(bodies) {}
-	/// <summary>
-	/// @todo
-	/// </summary>
-	/// <param name="rectangle"></param>
-	void Warp(DRect rectangle);
+struct Group
+{
+    vector<Body*> bodies;
+    Group(vector<Body*> const& bodies) : bodies(bodies) {}
+    /// <summary>
+    /// @todo
+    /// </summary>
+    /// <param name="rectangle"></param>
+    void Warp(DRect rectangle);
 };
 
 void FindBodiesInGroup(vector<Body*>& bodies, Body* body);
 /// <summary>
-/// ½«ÊäÈëµÄ body »®·ÖÎª group
+/// å°†è¾“å…¥çš„ body åˆ’åˆ†ä¸º group
 /// </summary>
 /// <param name="bodies"></param>
 /// <returns></returns>
 vector<std::shared_ptr<Group>> FormGroups(vector<std::shared_ptr<Body>> const& bodies);
-
-

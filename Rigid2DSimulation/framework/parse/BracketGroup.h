@@ -1,13 +1,12 @@
-#pragma once
+ï»¿#pragma once
 #include "Token.h"
 
 struct BracketGroup
 {
     int type = 0;
-    // 1 ´ú±í ()£¬2 ´ú±í {}, 3 ´ú±í []¡£
+    // 1 ä»£è¡¨ ()ï¼Œ2 ä»£è¡¨ {}, 3 ä»£è¡¨ []ã€‚
     Token token;
     vector<BracketGroup> children;
 };
 wstring ToWString(BracketGroup const& group);
 vector<BracketGroup> AnalyzeBrackets(vector<Token> const& tokens);
-

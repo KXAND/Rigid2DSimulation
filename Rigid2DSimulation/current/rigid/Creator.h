@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Vector2.h"
 
 int constexpr kCreateBox = 0;
@@ -15,49 +15,47 @@ struct Body;
 struct Connection;
 struct Creator
 {
-	int mode = 0;
-	double bodyDepth = 0;
-	double connectionDepth = 0;
-	double thickness = 0;
-	double radius = 0;
-	DVector2 creationStartPoint;
-	Body* body0 = NULL;
-	Body* body1 = NULL;
-	std::shared_ptr<Value> bodyConfiguration, connectionConfiguration;
-	Vector2 p0Relative, p1Relative;
+    int mode = 0;
+    double bodyDepth = 0;
+    double connectionDepth = 0;
+    double thickness = 0;
+    double radius = 0;
+    DVector2 creationStartPoint;
+    Body* body0 = NULL;
+    Body* body1 = NULL;
+    std::shared_ptr<Value> bodyConfiguration, connectionConfiguration;
+    Vector2 p0Relative, p1Relative;
 
-	std::shared_ptr<Body> body;
-	std::shared_ptr<Connection> connection;
-	bool active = false;
-	bool hovered = false;
+    std::shared_ptr<Body> body;
+    std::shared_ptr<Connection> connection;
+    bool active = false;
+    bool hovered = false;
 
-	Creator();
-	Creator(Value const& config);
-	double Depth() const;
-	void Update(SimulationApp& simulationApp);
-	void Discard(SimulationApp& simulationApp);
-	void PreUpdate(SimulationApp& simulationApp);
+    Creator();
+    Creator(Value const& config);
+    double Depth() const;
+    void Update(SimulationApp& simulationApp);
+    void Discard(SimulationApp& simulationApp);
+    void PreUpdate(SimulationApp& simulationApp);
 
 private:
-	void UpdateBox(SimulationApp& simulationApp);
-	void UpdateBall(SimulationApp& simulationApp);
-	void UpdatePlate(SimulationApp& simulationApp);
-	void UpdateConnection(SimulationApp& simulationApp);
-	/// <summary>
-	/// ÔÚÒ»¸ö¿ÕµØ·½µã»÷£¬¿ªÊ¼´´½¨Ò»¸öĞÂÎïÌå
-	/// </summary>
-	/// <param name="simulationApp"></param>
-	void UpdatePoint(SimulationApp& simulationApp);
-	/// <summary>
-	/// ½«body0¹Ì¶¨¶¤ÔÚÔ­µØ
-	/// </summary>
-	/// <param name="simulationApp"></param>
-	void UpdateNail(SimulationApp& simulationApp);
-	/// <summary>
-	/// ÔÚÊó±êÎ»ÖÃ´´½¨Ò»¸ö°ë¾¶Îª radius µÄÔ²/Á£×Ó
-	/// </summary>
-	/// <param name="simulationApp"></param>
-	void UpdateParticle(SimulationApp& simulationApp);
+    void UpdateBox(SimulationApp& simulationApp);
+    void UpdateBall(SimulationApp& simulationApp);
+    void UpdatePlate(SimulationApp& simulationApp);
+    void UpdateConnection(SimulationApp& simulationApp);
+    /// <summary>
+    /// åœ¨ä¸€ä¸ªç©ºåœ°æ–¹ç‚¹å‡»ï¼Œå¼€å§‹åˆ›å»ºä¸€ä¸ªæ–°ç‰©ä½“
+    /// </summary>
+    /// <param name="simulationApp"></param>
+    void UpdatePoint(SimulationApp& simulationApp);
+    /// <summary>
+    /// å°†body0å›ºå®šé’‰åœ¨åŸåœ°
+    /// </summary>
+    /// <param name="simulationApp"></param>
+    void UpdateNail(SimulationApp& simulationApp);
+    /// <summary>
+    /// åœ¨é¼ æ ‡ä½ç½®åˆ›å»ºä¸€ä¸ªåŠå¾„ä¸º radius çš„åœ†/ç²’å­
+    /// </summary>
+    /// <param name="simulationApp"></param>
+    void UpdateParticle(SimulationApp& simulationApp);
 };
-
-

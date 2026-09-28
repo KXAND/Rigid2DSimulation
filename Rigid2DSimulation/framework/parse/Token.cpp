@@ -1,4 +1,4 @@
-#include "Token.h"
+ï»¿#include "Token.h"
 
 Token::Token(wstring const& type) : type(type)
 {
@@ -45,7 +45,7 @@ wstring ToWString(Token const& token)
 
 Token ParseNumberToken(wstring const& source, int& index)
 {
-    wstring numberText = { source[index] };
+    wstring numberText = {source[index]};
     bool isValid = true;
     bool hasDecimalPoint = false;
 
@@ -114,8 +114,7 @@ Token ParseStringToken(wstring const& source, int& index)
 Token ParseMarkToken(wstring const& source, int& index)
 {
     vector<wstring> twoCharacterMarks = {
-        L"||", L"&&", L"==", L"!=", L"<=", L">=", L"//"
-    };
+        L"||", L"&&", L"==", L"!=", L"<=", L">=", L"//"};
     if (index + 1 < source.size())
     {
         for (auto const& mark : twoCharacterMarks)
@@ -135,7 +134,7 @@ Token ParseMarkToken(wstring const& source, int& index)
             if (source[index] == character)
             {
                 ++index;
-                return Token(wstring({ character }));
+                return Token(wstring({character}));
             }
         }
     }
@@ -146,7 +145,7 @@ Token ParseGlobalVariableToken(wstring const& source, int& index)
 {
     wstring variableName;
     bool isValid = true;
-    // ÏÂÃæÕâĞĞÅĞ¶ÏµÄË³ĞòºÜÖØÒª£¬isValid ²»ÄÜÒÆµ½ÓÒ±ß¡£
+    // ä¸‹é¢è¿™è¡Œåˆ¤æ–­çš„é¡ºåºå¾ˆé‡è¦ï¼ŒisValid ä¸èƒ½ç§»åˆ°å³è¾¹ã€‚
     while (isValid && ++index != source.size())
     {
         auto character = source[index];
@@ -161,9 +160,9 @@ Token ParseGlobalVariableToken(wstring const& source, int& index)
 
 Token ParseVariableOrReservedToken(wstring const& source, int& index)
 {
-    wstring variableName = { source[index] };
+    wstring variableName = {source[index]};
     bool isValid = true;
-    // ÏÂÃæÕâĞĞÅĞ¶ÏµÄË³ĞòºÜÖØÒª£¬isValid ²»ÄÜÒÆµ½ÓÒ±ß¡£
+    // ä¸‹é¢è¿™è¡Œåˆ¤æ–­çš„é¡ºåºå¾ˆé‡è¦ï¼ŒisValid ä¸èƒ½ç§»åˆ°å³è¾¹ã€‚
     while (isValid && ++index != source.size())
     {
         auto character = source[index];
@@ -247,7 +246,7 @@ vector<Token> Tokenize(wstring const& source)
     vector<Token> tokens;
     while (index != source.size())
     {
-        // ÄãÖ®Ç°ÔÚ token Ç°Ãæ¼ÓÁË const &£¬Ç§Íò²»ÒªÔÚÕâÑùÁË¡£
+        // ä½ ä¹‹å‰åœ¨ token å‰é¢åŠ äº† const &ï¼Œåƒä¸‡ä¸è¦åœ¨è¿™æ ·äº†ã€‚
         auto token = ParseToken(source, index);
         bool blank = token.type == L" " || token.type == L"\n";
         if (token.type == L"//")

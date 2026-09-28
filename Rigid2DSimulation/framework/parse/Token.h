@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Utils.h"
 
 struct Token
@@ -26,4 +26,3 @@ Token ParseToken(wstring const& source, int& index);
 
 vector<Token> NormalizeSigns(vector<Token> const& tokens);
 vector<Token> Tokenize(wstring const& source);
-

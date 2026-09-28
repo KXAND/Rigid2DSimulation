@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Tile.h"
 
 int constexpr kRopeConnection = 0;
@@ -10,40 +10,39 @@ struct Value;
 struct SimulationApp;
 struct Body;
 /// <summary>
-/// ¶¨ÒåÒ»¸öÁ½Á½Á¬½Ó¹ØÏµ£¬¸ù¾İÁ¬½ÓÎïÀí²ÄÖÊµÄ²»Í¬£¬¸üĞÂÎ»ÖÃ
+/// å®šä¹‰ä¸€ä¸ªä¸¤ä¸¤è¿æ¥å…³ç³»ï¼Œæ ¹æ®è¿æ¥ç‰©ç†æè´¨çš„ä¸åŒï¼Œæ›´æ–°ä½ç½®
 /// </summary>
-struct Connection {
-	bool isMarkedForDeletion = false;
-	int type = 0;
-	wstring scriptText, temporaryScriptText;
-	Body* body0 = NULL;
-	Body* body1 = NULL;
-	Vector2 p0Relative, p1Relative;
-	Vector2 p0, p1;
-	double length = 0;
-	double springConstant = 0;
-	bool isTight = false;
+struct Connection
+{
+    bool isMarkedForDeletion = false;
+    int type = 0;
+    wstring scriptText, temporaryScriptText;
+    Body* body0 = NULL;
+    Body* body1 = NULL;
+    Vector2 p0Relative, p1Relative;
+    Vector2 p0, p1;
+    double length = 0;
+    double springConstant = 0;
+    bool isTight = false;
 
-	// @todo:Ó¦¸Ã¸ù¾İ±äconnectionµÄÀàĞÍ¾ö¶¨Õâ¼¸¸öÁ¿µÄ³öÏÖµÄ
-	Color colorRopeTight, colorRope;
-	Color colorLink;
-	Color colorCordTight, colorCord;
-	Color colorSpringStretch, colorSpringCompress;
+    // @todo:åº”è¯¥æ ¹æ®å˜connectionçš„ç±»å‹å†³å®šè¿™å‡ ä¸ªé‡çš„å‡ºç°çš„
+    Color colorRopeTight, colorRope;
+    Color colorLink;
+    Color colorCordTight, colorCord;
+    Color colorSpringStretch, colorSpringCompress;
 
-	Connection();
-	Connection(SimulationApp& simulationApp, FILE* file);
-	void Save(SimulationApp const& simulationApp, FILE* file) const;
+    Connection();
+    Connection(SimulationApp& simulationApp, FILE* file);
+    void Save(SimulationApp const& simulationApp, FILE* file) const;
 
-	void ReadConfig(Value const& configuration);
-	void SignUpToBodies();
-	void UpdatePosition();
-	void RefreshFromScript(SimulationApp& simulationApp);
-	void SimulateRopeOrLink(bool useEqualPositionCorrection);
-	void SimulateCordOrSpring(double stepDeltaTime);
-	void Simulate(double stepDeltaTime, bool useEqualPositionCorrection);
-	void Render(SimulationApp& simulationApp) const;
+    void ReadConfig(Value const& configuration);
+    void SignUpToBodies();
+    void UpdatePosition();
+    void RefreshFromScript(SimulationApp& simulationApp);
+    void SimulateRopeOrLink(bool useEqualPositionCorrection);
+    void SimulateCordOrSpring(double stepDeltaTime);
+    void Simulate(double stepDeltaTime, bool useEqualPositionCorrection);
+    void Render(SimulationApp& simulationApp) const;
 };
 
 Body* GetOtherBody(Body* body, Connection const& connection);
-
-

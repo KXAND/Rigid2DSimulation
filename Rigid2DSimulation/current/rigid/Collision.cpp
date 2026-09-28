@@ -1,228 +1,261 @@
-#include "Collision.h"
+Ôªø#include "Collision.h"
 #include "SimulationApp.h"
 #include "Background.h"
 #include "Body.h"
 #include "Shape.h"
 #include "DrawGeometry.h"
 
-//	“…À∆∑œ∆˙
+//	Áñë‰ººÂ∫üÂºÉ
 void Collision::Render(SimulationApp& simulationApp) const
 {
-	DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, 100, contactPoint, 5, 5, simulationApp.background->GetViewport(), Color::kYellow);
+    DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, 100, contactPoint, 5, 5, simulationApp.background->GetViewport(), Color::kYellow);
 }
 void Collision::Simulate(bool equalResponse)
 {
-	/*√¸√˚‘º∂®£∫
-		?????c
-		???âÿ1??2
-	*/
+    /*ÂëΩÂêçÁ∫¶ÂÆöÔºö
+        ?????c
+        ???Â£∫1??2
+    */
 
-	double elasticity = min(body0->elasticity, body1->elasticity);
-	double frictionDynamic = min(body0->frictionDynamic, body1->frictionDynamic);
-	double frictionStatic = min(body0->frictionStatic, body1->frictionStatic);
+    double elasticity = min(body0->elasticity, body1->elasticity);
+    double frictionDynamic = min(body0->frictionDynamic, body1->frictionDynamic);
+    double frictionStatic = min(body0->frictionStatic, body1->frictionStatic);
 
-	// Ω”¥•µ„¥¶¡Ω∏ˆŒÔÃÂµƒ«–œÚ¡ø£®tangent vector£©∫Õ∂‘”¶ÀŸ∂»
-	Vector2 contactOffsetPerpendicular0 = contactPoint - body0->position;
-	Vector2 contactOffsetPerpendicular1 = contactPoint - body1->position;
-	contactOffsetPerpendicular0 = Vector2(-contactOffsetPerpendicular0.y, contactOffsetPerpendicular0.x);//ƒÊ ±’Î◊™90∂»
-	contactOffsetPerpendicular1 = Vector2(-contactOffsetPerpendicular1.y, contactOffsetPerpendicular1.x);
-	Vector2 velocity0 = body0->velocity + body0->velocityAngular * contactOffsetPerpendicular0;
-	Vector2 velocity1 = body1->velocity + body1->velocityAngular * contactOffsetPerpendicular1;
+    // Êé•Ëß¶ÁÇπÂ§Ñ‰∏§‰∏™Áâ©‰ΩìÁöÑÂàáÂêëÈáèÔºàtangent vectorÔºâÂíåÂØπÂ∫îÈÄüÂ∫¶
+    Vector2 contactOffsetPerpendicular0 = contactPoint - body0->position;
+    Vector2 contactOffsetPerpendicular1 = contactPoint - body1->position;
+    contactOffsetPerpendicular0 = Vector2(-contactOffsetPerpendicular0.y, contactOffsetPerpendicular0.x); //ÈÄÜÊó∂ÈíàËΩ¨90Â∫¶
+    contactOffsetPerpendicular1 = Vector2(-contactOffsetPerpendicular1.y, contactOffsetPerpendicular1.x);
+    Vector2 velocity0 = body0->velocity + body0->velocityAngular * contactOffsetPerpendicular0;
+    Vector2 velocity1 = body1->velocity + body1->velocityAngular * contactOffsetPerpendicular1;
 
-	// ∑®œﬂ∑ΩœÚ
-	// @todo£∫’‚¿Ô–Ë“™≤πŒÔ¿Ì÷™ ∂
-	double normalMomentArm0 = Dot(contactOffsetPerpendicular0, normal);
-	double normalMomentArm1 = Dot(contactOffsetPerpendicular1, normal);
-	double normalInvMass0 = body0->invMass + normalMomentArm0 * normalMomentArm0 * body0->invInertia;
-	double normalInvMass1 = body1->invMass + normalMomentArm1 * normalMomentArm1 * body1->invInertia;
-	double impulseNormal = (1 + elasticity) * max(0.0, Dot(velocity0 - velocity1, normal)) / (normalInvMass0 + normalInvMass1); // ∑®œÚ∑ΩœÚµƒ≥Â¡ø
+    // Ê≥ïÁ∫øÊñπÂêë
+    // @todoÔºöËøôÈáåÈúÄË¶ÅË°•Áâ©ÁêÜÁü•ËØÜ
+    double normalMomentArm0 = Dot(contactOffsetPerpendicular0, normal);
+    double normalMomentArm1 = Dot(contactOffsetPerpendicular1, normal);
+    double normalInvMass0 = body0->invMass + normalMomentArm0 * normalMomentArm0 * body0->invInertia;
+    double normalInvMass1 = body1->invMass + normalMomentArm1 * normalMomentArm1 * body1->invInertia;
+    double impulseNormal = (1 + elasticity) * max(0.0, Dot(velocity0 - velocity1, normal)) / (normalInvMass0 + normalInvMass1); // Ê≥ïÂêëÊñπÂêëÁöÑÂÜ≤Èáè
 
-	Vector2 impulse;
-	impulse = -impulseNormal * normal;
-	body0->velocity += impulse * body0->invMass;
-	body1->velocity -= impulse * body1->invMass;
-	body0->velocityAngular += Dot(impulse, contactOffsetPerpendicular0) * body0->invInertia;
-	body1->velocityAngular -= Dot(impulse, contactOffsetPerpendicular1) * body1->invInertia;
+    Vector2 impulse;
+    impulse = -impulseNormal * normal;
+    body0->velocity += impulse * body0->invMass;
+    body1->velocity -= impulse * body1->invMass;
+    body0->velocityAngular += Dot(impulse, contactOffsetPerpendicular0) * body0->invInertia;
+    body1->velocityAngular -= Dot(impulse, contactOffsetPerpendicular1) * body1->invInertia;
 
-	Vector2 updatedVelocity0 = body0->velocity + body0->velocityAngular * contactOffsetPerpendicular0;
-	Vector2 updatedVelocity1 = body1->velocity + body1->velocityAngular * contactOffsetPerpendicular1;
+    Vector2 updatedVelocity0 = body0->velocity + body0->velocityAngular * contactOffsetPerpendicular0;
+    Vector2 updatedVelocity1 = body1->velocity + body1->velocityAngular * contactOffsetPerpendicular1;
 
-	double staticFrictionImpulse = frictionStatic * impulseNormal;
-	double dynamicFrictionImpulse = frictionDynamic * impulseNormal;
+    double staticFrictionImpulse = frictionStatic * impulseNormal;
+    double dynamicFrictionImpulse = frictionDynamic * impulseNormal;
 
+    // ÂàáÁ∫øÊñπÂêë
+    Vector2 tangentDirection = Vector2(-normal.y, normal.x);
+    double impulseTangential = Dot(updatedVelocity0 - updatedVelocity1, tangentDirection);
+    if (impulseTangential < 0)
+    {
+        impulseTangential = -impulseTangential;
+        tangentDirection = -tangentDirection;
+    }
+    double tangentMomentArm0 = Dot(contactOffsetPerpendicular0, tangentDirection); // tantanÔºüÔºüÔºü
+    double tangentMomentArm1 = Dot(contactOffsetPerpendicular1, tangentDirection);
+    double tangentInvMass0 = body0->invMass + tangentMomentArm0 * tangentMomentArm0 * body0->invInertia;
+    double tangentInvMass1 = body1->invMass + tangentMomentArm1 * tangentMomentArm1 * body1->invInertia;
+    impulseTangential /= tangentInvMass0 + tangentInvMass1;
 
-	// «–œﬂ∑ΩœÚ
-	Vector2 tangentDirection = Vector2(-normal.y, normal.x);
-	double impulseTangential = Dot(updatedVelocity0 - updatedVelocity1, tangentDirection);
-	if (impulseTangential < 0)
-	{
-		impulseTangential = -impulseTangential; tangentDirection = -tangentDirection;
-	}
-	double tangentMomentArm0 = Dot(contactOffsetPerpendicular0, tangentDirection);// tantan£ø£ø£ø
-	double tangentMomentArm1 = Dot(contactOffsetPerpendicular1, tangentDirection);
-	double tangentInvMass0 = body0->invMass + tangentMomentArm0 * tangentMomentArm0 * body0->invInertia;
-	double tangentInvMass1 = body1->invMass + tangentMomentArm1 * tangentMomentArm1 * body1->invInertia;
-	impulseTangential /= tangentInvMass0 + tangentInvMass1;
+    if (impulseTangential < staticFrictionImpulse)
+    {
+        impulse = -impulseTangential * tangentDirection;
+    }
+    else
+    {
+        impulse = -dynamicFrictionImpulse * tangentDirection;
+    }
 
-	if (impulseTangential < staticFrictionImpulse)
-	{
-		impulse = -impulseTangential * tangentDirection;
-	}
-	else
-	{
-		impulse = -dynamicFrictionImpulse * tangentDirection;
-	}
+    body0->velocity += impulse * body0->invMass;
+    body1->velocity -= impulse * body1->invMass;
+    body0->velocityAngular += Dot(impulse, contactOffsetPerpendicular0) * body0->invInertia;
+    body1->velocityAngular -= Dot(impulse, contactOffsetPerpendicular1) * body1->invInertia;
 
-	body0->velocity += impulse * body0->invMass;
-	body1->velocity -= impulse * body1->invMass;
-	body0->velocityAngular += Dot(impulse, contactOffsetPerpendicular0) * body0->invInertia;
-	body1->velocityAngular -= Dot(impulse, contactOffsetPerpendicular1) * body1->invInertia;
-
-	if (equalResponse)
-	{
-		if (body0->invMass == 0) { body1->position += normal * depth; }
-		else if (body1->invMass == 0) { body0->position -= normal * depth; }
-		else
-		{
-			body0->position -= normal * depth / 2;
-			body1->position += normal * depth / 2;
-		}
-		return;
-	}
-	// Œ“ «’Êµƒ≤ª÷™µ¿’‚∏ˆ”–√ª”–µ¿¿Ì°£
-	double sum = body0->invMass + body1->invMass;
-	body0->position -= normal * depth * body0->invMass / sum;
-	body1->position += normal * depth * body1->invMass / sum;
+    if (equalResponse)
+    {
+        if (body0->invMass == 0)
+        {
+            body1->position += normal * depth;
+        }
+        else if (body1->invMass == 0)
+        {
+            body0->position -= normal * depth;
+        }
+        else
+        {
+            body0->position -= normal * depth / 2;
+            body1->position += normal * depth / 2;
+        }
+        return;
+    }
+    // ÊàëÊòØÁúüÁöÑ‰∏çÁü•ÈÅìËøô‰∏™ÊúâÊ≤°ÊúâÈÅìÁêÜ„ÄÇ
+    double sum = body0->invMass + body1->invMass;
+    body0->position -= normal * depth * body0->invMass / sum;
+    body1->position += normal * depth * body1->invMass / sum;
 }
 
 void Collide(Body& b0, Body& b1, vector<std::shared_ptr<Collision>>& out, double parallelEpsilon)
 {
-	// ≤ªø…ƒ‹∑¢…˙≈ˆ◊≤µƒ«Èøˆ
-	if (b0.invMass == 0 && b1.invMass == 0) { return; }
-	if (!IsOverlap(b0.box, b1.box)) { return; }
+    // ‰∏çÂèØËÉΩÂèëÁîüÁ¢∞ÊíûÁöÑÊÉÖÂÜµ
+    if (b0.invMass == 0 && b1.invMass == 0)
+    {
+        return;
+    }
+    if (!IsOverlap(b0.box, b1.box))
+    {
+        return;
+    }
 
-	for (auto& shape0 : b0.shapes)
-		for (auto& shape1 : b1.shapes)
-		{
-			Collision collision;
+    for (auto& shape0 : b0.shapes)
+        for (auto& shape1 : b1.shapes)
+        {
+            Collision collision;
 
-			collision.body0 = &b0; collision.body1 = &b1;
-			if (shape0->isCircle && shape1->isCircle)
-			{
-				// ∂º ««Ú
-				if (!CollideBalls(*shape0, *shape1, collision)) { continue; }
-			}
-			else
-			{
-				if (!CollideShapes(*shape0, *shape1, collision, false)) { continue; }
-				if (!CollideShapes(*shape1, *shape0, collision, true)) { continue; }
-			}
+            collision.body0 = &b0;
+            collision.body1 = &b1;
+            if (shape0->isCircle && shape1->isCircle)
+            {
+                // ÈÉΩÊòØÁêÉ
+                if (!CollideBalls(*shape0, *shape1, collision))
+                {
+                    continue;
+                }
+            }
+            else
+            {
+                if (!CollideShapes(*shape0, *shape1, collision, false))
+                {
+                    continue;
+                }
+                if (!CollideShapes(*shape1, *shape0, collision, true))
+                {
+                    continue;
+                }
+            }
 
+            // ÈÉΩ‰∏çÊòØÂúÜÔºåÊ£ÄÊü•ÊúÄËøëË∑ùÁ¶ªÊòØÂê¶Â∞è‰∫éÈòàÂÄº
+            if (!shape0->isCircle && !shape1->isCircle && collision.difference < parallelEpsilon)
+            {
+                double distanceSquareClosest = DBL_MAX;
+                FindClosestContactVertex(*shape0, *shape1, collision.contactPoint, distanceSquareClosest);
+                FindClosestContactVertex(*shape1, *shape0, collision.contactPoint, distanceSquareClosest);
+            }
 
-			// ∂º≤ª «‘≤£¨ºÏ≤È◊ÓΩ¸æ‡¿Î «∑Ò–°”⁄„–÷µ
-			if (!shape0->isCircle && !shape1->isCircle && collision.difference < parallelEpsilon)
-			{
-				double distanceSquareClosest = DBL_MAX;
-				FindClosestContactVertex(*shape0, *shape1, collision.contactPoint, distanceSquareClosest);
-				FindClosestContactVertex(*shape1, *shape0, collision.contactPoint, distanceSquareClosest);
-			}
-
-			out.push_back(std::make_shared<Collision>(collision));
-		}
+            out.push_back(std::make_shared<Collision>(collision));
+        }
 }
 
-/***need be move to private°˝***/
+/***need be move to private‚Üì***/
 
 bool CollideShapes(Shape& firstShape, Shape& secondShape, Collision& collision, bool reverse)
 {
-	Vector2 contactPoint;
-	if (firstShape.isCircle)
-	{
-		for (int i = (0), iEnd = int(secondShape.vertices.size()); i < iEnd; ++i)
-		{
-			Vector2 normal = (secondShape.vertices[i] - firstShape.position).GetNormalized();
-			if (normal.IsZero()) { normal = Vector2(0, 1); }
-			auto depth = CalculatePolygonCollisionDepth(normal, firstShape.position + normal * firstShape.radius, secondShape, contactPoint);
-			if (depth < 0) { return false; }
-			if (depth < collision.depth)
-			{
-				collision.difference = collision.depth - depth;
-				collision.depth = depth;
-				collision.contactPoint = contactPoint;
-				collision.normal = reverse ? -normal : normal;
-			}
-		}
-		return true;
-	}
+    Vector2 contactPoint;
+    if (firstShape.isCircle)
+    {
+        for (int i = (0), iEnd = int(secondShape.vertices.size()); i < iEnd; ++i)
+        {
+            Vector2 normal = (secondShape.vertices[i] - firstShape.position).GetNormalized();
+            if (normal.IsZero())
+            {
+                normal = Vector2(0, 1);
+            }
+            auto depth = CalculatePolygonCollisionDepth(normal, firstShape.position + normal * firstShape.radius, secondShape, contactPoint);
+            if (depth < 0)
+            {
+                return false;
+            }
+            if (depth < collision.depth)
+            {
+                collision.difference = collision.depth - depth;
+                collision.depth = depth;
+                collision.contactPoint = contactPoint;
+                collision.normal = reverse ? -normal : normal;
+            }
+        }
+        return true;
+    }
 
-	for (int i = (0), iEnd = int(firstShape.vertices.size()); i < iEnd; ++i)
-	{
-		int j = (i + 1) % firstShape.vertices.size();
-		Vector2 normal = firstShape.vertices[j] - firstShape.vertices[i];
-		normal = Vector2(normal.y, -normal.x).GetNormalized();
-		auto depth = secondShape.isCircle ?
-			CalculateBallCollisionDepth(normal, firstShape.vertices[i], secondShape, contactPoint) :
-			CalculatePolygonCollisionDepth(normal, firstShape.vertices[i], secondShape, contactPoint);
-		if (depth < 0) { return false; }
-		if (depth < collision.depth)
-		{
-			collision.difference = collision.depth - depth;
-			collision.depth = depth;
-			collision.contactPoint = contactPoint;
-			collision.normal = reverse ? -normal : normal;
-		}
-	} return true;
+    for (int i = (0), iEnd = int(firstShape.vertices.size()); i < iEnd; ++i)
+    {
+        int j = (i + 1) % firstShape.vertices.size();
+        Vector2 normal = firstShape.vertices[j] - firstShape.vertices[i];
+        normal = Vector2(normal.y, -normal.x).GetNormalized();
+        auto depth = secondShape.isCircle ? CalculateBallCollisionDepth(normal, firstShape.vertices[i], secondShape, contactPoint) : CalculatePolygonCollisionDepth(normal, firstShape.vertices[i], secondShape, contactPoint);
+        if (depth < 0)
+        {
+            return false;
+        }
+        if (depth < collision.depth)
+        {
+            collision.difference = collision.depth - depth;
+            collision.depth = depth;
+            collision.contactPoint = contactPoint;
+            collision.normal = reverse ? -normal : normal;
+        }
+    }
+    return true;
 }
 void FindClosestContactVertex(Shape& firstShape, Shape& secondShape, Vector2& contactPoint, double& closestDistanceSquared)
 {
-	for (int i = (0), iEnd = int(firstShape.vertices.size()); i < iEnd; ++i)
-	{
-		int j = (i + 1) % firstShape.vertices.size();
-		for (auto vertex : secondShape.vertices)
-		{
-			//À„≥ˆ∏√∂•µ„µΩ firstShape µ±«∞∂•µ„∫Õœ¬“ª∏ˆ∂•µ„À˘ππ≥…µƒœﬂ∂Œµƒæ‡¿Î∆Ω∑Ω
-			double distanceSquare = GetDistanceSquare(firstShape.vertices[i], firstShape.vertices[j], vertex);
-			if (distanceSquare < closestDistanceSquared)
-			{
-				closestDistanceSquared = distanceSquare;
-				contactPoint = vertex;
-			}
-		}
-	}
+    for (int i = (0), iEnd = int(firstShape.vertices.size()); i < iEnd; ++i)
+    {
+        int j = (i + 1) % firstShape.vertices.size();
+        for (auto vertex : secondShape.vertices)
+        {
+            //ÁÆóÂá∫ËØ•È°∂ÁÇπÂà∞ firstShape ÂΩìÂâçÈ°∂ÁÇπÂíå‰∏ã‰∏Ä‰∏™È°∂ÁÇπÊâÄÊûÑÊàêÁöÑÁ∫øÊÆµÁöÑË∑ùÁ¶ªÂπ≥Êñπ
+            double distanceSquare = GetDistanceSquare(firstShape.vertices[i], firstShape.vertices[j], vertex);
+            if (distanceSquare < closestDistanceSquared)
+            {
+                closestDistanceSquared = distanceSquare;
+                contactPoint = vertex;
+            }
+        }
+    }
 }
 bool CollideBalls(Shape& firstShape, Shape& secondShape, Collision& collision)
 {
-	Vector2 centerOffset = secondShape.position - firstShape.position;
-	double depth = firstShape.radius + secondShape.radius - centerOffset.GetLength();
-	if (depth < 0) { return false; }
-	collision.depth = depth;
-	collision.normal = centerOffset.IsZero() ? Vector2(0, 1) : centerOffset.GetNormalized();
-	if (firstShape.radius < secondShape.radius)
-	{
-		collision.contactPoint = firstShape.position + firstShape.radius * collision.normal;
-	}
-	else
-	{
-		collision.contactPoint = secondShape.position - secondShape.radius * collision.normal;
-	} return true;
+    Vector2 centerOffset = secondShape.position - firstShape.position;
+    double depth = firstShape.radius + secondShape.radius - centerOffset.GetLength();
+    if (depth < 0)
+    {
+        return false;
+    }
+    collision.depth = depth;
+    collision.normal = centerOffset.IsZero() ? Vector2(0, 1) : centerOffset.GetNormalized();
+    if (firstShape.radius < secondShape.radius)
+    {
+        collision.contactPoint = firstShape.position + firstShape.radius * collision.normal;
+    }
+    else
+    {
+        collision.contactPoint = secondShape.position - secondShape.radius * collision.normal;
+    }
+    return true;
 }
 double CalculateBallCollisionDepth(Vector2 normal, Vector2 origin, Shape const& shape, Vector2& contactPoint)
 {
-	auto tmp = Dot(shape.position - origin, normal) - shape.radius;
-	contactPoint = shape.position - shape.radius * normal; return -tmp;
+    auto tmp = Dot(shape.position - origin, normal) - shape.radius;
+    contactPoint = shape.position - shape.radius * normal;
+    return -tmp;
 }
 double CalculatePolygonCollisionDepth(Vector2 normal, Vector2 origin, Shape const& shape, Vector2& contactPoint)
 {
-	double minimumProjection = DBL_MAX;
-	for (auto vertex : shape.vertices)
-	{
-		auto tmp = Dot(vertex - origin, normal);
-		if (tmp < minimumProjection)
-		{
-			minimumProjection = tmp; contactPoint = vertex;
-		}
-	} return -minimumProjection;
+    double minimumProjection = DBL_MAX;
+    for (auto vertex : shape.vertices)
+    {
+        auto tmp = Dot(vertex - origin, normal);
+        if (tmp < minimumProjection)
+        {
+            minimumProjection = tmp;
+            contactPoint = vertex;
+        }
+    }
+    return -minimumProjection;
 }
-
-
-

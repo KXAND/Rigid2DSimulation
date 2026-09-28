@@ -1,35 +1,36 @@
-#pragma once
+ï»¿#pragma once
 #include "Utils.h"
 
-// ÕâÀï·´ÕıÄÜÓÃ£¬²»ÖªµÀÓĞÃ»ÓĞ¸üºÃµÄÊµÏÖ·½Ê½¡£
-struct WaveBlock {
-	WAVEHDR waveHeader{};
-	vector<int16_t> samples;
+// è¿™é‡Œåæ­£èƒ½ç”¨ï¼Œä¸çŸ¥é“æœ‰æ²¡æœ‰æ›´å¥½çš„å®ç°æ–¹å¼ã€‚
+struct WaveBlock
+{
+    WAVEHDR waveHeader{};
+    vector<int16_t> samples;
 
-	WaveBlock(int sampleCount = 0);
-	int GetSampleCount() const;
-	bool IsDone() const;
-	bool Play(HWAVEOUT waveOutputHandle);
-	bool Finish(HWAVEOUT waveOutputHandle);
+    WaveBlock(int sampleCount = 0);
+    int GetSampleCount() const;
+    bool IsDone() const;
+    bool Play(HWAVEOUT waveOutputHandle);
+    bool Finish(HWAVEOUT waveOutputHandle);
 };
 
-struct WaveOutput {
-	HWAVEOUT waveOutputHandle{};
-	int sampleRate = 0;
-	int safeBlockCount = 0;
-	int blockCount = 0;
-	double blockDuration = 0;
-	WAVEFORMATEX format{};
+struct WaveOutput
+{
+    HWAVEOUT waveOutputHandle{};
+    int sampleRate = 0;
+    int safeBlockCount = 0;
+    int blockCount = 0;
+    double blockDuration = 0;
+    WAVEFORMATEX format{};
 
-	int playingBlockCount = 0;
-	vector<double> inputSamples;
-	// Êµ¼ù·¢ÏÖÏÂÃæÓÃÖ¸ÕëÊÇ±ØÒªµÄ, ·ñÔòÉæ¼°µ½¸´ÖÆ»áÓĞ´íÎó£¬¿ÉÄÜ¸ú winapi ÓĞ¹Ø¡£
-	deque<std::shared_ptr<WaveBlock>> blocks;
+    int playingBlockCount = 0;
+    vector<double> inputSamples;
+    // å®è·µå‘ç°ä¸‹é¢ç”¨æŒ‡é’ˆæ˜¯å¿…è¦çš„, å¦åˆ™æ¶‰åŠåˆ°å¤åˆ¶ä¼šæœ‰é”™è¯¯ï¼Œå¯èƒ½è·Ÿ winapi æœ‰å…³ã€‚
+    deque<std::shared_ptr<WaveBlock>> blocks;
 
-	WaveOutput();
-	int GetBlockSampleCount() const;
-	bool Initialize();
-	bool Play();
-	void Shutdown();
+    WaveOutput();
+    int GetBlockSampleCount() const;
+    bool Initialize();
+    bool Play();
+    void Shutdown();
 };
-

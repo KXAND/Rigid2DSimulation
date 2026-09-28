@@ -1,6 +1,6 @@
-#include "SimulationApp.h"
+﻿#include "SimulationApp.h"
 
-int main() {
-	SimulationApp().Run();
+int main()
+{
+    SimulationApp().Run();
 }
-

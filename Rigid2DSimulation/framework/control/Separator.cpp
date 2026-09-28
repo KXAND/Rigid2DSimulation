@@ -1,20 +1,27 @@
-#include "Separator.h"
+ï»¿#include "Separator.h"
 #include "App.h"
 #include "DrawGeometry.h"
 
-
-HorizontalSeparator::HorizontalSeparator(int width) : width(width) {
-	gap = { 10, 10 };
-	markerColor = { 150, 150, 150 };
+HorizontalSeparator::HorizontalSeparator(int width) : width(width)
+{
+    gap = {10, 10};
+    markerColor = {150, 150, 150};
 }
-int HorizontalSeparator::GetWidth() const { return width + gap.x; }
-int HorizontalSeparator::GetHeight() const { return 1 + gap.y; }
-
-void HorizontalSeparator::Render(App& app) {
-	// ËäÈ» dep Ã»Ê²Ã´ÓÃ£¬µ«³öÓÚÏ°¹ß»¹ÊÇ±£ÁôÁË¡£
-	DrawRectangleRaw(app.screen, topLeft, width, 1, viewport, markerColor);
+int HorizontalSeparator::GetWidth() const
+{
+    return width + gap.x;
 }
-void HorizontalSeparator::Update(App& app) { Render(app); }
+int HorizontalSeparator::GetHeight() const
+{
+    return 1 + gap.y;
+}
 
-
-
+void HorizontalSeparator::Render(App& app)
+{
+    // è™½ç„¶ dep æ²¡ä»€ä¹ˆç”¨ï¼Œä½†å‡ºäºä¹ æƒ¯è¿˜æ˜¯ä¿ç•™äº†ã€‚
+    DrawRectangleRaw(app.screen, topLeft, width, 1, viewport, markerColor);
+}
+void HorizontalSeparator::Update(App& app)
+{
+    Render(app);
+}

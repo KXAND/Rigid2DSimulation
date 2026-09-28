@@ -1,15 +1,13 @@
-#pragma once
+ï»¿#pragma once
 #include "Vector3.h"
 #include "Tile.h"
 
-
-// ½öÔÚÕûĞÍÏòÁ¿»æÖÆÖĞµ÷ÓÃ
+// ä»…åœ¨æ•´å‹å‘é‡ç»˜åˆ¶ä¸­è°ƒç”¨
 bool ClipLineSegment(DVector2& firstPoint, DVector2& secondPoint, DRect viewport);
 
 void DrawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
-	DVector2 firstPoint, DVector2 secondPoint, double depth, DRect viewport, Color color);
+                     DVector2 firstPoint, DVector2 secondPoint, double depth, DRect viewport, Color color);
 
-// ¸¡µãÏòÁ¿µÄÖØÔØ
+// æµ®ç‚¹å‘é‡çš„é‡è½½
 void DrawLineSegment(Tile& targetTile, DepthBuffer& zBuffer,
-	Vector2 firstPoint, Vector2 secondPoint, double depth, DRect viewport, Color color);
-
+                     Vector2 firstPoint, Vector2 secondPoint, double depth, DRect viewport, Color color);

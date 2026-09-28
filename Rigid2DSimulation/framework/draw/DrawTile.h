@@ -1,8 +1,8 @@
-#pragma once
+ï»¿#pragma once
 #include "Vector2.h"
 #include "Tile.h"
 /// <summary>
-/// ×îµ×²ãµÄTile£¬ÓÃÓÚBackground£¬ÎŞĞè¼ì²éÉî¶È
+/// æœ€åº•å±‚çš„Tileï¼Œç”¨äºBackgroundï¼Œæ— éœ€æ£€æŸ¥æ·±åº¦
 /// </summary>
 /// <param name="targetTile"></param>
 /// <param name="topLeft"></param>
@@ -10,12 +10,12 @@
 void DrawTileRaw(Tile& targetTile, DVector2 topLeft, Tile const& sourceTile);
 
 /// <summary>
-/// ´øÓĞÉî¶ÈµÄ»æÖÆ Tile»æÖÆ
-/// ÕâÀï targetViewport ÔÊĞí¿í¶ÈÎª0µÈÒì³£Çé¿ö£¬µ«ÊÇ sourceViewport ²»ÔÊĞí¡£ÈçºÎ¼ÓÒÔÏŞÖÆ»¹Ã»ÏëºÃ¡£
+/// å¸¦æœ‰æ·±åº¦çš„ç»˜åˆ¶ Tileç»˜åˆ¶
+/// è¿™é‡Œ targetViewport å…è®¸å®½åº¦ä¸º0ç­‰å¼‚å¸¸æƒ…å†µï¼Œä½†æ˜¯ sourceViewport ä¸å…è®¸ã€‚å¦‚ä½•åŠ ä»¥é™åˆ¶è¿˜æ²¡æƒ³å¥½ã€‚
 /// </summary>
 void DrawTile(Tile& targetTile, DepthBuffer& depthBuffer, double depth, DVector2 topLeft, DRect targetViewport, Tile const& sourceTile, DRect sourceViewport);
 /// <summary>
-/// ÆúÓÃ£¿
+/// å¼ƒç”¨ï¼Ÿ
 /// </summary>
 /// <param name="point"></param>
 /// <param name="topLeft"></param>
@@ -23,5 +23,3 @@ void DrawTile(Tile& targetTile, DepthBuffer& depthBuffer, double depth, DVector2
 /// <param name="sourceViewport"></param>
 /// <returns></returns>
 bool HitTestTile(DVector2 point, DVector2 topLeft, Tile const& sourceTile, DRect sourceViewport);
-
-

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "framework/basic/Utils.h"
 
 struct Value;

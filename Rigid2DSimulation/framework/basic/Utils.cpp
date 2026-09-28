@@ -1,8 +1,8 @@
-#include "Utils.h"
+ï»¿#include "Utils.h"
 
-// ÓĞ¸ö´óÎÊÌâÊÇ´úÂëµÄ¸ñÊ½ÓëÅÅ°æµ½µ×ÊÇÔõÑùµÄ¡£0__
-// ÓĞ¸ö´óÎÊÌâÊÇ´úÂëµÄ¸ñÊ½ÓëÅÅ°æµ½µ×ÊÇÔõÑùµÄ¡£1__
-// ÓĞ¸ö´óÎÊÌâÊÇ´úÂëµÄ¸ñÊ½ÓëÅÅ°æµ½µ×ÊÇÔõÑùµÄ¡£2__
+// æœ‰ä¸ªå¤§é—®é¢˜æ˜¯ä»£ç çš„æ ¼å¼ä¸æ’ç‰ˆåˆ°åº•æ˜¯æ€æ ·çš„ã€‚0__
+// æœ‰ä¸ªå¤§é—®é¢˜æ˜¯ä»£ç çš„æ ¼å¼ä¸æ’ç‰ˆåˆ°åº•æ˜¯æ€æ ·çš„ã€‚1__
+// æœ‰ä¸ªå¤§é—®é¢˜æ˜¯ä»£ç çš„æ ¼å¼ä¸æ’ç‰ˆåˆ°åº•æ˜¯æ€æ ·çš„ã€‚2__
 
 int GenerateRandomInt(int low, int high)
 {
@@ -38,7 +38,7 @@ double GenerateNormalRandomFloat(double mean, double standardDeviation)
     return distribution(generator);
 }
 
-// ÓĞ¸ö´óÎÊÌâÊÇ´úÂëµÄ¸ñÊ½ÓëÅÅ°æµ½µ×ÊÇÔõÑùµÄ¡£3__
+// æœ‰ä¸ªå¤§é—®é¢˜æ˜¯ä»£ç çš„æ ¼å¼ä¸æ’ç‰ˆåˆ°åº•æ˜¯æ€æ ·çš„ã€‚3__
 wstring FormatFixed2(double value)
 {
     static wchar_t buffer[1024];
@@ -46,7 +46,7 @@ wstring FormatFixed2(double value)
     return buffer;
 }
 
-// ÓĞ¸ö´óÎÊÌâÊÇ´úÂëµÄ¸ñÊ½ÓëÅÅ°æµ½µ×ÊÇÔõÑùµÄ¡£4__
+// æœ‰ä¸ªå¤§é—®é¢˜æ˜¯ä»£ç çš„æ ¼å¼ä¸æ’ç‰ˆåˆ°åº•æ˜¯æ€æ ·çš„ã€‚4__
 wstring ToWString(string const& text)
 {
     vector<wchar_t> buffer(text.size() + 1);
@@ -56,7 +56,7 @@ wstring ToWString(string const& text)
 
 string ToString(wstring const& text)
 {
-    // ÓĞ¸ö´óÎÊÌâÊÇ´úÂëµÄ¸ñÊ½ÓëÅÅ°æµ½µ×ÊÇÔõÑùµÄ¡£5__
+    // æœ‰ä¸ªå¤§é—®é¢˜æ˜¯ä»£ç çš„æ ¼å¼ä¸æ’ç‰ˆåˆ°åº•æ˜¯æ€æ ·çš„ã€‚5__
     vector<char> buffer(2 * text.size() + 2);
     sprintf_s(buffer.data(), buffer.size(), "%S", text.c_str());
     return buffer.data();
@@ -72,7 +72,7 @@ double ParseDouble(wstring const& text)
     return ParseDouble(ToString(text));
 }
 
-// ÓĞ¸ö´óÎÊÌâÊÇ´úÂëµÄ¸ñÊ½ÓëÅÅ°æµ½µ×ÊÇÔõÑùµÄ¡£6__
+// æœ‰ä¸ªå¤§é—®é¢˜æ˜¯ä»£ç çš„æ ¼å¼ä¸æ’ç‰ˆåˆ°åº•æ˜¯æ€æ ·çš„ã€‚6__
 FILE* OpenFile(wstring const& fileName, wstring const& mode)
 {
     FILE* file = NULL;
@@ -107,7 +107,7 @@ void PrintConsole(wstring const& text, bool newline, int width)
     auto consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO screenBufferInfo;
     GetConsoleScreenBufferInfo(consoleHandle, &screenBufferInfo);
-    SetConsoleCursorPosition(consoleHandle, { 0, screenBufferInfo.dwCursorPosition.Y });
+    SetConsoleCursorPosition(consoleHandle, {0, screenBufferInfo.dwCursorPosition.Y});
     wprintf(text.c_str());
 
     GetConsoleScreenBufferInfo(consoleHandle, &screenBufferInfo);
@@ -127,7 +127,7 @@ void SetLocale()
     setlocale(LC_ALL, "zh-CN");
 }
 
-// ÓĞ¸ö´óÎÊÌâÊÇ´úÂëµÄ¸ñÊ½ÓëÅÅ°æµ½µ×ÊÇÔõÑùµÄ¡£7__
+// æœ‰ä¸ªå¤§é—®é¢˜æ˜¯ä»£ç çš„æ ¼å¼ä¸æ’ç‰ˆåˆ°åº•æ˜¯æ€æ ·çš„ã€‚7__
 wstring GetClipboard()
 {
     wstring clipboardText;
@@ -146,7 +146,7 @@ wstring GetClipboard()
     return clipboardText;
 }
 
-// ÓĞ¸ö´óÎÊÌâÊÇ´úÂëµÄ¸ñÊ½ÓëÅÅ°æµ½µ×ÊÇÔõÑùµÄ¡£8__
+// æœ‰ä¸ªå¤§é—®é¢˜æ˜¯ä»£ç çš„æ ¼å¼ä¸æ’ç‰ˆåˆ°åº•æ˜¯æ€æ ·çš„ã€‚8__
 void SetClipboard(wstring const& text)
 {
     if (OpenClipboard(NULL))

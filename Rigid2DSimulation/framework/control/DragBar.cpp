@@ -1,69 +1,102 @@
-#include "DragBar.h"
+ï»¿#include "DragBar.h"
 #include "App.h"
 #include "DrawGeometry.h"
 #include "DrawString.h"
 
+HorizontalDragBar::HorizontalDragBar(int width) : barWidth(width)
+{
+    gap = {10, 10};
+    depth = 1000;
+    barHeight = 2;
+    nodeWidth = 12;
+    nodeHeight = 30;
 
-HorizontalDragBar::HorizontalDragBar(int width) : barWidth(width) {
-	gap = { 10, 10 }; depth = 1000;
-	barHeight = 2; nodeWidth = 12; nodeHeight = 30;
-
-	textColor = { 255, 255, 255 };
-	barColor = { 80, 80, 80 };
-	normalColor = { 80, 80, 80 };
-	hoveredColor = { 20, 20, 255 };
-	invalidColor = { 0, 0, 0 };
-	draggedColor = { 250, 20, 20 };
+    textColor = {255, 255, 255};
+    barColor = {80, 80, 80};
+    normalColor = {80, 80, 80};
+    hoveredColor = {20, 20, 255};
+    invalidColor = {0, 0, 0};
+    draggedColor = {250, 20, 20};
 }
-int HorizontalDragBar::GetWidth() const { return barWidth + gap.x + textWidth; }
-int HorizontalDragBar::GetHeight() const { return nodeHeight + gap.y; }
-
-// ÏÂÃæµÄ±í´ïÊ½ÊÇÕıÈ·µÄ£¬²»ĞèÒª¼ÓÒ»¼õÒ»Ê²Ã´µÄ¡£
-double HorizontalDragBar::GetNormalizedValue() const { return (double)nodeX / (barWidth - nodeWidth); }
-void HorizontalDragBar::SetNormalizedNodePosition(double normalizedValue) {
-	int newNodeX = normalizedValue * (barWidth - nodeWidth);
-	nodeX = Clamp(newNodeX, 0, barWidth - nodeWidth);
+int HorizontalDragBar::GetWidth() const
+{
+    return barWidth + gap.x + textWidth;
 }
-DVector2 HorizontalDragBar::GetNodeTopLeft() const { return topLeft + DVector2(textWidth + nodeX, 0); }
-void HorizontalDragBar::Render(App& app) {
-	DVector2 textTopLeft = topLeft + DVector2(0, (nodeHeight - app.font.height) / 2);
-	DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, viewport);
-
-	Color const& color =
-		!enabled ? invalidColor :
-		dragged ? draggedColor :
-		(hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor : normalColor;
-	DVector2 barTopLeft = topLeft + DVector2(textWidth, (nodeHeight - barHeight) / 2);
-	DrawRectangleRaw(app.screen, barTopLeft, barWidth, barHeight, viewport, barColor);
-	DrawRectangleRaw(app.screen, GetNodeTopLeft(), nodeWidth, nodeHeight, viewport, color);
+int HorizontalDragBar::GetHeight() const
+{
+    return nodeHeight + gap.y;
 }
 
-void HorizontalDragBar::Update(App& app) {
-	hovered = (app.inputOwners.hovered == this);
-	textWidth = GetStringSize(text, app.font, 0).x;
-	if (dragged) {
-		nodeX = Clamp(app.input.mousePosition.x - (topLeft.x + textWidth + nodeWidth / 2), 0, barWidth - nodeWidth);
-		// ÔÚ¸Õ¸Õ×¥×¡µÄÄÇÒ»Ö¡Ã»ÓĞ¸üĞÂ£¬ÔÚ·ÅÏÂµÄÄÇÒ»Ö¡»¹ÔÚ¸üĞÂ¡£Ê¡ÊÂ¡£
-		Upload(app);
-		if (enabled && !app.input.mouseButtonDown[0]) { OnDone(app); }
-		dragged = enabled && app.input.mouseButtonDown[0];
-	} else {
-		Sync(app);
-		dragged = enabled && hovered && app.input.IsMouseClickedDown(0);
-	} Render(app);
+// ä¸‹é¢çš„è¡¨è¾¾å¼æ˜¯æ­£ç¡®çš„ï¼Œä¸éœ€è¦åŠ ä¸€å‡ä¸€ä»€ä¹ˆçš„ã€‚
+double HorizontalDragBar::GetNormalizedValue() const
+{
+    return (double)nodeX / (barWidth - nodeWidth);
 }
-void HorizontalDragBar::Discard(App& app) {
-	app.inputOwners.Remove(this); textWidth = 0;
-	dragged = hovered = false;
+void HorizontalDragBar::SetNormalizedNodePosition(double normalizedValue)
+{
+    int newNodeX = normalizedValue * (barWidth - nodeWidth);
+    nodeX = Clamp(newNodeX, 0, barWidth - nodeWidth);
 }
-void HorizontalDragBar::PreUpdate(App& app) {
-	bool canReceivePointer = app.inputOwners.hoveredDepth <= depth &&
-		IsInside(app.input.mousePosition, { GetNodeTopLeft(), nodeWidth, nodeHeight }) && IsInside(app.input.mousePosition, viewport);
-	if (canReceivePointer) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
+DVector2 HorizontalDragBar::GetNodeTopLeft() const
+{
+    return topLeft + DVector2(textWidth + nodeX, 0);
+}
+void HorizontalDragBar::Render(App& app)
+{
+    DVector2 textTopLeft = topLeft + DVector2(0, (nodeHeight - app.font.height) / 2);
+    DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, viewport);
+
+    Color const& color =
+        !enabled ? invalidColor : dragged                                                                                                    ? draggedColor
+                              : (hovered && !app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? hoveredColor
+                                                                                                                                             : normalColor;
+    DVector2 barTopLeft = topLeft + DVector2(textWidth, (nodeHeight - barHeight) / 2);
+    DrawRectangleRaw(app.screen, barTopLeft, barWidth, barHeight, viewport, barColor);
+    DrawRectangleRaw(app.screen, GetNodeTopLeft(), nodeWidth, nodeHeight, viewport, color);
+}
+
+void HorizontalDragBar::Update(App& app)
+{
+    hovered = (app.inputOwners.hovered == this);
+    textWidth = GetStringSize(text, app.font, 0).x;
+    if (dragged)
+    {
+        nodeX = Clamp(app.input.mousePosition.x - (topLeft.x + textWidth + nodeWidth / 2), 0, barWidth - nodeWidth);
+        // åœ¨åˆšåˆšæŠ“ä½çš„é‚£ä¸€å¸§æ²¡æœ‰æ›´æ–°ï¼Œåœ¨æ”¾ä¸‹çš„é‚£ä¸€å¸§è¿˜åœ¨æ›´æ–°ã€‚çœäº‹ã€‚
+        Upload(app);
+        if (enabled && !app.input.mouseButtonDown[0])
+        {
+            OnDone(app);
+        }
+        dragged = enabled && app.input.mouseButtonDown[0];
+    }
+    else
+    {
+        Sync(app);
+        dragged = enabled && hovered && app.input.IsMouseClickedDown(0);
+    }
+    Render(app);
+}
+void HorizontalDragBar::Discard(App& app)
+{
+    app.inputOwners.Remove(this);
+    textWidth = 0;
+    dragged = hovered = false;
+}
+void HorizontalDragBar::PreUpdate(App& app)
+{
+    bool canReceivePointer = app.inputOwners.hoveredDepth <= depth &&
+                             IsInside(app.input.mousePosition, {GetNodeTopLeft(), nodeWidth, nodeHeight}) && IsInside(app.input.mousePosition, viewport);
+    if (canReceivePointer)
+    {
+        app.inputOwners.hoveredDepth = depth;
+        app.inputOwners.hovered = this;
+    }
 }
 
 LocalizedHorizontalDragBar::LocalizedHorizontalDragBar(wstring const& id, int width) : HorizontalDragBar(width), textId(id) {}
-void LocalizedHorizontalDragBar::Update(App& app) { text = app.GetLocalizedString(textId); HorizontalDragBar::Update(app); }
-
-
-
+void LocalizedHorizontalDragBar::Update(App& app)
+{
+    text = app.GetLocalizedString(textId);
+    HorizontalDragBar::Update(app);
+}

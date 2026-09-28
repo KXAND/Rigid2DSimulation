@@ -1,4 +1,4 @@
-#include "SimulationApp.h"
+Ôªø#include "SimulationApp.h"
 #include "Utils.h"
 #include "UserInterface.h"
 #include "Background.h"
@@ -13,454 +13,629 @@
 #include "Collision.h"
 #include "Connection.h"
 
-SimulationApp::SimulationApp( )
+SimulationApp::SimulationApp()
 {
-	width = 1800;
-	height = 900;
-	SetLocale( );
-	waveOutput.blockDuration = 4 * 5e-4;
+    width = 1800;
+    height = 900;
+    SetLocale();
+    waveOutput.blockDuration = 4 * 5e-4;
 
-	PrintConsole(L"’˝‘⁄º”‘ÿ◊÷ÃÂ...");
-	App::Init( );
+    PrintConsole(L"Ê≠£Âú®Âä†ËΩΩÂ≠ó‰Ωì...");
+    App::Init();
 
-	PrintConsole(L"◊÷ÃÂº”‘ÿÕÍ≥….", true);
+    PrintConsole(L"Â≠ó‰ΩìÂä†ËΩΩÂÆåÊàê.", true);
 
-	PrintConsole(L"’˝‘⁄º”‘ÿøÿº˛...");
-	userInterface = std::make_shared<UserInterface>(*this);
-	userInterface->Init(*this);
-	background = std::make_shared<Background>(*this);
-	Reset( );
+    PrintConsole(L"Ê≠£Âú®Âä†ËΩΩÊéß‰ª∂...");
+    userInterface = std::make_shared<UserInterface>(*this);
+    userInterface->Init(*this);
+    background = std::make_shared<Background>(*this);
+    Reset();
 
-	PrintConsole(L"øÿº˛º”‘ÿÕÍ≥….", true);
+    PrintConsole(L"Êéß‰ª∂Âä†ËΩΩÂÆåÊàê.", true);
 
-	PrintConsole(L"’˝‘⁄º”‘ÿ“Ù¿÷...");
-	bool audioLoaded = false;
-	firstMusicClip = std::make_shared<AudioClip>(L"sound/bgm0.clip", &audioLoaded);
-	if (!audioLoaded) { firstMusicClip = NULL; }
-	secondMusicClip = std::make_shared<AudioClip>(L"sound/bgm1.clip", &audioLoaded);
-	if (!audioLoaded) { secondMusicClip = NULL; }
-	PrintConsole(L"“Ù¿÷º”‘ÿÕÍ≥….", true);
+    PrintConsole(L"Ê≠£Âú®Âä†ËΩΩÈü≥‰πê...");
+    bool audioLoaded = false;
+    firstMusicClip = std::make_shared<AudioClip>(L"sound/bgm0.clip", &audioLoaded);
+    if (!audioLoaded)
+    {
+        firstMusicClip = NULL;
+    }
+    secondMusicClip = std::make_shared<AudioClip>(L"sound/bgm1.clip", &audioLoaded);
+    if (!audioLoaded)
+    {
+        secondMusicClip = NULL;
+    }
+    PrintConsole(L"Èü≥‰πêÂä†ËΩΩÂÆåÊàê.", true);
 
-	volume = 1;
-	currentMusicClip = GenerateRandomFloat(1) < 0.5 ? &*firstMusicClip : &*secondMusicClip;
+    volume = 1;
+    currentMusicClip = GenerateRandomFloat(1) < 0.5 ? &*firstMusicClip : &*secondMusicClip;
 }
 
 void SimulationApp::Save(wstring const& name) const
 {
-	FILE* file = OpenFile(name, L"wb");
-	if (!file) { return; }
-	int size = 0;
-	size = (scriptText).size( );
-	fwrite(&(size), sizeof(size), 1, file);
-	fwrite(&*(scriptText).begin( ), sizeof(*(&*(scriptText).begin( ))), size, file);
-	SaveParameters(file);
+    FILE* file = OpenFile(name, L"wb");
+    if (!file)
+    {
+        return;
+    }
+    int size = 0;
+    size = (scriptText).size();
+    fwrite(&(size), sizeof(size), 1, file);
+    fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
+    SaveParameters(file);
 
-	// ø…ƒ‹ª·±£¥Ê“ª–©º¥Ω´±ª…æ≥˝µƒ‘™Àÿ£¨µ´ «“≤ŒﬁÀ˘ŒΩ°£
-	size = bodies.size( );
-	fwrite(&(size), sizeof(size), 1, file);
-	for (auto body : bodies) { body->Save(file); }
-	size = connections.size( );
-	fwrite(&(size), sizeof(size), 1, file);
-	for (auto connection : connections) { connection->Save(*this, file); }
+    // ÂèØËÉΩ‰ºö‰øùÂ≠ò‰∏Ä‰∫õÂç≥Â∞ÜË¢´Âà†Èô§ÁöÑÂÖÉÁ¥†Ôºå‰ΩÜÊòØ‰πüÊó†ÊâÄË∞ì„ÄÇ
+    size = bodies.size();
+    fwrite(&(size), sizeof(size), 1, file);
+    for (auto body : bodies)
+    {
+        body->Save(file);
+    }
+    size = connections.size();
+    fwrite(&(size), sizeof(size), 1, file);
+    for (auto connection : connections)
+    {
+        connection->Save(*this, file);
+    }
 
-	fclose(file);
+    fclose(file);
 }
 void SimulationApp::Load(wstring const& name)
 {
-	FILE* file = OpenFile(name, L"rb");
-	if (!file) { return; } Reset( );
-	int size = 0;
-	fread(&(size), sizeof(size), 1, file);
-	(scriptText).resize(size);
-	fread(&*(scriptText).begin( ), sizeof(*(&*(scriptText).begin( ))), size, file);
-	temporaryScriptText = scriptText; LoadParameters(file);
+    FILE* file = OpenFile(name, L"rb");
+    if (!file)
+    {
+        return;
+    }
+    Reset();
+    int size = 0;
+    fread(&(size), sizeof(size), 1, file);
+    (scriptText).resize(size);
+    fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
+    temporaryScriptText = scriptText;
+    LoadParameters(file);
 
-	fread(&(size), sizeof(size), 1, file);
-	for (int i = (0), iEnd = int(size); i < iEnd; ++i) { bodies.push_back(std::make_shared<Body>(*this, file)); }
-	fread(&(size), sizeof(size), 1, file);
-	for (int i = (0), iEnd = int(size); i < iEnd; ++i) { connections.push_back(std::make_shared<Connection>(*this, file)); }
-	isSceneChanged = true;
+    fread(&(size), sizeof(size), 1, file);
+    for (int i = (0), iEnd = int(size); i < iEnd; ++i)
+    {
+        bodies.push_back(std::make_shared<Body>(*this, file));
+    }
+    fread(&(size), sizeof(size), 1, file);
+    for (int i = (0), iEnd = int(size); i < iEnd; ++i)
+    {
+        connections.push_back(std::make_shared<Connection>(*this, file));
+    }
+    isSceneChanged = true;
 
-	Execute(currentScope, Compile(scriptText)); fclose(file);
+    Execute(currentScope, Compile(scriptText));
+    fclose(file);
 }
-void SimulationApp::Reset( )
+void SimulationApp::Reset()
 {
-	currentScope.clear( ); InitializeDefaultFunctions( ); parameters.clear( );
+    currentScope.clear();
+    InitializeDefaultFunctions();
+    parameters.clear();
 
-	bodies.clear( );
-	groups.clear( );
-	collisions.clear( );
-	connections.clear( );
-	debugString.clear( );
+    bodies.clear();
+    groups.clear();
+    collisions.clear();
+    connections.clear();
+    debugString.clear();
 
-	currentScope[L"backgroundLeft"] = std::make_shared<Value>(background->topLeft.x);
-	currentScope[L"backgroundTop"] = std::make_shared<Value>(background->topLeft.y);
-	currentScope[L"backgroundWidth"] = std::make_shared<Value>(background->width);
-	currentScope[L"backgroundHeight"] = std::make_shared<Value>(background->height);
+    currentScope[L"backgroundLeft"] = std::make_shared<Value>(background->topLeft.x);
+    currentScope[L"backgroundTop"] = std::make_shared<Value>(background->topLeft.y);
+    currentScope[L"backgroundWidth"] = std::make_shared<Value>(background->width);
+    currentScope[L"backgroundHeight"] = std::make_shared<Value>(background->height);
 
-	bodySelecting = NULL;
-	connectionSelecting = NULL;
-	isSceneChanged = false;
-	gravity = Vector2( );
-	maxRealDeltaTime = 0.05;
-	simulationTime = 0; stepNum = 60;
-	rectScene.topLeftPosition = background->topLeft;
-	rectScene.width = background->width;
-	rectScene.height = background->height;
-	gridSize = 50;
-	energyMultiplier = 4e-6;
-	chargeMultiplier = 1;
-	isTrackShown = false;
+    bodySelecting = NULL;
+    connectionSelecting = NULL;
+    isSceneChanged = false;
+    gravity = Vector2();
+    maxRealDeltaTime = 0.05;
+    simulationTime = 0;
+    stepNum = 60;
+    rectScene.topLeftPosition = background->topLeft;
+    rectScene.width = background->width;
+    rectScene.height = background->height;
+    gridSize = 50;
+    energyMultiplier = 4e-6;
+    chargeMultiplier = 1;
+    isTrackShown = false;
 
-	hasElectrostatic = false;
-	coulombConstant = 1e5;
+    hasElectrostatic = false;
+    coulombConstant = 1e5;
 
-	parallelEpsilon = 1e-3;
-	useEqualPositionCorrection = false;
-	velocityAngularDrag = 2;
+    parallelEpsilon = 1e-3;
+    useEqualPositionCorrection = false;
+    velocityAngularDrag = 2;
 
-	creator = std::make_shared<Creator>( );
+    creator = std::make_shared<Creator>();
 }
-void SimulationApp::Update( )
+void SimulationApp::Update()
 {
-	// pre update
-	(*background).PreUpdate(*this);
-	if (mode == kCreateMode) { creator->PreUpdate(*this); }
-	for (auto& body : bodies) { body->PreUpdate(*this); }
-	userInterface->PreUpdate(*this);
-	UpdateBasicState( );
+    // pre update
+    (*background).PreUpdate(*this);
+    if (mode == kCreateMode)
+    {
+        creator->PreUpdate(*this);
+    }
+    for (auto& body : bodies)
+    {
+        body->PreUpdate(*this);
+    }
+    userInterface->PreUpdate(*this);
+    UpdateBasicState();
 
-	if (currentScope.find(L"Update") != currentScope.end( ))
-	{
-		auto updateFunction = *currentScope[L"Update"];
-		Execute(currentScope, updateFunction.bodyStatements);
-	}
+    if (currentScope.find(L"Update") != currentScope.end())
+    {
+        auto updateFunction = *currentScope[L"Update"];
+        Execute(currentScope, updateFunction.bodyStatements);
+    }
 
-	// “Ù¿÷
-	if (firstMusicClip && secondMusicClip)
-	{
-		if (currentMusicClip->sampleIndex >= currentMusicClip->GetSampleCount( ))
-		{
-			currentMusicClip->sampleIndex = 0;
-			currentMusicClip = (currentMusicClip == &*firstMusicClip) ? &*secondMusicClip : &*firstMusicClip;
-		}
-		if (!isMuted) { currentMusicClip->Play(waveOutput.inputSamples); }
-	}
+    // Èü≥‰πê
+    if (firstMusicClip && secondMusicClip)
+    {
+        if (currentMusicClip->sampleIndex >= currentMusicClip->GetSampleCount())
+        {
+            currentMusicClip->sampleIndex = 0;
+            currentMusicClip = (currentMusicClip == &*firstMusicClip) ? &*secondMusicClip : &*firstMusicClip;
+        }
+        if (!isMuted)
+        {
+            currentMusicClip->Play(waveOutput.inputSamples);
+        }
+    }
 
-	// ºÏ≤È‘›Õ£
-	if (!inputOwners.keyboardOwner)
-	{
-		if (input.IsKeyPressedDown(L' ')) { isPaused = !isPaused; }
-	}
+    // Ê£ÄÊü•ÊöÇÂÅú
+    if (!inputOwners.keyboardOwner)
+    {
+        if (input.IsKeyPressedDown(L' '))
+        {
+            isPaused = !isPaused;
+        }
+    }
 
-	// …æ≥˝±ª±Íº«Œ™…æ≥˝µƒÕº–Œ∫Õ∆‰…œµƒ¡¨Ω”
-	for (auto body : bodies) if (body->isMarkedForDeletion)
-		for (auto connection : body->connections) { connection->isMarkedForDeletion = true; }
-	if (bodySelecting && bodySelecting->isMarkedForDeletion) { bodySelecting = NULL; }
-	if (connectionSelecting && connectionSelecting->isMarkedForDeletion) { connectionSelecting = NULL; }
-	for (auto& connection : connections) if (connection->isMarkedForDeletion)
-	{
-		//Ω´∏√¡¨Ω”¥”∆‰¡Ω∂ÀµƒŒÔÃÂµƒ¡¨Ω”¡–±Ì÷–“∆≥˝°£
-		auto& firstBodyConnections = connection->body0->connections;
-		firstBodyConnections.erase(remove(firstBodyConnections.begin( ), firstBodyConnections.end( ), &*connection), firstBodyConnections.end( ));
-		auto& secondBodyConnections = connection->body1->connections;
-		secondBodyConnections.erase(remove(secondBodyConnections.begin( ), secondBodyConnections.end( ), &*connection), secondBodyConnections.end( ));
-	}
-	connections.erase(
-		remove_if(connections.begin( ), connections.end( ),
-			[](std::shared_ptr<Connection> connection) { return connection->isMarkedForDeletion; }),
-		connections.end( ));
-	bodies.erase(
-		remove_if(bodies.begin( ), bodies.end( ),
-			[](std::shared_ptr<Body> body) { return body->isMarkedForDeletion; }),
-		bodies.end( ));
+    // Âà†Èô§Ë¢´Ê†áËÆ∞‰∏∫Âà†Èô§ÁöÑÂõæÂΩ¢ÂíåÂÖ∂‰∏äÁöÑËøûÊé•
+    for (auto body : bodies)
+        if (body->isMarkedForDeletion)
+            for (auto connection : body->connections)
+            {
+                connection->isMarkedForDeletion = true;
+            }
+    if (bodySelecting && bodySelecting->isMarkedForDeletion)
+    {
+        bodySelecting = NULL;
+    }
+    if (connectionSelecting && connectionSelecting->isMarkedForDeletion)
+    {
+        connectionSelecting = NULL;
+    }
+    for (auto& connection : connections)
+        if (connection->isMarkedForDeletion)
+        {
+            //Â∞ÜËØ•ËøûÊé•‰ªéÂÖ∂‰∏§Á´ØÁöÑÁâ©‰ΩìÁöÑËøûÊé•ÂàóË°®‰∏≠ÁßªÈô§„ÄÇ
+            auto& firstBodyConnections = connection->body0->connections;
+            firstBodyConnections.erase(remove(firstBodyConnections.begin(), firstBodyConnections.end(), &*connection), firstBodyConnections.end());
+            auto& secondBodyConnections = connection->body1->connections;
+            secondBodyConnections.erase(remove(secondBodyConnections.begin(), secondBodyConnections.end(), &*connection), secondBodyConnections.end());
+        }
+    connections.erase(
+        remove_if(connections.begin(), connections.end(),
+                  [](std::shared_ptr<Connection> connection)
+                  {
+                      return connection->isMarkedForDeletion;
+                  }),
+        connections.end());
+    bodies.erase(
+        remove_if(bodies.begin(), bodies.end(),
+                  [](std::shared_ptr<Body> body)
+                  {
+                      return body->isMarkedForDeletion;
+                  }),
+        bodies.end());
 
-	// ∏¸–¬‘À–––≈œ¢
-	(*background).Update(*this);
-	(*background).Render(*this);
-	realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime( ));
-	currentScope[L"current.frameRate.GetDeltaTime()"] = std::make_shared<Value>(realDeltaTime);
-	gridNumX = ceil(rectScene.width / gridSize);
-	gridNumY = ceil(rectScene.height / gridSize);
-	if (isSceneChanged) { isSceneChanged = false; groups = FormGroups(bodies); }
-	for (const auto& body : bodies) { body->Update(*this); }
+    // Êõ¥Êñ∞ËøêË°å‰ø°ÊÅØ
+    (*background).Update(*this);
+    (*background).Render(*this);
+    realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
+    currentScope[L"current.frameRate.GetDeltaTime()"] = std::make_shared<Value>(realDeltaTime);
+    gridNumX = ceil(rectScene.width / gridSize);
+    gridNumY = ceil(rectScene.height / gridSize);
+    if (isSceneChanged)
+    {
+        isSceneChanged = false;
+        groups = FormGroups(bodies);
+    }
+    for (const auto& body : bodies)
+    {
+        body->Update(*this);
+    }
 
-	// ŒÔ¿Ìƒ£ƒ‚
-	if (!isPaused && realDeltaTime != 0)
-	{
-		// ±Í◊º ±≥§
-		double stepDeltaTime = realDeltaTime / stepNum;
+    // Áâ©ÁêÜÊ®°Êãü
+    if (!isPaused && realDeltaTime != 0)
+    {
+        // Ê†áÂáÜÊó∂Èïø
+        double stepDeltaTime = realDeltaTime / stepNum;
 
-		for (int i = (0), iEnd = int(stepNum); i < iEnd; ++i)
-		{
-			currentScope[L"time"] = std::make_shared<Value>(simulationTime);
-			for (const auto& body : bodies) { body->Step(*this, stepDeltaTime); }
-			// for (auto b : bodies) { b->warp(rectScene); }
-			for (auto& group : groups) { group->Warp(rectScene); }
+        for (int i = (0), iEnd = int(stepNum); i < iEnd; ++i)
+        {
+            currentScope[L"time"] = std::make_shared<Value>(simulationTime);
+            for (const auto& body : bodies)
+            {
+                body->Step(*this, stepDeltaTime);
+            }
+            // for (auto b : bodies) { b->warp(rectScene); }
+            for (auto& group : groups)
+            {
+                group->Warp(rectScene);
+            }
 
-			//º∆À„æ≤µÁ
-			if (hasElectrostatic)
-			{
-				for (int i = (0), iEnd = int(bodies.size( ) - 1); i < iEnd; ++i)
-					for (int j = (i + 1), jEnd = int(bodies.size( )); j < jEnd; ++j)
-					{
-						Electrostatic(*bodies[i], *bodies[j], stepDeltaTime, coulombConstant);
-					}
-			}
+            //ËÆ°ÁÆóÈùôÁîµ
+            if (hasElectrostatic)
+            {
+                for (int i = (0), iEnd = int(bodies.size() - 1); i < iEnd; ++i)
+                    for (int j = (i + 1), jEnd = int(bodies.size()); j < jEnd; ++j)
+                    {
+                        Electrostatic(*bodies[i], *bodies[j], stepDeltaTime, coulombConstant);
+                    }
+            }
 
-			// ÷ÿ–¬ºÏ≤ÈŒÔÃÂ‘⁄grid÷–µƒ«Èøˆ
-			multiGridBodies.clear( );
-			grid.clear( );
-			grid.resize(gridNumX * gridNumY);
-			for (auto& body : bodies) { body->RegisterGrid(*this); }
+            // ÈáçÊñ∞Ê£ÄÊü•Áâ©‰ΩìÂú®grid‰∏≠ÁöÑÊÉÖÂÜµ
+            multiGridBodies.clear();
+            grid.clear();
+            grid.resize(gridNumX * gridNumY);
+            for (auto& body : bodies)
+            {
+                body->RegisterGrid(*this);
+            }
 
-			// ≈ˆ◊≤
-			collisions.clear( );
-			DetectCollisions( );
-			for (auto& collision : collisions) { collision->Simulate(useEqualPositionCorrection); }
-			// for (auto collision : collisions) { collision->Render(*this); }
+            // Á¢∞Êíû
+            collisions.clear();
+            DetectCollisions();
+            for (auto& collision : collisions)
+            {
+                collision->Simulate(useEqualPositionCorrection);
+            }
+            // for (auto collision : collisions) { collision->Render(*this); }
 
-			// ¡¨Ω”
-			for (auto& connection : connections) { connection->Simulate(stepDeltaTime, useEqualPositionCorrection); }
+            // ËøûÊé•
+            for (auto& connection : connections)
+            {
+                connection->Simulate(stepDeltaTime, useEqualPositionCorrection);
+            }
 
-			simulationTime += stepDeltaTime;
-		}
-	}
+            simulationTime += stepDeltaTime;
+        }
+    }
 
-	// ‰÷»æ
-	for (auto& body : bodies)
-	{
-		body->UpdateShapesPositionAndAABB( );
-		body->Render(*this);
-	}
-	for (auto& connection : connections)
-	{
-		connection->UpdatePosition( );
-		connection->Render(*this);
-	}
+    // Ê∏≤Êüì
+    for (auto& body : bodies)
+    {
+        body->UpdateShapesPositionAndAABB();
+        body->Render(*this);
+    }
+    for (auto& connection : connections)
+    {
+        connection->UpdatePosition();
+        connection->Render(*this);
+    }
 
-	if (mode == kCreateMode) { creator->Update(*this); }
-	userInterface->Update(*this);
+    if (mode == kCreateMode)
+    {
+        creator->Update(*this);
+    }
+    userInterface->Update(*this);
 }
 
 void SimulationApp::SetConfig(Value const& config)
 {
-	TryReadConfigNumber(config, L"volume", volume);
-	TryReadConfigNumber(config, L"energyMultiplier", energyMultiplier);
-	TryReadConfigNumber(config, L"chargeMultiplier", chargeMultiplier);
-	TryReadConfigNumber(config, L"parallelEpsilon", parallelEpsilon);
-	TryReadConfigNumber(config, L"maxRealDeltaTime", maxRealDeltaTime);
-	TryReadConfigNumber(config, L"hasElectrostatic", hasElectrostatic);
-	TryReadConfigNumber(config, L"coulombConstant", coulombConstant);
-	TryReadConfigNumber(config, L"stepCount", stepNum);
-	stepNum = max(1, stepNum);
-	TryReadConfigNumber(config, L"gridSize", gridSize);
-	TryReadConfigNumber(config, L"useEqualPositionCorrection", useEqualPositionCorrection);
-	TryReadConfigNumber(config, L"time", simulationTime);
-	TryReadConfigNumber(config, L"isTrackShown", isTrackShown);
-	if (auto value = FindConfigValue(config, L"sceneLeft")) { rectScene.topLeftPosition.x = value->number; }
-	if (auto value = FindConfigValue(config, L"sceneTop")) { rectScene.topLeftPosition.y = value->number; }
-	if (auto value = FindConfigValue(config, L"sceneWidth")) { rectScene.width = value->number; }
-	if (auto value = FindConfigValue(config, L"sceneHeight")) { rectScene.height = value->number; }
-	if (auto value = FindConfigValue(config, L"gravity")) { gravity = ToVector2(*value); }
+    TryReadConfigNumber(config, L"volume", volume);
+    TryReadConfigNumber(config, L"energyMultiplier", energyMultiplier);
+    TryReadConfigNumber(config, L"chargeMultiplier", chargeMultiplier);
+    TryReadConfigNumber(config, L"parallelEpsilon", parallelEpsilon);
+    TryReadConfigNumber(config, L"maxRealDeltaTime", maxRealDeltaTime);
+    TryReadConfigNumber(config, L"hasElectrostatic", hasElectrostatic);
+    TryReadConfigNumber(config, L"coulombConstant", coulombConstant);
+    TryReadConfigNumber(config, L"stepCount", stepNum);
+    stepNum = max(1, stepNum);
+    TryReadConfigNumber(config, L"gridSize", gridSize);
+    TryReadConfigNumber(config, L"useEqualPositionCorrection", useEqualPositionCorrection);
+    TryReadConfigNumber(config, L"time", simulationTime);
+    TryReadConfigNumber(config, L"isTrackShown", isTrackShown);
+    if (auto value = FindConfigValue(config, L"sceneLeft"))
+    {
+        rectScene.topLeftPosition.x = value->number;
+    }
+    if (auto value = FindConfigValue(config, L"sceneTop"))
+    {
+        rectScene.topLeftPosition.y = value->number;
+    }
+    if (auto value = FindConfigValue(config, L"sceneWidth"))
+    {
+        rectScene.width = value->number;
+    }
+    if (auto value = FindConfigValue(config, L"sceneHeight"))
+    {
+        rectScene.height = value->number;
+    }
+    if (auto value = FindConfigValue(config, L"gravity"))
+    {
+        gravity = ToVector2(*value);
+    }
 
-	isSceneChanged = true;
+    isSceneChanged = true;
 }
 
-void SimulationApp::DetectCollisions( )
+void SimulationApp::DetectCollisions()
 {
-	for (int i = (0), iEnd = int(gridNumX); i < iEnd; ++i)
-		for (int j = (0), jEnd = int(gridNumY); j < jEnd; ++j)
-		{
-			auto& bodies = grid[j * gridNumX + i];
-			for (int k = (0), kEnd = int(bodies.size( )); k < kEnd; ++k)
-			{
-				auto& body = *bodies[k];
+    for (int i = (0), iEnd = int(gridNumX); i < iEnd; ++i)
+        for (int j = (0), jEnd = int(gridNumY); j < jEnd; ++j)
+        {
+            auto& bodies = grid[j * gridNumX + i];
+            for (int k = (0), kEnd = int(bodies.size()); k < kEnd; ++k)
+            {
+                auto& body = *bodies[k];
 
-				// ºÏ≤ÈÕ¨grid∫ÕøÁgridµƒ«Èøˆ£¨ ‰≥ˆµΩcollisions÷–
-				for (int m = (k + 1), mEnd = int(bodies.size( )); m < mEnd; ++m) { Collide(body, *bodies[m], collisions, parallelEpsilon); }
-				for (auto otherBody : multiGridBodies) { Collide(body, *otherBody, collisions, parallelEpsilon); }
+                // Ê£ÄÊü•ÂêågridÂíåË∑®gridÁöÑÊÉÖÂÜµÔºåËæìÂá∫Âà∞collisions‰∏≠
+                for (int m = (k + 1), mEnd = int(bodies.size()); m < mEnd; ++m)
+                {
+                    Collide(body, *bodies[m], collisions, parallelEpsilon);
+                }
+                for (auto otherBody : multiGridBodies)
+                {
+                    Collide(body, *otherBody, collisions, parallelEpsilon);
+                }
 
-				// ºÏ≤È”“¡⁄
-				if (i + 1 < gridNumX)
-				{
-					int a = i + 1, b = j;
-					for (auto otherBody : grid[b * gridNumX + a]) { Collide(body, *otherBody, collisions, parallelEpsilon); }
-				}
-				if (j + 1 >= gridNumY) { continue; }// ºÏ≤Èœ¬¡⁄£¨√ª”–œ¬¡⁄æÕŒﬁ∑®Ω¯––œ¬¡–≤Ÿ◊˜¡À
+                // Ê£ÄÊü•Âè≥ÈÇª
+                if (i + 1 < gridNumX)
+                {
+                    int a = i + 1, b = j;
+                    for (auto otherBody : grid[b * gridNumX + a])
+                    {
+                        Collide(body, *otherBody, collisions, parallelEpsilon);
+                    }
+                }
+                if (j + 1 >= gridNumY)
+                {
+                    continue;
+                } // Ê£ÄÊü•‰∏ãÈÇªÔºåÊ≤°Êúâ‰∏ãÈÇªÂ∞±Êó†Ê≥ïËøõË°å‰∏ãÂàóÊìç‰Ωú‰∫Ü
 
-				//ºÏ≤È◊Ûœ¬
-				if (i - 1 >= 0)
-				{
-					int a = i - 1, b = j + 1;
-					for (auto otherBody : grid[b * gridNumX + a]) { Collide(body, *otherBody, collisions, parallelEpsilon); }
-				}
-				// ºÏ≤È”“œ¬
-				if (i + 1 < gridNumX)
-				{
-					int a = i + 1, b = j + 1;
-					for (auto otherBody : grid[b * gridNumX + a]) { Collide(body, *otherBody, collisions, parallelEpsilon); }
-				}
-				// ºÏ≤È’˝œ¬
-				int a = i, b = j + 1;
-				for (auto otherBody : grid[b * gridNumX + a]) { Collide(body, *otherBody, collisions, parallelEpsilon); }
-			}
-		}
+                //Ê£ÄÊü•Â∑¶‰∏ã
+                if (i - 1 >= 0)
+                {
+                    int a = i - 1, b = j + 1;
+                    for (auto otherBody : grid[b * gridNumX + a])
+                    {
+                        Collide(body, *otherBody, collisions, parallelEpsilon);
+                    }
+                }
+                // Ê£ÄÊü•Âè≥‰∏ã
+                if (i + 1 < gridNumX)
+                {
+                    int a = i + 1, b = j + 1;
+                    for (auto otherBody : grid[b * gridNumX + a])
+                    {
+                        Collide(body, *otherBody, collisions, parallelEpsilon);
+                    }
+                }
+                // Ê£ÄÊü•Ê≠£‰∏ã
+                int a = i, b = j + 1;
+                for (auto otherBody : grid[b * gridNumX + a])
+                {
+                    Collide(body, *otherBody, collisions, parallelEpsilon);
+                }
+            }
+        }
 
-	// ºÏ≤È∂‡gird∫Õ∂‡gird±æ…Ìµƒ≈ˆ◊≤
-	for (int i = (0), iEnd = int(multiGridBodies.size( ) - 1); i < iEnd; ++i)
-		for (int j = (i + 1), jEnd = int(multiGridBodies.size( )); j < jEnd; ++j)
-		{
-			Collide(*multiGridBodies[i], *multiGridBodies[j], collisions, parallelEpsilon);
-		}
+    // Ê£ÄÊü•Â§ögirdÂíåÂ§ögirdÊú¨Ë∫´ÁöÑÁ¢∞Êíû
+    for (int i = (0), iEnd = int(multiGridBodies.size() - 1); i < iEnd; ++i)
+        for (int j = (i + 1), jEnd = int(multiGridBodies.size()); j < jEnd; ++j)
+        {
+            Collide(*multiGridBodies[i], *multiGridBodies[j], collisions, parallelEpsilon);
+        }
 }
 
 void SimulationApp::SaveParameters(FILE* file) const
 {
-	int size = parameters.size( );
-	fwrite(&(size), sizeof(size), 1, file);
-	for (auto parameter : parameters) { parameter->Save(file); }
+    int size = parameters.size();
+    fwrite(&(size), sizeof(size), 1, file);
+    for (auto parameter : parameters)
+    {
+        parameter->Save(file);
+    }
 }
 void SimulationApp::LoadParameters(FILE* file)
 {
-	int size = 0;
-	fread(&(size), sizeof(size), 1, file);
-	for (int i = (0), iEnd = int(size); i < iEnd; ++i) { parameters.push_back(std::make_shared<SceneParameter>(file)); }
+    int size = 0;
+    fread(&(size), sizeof(size), 1, file);
+    for (int i = (0), iEnd = int(size); i < iEnd; ++i)
+    {
+        parameters.push_back(std::make_shared<SceneParameter>(file));
+    }
 }
-void SimulationApp::InitializeDefaultFunctions( )
+void SimulationApp::InitializeDefaultFunctions()
 {
-	auto setCreatorFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 1) { creator = std::make_shared<Creator>(*arguments[0]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"SetCreator"] = std::make_shared<Value>(setCreatorFunction);
+    auto setCreatorFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 1)
+        {
+            creator = std::make_shared<Creator>(*arguments[0]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"SetCreator"] = std::make_shared<Value>(setCreatorFunction);
 
-	auto createBodyFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 2) { CreateBody(*this, *arguments[0], *arguments[1]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"CreateBody"] = std::make_shared<Value>(createBodyFunction);
+    auto createBodyFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 2)
+        {
+            CreateBody(*this, *arguments[0], *arguments[1]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"CreateBody"] = std::make_shared<Value>(createBodyFunction);
 
-	auto boxFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 2) { return Box(*arguments[0], *arguments[1]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"Box"] = std::make_shared<Value>(boxFunction);
+    auto boxFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 2)
+        {
+            return Box(*arguments[0], *arguments[1]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"Box"] = std::make_shared<Value>(boxFunction);
 
-	auto ballFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 1) { return Ball(*arguments[0]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"Ball"] = std::make_shared<Value>(ballFunction);
+    auto ballFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 1)
+        {
+            return Ball(*arguments[0]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"Ball"] = std::make_shared<Value>(ballFunction);
 
-	auto parallelogramFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 2) { return Parallelogram(*arguments[0], *arguments[1], *arguments[2]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"Parallelogram"] = std::make_shared<Value>(parallelogramFunction);
+    auto parallelogramFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 2)
+        {
+            return Parallelogram(*arguments[0], *arguments[1], *arguments[2]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"Parallelogram"] = std::make_shared<Value>(parallelogramFunction);
 
-	auto trapezoidFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 3) { return Trapezoid(*arguments[0], *arguments[1], *arguments[2]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"Trapezoid"] = std::make_shared<Value>(trapezoidFunction);
+    auto trapezoidFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 3)
+        {
+            return Trapezoid(*arguments[0], *arguments[1], *arguments[2]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"Trapezoid"] = std::make_shared<Value>(trapezoidFunction);
 
-	auto regularPolygonFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 2) { return RegularPolygon(*arguments[0], *arguments[1]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"RegularPolygon"] = std::make_shared<Value>(regularPolygonFunction);
+    auto regularPolygonFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 2)
+        {
+            return RegularPolygon(*arguments[0], *arguments[1]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"RegularPolygon"] = std::make_shared<Value>(regularPolygonFunction);
 
-	auto crossFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 2) { return Cross(*arguments[0], *arguments[1]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"Cross"] = std::make_shared<Value>(crossFunction);
+    auto crossFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 2)
+        {
+            return Cross(*arguments[0], *arguments[1]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"Cross"] = std::make_shared<Value>(crossFunction);
 
-	auto getBodyCountFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			return std::make_shared<Value>(bodies.size( ));
-		};
-	currentScope[L"GetBodyCount"] = std::make_shared<Value>(getBodyCountFunction);
+    auto getBodyCountFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        return std::make_shared<Value>(bodies.size());
+    };
+    currentScope[L"GetBodyCount"] = std::make_shared<Value>(getBodyCountFunction);
 
-	auto createConnectionFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 1) { CreateConnection(*this, *arguments[0]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"CreateConnection"] = std::make_shared<Value>(createConnectionFunction);
+    auto createConnectionFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 1)
+        {
+            CreateConnection(*this, *arguments[0]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"CreateConnection"] = std::make_shared<Value>(createConnectionFunction);
 
-	auto setConfigFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 1) { SetConfig(*arguments[0]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"SetConfig"] = std::make_shared<Value>(setConfigFunction);
+    auto setConfigFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 1)
+        {
+            SetConfig(*arguments[0]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"SetConfig"] = std::make_shared<Value>(setConfigFunction);
 
-	auto boundaryFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 2) { Boundary(*this, *arguments[0], *arguments[1]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"Boundary"] = std::make_shared<Value>(boundaryFunction);
+    auto boundaryFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 2)
+        {
+            Boundary(*this, *arguments[0], *arguments[1]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"Boundary"] = std::make_shared<Value>(boundaryFunction);
 
-	auto framedBoxFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 3) { return FramedBox(*arguments[0], *arguments[1], *arguments[2]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"FramedBox"] = std::make_shared<Value>(framedBoxFunction);
+    auto framedBoxFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 3)
+        {
+            return FramedBox(*arguments[0], *arguments[1], *arguments[2]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"FramedBox"] = std::make_shared<Value>(framedBoxFunction);
 
-	auto gearFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 4) { Gear(*this, *arguments[0], *arguments[1], *arguments[2], *arguments[3]); }
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"Gear"] = std::make_shared<Value>(gearFunction);
+    auto gearFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 4)
+        {
+            Gear(*this, *arguments[0], *arguments[1], *arguments[2], *arguments[3]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"Gear"] = std::make_shared<Value>(gearFunction);
 
-	auto strandFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 6)
-			{
-				Strand(*this, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
-			}
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"Strand"] = std::make_shared<Value>(strandFunction);
+    auto strandFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 6)
+        {
+            Strand(*this, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"Strand"] = std::make_shared<Value>(strandFunction);
 
-	auto necklaceFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-		{
-			if (arguments.size( ) >= 6)
-			{
-				Necklace(*this, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
-			}
-			return std::make_shared<Value>( );
-		};
-	currentScope[L"Necklace"] = std::make_shared<Value>(necklaceFunction);
+    auto necklaceFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
+    {
+        if (arguments.size() >= 6)
+        {
+            Necklace(*this, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
+        }
+        return std::make_shared<Value>();
+    };
+    currentScope[L"Necklace"] = std::make_shared<Value>(necklaceFunction);
 }
-void SimulationApp::UpdateBasicState( )
+void SimulationApp::UpdateBasicState()
 {
-	title = GetLocalizedString(L"title");
-	if (currentScope.find(L"current.debugString") != currentScope.end( )) { debugString = currentScope[L"current.debugString"]->stringValue; }
-	if (currentScope.find(L"Update") != currentScope.end( )) { auto file = currentScope[L"Update"];  Execute(currentScope, file->bodyStatements); }
+    title = GetLocalizedString(L"title");
+    if (currentScope.find(L"current.debugString") != currentScope.end())
+    {
+        debugString = currentScope[L"current.debugString"]->stringValue;
+    }
+    if (currentScope.find(L"Update") != currentScope.end())
+    {
+        auto file = currentScope[L"Update"];
+        Execute(currentScope, file->bodyStatements);
+    }
 
-	// …æ≥˝±Íº«Œ™…æ≥˝µƒº¸
-	parameters.erase(
-		remove_if(parameters.begin( ), parameters.end( ),
-			[](std::shared_ptr<SceneParameter> parameter) { return parameter->isMarkedForDeletion; }),
-		parameters.end( ));
+    // Âà†Èô§Ê†áËÆ∞‰∏∫Âà†Èô§ÁöÑÈîÆ
+    parameters.erase(
+        remove_if(parameters.begin(), parameters.end(),
+                  [](std::shared_ptr<SceneParameter> parameter)
+                  {
+                      return parameter->isMarkedForDeletion;
+                  }),
+        parameters.end());
 
-	//∏¸–¬∂‘”¶º¸µƒ÷µ
-	for (auto& parameter : parameters) { currentScope[parameter->name] = std::make_shared<Value>(parameter->value); }
+    //Êõ¥Êñ∞ÂØπÂ∫îÈîÆÁöÑÂÄº
+    for (auto& parameter : parameters)
+    {
+        currentScope[parameter->name] = std::make_shared<Value>(parameter->value);
+    }
 }
-
-
-

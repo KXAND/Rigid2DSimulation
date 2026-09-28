@@ -1,118 +1,153 @@
-#include "App.h"
+ï»¿#include "App.h"
 
-int HandleCreate(App*& application, WPARAM wParam, LPARAM lParam) {
-	auto createStruct = (CREATESTRUCT*)lParam;
-	application = (App*)createStruct->lpCreateParams;
-	return 0;
+int HandleCreate(App*& application, WPARAM wParam, LPARAM lParam)
+{
+    auto createStruct = (CREATESTRUCT*)lParam;
+    application = (App*)createStruct->lpCreateParams;
+    return 0;
 }
-int HandleDestroy(App* application, WPARAM wParam, LPARAM lParam) {
-	PostQuitMessage(0);
-	return 0;
+int HandleDestroy(App* application, WPARAM wParam, LPARAM lParam)
+{
+    PostQuitMessage(0);
+    return 0;
 }
-int HandleKillFocus(App* application, WPARAM wParam, LPARAM lParam) {
-	application->input.keyDown.fill(false);
-	return 0;
+int HandleKillFocus(App* application, WPARAM wParam, LPARAM lParam)
+{
+    application->input.keyDown.fill(false);
+    return 0;
 }
-int HandleSetCursor(App* application, WPARAM wParam, LPARAM lParam) {
-	HCURSOR cursor =
-		LOWORD(lParam) != HTCLIENT || application->useSystemCursor ?
-		application->systemCursor : NULL;
-	SetCursor(cursor);
-	return 0;
+int HandleSetCursor(App* application, WPARAM wParam, LPARAM lParam)
+{
+    HCURSOR cursor =
+        LOWORD(lParam) != HTCLIENT || application->useSystemCursor ? application->systemCursor : NULL;
+    SetCursor(cursor);
+    return 0;
 }
-int HandleCaptureChanged(App* application, WPARAM wParam, LPARAM lParam) {
-	application->input.isTitleBarClicked = true;
-	application->input.keyDown.fill(false);
-	return 0;
+int HandleCaptureChanged(App* application, WPARAM wParam, LPARAM lParam)
+{
+    application->input.isTitleBarClicked = true;
+    application->input.keyDown.fill(false);
+    return 0;
 }
-int HandleCharacter(App* application, WPARAM wParam, LPARAM lParam) {
-	application->input.typedCharacters += (wchar_t)wParam;
-	return 0;
+int HandleCharacter(App* application, WPARAM wParam, LPARAM lParam)
+{
+    application->input.typedCharacters += (wchar_t)wParam;
+    return 0;
 }
-int HandleKeyUp(App* application, WPARAM wParam, LPARAM lParam) {
-	application->input.keyDown[wParam] = false;
-	return 0;
+int HandleKeyUp(App* application, WPARAM wParam, LPARAM lParam)
+{
+    application->input.keyDown[wParam] = false;
+    return 0;
 }
-int HandleKeyDown(App* application, WPARAM wParam, LPARAM lParam) {
-	application->input.keyMessageCounts[wParam]++;
-	application->input.keyDown[wParam] = true;
-	return 0;
+int HandleKeyDown(App* application, WPARAM wParam, LPARAM lParam)
+{
+    application->input.keyMessageCounts[wParam]++;
+    application->input.keyDown[wParam] = true;
+    return 0;
 }
-int HandleMouseMove(App* application, WPARAM wParam, LPARAM lParam) {
-	return 0;
+int HandleMouseMove(App* application, WPARAM wParam, LPARAM lParam)
+{
+    return 0;
 }
-int HandleMouseWheel(App* application, WPARAM wParam, LPARAM lParam) {
-	int wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-	application->input.mouseWheelDelta = (double)wheelDelta / WHEEL_DELTA;
-	return 0;
-}
-
-// ÓĞºÜ¶àÇé¿öÒª¿¼ÂÇ£ºÈç¹ûÊó±ê±»°ÎµôÁË£¬»áÔõÃ´Ñù¡£
-// ¿ÉÄÜÒ»Ö¡Ö®ÄÚÊó±ê×öÁËºÜ¶àÊÂÇé¡£
-// ´°¿Ú×îĞ¡»¯»òÕß±»ÕÚµ²Ö®ºó£¬ÈçºÎÅĞ¶ÏÊó±êÊÇ·ñÔÚ´°¿ÚÄÚ¡£
-// ºÃÏñÊó±êÔÚ×ÀÃæÖ®ÍâµÄÊ±ºò²»»áÓĞ MOUSELEAVE ÏûÏ¢¡£
-int HandleMouseLeave(App* application, WPARAM wParam, LPARAM lParam) {
-	application->input.isMouseInputOwned = false;
-	application->input.isMouseLeaveTracked = false;
-	return 0;
-}
-int HandleLeftMouseUp(App* application, WPARAM wParam, LPARAM lParam) {
-	application->input.mouseButtonDown[0] = false;
-	application->input.isMouseInputOwned = true;
-	return 0;
-}
-int HandleLeftMouseDown(App* application, WPARAM wParam, LPARAM lParam) {
-	application->input.mouseButtonDown[0] = true;
-	application->input.isMouseInputOwned = true;
-	application->input.TrackMouse();
-	return 0;
-}
-int HandleMiddleMouseUp(App* application, WPARAM wParam, LPARAM lParam) {
-	application->input.mouseButtonDown[1] = false;
-	application->input.isMouseInputOwned = true;
-	return 0;
-}
-int HandleMiddleMouseDown(App* application, WPARAM wParam, LPARAM lParam) {
-	application->input.mouseButtonDown[1] = true;
-	application->input.isMouseInputOwned = true;
-	application->input.TrackMouse();
-	return 0;
-}
-int HandleRightMouseUp(App* application, WPARAM wParam, LPARAM lParam) {
-	application->input.mouseButtonDown[2] = false;
-	application->input.isMouseInputOwned = true;
-	return 0;
-}
-int HandleRightMouseDown(App* application, WPARAM wParam, LPARAM lParam) {
-	application->input.mouseButtonDown[2] = true;
-	application->input.isMouseInputOwned = true;
-	application->input.TrackMouse();
-	return 0;
+int HandleMouseWheel(App* application, WPARAM wParam, LPARAM lParam)
+{
+    int wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+    application->input.mouseWheelDelta = (double)wheelDelta / WHEEL_DELTA;
+    return 0;
 }
 
-// ÎÒ¸ã²»Çå³şÊ²Ã´ÊÇ capture changed¡£
-// Êµ¼ÊÖĞ·¢ÏÖÔÚµã»÷±êÌâÀ¸µÄÊ±ºò»áÓĞÕâ¸öÏûÏ¢¡£
-LRESULT CALLBACK WindowProcedure(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam) {
-	static App* application = NULL;
-	switch (message) {
-	case WM_CREATE: return HandleCreate(application, wParam, lParam);
-	case WM_DESTROY: return HandleDestroy(application, wParam, lParam);
-	case WM_KILLFOCUS: return HandleKillFocus(application, wParam, lParam);
-	case WM_SETCURSOR: return HandleSetCursor(application, wParam, lParam);
-	case WM_CAPTURECHANGED: return HandleCaptureChanged(application, wParam, lParam);
-	case WM_CHAR: return HandleCharacter(application, wParam, lParam);
-	case WM_KEYUP: return HandleKeyUp(application, wParam, lParam);
-	case WM_KEYDOWN: return HandleKeyDown(application, wParam, lParam);
-	case WM_MOUSEMOVE: return HandleMouseMove(application, wParam, lParam);
-	case WM_MOUSEWHEEL: return HandleMouseWheel(application, wParam, lParam);
-	case WM_MOUSELEAVE: return HandleMouseLeave(application, wParam, lParam);
-	case WM_LBUTTONUP: return HandleLeftMouseUp(application, wParam, lParam);
-	case WM_LBUTTONDOWN: return HandleLeftMouseDown(application, wParam, lParam);
-	case WM_MBUTTONUP: return HandleMiddleMouseUp(application, wParam, lParam);
-	case WM_MBUTTONDOWN: return HandleMiddleMouseDown(application, wParam, lParam);
-	case WM_RBUTTONUP: return HandleRightMouseUp(application, wParam, lParam);
-	case WM_RBUTTONDOWN: return HandleRightMouseDown(application, wParam, lParam);
-	default: return DefWindowProc(windowHandle, message, wParam, lParam);
-	}
+// æœ‰å¾ˆå¤šæƒ…å†µè¦è€ƒè™‘ï¼šå¦‚æœé¼ æ ‡è¢«æ‹”æ‰äº†ï¼Œä¼šæ€ä¹ˆæ ·ã€‚
+// å¯èƒ½ä¸€å¸§ä¹‹å†…é¼ æ ‡åšäº†å¾ˆå¤šäº‹æƒ…ã€‚
+// çª—å£æœ€å°åŒ–æˆ–è€…è¢«é®æŒ¡ä¹‹åï¼Œå¦‚ä½•åˆ¤æ–­é¼ æ ‡æ˜¯å¦åœ¨çª—å£å†…ã€‚
+// å¥½åƒé¼ æ ‡åœ¨æ¡Œé¢ä¹‹å¤–çš„æ—¶å€™ä¸ä¼šæœ‰ MOUSELEAVE æ¶ˆæ¯ã€‚
+int HandleMouseLeave(App* application, WPARAM wParam, LPARAM lParam)
+{
+    application->input.isMouseInputOwned = false;
+    application->input.isMouseLeaveTracked = false;
+    return 0;
+}
+int HandleLeftMouseUp(App* application, WPARAM wParam, LPARAM lParam)
+{
+    application->input.mouseButtonDown[0] = false;
+    application->input.isMouseInputOwned = true;
+    return 0;
+}
+int HandleLeftMouseDown(App* application, WPARAM wParam, LPARAM lParam)
+{
+    application->input.mouseButtonDown[0] = true;
+    application->input.isMouseInputOwned = true;
+    application->input.TrackMouse();
+    return 0;
+}
+int HandleMiddleMouseUp(App* application, WPARAM wParam, LPARAM lParam)
+{
+    application->input.mouseButtonDown[1] = false;
+    application->input.isMouseInputOwned = true;
+    return 0;
+}
+int HandleMiddleMouseDown(App* application, WPARAM wParam, LPARAM lParam)
+{
+    application->input.mouseButtonDown[1] = true;
+    application->input.isMouseInputOwned = true;
+    application->input.TrackMouse();
+    return 0;
+}
+int HandleRightMouseUp(App* application, WPARAM wParam, LPARAM lParam)
+{
+    application->input.mouseButtonDown[2] = false;
+    application->input.isMouseInputOwned = true;
+    return 0;
+}
+int HandleRightMouseDown(App* application, WPARAM wParam, LPARAM lParam)
+{
+    application->input.mouseButtonDown[2] = true;
+    application->input.isMouseInputOwned = true;
+    application->input.TrackMouse();
+    return 0;
 }
 
+// æˆ‘æä¸æ¸…æ¥šä»€ä¹ˆæ˜¯ capture changedã€‚
+// å®é™…ä¸­å‘ç°åœ¨ç‚¹å‡»æ ‡é¢˜æ çš„æ—¶å€™ä¼šæœ‰è¿™ä¸ªæ¶ˆæ¯ã€‚
+LRESULT CALLBACK WindowProcedure(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    static App* application = NULL;
+    switch (message)
+    {
+    case WM_CREATE:
+        return HandleCreate(application, wParam, lParam);
+    case WM_DESTROY:
+        return HandleDestroy(application, wParam, lParam);
+    case WM_KILLFOCUS:
+        return HandleKillFocus(application, wParam, lParam);
+    case WM_SETCURSOR:
+        return HandleSetCursor(application, wParam, lParam);
+    case WM_CAPTURECHANGED:
+        return HandleCaptureChanged(application, wParam, lParam);
+    case WM_CHAR:
+        return HandleCharacter(application, wParam, lParam);
+    case WM_KEYUP:
+        return HandleKeyUp(application, wParam, lParam);
+    case WM_KEYDOWN:
+        return HandleKeyDown(application, wParam, lParam);
+    case WM_MOUSEMOVE:
+        return HandleMouseMove(application, wParam, lParam);
+    case WM_MOUSEWHEEL:
+        return HandleMouseWheel(application, wParam, lParam);
+    case WM_MOUSELEAVE:
+        return HandleMouseLeave(application, wParam, lParam);
+    case WM_LBUTTONUP:
+        return HandleLeftMouseUp(application, wParam, lParam);
+    case WM_LBUTTONDOWN:
+        return HandleLeftMouseDown(application, wParam, lParam);
+    case WM_MBUTTONUP:
+        return HandleMiddleMouseUp(application, wParam, lParam);
+    case WM_MBUTTONDOWN:
+        return HandleMiddleMouseDown(application, wParam, lParam);
+    case WM_RBUTTONUP:
+        return HandleRightMouseUp(application, wParam, lParam);
+    case WM_RBUTTONDOWN:
+        return HandleRightMouseDown(application, wParam, lParam);
+    default:
+        return DefWindowProc(windowHandle, message, wParam, lParam);
+    }
+}

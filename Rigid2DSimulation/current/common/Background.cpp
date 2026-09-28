@@ -1,41 +1,48 @@
-#include "Background.h"
+ï»¿#include "Background.h"
 #include "SimulationApp.h"
 #include "DrawString.h"
 #include "DrawTile.h"
 
 Background::Background(SimulationApp& simulationApp)
 {
-	width = 1630; height = 860;
-	topLeft = { 170, 0 }; // tileµÄÔ­µã×ø±êÎ»ÖÃ£¬170µÄÓàÁ¿ÓÃÓÚ×ó²àUIÏÔÊ¾
-	depth = -100000;
-	backgroundTile = Tile(width, height, Color::kBlack, 255);
+    width = 1630;
+    height = 860;
+    topLeft = {170, 0}; // tileçš„åŽŸç‚¹åæ ‡ä½ç½®ï¼Œ170çš„ä½™é‡ç”¨äºŽå·¦ä¾§UIæ˜¾ç¤º
+    depth = -100000;
+    backgroundTile = Tile(width, height, Color::kBlack, 255);
 }
 
 void Background::Render(SimulationApp& simulationApp)
 {
-	DrawTileRaw((simulationApp.screen), topLeft,  backgroundTile);
-	DrawString((simulationApp.screen), (simulationApp.depthBuffer), 999, (simulationApp.debugString),
-		Color(110), (simulationApp.font), topLeft + DVector2(10, 10), width - 20, simulationApp.background->GetViewport());
+    DrawTileRaw((simulationApp.screen), topLeft, backgroundTile);
+    DrawString((simulationApp.screen), (simulationApp.depthBuffer), 999, (simulationApp.debugString),
+               Color(110), (simulationApp.font), topLeft + DVector2(10, 10), width - 20, simulationApp.background->GetViewport());
 }
 
 void Background::Update(SimulationApp& simulationApp)
 {
-	hovered = ((simulationApp.inputOwners.hovered) == this);
-	wheeled = ((simulationApp.inputOwners.wheeled) == this);
+    hovered = ((simulationApp.inputOwners.hovered) == this);
+    wheeled = ((simulationApp.inputOwners.wheeled) == this);
 
-	if (hovered && (simulationApp.input.IsMouseClickedDown)(0))
-	{
-		simulationApp.bodySelecting = NULL;
-		simulationApp.connectionSelecting = NULL;
-	}
+    if (hovered && (simulationApp.input.IsMouseClickedDown)(0))
+    {
+        simulationApp.bodySelecting = NULL;
+        simulationApp.connectionSelecting = NULL;
+    }
 }
 void Background::PreUpdate(SimulationApp& simulationApp)
 {
-	bool haveDeeperValue = ((simulationApp.inputOwners).hoveredDepth) <= depth && IsInside(simulationApp.input.mousePosition, GetViewport());
-	if (haveDeeperValue) { ((simulationApp.inputOwners).hoveredDepth) = depth; ((simulationApp.inputOwners).hovered) = this; }
+    bool haveDeeperValue = ((simulationApp.inputOwners).hoveredDepth) <= depth && IsInside(simulationApp.input.mousePosition, GetViewport());
+    if (haveDeeperValue)
+    {
+        ((simulationApp.inputOwners).hoveredDepth) = depth;
+        ((simulationApp.inputOwners).hovered) = this;
+    }
 
-	haveDeeperValue = (simulationApp.inputOwners.wheeledDepth) <= depth && IsInside(simulationApp.input.mousePosition, GetViewport());
-	if (haveDeeperValue) { (simulationApp.inputOwners.wheeledDepth) = depth; (simulationApp.inputOwners.wheeled) = this; }
+    haveDeeperValue = (simulationApp.inputOwners.wheeledDepth) <= depth && IsInside(simulationApp.input.mousePosition, GetViewport());
+    if (haveDeeperValue)
+    {
+        (simulationApp.inputOwners.wheeledDepth) = depth;
+        (simulationApp.inputOwners.wheeled) = this;
+    }
 }
-
-

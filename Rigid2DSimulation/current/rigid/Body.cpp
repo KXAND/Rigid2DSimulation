@@ -1,4 +1,4 @@
-#include "Body.h"
+Ôªø#include "Body.h"
 #include "current/common/utils.h"
 #include "SimulationApp.h"
 #include "Background.h"
@@ -10,568 +10,679 @@
 #include "DrawLineSegment.h"
 #include "Connection.h"
 
-// ’‚–©ππ‘Ï∫Ø ˝’Êµƒ∫‹ªÏ¬“°£
-Body::Body( )
+// Ëøô‰∫õÊûÑÈÄ†ÂáΩÊï∞ÁúüÁöÑÂæàÊ∑∑‰π±„ÄÇ
+Body::Body()
 {
-	density = 1;
-	dampCoeff = 0.1; dampCoeffAngular = 0.1;
-	elasticity = 0.7; frictionStatic = 0.5; frictionDynamic = 0.3;
+    density = 1;
+    dampCoeff = 0.1;
+    dampCoeffAngular = 0.1;
+    elasticity = 0.7;
+    frictionStatic = 0.5;
+    frictionDynamic = 0.3;
 
-	depthShape = 0; depthPoint = 1;
-	pointRadius = 8;
-	borderColor = { 255, 255, 255 };
-	hoveredColor = { 0, 0, 255 };
-	draggedColor = { 255, 0, 0 };
-	selectedColor = { 255, 0, 255 };
-	selectedConnectionColor = { 255, 255, 0 };
+    depthShape = 0;
+    depthPoint = 1;
+    pointRadius = 8;
+    borderColor = {255, 255, 255};
+    hoveredColor = {0, 0, 255};
+    draggedColor = {255, 0, 0};
+    selectedColor = {255, 0, 255};
+    selectedConnectionColor = {255, 255, 0};
 }
-Body::Body(Vector2 const& position) : Body( )
+Body::Body(Vector2 const& position) : Body()
 {
-	point = true;
-	this->position = position;
+    point = true;
+    this->position = position;
 }
-Body::Body(std::shared_ptr<Shape> shape) : Body( )
+Body::Body(std::shared_ptr<Shape> shape) : Body()
 {
-	shapes = { shape };
+    shapes = {shape};
 }
-Body::Body(vector<std::shared_ptr<Shape>> const& shapes) : Body( )
+Body::Body(vector<std::shared_ptr<Shape>> const& shapes) : Body()
 {
-	this->shapes = shapes;
+    this->shapes = shapes;
 }
 void Body::Save(FILE* file) const
 {
-	int size = 0;
-	fwrite(&(point), sizeof(point), 1, file);
-	fwrite(&(fixed), sizeof(fixed), 1, file);
-	size = shapes.size( );
-	fwrite(&(size), sizeof(size), 1, file);
-	for (auto shape : shapes) { shape->Save(file); }
-	fwrite(&(position), sizeof(position), 1, file);
-	fwrite(&(velocity), sizeof(velocity), 1, file);
-	size = (scriptText).size( );
-	fwrite(&(size), sizeof(size), 1, file);
-	fwrite(&*(scriptText).begin( ), sizeof(*(&*(scriptText).begin( ))), size, file);
-	fwrite(&(radian), sizeof(radian), 1, file);
-	fwrite(&(velocityAngular), sizeof(velocityAngular), 1, file);
-	fwrite(&(density), sizeof(density), 1, file);
-	fwrite(&(elasticity), sizeof(elasticity), 1, file);
-	fwrite(&(frictionStatic), sizeof(frictionStatic), 1, file);
-	fwrite(&(frictionDynamic), sizeof(frictionDynamic), 1, file);
-	fwrite(&(dampCoeff), sizeof(dampCoeff), 1, file);
-	fwrite(&(dampCoeffAngular), sizeof(dampCoeffAngular), 1, file);
-	fwrite(&(chargeDensity), sizeof(chargeDensity), 1, file);
-	fwrite(&(innerColor), sizeof(innerColor), 1, file);
+    int size = 0;
+    fwrite(&(point), sizeof(point), 1, file);
+    fwrite(&(fixed), sizeof(fixed), 1, file);
+    size = shapes.size();
+    fwrite(&(size), sizeof(size), 1, file);
+    for (auto shape : shapes)
+    {
+        shape->Save(file);
+    }
+    fwrite(&(position), sizeof(position), 1, file);
+    fwrite(&(velocity), sizeof(velocity), 1, file);
+    size = (scriptText).size();
+    fwrite(&(size), sizeof(size), 1, file);
+    fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
+    fwrite(&(radian), sizeof(radian), 1, file);
+    fwrite(&(velocityAngular), sizeof(velocityAngular), 1, file);
+    fwrite(&(density), sizeof(density), 1, file);
+    fwrite(&(elasticity), sizeof(elasticity), 1, file);
+    fwrite(&(frictionStatic), sizeof(frictionStatic), 1, file);
+    fwrite(&(frictionDynamic), sizeof(frictionDynamic), 1, file);
+    fwrite(&(dampCoeff), sizeof(dampCoeff), 1, file);
+    fwrite(&(dampCoeffAngular), sizeof(dampCoeffAngular), 1, file);
+    fwrite(&(chargeDensity), sizeof(chargeDensity), 1, file);
+    fwrite(&(innerColor), sizeof(innerColor), 1, file);
 }
-Body::Body(SimulationApp& simulationApp, FILE* file) : Body( )
+Body::Body(SimulationApp& simulationApp, FILE* file) : Body()
 {
-	int size = 0;
-	fread(&(point), sizeof(point), 1, file);
-	fread(&(fixed), sizeof(fixed), 1, file);
-	fread(&(size), sizeof(size), 1, file);
-	for (int i = (0), iEnd = int(size); i < iEnd; ++i)
-	{
-		shapes.push_back(std::make_shared<Shape>(file));
-	}
-	fread(&(position), sizeof(position), 1, file);
-	fread(&(velocity), sizeof(velocity), 1, file);
-	fread(&(size), sizeof(size), 1, file);
-	(scriptText).resize(size);
-	fread(&*(scriptText).begin( ), sizeof(*(&*(scriptText).begin( ))), size, file);
-	temporaryScriptText = scriptText;
-	fread(&(radian), sizeof(radian), 1, file);
-	fread(&(velocityAngular), sizeof(velocityAngular), 1, file);
-	fread(&(density), sizeof(density), 1, file);
-	fread(&(elasticity), sizeof(elasticity), 1, file);
-	fread(&(frictionStatic), sizeof(frictionStatic), 1, file);
-	fread(&(frictionDynamic), sizeof(frictionDynamic), 1, file);
-	fread(&(dampCoeff), sizeof(dampCoeff), 1, file);
-	fread(&(dampCoeffAngular), sizeof(dampCoeffAngular), 1, file);
-	fread(&(chargeDensity), sizeof(chargeDensity), 1, file);
-	fread(&(innerColor), sizeof(innerColor), 1, file);
+    int size = 0;
+    fread(&(point), sizeof(point), 1, file);
+    fread(&(fixed), sizeof(fixed), 1, file);
+    fread(&(size), sizeof(size), 1, file);
+    for (int i = (0), iEnd = int(size); i < iEnd; ++i)
+    {
+        shapes.push_back(std::make_shared<Shape>(file));
+    }
+    fread(&(position), sizeof(position), 1, file);
+    fread(&(velocity), sizeof(velocity), 1, file);
+    fread(&(size), sizeof(size), 1, file);
+    (scriptText).resize(size);
+    fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
+    temporaryScriptText = scriptText;
+    fread(&(radian), sizeof(radian), 1, file);
+    fread(&(velocityAngular), sizeof(velocityAngular), 1, file);
+    fread(&(density), sizeof(density), 1, file);
+    fread(&(elasticity), sizeof(elasticity), 1, file);
+    fread(&(frictionStatic), sizeof(frictionStatic), 1, file);
+    fread(&(frictionDynamic), sizeof(frictionDynamic), 1, file);
+    fread(&(dampCoeff), sizeof(dampCoeff), 1, file);
+    fread(&(dampCoeffAngular), sizeof(dampCoeffAngular), 1, file);
+    fread(&(chargeDensity), sizeof(chargeDensity), 1, file);
+    fread(&(innerColor), sizeof(innerColor), 1, file);
 
-	RefreshFromScript(simulationApp);
+    RefreshFromScript(simulationApp);
 }
 
-double Body::GetDepth( ) const
+double Body::GetDepth() const
 {
-	return point ? depthPoint : depthShape;
+    return point ? depthPoint : depthShape;
 }
 bool Body::IsInside(Vector2 p) const
 {
-	if (point) { return (p - position).GetLengthSquared( ) < pointRadius * pointRadius; }
+    if (point)
+    {
+        return (p - position).GetLengthSquared() < pointRadius * pointRadius;
+    }
 
-	for (auto shape : shapes)
-	{
-		if (shape->IsInside(p)) return true;
-	}
-	return false;
+    for (auto shape : shapes)
+    {
+        if (shape->IsInside(p))
+            return true;
+    }
+    return false;
 }
 
 void Body::RefreshFromScript(SimulationApp& simulationApp)
 {
-	simulationApp.currentScope[L"body"] = std::make_shared<Value>( );
-	Execute(simulationApp.currentScope, Compile(scriptText));
-	if (simulationApp.currentScope.find(L"body") == simulationApp.currentScope.end( )) { return; }
-	auto const& bodyConfig = *simulationApp.currentScope[L"body"];
-	ReadConfig(bodyConfig);
+    simulationApp.currentScope[L"body"] = std::make_shared<Value>();
+    Execute(simulationApp.currentScope, Compile(scriptText));
+    if (simulationApp.currentScope.find(L"body") == simulationApp.currentScope.end())
+    {
+        return;
+    }
+    auto const& bodyConfig = *simulationApp.currentScope[L"body"];
+    ReadConfig(bodyConfig);
 
-	// ’‚–©µ•∂¿∑≈ «“ÚŒ™À¸√«Œﬁ∑®÷ªƒ‹Õ®π˝ scriptText ªÒµ√£¨Œﬁ∑®±£¥Ê°£
-	TryReadConfigNumber(bodyConfig, L"hasPositionPreset", hasPositionPreset);
-	TryReadConfigNumber(bodyConfig, L"hasAnglePreset", hasAnglePreset);
-	TryReadConfigNumber(bodyConfig, L"hasAngularVelocityPreset", hasAngularVelocityPreset);
-	if (auto value = FindConfigValue(bodyConfig, L"positionProgram")) { positionProgram = std::make_shared<Program>(value->bodyStatements); }
-	if (auto value = FindConfigValue(bodyConfig, L"angleProgram")) { angleProgram = std::make_shared<Program>(value->bodyStatements); }
-	if (auto value = FindConfigValue(bodyConfig, L"angularVelocityProgram")) { angularVelocityProgram = std::make_shared<Program>(value->bodyStatements); }
-	Init( );
+    // Ëøô‰∫õÂçïÁã¨ÊîæÊòØÂõ†‰∏∫ÂÆÉ‰ª¨Êó†Ê≥ïÂè™ËÉΩÈÄöËøá scriptText Ëé∑ÂæóÔºåÊó†Ê≥ï‰øùÂ≠ò„ÄÇ
+    TryReadConfigNumber(bodyConfig, L"hasPositionPreset", hasPositionPreset);
+    TryReadConfigNumber(bodyConfig, L"hasAnglePreset", hasAnglePreset);
+    TryReadConfigNumber(bodyConfig, L"hasAngularVelocityPreset", hasAngularVelocityPreset);
+    if (auto value = FindConfigValue(bodyConfig, L"positionProgram"))
+    {
+        positionProgram = std::make_shared<Program>(value->bodyStatements);
+    }
+    if (auto value = FindConfigValue(bodyConfig, L"angleProgram"))
+    {
+        angleProgram = std::make_shared<Program>(value->bodyStatements);
+    }
+    if (auto value = FindConfigValue(bodyConfig, L"angularVelocityProgram"))
+    {
+        angularVelocityProgram = std::make_shared<Program>(value->bodyStatements);
+    }
+    Init();
 }
 
 void Body::ReadConfig(Value const& config)
 {
-	if (auto value = FindConfigValue(config, L"position")) { position = ToVector2(*value); }
-	if (auto value = FindConfigValue(config, L"velocity")) { velocity = ToVector2(*value); }
-	if (auto value = FindConfigValue(config, L"innerColor")) { innerColor = (Color) ToVector3(*value); }
-	TryReadConfigNumber(config, L"radian", radian);
-	TryReadConfigNumber(config, L"velocityAngular", velocityAngular);
-	TryReadConfigNumber(config, L"elasticity", elasticity);
-	TryReadConfigNumber(config, L"frictionStatic", frictionStatic);
-	TryReadConfigNumber(config, L"frictionDynamic", frictionDynamic);
-	TryReadConfigNumber(config, L"dampCoeff", dampCoeff);
-	TryReadConfigNumber(config, L"dampCoeffAngular", dampCoeffAngular);
-	TryReadConfigNumber(config, L"fixed", fixed);
-	TryReadConfigNumber(config, L"density", density);
-	TryReadConfigNumber(config, L"chargeDensity", chargeDensity);
+    if (auto value = FindConfigValue(config, L"position"))
+    {
+        position = ToVector2(*value);
+    }
+    if (auto value = FindConfigValue(config, L"velocity"))
+    {
+        velocity = ToVector2(*value);
+    }
+    if (auto value = FindConfigValue(config, L"innerColor"))
+    {
+        innerColor = (Color)ToVector3(*value);
+    }
+    TryReadConfigNumber(config, L"radian", radian);
+    TryReadConfigNumber(config, L"velocityAngular", velocityAngular);
+    TryReadConfigNumber(config, L"elasticity", elasticity);
+    TryReadConfigNumber(config, L"frictionStatic", frictionStatic);
+    TryReadConfigNumber(config, L"frictionDynamic", frictionDynamic);
+    TryReadConfigNumber(config, L"dampCoeff", dampCoeff);
+    TryReadConfigNumber(config, L"dampCoeffAngular", dampCoeffAngular);
+    TryReadConfigNumber(config, L"fixed", fixed);
+    TryReadConfigNumber(config, L"density", density);
+    TryReadConfigNumber(config, L"chargeDensity", chargeDensity);
 }
 
-Vector2 Body::GenerateRandomPointInside( ) const
+Vector2 Body::GenerateRandomPointInside() const
 {
-	if (point) { return {}; }
+    if (point)
+    {
+        return {};
+    }
 
-	double randomArea = GenerateRandomFloat(area);
-	for (const auto& shape : shapes)
-	{
-		randomArea -= shape->area;
-		if (randomArea < 0)
-		{
-			return shape->GenerateRandomPointInside( );
-		}
-	}
-	return shapes.back( )->GenerateRandomPointInside( );
+    double randomArea = GenerateRandomFloat(area);
+    for (const auto& shape : shapes)
+    {
+        randomArea -= shape->area;
+        if (randomArea < 0)
+        {
+            return shape->GenerateRandomPointInside();
+        }
+    }
+    return shapes.back()->GenerateRandomPointInside();
 }
 
-void Body::UpdateShapesPositionAndAABB( )
+void Body::UpdateShapesPositionAndAABB()
 {
-	transform = Matrix2::Rotation(radian);
-	for (auto& shape : shapes)
-	{
-		shape->position = position + transform * shape->relativePosition;
-		shape->radian = radian;
-		for (int i = (0), iEnd = int(shape->vertices.size( )); i < iEnd; ++i)
-		{
-			shape->vertices[i] = position + transform * shape->verticesRelative[i];
-		}
-	}
-	UpdateAABB( );
+    transform = Matrix2::Rotation(radian);
+    for (auto& shape : shapes)
+    {
+        shape->position = position + transform * shape->relativePosition;
+        shape->radian = radian;
+        for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
+        {
+            shape->vertices[i] = position + transform * shape->verticesRelative[i];
+        }
+    }
+    UpdateAABB();
 }
 
-void Body::UpdateAABB( )
+void Body::UpdateAABB()
 {
-	// @todo£∫øº¬«…Ëº∆“ª∏ˆexpand∫Ø ˝
-	box = Aabb( );
-	for (const auto& shape : shapes)
-	{
-		box = Aabb(box, shape->GetBoundingBox( ));
-	}
+    // @todoÔºöËÄÉËôëËÆæËÆ°‰∏Ä‰∏™expandÂáΩÊï∞
+    box = Aabb();
+    for (const auto& shape : shapes)
+    {
+        box = Aabb(box, shape->GetBoundingBox());
+    }
 }
 
-// ’‚∏ˆ∑Ω∑®“—æ≠π˝ ±¡À°£
+// Ëøô‰∏™ÊñπÊ≥ïÂ∑≤ÁªèËøáÊó∂‰∫Ü„ÄÇ
 void Body::Warp(DRect rectangle)
 {
-	if (invMass == 0 || dragged) { return; }
+    if (invMass == 0 || dragged)
+    {
+        return;
+    }
 
-	if (position.x < rectangle.GetLeft( )) { position.x += rectangle.width; }
-	else if (position.x > rectangle.GetRight( )) { position.x -= rectangle.width; }
-	if (position.y < rectangle.GetTop( )) { position.y += rectangle.height; }
-	else if (position.y > rectangle.GetBottom( )) { position.y -= rectangle.height; }
+    if (position.x < rectangle.GetLeft())
+    {
+        position.x += rectangle.width;
+    }
+    else if (position.x > rectangle.GetRight())
+    {
+        position.x -= rectangle.width;
+    }
+    if (position.y < rectangle.GetTop())
+    {
+        position.y += rectangle.height;
+    }
+    else if (position.y > rectangle.GetBottom())
+    {
+        position.y -= rectangle.height;
+    }
 }
 
 void Body::RegisterGrid(SimulationApp& simulationApp)
 {
-	if (point) { return; }
+    if (point)
+    {
+        return;
+    }
 
-	auto const& topLeft = simulationApp.rectScene.topLeftPosition;
-	int x0 = floor((box.x0 - topLeft.x) / simulationApp.gridSize);
-	int y0 = floor((box.y0 - topLeft.y) / simulationApp.gridSize);
-	int x1 = floor((box.x1 - topLeft.x) / simulationApp.gridSize);
-	int y1 = floor((box.y1 - topLeft.y) / simulationApp.gridSize);
-	x0 = Clamp(x0, 0, simulationApp.gridNumX - 1);
-	x1 = Clamp(x1, 0, simulationApp.gridNumX - 1);
-	y0 = Clamp(y0, 0, simulationApp.gridNumY - 1);
-	y1 = Clamp(y1, 0, simulationApp.gridNumY - 1);
-	if (x1 > x0 + 1 || y1 > y0 + 1)
-	{
-		//  «∂‡∏ˆøÁ‘Ω∂‡∏ˆgridµƒŒÔÃÂ
-		simulationApp.multiGridBodies.push_back(this);
-		return;
-	}
-	simulationApp.grid[y0 * simulationApp.gridNumX + x0].push_back(this);
+    auto const& topLeft = simulationApp.rectScene.topLeftPosition;
+    int x0 = floor((box.x0 - topLeft.x) / simulationApp.gridSize);
+    int y0 = floor((box.y0 - topLeft.y) / simulationApp.gridSize);
+    int x1 = floor((box.x1 - topLeft.x) / simulationApp.gridSize);
+    int y1 = floor((box.y1 - topLeft.y) / simulationApp.gridSize);
+    x0 = Clamp(x0, 0, simulationApp.gridNumX - 1);
+    x1 = Clamp(x1, 0, simulationApp.gridNumX - 1);
+    y0 = Clamp(y0, 0, simulationApp.gridNumY - 1);
+    y1 = Clamp(y1, 0, simulationApp.gridNumY - 1);
+    if (x1 > x0 + 1 || y1 > y0 + 1)
+    {
+        // ÊòØÂ§ö‰∏™Ë∑®Ë∂äÂ§ö‰∏™gridÁöÑÁâ©‰Ωì
+        simulationApp.multiGridBodies.push_back(this);
+        return;
+    }
+    simulationApp.grid[y0 * simulationApp.gridNumX + x0].push_back(this);
 }
 
 void Body::Init(bool resetPosition)
 {
-	// ’‚¿ÔºŸ…Ë «÷Æ«∞√ª”–¬“∏ƒ≥…‘±°£
-	if (point) { return; }
+    // ËøôÈáåÂÅáËÆæÊòØ‰πãÂâçÊ≤°Êúâ‰π±ÊîπÊàêÂëò„ÄÇ
+    if (point)
+    {
+        return;
+    }
 
-	area = 0; Vector2 center;
-	inertia = 0;
-	for (auto shape : shapes)
-	{
-		shape->area = 0; Vector2 shapeCenter;
-		if (shape->isCircle)
-		{
-			shape->area = kPi * shape->radius * shape->radius;
-			shapeCenter = shape->area * shape->relativePosition;
-			inertia += shape->area * (shape->radius * shape->radius) / 2;
-		}
-		else
-		{
-			for (int i = (0), iEnd = int(shape->verticesRelative.size( )); i < iEnd; ++i)
-			{
-				int j = (i + 1) % shape->verticesRelative.size( );
-				auto p = shape->verticesRelative[i], q = shape->verticesRelative[j];
-				double triangleArea = Matrix2(p, q).Determinant( ) / 2;
-				double triangleInertia = Dot(p, p) + Dot(p, q) + Dot(q, q);
-				triangleInertia *= triangleArea / 6;
+    area = 0;
+    Vector2 center;
+    inertia = 0;
+    for (auto shape : shapes)
+    {
+        shape->area = 0;
+        Vector2 shapeCenter;
+        if (shape->isCircle)
+        {
+            shape->area = kPi * shape->radius * shape->radius;
+            shapeCenter = shape->area * shape->relativePosition;
+            inertia += shape->area * (shape->radius * shape->radius) / 2;
+        }
+        else
+        {
+            for (int i = (0), iEnd = int(shape->verticesRelative.size()); i < iEnd; ++i)
+            {
+                int j = (i + 1) % shape->verticesRelative.size();
+                auto p = shape->verticesRelative[i], q = shape->verticesRelative[j];
+                double triangleArea = Matrix2(p, q).Determinant() / 2;
+                double triangleInertia = Dot(p, p) + Dot(p, q) + Dot(q, q);
+                triangleInertia *= triangleArea / 6;
 
-				shapeCenter += triangleArea * (p + q) / 3;
-				shape->area += triangleArea;
-				inertia += triangleInertia;
-			}
-		}
+                shapeCenter += triangleArea * (p + q) / 3;
+                shape->area += triangleArea;
+                inertia += triangleInertia;
+            }
+        }
 
-		area += shape->area;
-		center += shapeCenter;
-		shape->relativePosition = shapeCenter / shape->area;
-	}
+        area += shape->area;
+        center += shapeCenter;
+        shape->relativePosition = shapeCenter / shape->area;
+    }
 
-	center /= area;
-	charge = chargeDensity * area;
-	invMass = fixed ? 0 : 1 / (density * area);
-	invInertia = fixed ? 0 : 1 / (density * inertia);
-	if (resetPosition) { position = center; }
-	for (auto shape : shapes)
-	{
-		shape->relativePosition -= center;
-		for (auto& v : shape->verticesRelative) { v -= center; }
-	}
-	UpdateShapesPositionAndAABB( );
+    center /= area;
+    charge = chargeDensity * area;
+    invMass = fixed ? 0 : 1 / (density * area);
+    invInertia = fixed ? 0 : 1 / (density * inertia);
+    if (resetPosition)
+    {
+        position = center;
+    }
+    for (auto shape : shapes)
+    {
+        shape->relativePosition -= center;
+        for (auto& v : shape->verticesRelative)
+        {
+            v -= center;
+        }
+    }
+    UpdateShapesPositionAndAABB();
 }
 void Body::Render(SimulationApp& simulationApp) const
 {
-	bool isSelectedConnection = simulationApp.connectionSelecting &&
-		(simulationApp.connectionSelecting->body0 == this || simulationApp.connectionSelecting->body1 == this);
-	Color normalColor;
-	switch (simulationApp.display)
-	{
-	case kColorDisplay:
-		normalColor = innerColor;
-		break;
-		if (point) { break; }
-	case kEnergyDisplay:
-	{
-		double energy = velocity.GetLengthSquared( ) + velocityAngular * velocityAngular * inertia / area;
-		normalColor = (Color) Vector3(energy * simulationApp.energyMultiplier, 0, 0);
-		break;
-	}
-	case kChargesDisplay:
-	{
-		normalColor = chargeDensity > 0 ?
-			(Color) Vector3(chargeDensity * simulationApp.chargeMultiplier, 0, 0) :
-			(Color) Vector3(0, 0, -chargeDensity * simulationApp.chargeMultiplier);
-		break;
-	}
-	default:
-		break;
-	}
+    bool isSelectedConnection = simulationApp.connectionSelecting &&
+                                (simulationApp.connectionSelecting->body0 == this || simulationApp.connectionSelecting->body1 == this);
+    Color normalColor;
+    switch (simulationApp.display)
+    {
+    case kColorDisplay:
+        normalColor = innerColor;
+        break;
+        if (point)
+        {
+            break;
+        }
+    case kEnergyDisplay:
+    {
+        double energy = velocity.GetLengthSquared() + velocityAngular * velocityAngular * inertia / area;
+        normalColor = (Color)Vector3(energy * simulationApp.energyMultiplier, 0, 0);
+        break;
+    }
+    case kChargesDisplay:
+    {
+        normalColor = chargeDensity > 0 ? (Color)Vector3(chargeDensity * simulationApp.chargeMultiplier, 0, 0) : (Color)Vector3(0, 0, -chargeDensity * simulationApp.chargeMultiplier);
+        break;
+    }
+    default:
+        break;
+    }
 
-	Color color =
-		dragged ? draggedColor :
-		(simulationApp.bodySelecting == this) ? selectedColor :
-		hovered ? hoveredColor :
-		isSelectedConnection ? selectedConnectionColor :
-		normalColor;
+    Color color =
+        dragged ? draggedColor : (simulationApp.bodySelecting == this) ? selectedColor
+                             : hovered                                 ? hoveredColor
+                             : isSelectedConnection                    ? selectedConnectionColor
+                                                                       : normalColor;
 
-	if (point)
-	{
-		DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, GetDepth( ), position, pointRadius, pointRadius, simulationApp.background->GetViewport( ), color);
-		DrawEllipseBorder(simulationApp.screen, simulationApp.depthBuffer, GetDepth( ), position, pointRadius, pointRadius, simulationApp.background->GetViewport( ), borderColor, 20);
-	}
-	for (auto& shape : shapes)
-	{
-		if (shape->isCircle)
-		{
-			DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, GetDepth( ),
-				shape->position, shape->radius, shape->radius, simulationApp.background->GetViewport( ), color);
-			DrawEllipseBorder(simulationApp.screen, simulationApp.depthBuffer, GetDepth( ),
-				shape->position, shape->radius, shape->radius, simulationApp.background->GetViewport( ), borderColor, 30);
+    if (point)
+    {
+        DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, GetDepth(), position, pointRadius, pointRadius, simulationApp.background->GetViewport(), color);
+        DrawEllipseBorder(simulationApp.screen, simulationApp.depthBuffer, GetDepth(), position, pointRadius, pointRadius, simulationApp.background->GetViewport(), borderColor, 20);
+    }
+    for (auto& shape : shapes)
+    {
+        if (shape->isCircle)
+        {
+            DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, GetDepth(),
+                        shape->position, shape->radius, shape->radius, simulationApp.background->GetViewport(), color);
+            DrawEllipseBorder(simulationApp.screen, simulationApp.depthBuffer, GetDepth(),
+                              shape->position, shape->radius, shape->radius, simulationApp.background->GetViewport(), borderColor, 30);
 
-			// œ‘ æ“ªÃı∞Îæ∂“‘±„”⁄Œ“√«≈–∂œ‘≤µƒ–˝◊™Ω«∂»
-			auto peakPoint = Vector2(cos(shape->radian), sin(shape->radian)) * shape->radius + shape->position;
-			DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, shape->position, peakPoint, GetDepth( ), simulationApp.background->GetViewport( ), borderColor);
-			continue;
-		}
+            // ÊòæÁ§∫‰∏ÄÊù°ÂçäÂæÑ‰ª•‰æø‰∫éÊàë‰ª¨Âà§Êñ≠ÂúÜÁöÑÊóãËΩ¨ËßíÂ∫¶
+            auto peakPoint = Vector2(cos(shape->radian), sin(shape->radian)) * shape->radius + shape->position;
+            DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, shape->position, peakPoint, GetDepth(), simulationApp.background->GetViewport(), borderColor);
+            continue;
+        }
 
-		for (int i = (0), iEnd = int(shape->vertices.size( )); i < iEnd; ++i)
-		{
-			int j = (i + 1) % shape->vertices.size( );
-			DrawTriangle(simulationApp.screen, simulationApp.depthBuffer, simulationApp.background->GetViewport( ), shape->position, shape->vertices[i], shape->vertices[j], GetDepth( ), color);
-		}
-		for (int i = (0), iEnd = int(shape->vertices.size( )); i < iEnd; ++i)
-		{
-			int j = (i + 1) % shape->vertices.size( );
-			DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, shape->vertices[i], shape->vertices[j], GetDepth( ), simulationApp.background->GetViewport( ), borderColor);
-		}
-	}
+        for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
+        {
+            int j = (i + 1) % shape->vertices.size();
+            DrawTriangle(simulationApp.screen, simulationApp.depthBuffer, simulationApp.background->GetViewport(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
+        }
+        for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
+        {
+            int j = (i + 1) % shape->vertices.size();
+            DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, shape->vertices[i], shape->vertices[j], GetDepth(), simulationApp.background->GetViewport(), borderColor);
+        }
+    }
 
-	if (dragged)
-	{
-		Vector2 p1 = Vector2(simulationApp.input.mousePosition);
-		Vector2 p0 = position + transform * relativeDragPoint;
-		DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, GetDepth( ), simulationApp.background->GetViewport( ), Color(0, 255, 255));
-	}
+    if (dragged)
+    {
+        Vector2 p1 = Vector2(simulationApp.input.mousePosition);
+        Vector2 p0 = position + transform * relativeDragPoint;
+        DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, GetDepth(), simulationApp.background->GetViewport(), Color(0, 255, 255));
+    }
 
-	if (!track.empty( ))
-	{
-		Vector2 p0 = track.front( );
-		for (auto p1 : track)
-		{
-			DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, 10, simulationApp.background->GetViewport( ), Color(255, 0, 255));
-			p0 = p1;
-		}
-	}
+    if (!track.empty())
+    {
+        Vector2 p0 = track.front();
+        for (auto p1 : track)
+        {
+            DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, 10, simulationApp.background->GetViewport(), Color(255, 0, 255));
+            p0 = p1;
+        }
+    }
 }
 
 void Body::Step(SimulationApp& simulationApp, double stepDeltaTime)
 {
-	if (invMass)
-	{
-		velocity -= dampCoeff * velocity * stepDeltaTime;
-		velocity += simulationApp.gravity * stepDeltaTime;
-		velocityAngular -= dampCoeffAngular * velocityAngular * stepDeltaTime;
-		if (hasAngularVelocityPreset) { FollowPresetAngularVelocity(simulationApp); }
-		position += velocity * stepDeltaTime;
-		radian += velocityAngular * stepDeltaTime;
-	}
-	else
-	{
-		velocity = {};
-		velocityAngular = 0;
-		if (hasPositionPreset) { FollowPresetPosition(simulationApp, stepDeltaTime); }
-		if (hasAnglePreset) { FollowPresetAngle(simulationApp, stepDeltaTime); }
-	}
+    if (invMass)
+    {
+        velocity -= dampCoeff * velocity * stepDeltaTime;
+        velocity += simulationApp.gravity * stepDeltaTime;
+        velocityAngular -= dampCoeffAngular * velocityAngular * stepDeltaTime;
+        if (hasAngularVelocityPreset)
+        {
+            FollowPresetAngularVelocity(simulationApp);
+        }
+        position += velocity * stepDeltaTime;
+        radian += velocityAngular * stepDeltaTime;
+    }
+    else
+    {
+        velocity = {};
+        velocityAngular = 0;
+        if (hasPositionPreset)
+        {
+            FollowPresetPosition(simulationApp, stepDeltaTime);
+        }
+        if (hasAnglePreset)
+        {
+            FollowPresetAngle(simulationApp, stepDeltaTime);
+        }
+    }
 
-	if (dragged)
-	{
-		if (simulationApp.input.mouseButtonDown[2]) { HandleDragWhole(simulationApp); }
-		else if (!simulationApp.inputOwners.keyboardOwner && simulationApp.input.keyDown[L'F']) { HandleDragForce(simulationApp, stepDeltaTime); }
-		else if (invMass == 0) { HandleDragWhole(simulationApp); }
-		else { HandleDragPoint(simulationApp); }
-	}
+    if (dragged)
+    {
+        if (simulationApp.input.mouseButtonDown[2])
+        {
+            HandleDragWhole(simulationApp);
+        }
+        else if (!simulationApp.inputOwners.keyboardOwner && simulationApp.input.keyDown[L'F'])
+        {
+            HandleDragForce(simulationApp, stepDeltaTime);
+        }
+        else if (invMass == 0)
+        {
+            HandleDragWhole(simulationApp);
+        }
+        else
+        {
+            HandleDragPoint(simulationApp);
+        }
+    }
 
-	UpdateShapesPositionAndAABB( );
+    UpdateShapesPositionAndAABB();
 }
 
 void Body::FollowPresetPosition(SimulationApp& simulationApp, double stepDeltaTime)
 {
-	if (!positionProgram) { return; }
-	Scope scope;
-	bool hasReturned = false;
-	scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime);
-	auto positionOld = ToVector2(Execute(hasReturned, simulationApp.currentScope, scope, *positionProgram)->elements);
-	scope.clear( ); scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime + stepDeltaTime); hasReturned = false;
-	auto positionNew = ToVector2(Execute(hasReturned, simulationApp.currentScope, scope, *positionProgram)->elements);
-	auto velocityNew = (positionNew - positionOld) / stepDeltaTime;
+    if (!positionProgram)
+    {
+        return;
+    }
+    Scope scope;
+    bool hasReturned = false;
+    scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime);
+    auto positionOld = ToVector2(Execute(hasReturned, simulationApp.currentScope, scope, *positionProgram)->elements);
+    scope.clear();
+    scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime + stepDeltaTime);
+    hasReturned = false;
+    auto positionNew = ToVector2(Execute(hasReturned, simulationApp.currentScope, scope, *positionProgram)->elements);
+    auto velocityNew = (positionNew - positionOld) / stepDeltaTime;
 
-	// ∆‰ µŒ“æıµ√”¶µ±—°”√ ±º‰Ωœ–°µƒ÷µ°£
-	position = positionNew;
-	velocity = velocityNew;
+    // ÂÖ∂ÂÆûÊàëËßâÂæóÂ∫îÂΩìÈÄâÁî®Êó∂Èó¥ËæÉÂ∞èÁöÑÂÄº„ÄÇ
+    position = positionNew;
+    velocity = velocityNew;
 }
 
 void Body::FollowPresetAngle(SimulationApp& simulationApp, double stepDeltaTime)
 {
-	if (!angleProgram) { return; }
+    if (!angleProgram)
+    {
+        return;
+    }
 
-	Scope scope;
-	bool hasReturned = false;
-	scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime);
-	auto radianOld = Execute(hasReturned, simulationApp.currentScope, scope, *angleProgram)->number;
-	scope.clear( );
-	scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime + stepDeltaTime);
-	hasReturned = false;
-	auto radianNew = Execute(hasReturned, simulationApp.currentScope, scope, *angleProgram)->number;
-	auto velocityAngularNew = (radianNew - radianOld) / stepDeltaTime;
+    Scope scope;
+    bool hasReturned = false;
+    scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime);
+    auto radianOld = Execute(hasReturned, simulationApp.currentScope, scope, *angleProgram)->number;
+    scope.clear();
+    scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime + stepDeltaTime);
+    hasReturned = false;
+    auto radianNew = Execute(hasReturned, simulationApp.currentScope, scope, *angleProgram)->number;
+    auto velocityAngularNew = (radianNew - radianOld) / stepDeltaTime;
 
-	radian = radianNew;
-	velocityAngular = velocityAngularNew;
+    radian = radianNew;
+    velocityAngular = velocityAngularNew;
 }
 
 void Body::FollowPresetAngularVelocity(SimulationApp& simulationApp)
 {
-	if (!angularVelocityProgram) { return; }
+    if (!angularVelocityProgram)
+    {
+        return;
+    }
 
-	Scope scope;
-	bool hasReturned = false;
-	scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime);
-	auto velocityAngularNew = Execute(hasReturned, simulationApp.currentScope, scope, *angularVelocityProgram)->number;
+    Scope scope;
+    bool hasReturned = false;
+    scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime);
+    auto velocityAngularNew = Execute(hasReturned, simulationApp.currentScope, scope, *angularVelocityProgram)->number;
 
-	velocityAngular = velocityAngularNew;
+    velocityAngular = velocityAngularNew;
 }
 
 void Body::UpdateDragAngle(SimulationApp& simulationApp)
 {
-	velocityAngularDrag = 0;
-	if (!simulationApp.inputOwners.keyboardOwner)
-	{
-		if (simulationApp.input.keyDown[L'Q']) { velocityAngularDrag = -simulationApp.velocityAngularDrag; }
-		if (simulationApp.input.keyDown[L'E']) { velocityAngularDrag = +simulationApp.velocityAngularDrag; }
-	}
-	radianDrag = radian + velocityAngularDrag * simulationApp.realDeltaTime;
+    velocityAngularDrag = 0;
+    if (!simulationApp.inputOwners.keyboardOwner)
+    {
+        if (simulationApp.input.keyDown[L'Q'])
+        {
+            velocityAngularDrag = -simulationApp.velocityAngularDrag;
+        }
+        if (simulationApp.input.keyDown[L'E'])
+        {
+            velocityAngularDrag = +simulationApp.velocityAngularDrag;
+        }
+    }
+    radianDrag = radian + velocityAngularDrag * simulationApp.realDeltaTime;
 }
 
 void Body::HandleDragPoint(SimulationApp& simulationApp)
 {
-	// œ¬¡–√¸√˚÷∏∂®o,p,m»˝µ„Œ™body÷––ƒ°¢±ªÕœ◊ßµ„º∞ Û±Íœ÷‘⁄µ„
-	Vector2 mousePos = Vector2(simulationApp.input.mousePosition);
-	Vector2 pPos = position + transform * relativeDragPoint;
-	Vector2 mouseVelocity = Vector2(simulationApp.input.mousePosition - simulationApp.input.previousMousePosition) / simulationApp.realDeltaTime;
-	Vector2 pmDir = (mousePos - pPos).GetNormalized( );
+    // ‰∏ãÂàóÂëΩÂêçÊåáÂÆöo,p,m‰∏âÁÇπ‰∏∫body‰∏≠ÂøÉ„ÄÅË¢´ÊãñÊãΩÁÇπÂèäÈº†Ê†áÁé∞Âú®ÁÇπ
+    Vector2 mousePos = Vector2(simulationApp.input.mousePosition);
+    Vector2 pPos = position + transform * relativeDragPoint;
+    Vector2 mouseVelocity = Vector2(simulationApp.input.mousePosition - simulationApp.input.previousMousePosition) / simulationApp.realDeltaTime;
+    Vector2 pmDir = (mousePos - pPos).GetNormalized();
 
-	Vector2 opDir = pPos - position;
-	opDir = Vector2(-opDir.y, opDir.x);
-	Vector2 pVelocity = velocity + velocityAngular * opDir;
-	double rd0 = Dot(opDir, pmDir);
-	double effectiveInvMass = invMass + rd0 * rd0 * invInertia;
+    Vector2 opDir = pPos - position;
+    opDir = Vector2(-opDir.y, opDir.x);
+    Vector2 pVelocity = velocity + velocityAngular * opDir;
+    double rd0 = Dot(opDir, pmDir);
+    double effectiveInvMass = invMass + rd0 * rd0 * invInertia;
 
-	Vector2 impulse = Dot(mouseVelocity - pVelocity, pmDir) * pmDir / effectiveInvMass;
+    Vector2 impulse = Dot(mouseVelocity - pVelocity, pmDir) * pmDir / effectiveInvMass;
 
-	velocity += impulse * invMass;
-	velocityAngular += Dot(impulse, opDir) * invInertia;
-	position += mousePos - pPos;
+    velocity += impulse * invMass;
+    velocityAngular += Dot(impulse, opDir) * invInertia;
+    position += mousePos - pPos;
 }
 
 /// <summary>
-/// À˘”–µ„Õ¨≤Ω±ªÕœ◊ßŒª“∆
+/// ÊâÄÊúâÁÇπÂêåÊ≠•Ë¢´ÊãñÊãΩ‰ΩçÁßª
 /// </summary>
 /// <param name="simulationApp"></param>
 void Body::HandleDragWhole(SimulationApp& simulationApp)
 {
-	Vector2 mousePos = Vector2(simulationApp.input.mousePosition);
-	Vector2 dragPointPos = position + transform * relativeDragPoint;
-	Vector2 newVelocity = Vector2(simulationApp.input.mousePosition - simulationApp.input.previousMousePosition) / simulationApp.realDeltaTime;
+    Vector2 mousePos = Vector2(simulationApp.input.mousePosition);
+    Vector2 dragPointPos = position + transform * relativeDragPoint;
+    Vector2 newVelocity = Vector2(simulationApp.input.mousePosition - simulationApp.input.previousMousePosition) / simulationApp.realDeltaTime;
 
-	velocity = newVelocity;
-	radian = radianDrag;
-	velocityAngular = velocityAngularDrag;
-	position += mousePos - dragPointPos; // ÷––ƒ∆Ω––Œª“∆
+    velocity = newVelocity;
+    radian = radianDrag;
+    velocityAngular = velocityAngularDrag;
+    position += mousePos - dragPointPos; // ‰∏≠ÂøÉÂπ≥Ë°å‰ΩçÁßª
 }
 
 void Body::HandleDragForce(SimulationApp& simulationApp, double deltaTime)
 {
-	// ‘À∂Ø¬∑æ∂∑ΩœÚ
-	Vector2 p1 = Vector2(simulationApp.input.mousePosition);
-	Vector2 p0 = position + transform * relativeDragPoint;
-	Vector2 d = (p1 - p0).GetNormalized( );
+    // ËøêÂä®Ë∑ØÂæÑÊñπÂêë
+    Vector2 p1 = Vector2(simulationApp.input.mousePosition);
+    Vector2 p0 = position + transform * relativeDragPoint;
+    Vector2 d = (p1 - p0).GetNormalized();
 
-	// ¡¶
-	double k = 1e6;
-	Vector2 impulse = k * (p1 - p0).GetLength( ) * deltaTime * d;
+    // Âäõ
+    double k = 1e6;
+    Vector2 impulse = k * (p1 - p0).GetLength() * deltaTime * d;
 
-	// ∏’ÃÂ∞Îæ∂
-	Vector2 r0 = p0 - position;
-	r0 = Vector2(-r0.y, r0.x);
+    // Âàö‰ΩìÂçäÂæÑ
+    Vector2 r0 = p0 - position;
+    r0 = Vector2(-r0.y, r0.x);
 
-	velocity += impulse * invMass;
-	velocityAngular += Dot(impulse, r0) * invInertia;
+    velocity += impulse * invMass;
+    velocityAngular += Dot(impulse, r0) * invInertia;
 }
 void Body::Update(SimulationApp& simulationApp)
 {
-	hovered = (simulationApp.inputOwners.hovered == this);
+    hovered = (simulationApp.inputOwners.hovered == this);
 
-	if (simulationApp.mode == kDeleteMode && hovered && simulationApp.input.IsMouseClickedDown(0)) { isMarkedForDeletion = true; }
-	if (simulationApp.mode == kSelectMode && hovered && simulationApp.input.IsMouseClickedDown(0)) { simulationApp.bodySelecting = this; }
-	if (dragged)
-	{
-		// ºÏ≤ÈÕœ◊ßƒ£ Ω£¨”¶”√∫Ø ˝
-		UpdateDragAngle(simulationApp);
-		if (simulationApp.input.mouseButtonDown[2])
-		{
-			HandleDragWhole(simulationApp);
-		}
-		else if (!simulationApp.inputOwners.keyboardOwner && simulationApp.input.keyDown[L'F']) { }
-		else if (invMass == 0)
-		{
-			HandleDragWhole(simulationApp);
-		}
-		else
-		{
-			HandleDragPoint(simulationApp);
-		}
-		dragged = simulationApp.input.mouseButtonDown[0] && (simulationApp.mode == kDragMode);
-	}
-	else
-	{
-		// ºÏ≤È draged «∑Ò≈–∂œ’˝»∑£¨∏¸–¬±ªÕœ◊ßΩ«∂»
-		dragged = hovered && simulationApp.input.IsMouseClickedDown(0) && (simulationApp.mode == kDragMode);
-		if (dragged)
-		{
-			// p“∆µΩm£¨ƒ«√¥mo = ±‰ªª*‘≠æ‡¿Î = ±‰ªª*‘≠œ‡∂‘Œª÷√=po£¨π ”–°£
-			relativeDragPoint = transform.Inverse( ) * ((Vector2) simulationApp.input.mousePosition - position);
-			UpdateDragAngle(simulationApp);
-		}
-	}
+    if (simulationApp.mode == kDeleteMode && hovered && simulationApp.input.IsMouseClickedDown(0))
+    {
+        isMarkedForDeletion = true;
+    }
+    if (simulationApp.mode == kSelectMode && hovered && simulationApp.input.IsMouseClickedDown(0))
+    {
+        simulationApp.bodySelecting = this;
+    }
+    if (dragged)
+    {
+        // Ê£ÄÊü•ÊãñÊãΩÊ®°ÂºèÔºåÂ∫îÁî®ÂáΩÊï∞
+        UpdateDragAngle(simulationApp);
+        if (simulationApp.input.mouseButtonDown[2])
+        {
+            HandleDragWhole(simulationApp);
+        }
+        else if (!simulationApp.inputOwners.keyboardOwner && simulationApp.input.keyDown[L'F'])
+        {
+        }
+        else if (invMass == 0)
+        {
+            HandleDragWhole(simulationApp);
+        }
+        else
+        {
+            HandleDragPoint(simulationApp);
+        }
+        dragged = simulationApp.input.mouseButtonDown[0] && (simulationApp.mode == kDragMode);
+    }
+    else
+    {
+        // Ê£ÄÊü• dragedÊòØÂê¶Âà§Êñ≠Ê≠£Á°ÆÔºåÊõ¥Êñ∞Ë¢´ÊãñÊãΩËßíÂ∫¶
+        dragged = hovered && simulationApp.input.IsMouseClickedDown(0) && (simulationApp.mode == kDragMode);
+        if (dragged)
+        {
+            // pÁßªÂà∞mÔºåÈÇ£‰πàmo = ÂèòÊç¢*ÂéüË∑ùÁ¶ª = ÂèòÊç¢*ÂéüÁõ∏ÂØπ‰ΩçÁΩÆ=poÔºåÊïÖÊúâ„ÄÇ
+            relativeDragPoint = transform.Inverse() * ((Vector2)simulationApp.input.mousePosition - position);
+            UpdateDragAngle(simulationApp);
+        }
+    }
 
-	if (this == simulationApp.bodySelecting && simulationApp.isTrackShown && !simulationApp.isPaused)
-	{
-		// ªÊ÷∆‘À∂ØπÏº£
-		track.push_back(position);
-	}
-	else if (this != simulationApp.bodySelecting || !simulationApp.isTrackShown)
-	{
-		//≤ª∑˚∫œÃıº˛ ±«Âø’πÏº£–≈œ¢
-		track.clear( );
-	}
+    if (this == simulationApp.bodySelecting && simulationApp.isTrackShown && !simulationApp.isPaused)
+    {
+        // ÁªòÂà∂ËøêÂä®ËΩ®Ëøπ
+        track.push_back(position);
+    }
+    else if (this != simulationApp.bodySelecting || !simulationApp.isTrackShown)
+    {
+        //‰∏çÁ¨¶ÂêàÊù°‰ª∂Êó∂Ê∏ÖÁ©∫ËΩ®Ëøπ‰ø°ÊÅØ
+        track.clear();
+    }
 
-	// ¥¥‘Ï¡¨Ω”
-	bool canCreate = hovered && simulationApp.mode == kCreateMode &&
-		(simulationApp.creator->mode == kCreateConnection || simulationApp.creator->mode == kCreateNail);
-	if (canCreate)
-	{
-		if (simulationApp.input.IsMouseClickedDown(0) && !simulationApp.creator->active)
-		{
-			simulationApp.creator->body0 = this;
-			simulationApp.creator->p0Relative = transform.Inverse( ) * ((Vector2) simulationApp.input.mousePosition - position);
-		}
-		else if (!simulationApp.input.mouseButtonDown[0] && simulationApp.input.previousMouseButtonDown[0] && simulationApp.creator->active)
-		{
-			simulationApp.creator->body1 = this;
-			simulationApp.creator->p1Relative = transform.Inverse( ) * ((Vector2) simulationApp.input.mousePosition - position);
-		}
-	}
+    // ÂàõÈÄ†ËøûÊé•
+    bool canCreate = hovered && simulationApp.mode == kCreateMode &&
+                     (simulationApp.creator->mode == kCreateConnection || simulationApp.creator->mode == kCreateNail);
+    if (canCreate)
+    {
+        if (simulationApp.input.IsMouseClickedDown(0) && !simulationApp.creator->active)
+        {
+            simulationApp.creator->body0 = this;
+            simulationApp.creator->p0Relative = transform.Inverse() * ((Vector2)simulationApp.input.mousePosition - position);
+        }
+        else if (!simulationApp.input.mouseButtonDown[0] && simulationApp.input.previousMouseButtonDown[0] && simulationApp.creator->active)
+        {
+            simulationApp.creator->body1 = this;
+            simulationApp.creator->p1Relative = transform.Inverse() * ((Vector2)simulationApp.input.mousePosition - position);
+        }
+    }
 }
 void Body::PreUpdate(SimulationApp& simulationApp)
 {
-	bool canReceiveHover = simulationApp.inputOwners.hoveredDepth <= GetDepth( ) &&
-		IsInside((Vector2) simulationApp.input.mousePosition) && ::IsInside(simulationApp.input.mousePosition, simulationApp.background->GetViewport( ));
-	if (canReceiveHover) { simulationApp.inputOwners.hoveredDepth = GetDepth( ); simulationApp.inputOwners.hovered = this; }
+    bool canReceiveHover = simulationApp.inputOwners.hoveredDepth <= GetDepth() &&
+                           IsInside((Vector2)simulationApp.input.mousePosition) && ::IsInside(simulationApp.input.mousePosition, simulationApp.background->GetViewport());
+    if (canReceiveHover)
+    {
+        simulationApp.inputOwners.hoveredDepth = GetDepth();
+        simulationApp.inputOwners.hovered = this;
+    }
 }
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulombConstant)
 {
-	double dsqr = (b1.position - b0.position).GetLengthSquared( );
-	Vector2 d = (b1.position - b0.position).GetNormalized( );
-	Vector2 je = -b0.charge * b1.charge * d / dsqr * sdt * coulombConstant;
-	b0.velocity += je * b0.invMass;
-	b1.velocity -= je * b1.invMass;
+    double dsqr = (b1.position - b0.position).GetLengthSquared();
+    Vector2 d = (b1.position - b0.position).GetNormalized();
+    Vector2 je = -b0.charge * b1.charge * d / dsqr * sdt * coulombConstant;
+    b0.velocity += je * b0.invMass;
+    b1.velocity -= je * b1.invMass;
 }
-
-
-

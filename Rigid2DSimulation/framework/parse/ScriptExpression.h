@@ -1,13 +1,13 @@
-#pragma once
+ï»¿#pragma once
 #include "ValuePtr.h"
 #include "BracketGroup.h"
 
-// ÕâÀï¿Õ¼ä¿ÉÄÜÕ¼µÄÌ«´óÁË£¬ÔËĞĞÊ±¶àÌ¬¿ÉÒÔ½â¾ö¡£µ«ÊÇÀÁµÃÂé·³ÁË¡£
+// è¿™é‡Œç©ºé—´å¯èƒ½å çš„å¤ªå¤§äº†ï¼Œè¿è¡Œæ—¶å¤šæ€å¯ä»¥è§£å†³ã€‚ä½†æ˜¯æ‡’å¾—éº»çƒ¦äº†ã€‚
 struct ScriptExpression
 {
     wstring type = L"null";
-    // vec ºÍ access ÆäÊµ¶¼¿ÉÒÔ·Åµ½ call µÄ¿ò¼ÜÀï¡£
-    // µ«ÊÇÊµÏÖµÄÊ±ºòÎÒ»¹ÊÇÏ£Íû·Ö¿ªÀ´£¬ËäÈ»Ò²Ã»É¶ÀíÓÉ¾ÍÊÇÁË¡£
+    // vec å’Œ access å…¶å®éƒ½å¯ä»¥æ”¾åˆ° call çš„æ¡†æ¶é‡Œã€‚
+    // ä½†æ˜¯å®ç°çš„æ—¶å€™æˆ‘è¿˜æ˜¯å¸Œæœ›åˆ†å¼€æ¥ï¼Œè™½ç„¶ä¹Ÿæ²¡å•¥ç†ç”±å°±æ˜¯äº†ã€‚
     // num, var, str, call, null, vec, access
 
     bool isGlobal = false;
@@ -52,4 +52,3 @@ ScriptExpression ParseBinaryExpressions(vector<BracketGroup> const& groups);
 ScriptExpression ParseVector(vector<BracketGroup> const& groups);
 ScriptExpression ParseAccess(vector<BracketGroup> const& groups);
 ScriptExpression ParseExpression(vector<BracketGroup> const& groups);
-

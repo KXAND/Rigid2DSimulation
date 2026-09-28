@@ -1,4 +1,4 @@
-#include "FloatPanel.h"
+Ôªø#include "FloatPanel.h"
 #include "App.h"
 #include "Control.h"
 #include "ScrollBar.h"
@@ -7,195 +7,287 @@
 #include "DrawBorderedRectangle.h"
 #include "DrawLineSegment.h"
 
+FloatPanel::FloatPanel()
+{
+    depth = 1000;
+    title = L"Á™óÂè£";
+    wheelMultiplier = 40;
+    contentOffset = {10, 40};
 
-FloatPanel::FloatPanel() {
-	depth = 1000;
-	title = L"¥∞ø⁄";
-	wheelMultiplier = 40;
-	contentOffset = { 10, 40 };
+    titleBarHeight = 30;
+    closeButtonSize = 20;
+    closeMarkHalfSize = 5;
+    closeButtonMargin = 5;
+    titleMargin = 5;
 
-	titleBarHeight = 30;
-	closeButtonSize = 20;
-	closeMarkHalfSize = 5;
-	closeButtonMargin = 5;
-	titleMargin = 5;
+    titleColor = {255, 255, 255};
+    closeMarkColor = {255, 255, 255};
+    frameColor = {150, 150, 150};
+    panelColor = {0, 0, 0};
 
-	titleColor = { 255, 255, 255 };
-	closeMarkColor = { 255, 255, 255 };
-	frameColor = { 150, 150, 150 };
-	panelColor = { 0, 0, 0 };
+    titleBarNormalColor = {40, 40, 40};
+    titleBarDraggedColor = {80, 40, 40};
+    titleBarHoveredColor = {40, 40, 80};
 
-	titleBarNormalColor = { 40, 40, 40 };
-	titleBarDraggedColor = { 80, 40, 40 };
-	titleBarHoveredColor = { 40, 40, 80 };
+    closeButtonNormalColor = {0, 0, 0};
+    closeButtonChosenColor = {255, 20, 20};
+    closeButtonHoveredColor = {20, 20, 255};
+    closeButtonInvalidColor = {255, 255, 255};
+}
+FloatPanel::FloatPanel(App& app, int width, int height) : FloatPanel()
+{
+    this->width = width;
+    this->height = height;
+    topLeft = DVector2(app.screen.width - width, app.screen.height - height) / 2;
+    visibleHeight = height - 50;
+    useScrollBar = true;
 
-	closeButtonNormalColor = { 0, 0, 0 };
-	closeButtonChosenColor = { 255, 20, 20 };
-	closeButtonHoveredColor = { 20, 20, 255 };
-	closeButtonInvalidColor = { 255, 255, 255 };
-}
-FloatPanel::FloatPanel(App& app, int width, int height) : FloatPanel() {
-	this->width = width; this->height = height;
-	topLeft = DVector2(app.screen.width - width, app.screen.height - height) / 2;
-	visibleHeight = height - 50; useScrollBar = true;
-
-	DRect contentViewportRelative;
-	contentViewportRelative.topLeftPosition = DVector2(10 - 2, 40 - 2);
-	contentViewportRelative.width = width - 40 + 4;
-	contentViewportRelative.height = height - 50 + 4;
-	contentViewport = contentViewportRelative;
-}
-
-int FloatPanel::GetMinY() const {
-	return topLeft.y + contentOffset.y + visibleHeight - contentControl->GetHeight();
-}
-DRect FloatPanel::GetVisibleViewport(App& app) const {
-	DRect visibleViewport = contentViewport;
-	visibleViewport.topLeftPosition += topLeft; return GetOverlapRect(app.screen.Rect(), visibleViewport);
-}
-DVector2 FloatPanel::GetCloseTopLeft() const {
-	int closeX = width - closeButtonMargin - closeButtonSize;
-	int closeY = (titleBarHeight - closeButtonSize) / 2;
-	return topLeft + DVector2(closeX, closeY);
-}
-void FloatPanel::SetControl(App& app, Control* newContentControl) {
-	if (contentControl != newContentControl) {
-		if (contentControl) { contentControl->Discard(app); }
-		if (contentControl = newContentControl) {
-			contentControl->topLeft = topLeft + contentOffset;
-			contentControl->viewport = GetVisibleViewport(app);
-		} scrollBar->contentControl = contentControl;
-	}
-}
-void FloatPanel::SetTopLeft(App& app, DVector2 const& topLeft) {
-	if (contentControl) {
-		contentControl->topLeft += topLeft - this->topLeft;
-		// ‘⁄µ˜”√ GetVisibleViewport ÷Æ«∞–Ë“™œ»∏¸–¬ topLeft°£
-		this->topLeft = topLeft; contentControl->viewport = GetVisibleViewport(app);
-	}
-	scrollBar->topLeft = topLeft + DVector2(width - scrollBar->width, titleBarHeight);
-	scrollBar->visibleTop = topLeft.y + contentOffset.y;
-}
-void FloatPanel::InitializeControl(App& app) {
-	if (contentControl) {
-		contentControl->topLeft = topLeft + contentOffset;
-		contentControl->viewport = GetVisibleViewport(app);
-	}
-}
-void FloatPanel::InitializeScrollBar() {
-	scrollBar = std::make_shared<VerticalScrollBar>();
-	scrollBar->contentControl = contentControl;
-	scrollBar->height = height - titleBarHeight;
-	scrollBar->topLeft = topLeft + DVector2(width - scrollBar->width, titleBarHeight);
-	scrollBar->visibleHeight = visibleHeight;
-	scrollBar->visibleTop = topLeft.y + contentOffset.y;
+    DRect contentViewportRelative;
+    contentViewportRelative.topLeftPosition = DVector2(10 - 2, 40 - 2);
+    contentViewportRelative.width = width - 40 + 4;
+    contentViewportRelative.height = height - 50 + 4;
+    contentViewport = contentViewportRelative;
 }
 
-void FloatPanel::Hide(App& app) { shown = false; Discard(app); }
-void FloatPanel::Show(App& app) { shown = true; lastClickTime = app.frameRate.GetElapsedTime(); }
-void FloatPanel::HandleCaption(App& app) {
-	closeButtonHovered = hovered && IsInside(app.input.mousePosition, { GetCloseTopLeft(), closeButtonSize, closeButtonSize });
-	titleBarHovered = hovered && !closeButtonHovered && IsInside(app.input.mousePosition, { topLeft, width, titleBarHeight });
-
-	if (titleBarDragged) {
-		DVector2 newTopLeft = topLeft + app.input.mousePosition - app.input.previousMousePosition;
-		newTopLeft.x = Clamp(newTopLeft.x, 0, app.screen.width - width);
-		newTopLeft.y = Clamp(newTopLeft.y, 0, app.screen.height - titleBarHeight); SetTopLeft(app, newTopLeft);
-		titleBarDragged = app.input.mouseButtonDown[0];
-	}
-	else { titleBarDragged = titleBarHovered && app.input.IsMouseClickedDown(0); }
-
-	if (closeButtonChosen) {
-		if (closeButtonEnabled && !app.input.mouseButtonDown[0]) { Hide(app); return; }
-		closeButtonChosen = closeButtonEnabled && closeButtonHovered && app.input.mouseButtonDown[0];
-	}
-	else { closeButtonChosen = closeButtonEnabled && closeButtonHovered && app.input.IsMouseClickedDown(0); }
+int FloatPanel::GetMinY() const
+{
+    return topLeft.y + contentOffset.y + visibleHeight - contentControl->GetHeight();
 }
-void FloatPanel::HandleWheelAndClampContent(App& app) {
-	if (hasOverflow) {
-		int contentY = contentControl->topLeft.y;
-		if (wheeled) { contentY += app.input.mouseWheelDelta * wheelMultiplier; }
-		contentControl->topLeft.y = Clamp(contentY, GetMinY(), topLeft.y + contentOffset.y);
-	}
-	else if (contentControl) { contentControl->topLeft.y = topLeft.y + contentOffset.y; }
+DRect FloatPanel::GetVisibleViewport(App& app) const
+{
+    DRect visibleViewport = contentViewport;
+    visibleViewport.topLeftPosition += topLeft;
+    return GetOverlapRect(app.screen.Rect(), visibleViewport);
 }
-
-void FloatPanel::RenderMain(App& app) {
-	DrawRectangleWithBorderRaw(app.screen, topLeft, width, height, app.screen.Rect(), panelColor, frameColor);
-	Color const& titleBarColor =
-		titleBarDragged ? titleBarDraggedColor :
-		titleBarHovered && (!app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? titleBarHoveredColor : titleBarNormalColor;
-	DrawRectangleWithBorderRaw(app.screen, topLeft, width, titleBarHeight, app.screen.Rect(), titleBarColor, frameColor);
-
-	DVector2 titleTopLeft = topLeft + DVector2(titleMargin, (titleBarHeight - app.font.height) / 2);
-	DrawString(app.screen, app.depthBuffer, depth, title, titleColor, app.font, titleTopLeft, 0, app.screen.Rect());
+DVector2 FloatPanel::GetCloseTopLeft() const
+{
+    int closeX = width - closeButtonMargin - closeButtonSize;
+    int closeY = (titleBarHeight - closeButtonSize) / 2;
+    return topLeft + DVector2(closeX, closeY);
 }
-void FloatPanel::RenderClose(App& app) {
-	Color const& closeButtonColor =
-		!closeButtonEnabled ? closeButtonInvalidColor :
-		closeButtonChosen ? closeButtonChosenColor :
-		closeButtonHovered && (!app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? closeButtonHoveredColor : closeButtonNormalColor;
-	DrawRectangleRaw(app.screen, GetCloseTopLeft(), closeButtonSize, closeButtonSize, app.screen.Rect(), closeButtonColor);
-
-	DVector2 closeMarkCenter = GetCloseTopLeft() + DVector2(closeButtonSize, closeButtonSize) / 2;
-	DVector2 closeMarkArm = { closeMarkHalfSize , closeMarkHalfSize };
-	DrawLineSegment(app.screen, app.depthBuffer, closeMarkCenter - closeMarkArm, closeMarkCenter + closeMarkArm, depth, app.screen.Rect(), closeMarkColor);
-	closeMarkArm = { -closeMarkHalfSize , closeMarkHalfSize };
-	DrawLineSegment(app.screen, app.depthBuffer, closeMarkCenter - closeMarkArm, closeMarkCenter + closeMarkArm, depth, app.screen.Rect(), closeMarkColor);
+void FloatPanel::SetControl(App& app, Control* newContentControl)
+{
+    if (contentControl != newContentControl)
+    {
+        if (contentControl)
+        {
+            contentControl->Discard(app);
+        }
+        if (contentControl = newContentControl)
+        {
+            contentControl->topLeft = topLeft + contentOffset;
+            contentControl->viewport = GetVisibleViewport(app);
+        }
+        scrollBar->contentControl = contentControl;
+    }
 }
-void FloatPanel::Render(App& app) {
-	RenderMain(app); RenderClose(app);
+void FloatPanel::SetTopLeft(App& app, DVector2 const& topLeft)
+{
+    if (contentControl)
+    {
+        contentControl->topLeft += topLeft - this->topLeft;
+        // Âú®Ë∞ÉÁî® GetVisibleViewport ‰πãÂâçÈúÄË¶ÅÂÖàÊõ¥Êñ∞ topLeft„ÄÇ
+        this->topLeft = topLeft;
+        contentControl->viewport = GetVisibleViewport(app);
+    }
+    scrollBar->topLeft = topLeft + DVector2(width - scrollBar->width, titleBarHeight);
+    scrollBar->visibleTop = topLeft.y + contentOffset.y;
 }
-
-void FloatPanel::Init(App& app) { InitializeControl(app); InitializeScrollBar(); }
-// ’‚“≤ «±»ΩœÃÿ ‚£¨œ‡µ±”⁄“™¥¶¿Ì◊‘º∫µƒ Discard°£
-void FloatPanel::Update(App& app) {
-	if (!shown) { return; }
-	hasOverflow = (contentControl != NULL) && visibleHeight < contentControl->GetHeight();
-	hovered = (app.inputOwners.hovered == this);
-	wheeled = (app.inputOwners.wheeled == this);
-
-	HandleWheelAndClampContent(app);
-	if (hovered && app.input.IsMouseClickedDown(0)) { lastClickTime = app.frameRate.GetElapsedTime(); }
-	// ’‚œÓ∞⁄‘⁄◊Ó∫Û «“ÚŒ™À˚ø…ƒ‹÷¥–– hide ÷∏¡Ó°£
-	HandleCaption(app);
-
-	// Œ“æıµ√’‚¿Ô¬“µÙ¡À°£µ´ «Œ™¡À’‚∏ˆ÷ÿππ∫√œÒ≤ª÷µµ√°£
-	if (shown) {
-		Render(app);
-		if (contentControl) { contentControl->Update(app); }
-		if (useScrollBar) { scrollBar->Update(app); }
-	}
+void FloatPanel::InitializeControl(App& app)
+{
+    if (contentControl)
+    {
+        contentControl->topLeft = topLeft + contentOffset;
+        contentControl->viewport = GetVisibleViewport(app);
+    }
 }
-void FloatPanel::Discard(App& app) {
-	closeButtonChosen = closeButtonHovered =
-		hovered = wheeled = titleBarHovered = titleBarDragged = false;
-	app.inputOwners.Remove(this); scrollBar->Discard(app);
-	if (contentControl) { contentControl->Discard(app); }
-}
-void FloatPanel::PreUpdate(App& app) {
-	if (!shown) return;
-	bool canOwnInput = app.inputOwners.hoveredDepth <= depth &&
-		IsInside(app.input.mousePosition, { topLeft, width, height }) && IsInside(app.input.mousePosition, app.screen.Rect());
-	if (canOwnInput) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
-
-	canOwnInput = app.inputOwners.wheeledDepth <= depth &&
-		IsInside(app.input.mousePosition, { topLeft, width, height }) && IsInside(app.input.mousePosition, app.screen.Rect());
-	if (canOwnInput) { app.inputOwners.wheeledDepth = depth; app.inputOwners.wheeled = this; }
-
-	if (contentControl) { contentControl->PreUpdate(app); }
-	if (useScrollBar) { scrollBar->PreUpdate(app); }
+void FloatPanel::InitializeScrollBar()
+{
+    scrollBar = std::make_shared<VerticalScrollBar>();
+    scrollBar->contentControl = contentControl;
+    scrollBar->height = height - titleBarHeight;
+    scrollBar->topLeft = topLeft + DVector2(width - scrollBar->width, titleBarHeight);
+    scrollBar->visibleHeight = visibleHeight;
+    scrollBar->visibleTop = topLeft.y + contentOffset.y;
 }
 
-LocalizedFloatPanel::LocalizedFloatPanel(App& app, int width, int height, wstring const& id) :
-	FloatPanel(app, width, height), titleLocalizationId(id) {}
-void LocalizedFloatPanel::Update(App& app) {
-	title = app.GetLocalizedString(titleLocalizationId); FloatPanel::Update(app);
+void FloatPanel::Hide(App& app)
+{
+    shown = false;
+    Discard(app);
+}
+void FloatPanel::Show(App& app)
+{
+    shown = true;
+    lastClickTime = app.frameRate.GetElapsedTime();
+}
+void FloatPanel::HandleCaption(App& app)
+{
+    closeButtonHovered = hovered && IsInside(app.input.mousePosition, {GetCloseTopLeft(), closeButtonSize, closeButtonSize});
+    titleBarHovered = hovered && !closeButtonHovered && IsInside(app.input.mousePosition, {topLeft, width, titleBarHeight});
+
+    if (titleBarDragged)
+    {
+        DVector2 newTopLeft = topLeft + app.input.mousePosition - app.input.previousMousePosition;
+        newTopLeft.x = Clamp(newTopLeft.x, 0, app.screen.width - width);
+        newTopLeft.y = Clamp(newTopLeft.y, 0, app.screen.height - titleBarHeight);
+        SetTopLeft(app, newTopLeft);
+        titleBarDragged = app.input.mouseButtonDown[0];
+    }
+    else
+    {
+        titleBarDragged = titleBarHovered && app.input.IsMouseClickedDown(0);
+    }
+
+    if (closeButtonChosen)
+    {
+        if (closeButtonEnabled && !app.input.mouseButtonDown[0])
+        {
+            Hide(app);
+            return;
+        }
+        closeButtonChosen = closeButtonEnabled && closeButtonHovered && app.input.mouseButtonDown[0];
+    }
+    else
+    {
+        closeButtonChosen = closeButtonEnabled && closeButtonHovered && app.input.IsMouseClickedDown(0);
+    }
+}
+void FloatPanel::HandleWheelAndClampContent(App& app)
+{
+    if (hasOverflow)
+    {
+        int contentY = contentControl->topLeft.y;
+        if (wheeled)
+        {
+            contentY += app.input.mouseWheelDelta * wheelMultiplier;
+        }
+        contentControl->topLeft.y = Clamp(contentY, GetMinY(), topLeft.y + contentOffset.y);
+    }
+    else if (contentControl)
+    {
+        contentControl->topLeft.y = topLeft.y + contentOffset.y;
+    }
 }
 
-bool CompareFloatPanels(FloatPanel* const firstPanel, FloatPanel* const secondPanel) {
-	return firstPanel->lastClickTime < secondPanel->lastClickTime;
+void FloatPanel::RenderMain(App& app)
+{
+    DrawRectangleWithBorderRaw(app.screen, topLeft, width, height, app.screen.Rect(), panelColor, frameColor);
+    Color const& titleBarColor =
+        titleBarDragged ? titleBarDraggedColor : titleBarHovered && (!app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? titleBarHoveredColor
+                                                                                                                                                                      : titleBarNormalColor;
+    DrawRectangleWithBorderRaw(app.screen, topLeft, width, titleBarHeight, app.screen.Rect(), titleBarColor, frameColor);
+
+    DVector2 titleTopLeft = topLeft + DVector2(titleMargin, (titleBarHeight - app.font.height) / 2);
+    DrawString(app.screen, app.depthBuffer, depth, title, titleColor, app.font, titleTopLeft, 0, app.screen.Rect());
+}
+void FloatPanel::RenderClose(App& app)
+{
+    Color const& closeButtonColor =
+        !closeButtonEnabled ? closeButtonInvalidColor : closeButtonChosen                                                                                                     ? closeButtonChosenColor
+                                                    : closeButtonHovered && (!app.input.mouseButtonDown[0] && !app.input.mouseButtonDown[1] && !app.input.mouseButtonDown[2]) ? closeButtonHoveredColor
+                                                                                                                                                                              : closeButtonNormalColor;
+    DrawRectangleRaw(app.screen, GetCloseTopLeft(), closeButtonSize, closeButtonSize, app.screen.Rect(), closeButtonColor);
+
+    DVector2 closeMarkCenter = GetCloseTopLeft() + DVector2(closeButtonSize, closeButtonSize) / 2;
+    DVector2 closeMarkArm = {closeMarkHalfSize, closeMarkHalfSize};
+    DrawLineSegment(app.screen, app.depthBuffer, closeMarkCenter - closeMarkArm, closeMarkCenter + closeMarkArm, depth, app.screen.Rect(), closeMarkColor);
+    closeMarkArm = {-closeMarkHalfSize, closeMarkHalfSize};
+    DrawLineSegment(app.screen, app.depthBuffer, closeMarkCenter - closeMarkArm, closeMarkCenter + closeMarkArm, depth, app.screen.Rect(), closeMarkColor);
+}
+void FloatPanel::Render(App& app)
+{
+    RenderMain(app);
+    RenderClose(app);
 }
 
+void FloatPanel::Init(App& app)
+{
+    InitializeControl(app);
+    InitializeScrollBar();
+}
+// Ëøô‰πüÊòØÊØîËæÉÁâπÊÆäÔºåÁõ∏ÂΩì‰∫éË¶ÅÂ§ÑÁêÜËá™Â∑±ÁöÑ Discard„ÄÇ
+void FloatPanel::Update(App& app)
+{
+    if (!shown)
+    {
+        return;
+    }
+    hasOverflow = (contentControl != NULL) && visibleHeight < contentControl->GetHeight();
+    hovered = (app.inputOwners.hovered == this);
+    wheeled = (app.inputOwners.wheeled == this);
 
+    HandleWheelAndClampContent(app);
+    if (hovered && app.input.IsMouseClickedDown(0))
+    {
+        lastClickTime = app.frameRate.GetElapsedTime();
+    }
+    // ËøôÈ°πÊëÜÂú®ÊúÄÂêéÊòØÂõ†‰∏∫‰ªñÂèØËÉΩÊâßË°å hide Êåá‰ª§„ÄÇ
+    HandleCaption(app);
 
+    // ÊàëËßâÂæóËøôÈáå‰π±Êéâ‰∫Ü„ÄÇ‰ΩÜÊòØ‰∏∫‰∫ÜËøô‰∏™ÈáçÊûÑÂ•ΩÂÉè‰∏çÂÄºÂæó„ÄÇ
+    if (shown)
+    {
+        Render(app);
+        if (contentControl)
+        {
+            contentControl->Update(app);
+        }
+        if (useScrollBar)
+        {
+            scrollBar->Update(app);
+        }
+    }
+}
+void FloatPanel::Discard(App& app)
+{
+    closeButtonChosen = closeButtonHovered =
+        hovered = wheeled = titleBarHovered = titleBarDragged = false;
+    app.inputOwners.Remove(this);
+    scrollBar->Discard(app);
+    if (contentControl)
+    {
+        contentControl->Discard(app);
+    }
+}
+void FloatPanel::PreUpdate(App& app)
+{
+    if (!shown)
+        return;
+    bool canOwnInput = app.inputOwners.hoveredDepth <= depth &&
+                       IsInside(app.input.mousePosition, {topLeft, width, height}) && IsInside(app.input.mousePosition, app.screen.Rect());
+    if (canOwnInput)
+    {
+        app.inputOwners.hoveredDepth = depth;
+        app.inputOwners.hovered = this;
+    }
+
+    canOwnInput = app.inputOwners.wheeledDepth <= depth &&
+                  IsInside(app.input.mousePosition, {topLeft, width, height}) && IsInside(app.input.mousePosition, app.screen.Rect());
+    if (canOwnInput)
+    {
+        app.inputOwners.wheeledDepth = depth;
+        app.inputOwners.wheeled = this;
+    }
+
+    if (contentControl)
+    {
+        contentControl->PreUpdate(app);
+    }
+    if (useScrollBar)
+    {
+        scrollBar->PreUpdate(app);
+    }
+}
+
+LocalizedFloatPanel::LocalizedFloatPanel(App& app, int width, int height, wstring const& id) : FloatPanel(app, width, height), titleLocalizationId(id) {}
+void LocalizedFloatPanel::Update(App& app)
+{
+    title = app.GetLocalizedString(titleLocalizationId);
+    FloatPanel::Update(app);
+}
+
+bool CompareFloatPanels(FloatPanel* const firstPanel, FloatPanel* const secondPanel)
+{
+    return firstPanel->lastClickTime < secondPanel->lastClickTime;
+}

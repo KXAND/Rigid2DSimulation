@@ -1,30 +1,37 @@
-#pragma once
+ï»¿#pragma once
 #include "DVector2.h"
 
 struct App;
-struct Control {
-	DVector2 topLeft;
-	DRect viewport;
+struct Control
+{
+    DVector2 topLeft;
+    DRect viewport;
 
-	virtual ~Control() {}
-	virtual void Update(App& app) {}
-	// ÔÚÎö¹¹Ö®Ç°ÒªÖ´ĞĞ Discard¡£
-	virtual void Discard(App& app) {}
-	virtual void PreUpdate(App& app) {}
+    virtual ~Control() {}
+    virtual void Update(App& app) {}
+    // åœ¨ææ„ä¹‹å‰è¦æ‰§è¡Œ Discardã€‚
+    virtual void Discard(App& app) {}
+    virtual void PreUpdate(App& app) {}
 
-	virtual int GetWidth() const { return 0; }
-	virtual int GetHeight() const { return 0; }
+    virtual int GetWidth() const
+    {
+        return 0;
+    }
+    virtual int GetHeight() const
+    {
+        return 0;
+    }
 };
-// Delegate »á×Ô¶¯ Discard ËüµÄ³ÉÔ±£¬ÕâÊÇËüÓë CtrlList ²»Í¬µÄÒ»µã¡£
-// Delegate ÒªÇó control Ò»Ö±ÊÇÓĞĞ§µÄ£¬¼´Ê¹ÊÇÔÚ control ±»¸²¸ÇµÄÄÇÒ»Ö¡¡£
-struct Delegate : Control {
-	Control* control = NULL;
-	void SetControl(App& app, Control* newControl);
-	int GetWidth() const override;
-	int GetHeight() const override;
+// Delegate ä¼šè‡ªåŠ¨ Discard å®ƒçš„æˆå‘˜ï¼Œè¿™æ˜¯å®ƒä¸ CtrlList ä¸åŒçš„ä¸€ç‚¹ã€‚
+// Delegate è¦æ±‚ control ä¸€ç›´æ˜¯æœ‰æ•ˆçš„ï¼Œå³ä½¿æ˜¯åœ¨ control è¢«è¦†ç›–çš„é‚£ä¸€å¸§ã€‚
+struct Delegate : Control
+{
+    Control* control = NULL;
+    void SetControl(App& app, Control* newControl);
+    int GetWidth() const override;
+    int GetHeight() const override;
 
-	void Update(App& app) override;
-	void Discard(App& app) override;
-	void PreUpdate(App& app) override;
+    void Update(App& app) override;
+    void Discard(App& app) override;
+    void PreUpdate(App& app) override;
 };
-

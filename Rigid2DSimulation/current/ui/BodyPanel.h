@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 #include "Label.h"
 #include "Button.h"
 #include "ControlList.h"
@@ -9,64 +9,73 @@
 #include "RichLabel.h"
 
 struct Body;
-struct BodyScriptEditor : RichTextBox {
-	BodyScriptEditor();
-	void Sync(App& app) override;
-	void Upload(App& app) const override;
+struct BodyScriptEditor : RichTextBox
+{
+    BodyScriptEditor();
+    void Sync(App& app) override;
+    void Upload(App& app) const override;
 };
-struct ApplyBodyButton : LocalizedButton {
-	ApplyBodyButton();
-	void OnClick(App& app) override;
+struct ApplyBodyButton : LocalizedButton
+{
+    ApplyBodyButton();
+    void OnClick(App& app) override;
 };
-struct DeleteBodyButton : LocalizedButton {
-	DeleteBodyButton();
-	void OnClick(App& app) override;
-};
-
-struct BodyConnectionLabel : Label {
-	int id = 0;
-	BodyConnectionLabel(int id);
-	void Sync(App& app) override;
-};
-struct SelectBodyConnectionCheckBox : LocalizedCheckBox {
-	int id = 0;
-	SelectBodyConnectionCheckBox(int id);
-	void Sync(App& app) override;
-	void Upload(App& app) const override;
-};
-struct BodyConnectionControlRow : HorizontalControlList {
-	std::shared_ptr<BodyConnectionLabel> connectionLabel;
-	std::shared_ptr<SelectBodyConnectionCheckBox> selectCheckBox;
-	BodyConnectionControlRow(int id);
-};
-struct BodyConnectionControlList : VerticalControlList {
-	vector<std::shared_ptr<BodyConnectionControlRow>> connectionRows;
-	void Update(App& app) override;
+struct DeleteBodyButton : LocalizedButton
+{
+    DeleteBodyButton();
+    void OnClick(App& app) override;
 };
 
-struct BodyDetailsLabel : RichLabel {
-	void Sync(App& app) override;
+struct BodyConnectionLabel : Label
+{
+    int id = 0;
+    BodyConnectionLabel(int id);
+    void Sync(App& app) override;
+};
+struct SelectBodyConnectionCheckBox : LocalizedCheckBox
+{
+    int id = 0;
+    SelectBodyConnectionCheckBox(int id);
+    void Sync(App& app) override;
+    void Upload(App& app) const override;
+};
+struct BodyConnectionControlRow : HorizontalControlList
+{
+    std::shared_ptr<BodyConnectionLabel> connectionLabel;
+    std::shared_ptr<SelectBodyConnectionCheckBox> selectCheckBox;
+    BodyConnectionControlRow(int id);
+};
+struct BodyConnectionControlList : VerticalControlList
+{
+    vector<std::shared_ptr<BodyConnectionControlRow>> connectionRows;
+    void Update(App& app) override;
 };
 
-// Œ“æıµ√ delegate √ª”–…∂º€÷µ¡À°£
-// ∆‰ µ Panel µƒ set_c ∑Ω∑®“≤√ª…∂º€÷µ¡À∞…°£
-struct BodyEditorControls : VerticalControlList {
-	Body* selectedBody = NULL;
-	std::shared_ptr<BodyConnectionControlList> connectionList;
-	std::shared_ptr<BodyScriptEditor> scriptEditor;
-	std::shared_ptr<ApplyBodyButton> applyButton;
-	std::shared_ptr<DeleteBodyButton> deleteButton;
-	std::shared_ptr<HorizontalControlList> actionButtons;
-	std::shared_ptr<HorizontalSeparator> separator;
-	BodyEditorControls();
-	void Update(App& app) override;
-	void Discard(App& app) override;
+struct BodyDetailsLabel : RichLabel
+{
+    void Sync(App& app) override;
 };
 
-struct BodyPanel : LocalizedFloatPanel {
-	std::shared_ptr<BodyEditorControls> editorControls;
-	std::shared_ptr<BodyDetailsLabel> detailsLabel;
-	std::shared_ptr<VerticalControlList> controls;
-	BodyPanel(App& app);
+// ÊàëËßâÂæó delegate Ê≤°ÊúâÂï•‰ª∑ÂÄº‰∫Ü„ÄÇ
+// ÂÖ∂ÂÆû Panel ÁöÑ set_c ÊñπÊ≥ï‰πüÊ≤°Âï•‰ª∑ÂÄº‰∫ÜÂêß„ÄÇ
+struct BodyEditorControls : VerticalControlList
+{
+    Body* selectedBody = NULL;
+    std::shared_ptr<BodyConnectionControlList> connectionList;
+    std::shared_ptr<BodyScriptEditor> scriptEditor;
+    std::shared_ptr<ApplyBodyButton> applyButton;
+    std::shared_ptr<DeleteBodyButton> deleteButton;
+    std::shared_ptr<HorizontalControlList> actionButtons;
+    std::shared_ptr<HorizontalSeparator> separator;
+    BodyEditorControls();
+    void Update(App& app) override;
+    void Discard(App& app) override;
 };
 
+struct BodyPanel : LocalizedFloatPanel
+{
+    std::shared_ptr<BodyEditorControls> editorControls;
+    std::shared_ptr<BodyDetailsLabel> detailsLabel;
+    std::shared_ptr<VerticalControlList> controls;
+    BodyPanel(App& app);
+};

@@ -1,18 +1,18 @@
-#pragma once
+ï»¿#pragma once
 #include "Font.h"
 
 void DrawCharacter(Tile& targetTile, DepthBuffer& depthBuffer, double depth,
-    DVector2 topLeft, DRect viewport, Tile const& sourceTile, Color color);
-// w Îª 0 Ê±´ú±í²»»»ĞĞ¡£
+                   DVector2 topLeft, DRect viewport, Tile const& sourceTile, Color color);
+// w ä¸º 0 æ—¶ä»£è¡¨ä¸æ¢è¡Œã€‚
 void DrawString(Tile& targetTile, DepthBuffer& depthBuffer, double depth,
-    wstring const& text, Color color, Font const& font,
-    DVector2& currentTopLeft, int& currentX, int maxWidth, DRect viewport);
+                wstring const& text, Color color, Font const& font,
+                DVector2& currentTopLeft, int& currentX, int maxWidth, DRect viewport);
 void DrawString(Tile& targetTile, DepthBuffer& depthBuffer, double depth,
-    wstring const& text, Color color, Font const& font, DVector2 topLeft,
-    int maxWidth, DRect viewport);
+                wstring const& text, Color color, Font const& font, DVector2 topLeft,
+                int maxWidth, DRect viewport);
 
 DVector2 GetStringSize(wstring const& text, Font const& font, int maxWidth,
-    int* lastLineWidth = NULL);
-// Èç¹û²»Ïë¿¼ÂÇ¸ßµÄ»°£¬¾ÍÉèÖÃ p.y = 0¡£
+                       int* lastLineWidth = NULL);
+// å¦‚æœä¸æƒ³è€ƒè™‘é«˜çš„è¯ï¼Œå°±è®¾ç½® p.y = 0ã€‚
 int GetStringIndexAtPosition(wstring const& text, Font const& font,
-    DVector2 position, int maxWidth);
+                             DVector2 position, int maxWidth);

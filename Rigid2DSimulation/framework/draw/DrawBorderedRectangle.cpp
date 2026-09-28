@@ -1,39 +1,37 @@
-#include "DrawBorderedRectangle.h"
+ï»¿#include "DrawBorderedRectangle.h"
 #include "DrawGeometry.h"
 
 void DrawRectangleWithBorderRaw(Tile& targetTile,
-	DVector2 topLeft, int width, int height, DRect viewport, Color color, Color borderColor)
+                                DVector2 topLeft, int width, int height, DRect viewport, Color color, Color borderColor)
 {
-	// ×óÉÏÎªÔ­µã£¬ÏòÏÂÏò×ó
+    // å·¦ä¸Šä¸ºåŸç‚¹ï¼Œå‘ä¸‹å‘å·¦
 
-	// ÄÚ²¿
-	DrawRectangleRaw(targetTile, topLeft, width, height, viewport, color);
+    // å†…éƒ¨
+    DrawRectangleRaw(targetTile, topLeft, width, height, viewport, color);
 
-	DVector2 topRight = topLeft + DVector2(width, 0);
-	DVector2 bottomLeft = topLeft + DVector2(0, height);
+    DVector2 topRight = topLeft + DVector2(width, 0);
+    DVector2 bottomLeft = topLeft + DVector2(0, height);
 
-	// ¿òÑÕÉ«
-	DrawRectangleRaw(targetTile, topLeft, width, 1, viewport, borderColor);
-	DrawRectangleRaw(targetTile, bottomLeft, width, 1, viewport, borderColor);
-	DrawRectangleRaw(targetTile, topLeft, 1, height, viewport, borderColor);
-	DrawRectangleRaw(targetTile, topRight, 1, height, viewport, borderColor);
+    // æ¡†é¢œè‰²
+    DrawRectangleRaw(targetTile, topLeft, width, 1, viewport, borderColor);
+    DrawRectangleRaw(targetTile, bottomLeft, width, 1, viewport, borderColor);
+    DrawRectangleRaw(targetTile, topLeft, 1, height, viewport, borderColor);
+    DrawRectangleRaw(targetTile, topRight, 1, height, viewport, borderColor);
 }
 
-// º¬Éî¶ÈµÄ¾ØĞÎ
+// å«æ·±åº¦çš„çŸ©å½¢
 void DrawRectangleWithBorder(Tile& targetTile, DepthBuffer& zBuffer, double depth,
-	DVector2 topLeft, int width, int height, DRect viewport, Color color, Color borderColor)
+                             DVector2 topLeft, int width, int height, DRect viewport, Color color, Color borderColor)
 {
-	// ¾ØĞÎÄÚ²¿»æÖÆ
-	DrawRectangle(targetTile, zBuffer, depth, topLeft, width, height, viewport, color);
+    // çŸ©å½¢å†…éƒ¨ç»˜åˆ¶
+    DrawRectangle(targetTile, zBuffer, depth, topLeft, width, height, viewport, color);
 
+    // ç»˜åˆ¶çŸ©å½¢å¤–æ¡†
+    DVector2 topRight = topLeft + DVector2(width, 0);
+    DVector2 bottomLeft = topLeft + DVector2(0, height);
 
-	// »æÖÆ¾ØĞÎÍâ¿ò
-	DVector2 topRight = topLeft + DVector2(width, 0);
-	DVector2 bottomLeft = topLeft + DVector2(0, height);
-
-	DrawRectangle(targetTile, zBuffer, depth, topLeft, width, 1, viewport, color);
-	DrawRectangle(targetTile, zBuffer, depth, bottomLeft, width, 1, viewport, color);
-	DrawRectangle(targetTile, zBuffer, depth, topLeft, 1, height, viewport, color);
-	DrawRectangle(targetTile, zBuffer, depth, topRight, 1, height, viewport, color);
+    DrawRectangle(targetTile, zBuffer, depth, topLeft, width, 1, viewport, color);
+    DrawRectangle(targetTile, zBuffer, depth, bottomLeft, width, 1, viewport, color);
+    DrawRectangle(targetTile, zBuffer, depth, topLeft, 1, height, viewport, color);
+    DrawRectangle(targetTile, zBuffer, depth, topRight, 1, height, viewport, color);
 }
-

@@ -1,33 +1,32 @@
-#pragma once
+ï»¿#pragma once
 #include "Tile.h"
 
 struct App;
 struct Control;
-// Èç¹û¶ÔÏóµÄ¸ß¶È³¬¹ıÁË·¶Î§£¬Scrollbar ²»»á×Ô¶¯¸üÕı¡£
-// ÕâÒ»È¨ÏŞÁô¸ø Panel µÈ¶ÔÏóµÄÖ±½ÓÉÏ¼¶¡£
-// Scrollbar ²»ÊÇ¿Ø¼ş£¬²»¼Ì³Ğ Control Àà¡£
-struct VerticalScrollBar {
-	DVector2 topLeft;
-	double depth = 0;
-	Control* contentControl = NULL;
-	int width = 0, height = 0;
-	int visibleHeight = 0, visibleTop = 0;
-	Color barColor, frameColor, normalColor, draggedColor, hoveredColor, invalidColor;
+// å¦‚æœå¯¹è±¡çš„é«˜åº¦è¶…è¿‡äº†èŒƒå›´ï¼ŒScrollbar ä¸ä¼šè‡ªåŠ¨æ›´æ­£ã€‚
+// è¿™ä¸€æƒé™ç•™ç»™ Panel ç­‰å¯¹è±¡çš„ç›´æ¥ä¸Šçº§ã€‚
+// Scrollbar ä¸æ˜¯æ§ä»¶ï¼Œä¸ç»§æ‰¿ Control ç±»ã€‚
+struct VerticalScrollBar
+{
+    DVector2 topLeft;
+    double depth = 0;
+    Control* contentControl = NULL;
+    int width = 0, height = 0;
+    int visibleHeight = 0, visibleTop = 0;
+    Color barColor, frameColor, normalColor, draggedColor, hoveredColor, invalidColor;
 
-	int thumbY = 0, thumbHeight = 0;
-	bool hasOverflow = false;
-	bool dragged = false;
-	bool enabled = true;
-	bool hovered = false;
-	bool hoveredThumb = false;
+    int thumbY = 0, thumbHeight = 0;
+    bool hasOverflow = false;
+    bool dragged = false;
+    bool enabled = true;
+    bool hovered = false;
+    bool hoveredThumb = false;
 
-	VerticalScrollBar();
-	// Ã»ÓĞ set_c ²»»á Discard Ö®Ç°µÄ¶ÔÏó¡£
-	void Render(App& app);
+    VerticalScrollBar();
+    // æ²¡æœ‰ set_c ä¸ä¼š Discard ä¹‹å‰çš„å¯¹è±¡ã€‚
+    void Render(App& app);
 
-	virtual void Update(App& app);
-	virtual void Discard(App& app);
-	virtual void PreUpdate(App& app);
+    virtual void Update(App& app);
+    virtual void Discard(App& app);
+    virtual void PreUpdate(App& app);
 };
-
-

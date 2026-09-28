@@ -1,39 +1,41 @@
-#pragma once
+ï»¿#pragma once
 #include "Vector3.h"
 #include "Tile.h"
 
 struct SimulationApp;
 /// <summary>
-/// Background ·â×°ÁËÒ»¸ötile£¬ËùÓĞµÄÔË¶¯ºÍäÖÈ¾¶¼ÊÇÔÚ background Ö®ÉÏ½øĞĞµÄ
+/// Background å°è£…äº†ä¸€ä¸ªtileï¼Œæ‰€æœ‰çš„è¿åŠ¨å’Œæ¸²æŸ“éƒ½æ˜¯åœ¨ background ä¹‹ä¸Šè¿›è¡Œçš„
 /// </summary>
 struct Background
 {
-	DVector2 topLeft;
-	double depth = 0;
-	Tile backgroundTile;
-	int width = 0, height = 0;
+    DVector2 topLeft;
+    double depth = 0;
+    Tile backgroundTile;
+    int width = 0, height = 0;
 
-	bool hovered = false;
-	bool wheeled = false;
+    bool hovered = false;
+    bool wheeled = false;
 
-	Background(SimulationApp& simulationApp);
-	DRect GetViewport() const { return { topLeft, width, height }; }
-	
-	/// <summary>
-	/// @todo:½«¸Ãº¯ÊıµÄµ÷ÓÃ´ÓupdateÖĞÒÆ¶¯µ½ÁËsimulationAppÖĞ£¬Ö´ĞĞµÄË³ĞòÒÀÈ»Ô¶ÔÚÆäËûrenderº¯ÊıÖ®Ç°£¬ÀíÓÉÓĞ´ıÃ÷È·
-	/// @todo:¿¼ÂÇÈ¥µôÕâ¸öÎŞÎ½µÄ´«²Î
-	/// </summary>
-	/// <param name="simulationApp"></param>
-	void Render(SimulationApp& simulationApp);
-	/// <summary>
-	/// ¸üĞÂownerÉî¶È
-	/// </summary>
-	/// <param name="simulationApp"></param>
-	void PreUpdate(SimulationApp& simulationApp);
-	/// <summary>
-	/// ¼ì²éÊÇ·ñµã»÷ÁË±³¾°
-	/// </summary>
-	/// <param name="simulationApp"></param>
-	void Update(SimulationApp& simulationApp);
+    Background(SimulationApp& simulationApp);
+    DRect GetViewport() const
+    {
+        return {topLeft, width, height};
+    }
+
+    /// <summary>
+    /// @todo:å°†è¯¥å‡½æ•°çš„è°ƒç”¨ä»updateä¸­ç§»åŠ¨åˆ°äº†simulationAppä¸­ï¼Œæ‰§è¡Œçš„é¡ºåºä¾ç„¶è¿œåœ¨å…¶ä»–renderå‡½æ•°ä¹‹å‰ï¼Œç†ç”±æœ‰å¾…æ˜ç¡®
+    /// @todo:è€ƒè™‘å»æ‰è¿™ä¸ªæ— è°“çš„ä¼ å‚
+    /// </summary>
+    /// <param name="simulationApp"></param>
+    void Render(SimulationApp& simulationApp);
+    /// <summary>
+    /// æ›´æ–°owneræ·±åº¦
+    /// </summary>
+    /// <param name="simulationApp"></param>
+    void PreUpdate(SimulationApp& simulationApp);
+    /// <summary>
+    /// æ£€æŸ¥æ˜¯å¦ç‚¹å‡»äº†èƒŒæ™¯
+    /// </summary>
+    /// <param name="simulationApp"></param>
+    void Update(SimulationApp& simulationApp);
 };
-

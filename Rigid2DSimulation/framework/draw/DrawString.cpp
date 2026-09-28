@@ -1,8 +1,8 @@
-#include "DrawString.h"
+Ôªø#include "DrawString.h"
 #include "Font.h"
 
 void DrawCharacter(Tile& targetTile, DepthBuffer& depthBuffer, double depth,
-    DVector2 topLeft, DRect viewport, Tile const& sourceTile, Color color)
+                   DVector2 topLeft, DRect viewport, Tile const& sourceTile, Color color)
 {
     int left = max(viewport.GetLeft(), topLeft.x);
     int right = min(viewport.GetRight(), topLeft.x + sourceTile.width);
@@ -31,8 +31,8 @@ void DrawCharacter(Tile& targetTile, DepthBuffer& depthBuffer, double depth,
 }
 
 void DrawString(Tile& targetTile, DepthBuffer& depthBuffer, double depth,
-    wstring const& text, Color color, Font const& font,
-    DVector2& currentTopLeft, int& currentX, int maxWidth, DRect viewport)
+                wstring const& text, Color color, Font const& font,
+                DVector2& currentTopLeft, int& currentX, int maxWidth, DRect viewport)
 {
     for (wchar_t character : text)
     {
@@ -58,15 +58,15 @@ void DrawString(Tile& targetTile, DepthBuffer& depthBuffer, double depth,
 }
 
 void DrawString(Tile& targetTile, DepthBuffer& depthBuffer, double depth,
-    wstring const& text, Color color, Font const& font, DVector2 topLeft,
-    int maxWidth, DRect viewport)
+                wstring const& text, Color color, Font const& font, DVector2 topLeft,
+                int maxWidth, DRect viewport)
 {
     int currentX = 0;
     DrawString(targetTile, depthBuffer, depth, text, color, font, topLeft, currentX, maxWidth, viewport);
 }
 
 DVector2 GetStringSize(wstring const& text, Font const& font, int maxWidth,
-    int* lastLineWidth)
+                       int* lastLineWidth)
 {
     int currentX = 0;
     int width = 0;
@@ -89,7 +89,7 @@ DVector2 GetStringSize(wstring const& text, Font const& font, int maxWidth,
                 currentX = 0;
             }
 
-            // œ¬√Ê¡Ω∏ˆÀ≥–Úø…±¬“∂Ø∞°°£
+            // ‰∏ãÈù¢‰∏§‰∏™È°∫Â∫èÂèØÂà´‰π±Âä®Âïä„ÄÇ
             currentX += glyph.width;
             width = max(width, currentX);
         }
@@ -98,11 +98,11 @@ DVector2 GetStringSize(wstring const& text, Font const& font, int maxWidth,
     {
         *lastLineWidth = currentX;
     }
-    return { width, height };
+    return {width, height};
 }
 
 int GetStringIndexAtPosition(wstring const& text, Font const& font,
-    DVector2 position, int maxWidth)
+                             DVector2 position, int maxWidth)
 {
     int currentX = 0;
     int currentY = 0;

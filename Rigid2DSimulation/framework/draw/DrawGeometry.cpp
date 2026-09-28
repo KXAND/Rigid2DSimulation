@@ -1,99 +1,110 @@
-#include "DrawGeometry.h"
+ï»¿#include "DrawGeometry.h"
 #include "DrawLineSegment.h"
 
 void DrawRectangleRaw(Tile& targetTile, DVector2 topLeft, int width, int height, DRect viewport, Color color)
 {
-	int left = max(viewport.GetLeft(), topLeft.x);
-	int right = min(viewport.GetRight(), topLeft.x + width);
-	int top = max(viewport.GetTop(), topLeft.y);
-	int bottom = min(viewport.GetBottom(), topLeft.y + height);
-	if (left >= right || top >= bottom) { return; }
+    int left = max(viewport.GetLeft(), topLeft.x);
+    int right = min(viewport.GetRight(), topLeft.x + width);
+    int top = max(viewport.GetTop(), topLeft.y);
+    int bottom = min(viewport.GetBottom(), topLeft.y + height);
+    if (left >= right || top >= bottom)
+    {
+        return;
+    }
 
-	vector<Color> rowColors(right - left, color);
-	for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
-	{
-		int position = j * targetTile.width + left;
-		memcpy(targetTile.colors.data() + position, rowColors.data(), (right - left) * sizeof(color));
-	}
+    vector<Color> rowColors(right - left, color);
+    for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
+    {
+        int position = j * targetTile.width + left;
+        memcpy(targetTile.colors.data() + position, rowColors.data(), (right - left) * sizeof(color));
+    }
 }
 
 void DrawRectangle(Tile& targetTile, DepthBuffer& zBuffer, double depth,
-	DVector2 topLeft, int width, int height, DRect viewport, Color color)
+                   DVector2 topLeft, int width, int height, DRect viewport, Color color)
 {
-	int left = max(viewport.GetLeft(), topLeft.x);
-	int right = min(viewport.GetRight(), topLeft.x + width);
-	int top = max(viewport.GetTop(), topLeft.y);
-	int bottom = min(viewport.GetBottom(), topLeft.y + height);
-	if (left >= right || top >= bottom) { return; }
+    int left = max(viewport.GetLeft(), topLeft.x);
+    int right = min(viewport.GetRight(), topLeft.x + width);
+    int top = max(viewport.GetTop(), topLeft.y);
+    int bottom = min(viewport.GetBottom(), topLeft.y + height);
+    if (left >= right || top >= bottom)
+    {
+        return;
+    }
 
-	for (int i = (left), iEnd = int(right); i < iEnd; ++i) for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
-	{
-		int position = j * targetTile.width + i;// j ÐÐ i ÁÐ
-		if (zBuffer[position] <= depth)
-		{
-			zBuffer[position] = depth;
-			targetTile.colors[position] = color;
-		}
-	}
+    for (int i = (left), iEnd = int(right); i < iEnd; ++i)
+        for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
+        {
+            int position = j * targetTile.width + i; // j è¡Œ i åˆ—
+            if (zBuffer[position] <= depth)
+            {
+                zBuffer[position] = depth;
+                targetTile.colors[position] = color;
+            }
+        }
 }
 
 void DrawRectangleWithTransform(Tile& targetTile, DepthBuffer& zBuffer, double depth,
-	Vector2 center, double width, double height, Matrix2 transformMatrix, DRect viewport, Color color)
+                                Vector2 center, double width, double height, Matrix2 transformMatrix, DRect viewport, Color color)
 {
-	Matrix2 transformInverse = transformMatrix.Inverse();
-	Vector2 transformHalfWidthHeight = transformMatrix.Abs() * Vector2(width, height) / 2;
-	// Õâ¸ö 1 ÊÇ¾­Ñé¹«Ê½¡£ÎÒÃ»×öÑÏ¸ñÂÛÖ¤¡£
-	int left = max(viewport.GetLeft(), int(center.x - transformHalfWidthHeight.x) - 1);
-	int right = min(viewport.GetRight(), int(center.x + transformHalfWidthHeight.x) + 1);
-	int top = max(viewport.GetTop(), int(center.y - transformHalfWidthHeight.y) - 1);
-	int bottom = min(viewport.GetBottom(), int(center.y + transformHalfWidthHeight.y) + 1);
-	if (left >= right || top >= bottom) { return; }
+    Matrix2 transformInverse = transformMatrix.Inverse();
+    Vector2 transformHalfWidthHeight = transformMatrix.Abs() * Vector2(width, height) / 2;
+    // è¿™ä¸ª 1 æ˜¯ç»éªŒå…¬å¼ã€‚æˆ‘æ²¡åšä¸¥æ ¼è®ºè¯ã€‚
+    int left = max(viewport.GetLeft(), int(center.x - transformHalfWidthHeight.x) - 1);
+    int right = min(viewport.GetRight(), int(center.x + transformHalfWidthHeight.x) + 1);
+    int top = max(viewport.GetTop(), int(center.y - transformHalfWidthHeight.y) - 1);
+    int bottom = min(viewport.GetBottom(), int(center.y + transformHalfWidthHeight.y) + 1);
+    if (left >= right || top >= bottom)
+    {
+        return;
+    }
 
-	for (int i = (left), iEnd = int(right); i < iEnd; ++i) for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
-	{
-		DVector2 dPoint(i, j);
-		// ÏÂÃæÊ½×ÓµÄÕýÈ·ÐÔ´ÓÄæ±ä»»±È½ÏÈÝÒ×¿´£¬Òª×¢ÒâËÄÔòÔËËãµÄÓÅÏÈ¼¶¡£
-		Vector2 uPoint = Vector2(0.5) +
-			transformInverse * (Vector2(dPoint) - center) / Vector2(width, height);
-		if (IsInside(uPoint, { 1, 1 }))
-		{
-			int depthIndex = dPoint.y * targetTile.width + dPoint.x;
-			if (zBuffer[depthIndex] <= depth)
-			{
-				zBuffer[depthIndex] = depth;
-				targetTile.colors[depthIndex] = color;
-			}
-		}
-	}
+    for (int i = (left), iEnd = int(right); i < iEnd; ++i)
+        for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
+        {
+            DVector2 dPoint(i, j);
+            // ä¸‹é¢å¼å­çš„æ­£ç¡®æ€§ä»Žé€†å˜æ¢æ¯”è¾ƒå®¹æ˜“çœ‹ï¼Œè¦æ³¨æ„å››åˆ™è¿ç®—çš„ä¼˜å…ˆçº§ã€‚
+            Vector2 uPoint = Vector2(0.5) +
+                             transformInverse * (Vector2(dPoint) - center) / Vector2(width, height);
+            if (IsInside(uPoint, {1, 1}))
+            {
+                int depthIndex = dPoint.y * targetTile.width + dPoint.x;
+                if (zBuffer[depthIndex] <= depth)
+                {
+                    zBuffer[depthIndex] = depth;
+                    targetTile.colors[depthIndex] = color;
+                }
+            }
+        }
 }
 
 void DrawEllipse(Tile& targetTile, DepthBuffer& zBuffer, double depth,
-	Vector2 center, double horizontalRadius, double verticalRadius, DRect viewport, Color color)
+                 Vector2 center, double horizontalRadius, double verticalRadius, DRect viewport, Color color)
 {
-	int left = max(viewport.GetLeft(), int(center.x - horizontalRadius) - 1);
-	int right = min(viewport.GetRight(), int(center.x + horizontalRadius) + 1);
-	int top = max(viewport.GetTop(), int(center.y - verticalRadius) - 1);
-	int bottom = min(viewport.GetBottom(), int(center.y + verticalRadius) + 1);
-	double inverseHorizontalRadiusSquared = 1 / (horizontalRadius * horizontalRadius);
-	double inverseVerticalRadiusSquared = 1 / (verticalRadius * verticalRadius);
+    int left = max(viewport.GetLeft(), int(center.x - horizontalRadius) - 1);
+    int right = min(viewport.GetRight(), int(center.x + horizontalRadius) + 1);
+    int top = max(viewport.GetTop(), int(center.y - verticalRadius) - 1);
+    int bottom = min(viewport.GetBottom(), int(center.y + verticalRadius) + 1);
+    double inverseHorizontalRadiusSquared = 1 / (horizontalRadius * horizontalRadius);
+    double inverseVerticalRadiusSquared = 1 / (verticalRadius * verticalRadius);
 
-	for (int i = (left), iEnd = int(right); i < iEnd; ++i) for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
-	{
+    for (int i = (left), iEnd = int(right); i < iEnd; ++i)
+        for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
+        {
 
-		// Ó¦ÓÃÍÖÔ²µÄ±ê×¼·½³ÌÅÐ¶ÏÊÇ·ñÔÚÍÖÔ²ÄÚ
-		Vector2 offset = Vector2(i, j) - center;
-		double normalizedDistanceSquared =
-			offset.x * offset.x * inverseHorizontalRadiusSquared +
-			offset.y * offset.y * inverseVerticalRadiusSquared;
-		if (normalizedDistanceSquared < 1)
-		{
-			int position = j * targetTile.width + i;
-			if (zBuffer[position] <= depth)
-			{
-				zBuffer[position] = depth;
-				targetTile.colors[position] = color;
-			}
-		}
-	}
+            // åº”ç”¨æ¤­åœ†çš„æ ‡å‡†æ–¹ç¨‹åˆ¤æ–­æ˜¯å¦åœ¨æ¤­åœ†å†…
+            Vector2 offset = Vector2(i, j) - center;
+            double normalizedDistanceSquared =
+                offset.x * offset.x * inverseHorizontalRadiusSquared +
+                offset.y * offset.y * inverseVerticalRadiusSquared;
+            if (normalizedDistanceSquared < 1)
+            {
+                int position = j * targetTile.width + i;
+                if (zBuffer[position] <= depth)
+                {
+                    zBuffer[position] = depth;
+                    targetTile.colors[position] = color;
+                }
+            }
+        }
 }
-

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Utils.h"
 #include "ScriptStatement.h"
 
@@ -7,7 +7,7 @@ typedef function<std::shared_ptr<Value>(vector<std::shared_ptr<Value>> const&)> 
 typedef vector<ScriptStatement> Program;
 struct Value
 {
-    // ÆäÊµ»¹²»ÊÇºÜÈ·¶¨ type ÓĞÃ»ÓĞÓÃ£¬ÕâÀï»áÓĞĞ©ÂÒµô¡£
+    // å…¶å®è¿˜ä¸æ˜¯å¾ˆç¡®å®š type æœ‰æ²¡æœ‰ç”¨ï¼Œè¿™é‡Œä¼šæœ‰äº›ä¹±æ‰ã€‚
     wstring type = L"null";
     // null, num, str, fun, vec, user, dic
     double number = 0;
@@ -33,15 +33,14 @@ Vector3 ToVector3(Value const& value);
 
 typedef map<wstring, std::shared_ptr<Value>> Scope;
 std::shared_ptr<Value> FindVariable(Scope& globalScope, Scope& scope, wstring variableName, bool isGlobal);
-// ÏÂÃæ²»ÓÃ³£ÖµÒıÓÃÊÇÎªÁË¼õÉÙ²»±ØÒªµÄ¸´ÖÆ¡£µ«ÊÇËµÊµ»°ÎÒ²»ÖªµÀÓĞÃ»ÓĞ±ØÒª¡£
+// ä¸‹é¢ä¸ç”¨å¸¸å€¼å¼•ç”¨æ˜¯ä¸ºäº†å‡å°‘ä¸å¿…è¦çš„å¤åˆ¶ã€‚ä½†æ˜¯è¯´å®è¯æˆ‘ä¸çŸ¥é“æœ‰æ²¡æœ‰å¿…è¦ã€‚
 bool TryEvaluateDefaultFunction(Scope& globalScope, Scope& scope, ScriptExpression const& expression, Value& result);
 
 std::shared_ptr<Value> EvaluateCall(Scope& globalScope, Scope& scope, ScriptExpression const& expression);
 std::shared_ptr<Value> EvaluateAccess(Scope& globalScope, Scope& scope, ScriptExpression const& expression);
 std::shared_ptr<Value> Evaluate(Scope& globalScope, Scope& scope, ScriptExpression const& expression);
 
-// ÓĞÒ»¸ö·çÏÕÊÇÒ»¸öº¯Êı»á²»»áÔÚÖ´ĞĞ¹ı³ÌÖĞ°Ñ×Ô¼ºÄ¨È¥£¬Òª×¢ÒâÈçºÎ¹æ±Üµô¡£
+// æœ‰ä¸€ä¸ªé£é™©æ˜¯ä¸€ä¸ªå‡½æ•°ä¼šä¸ä¼šåœ¨æ‰§è¡Œè¿‡ç¨‹ä¸­æŠŠè‡ªå·±æŠ¹å»ï¼Œè¦æ³¨æ„å¦‚ä½•è§„é¿æ‰ã€‚
 std::shared_ptr<Value> Execute(bool& hasReturned, Scope& globalScope, Scope& scope, Program const& statements);
 std::shared_ptr<Value> Execute(Scope& globalScope, Program const& statements);
 Program Compile(wstring const& code);
-

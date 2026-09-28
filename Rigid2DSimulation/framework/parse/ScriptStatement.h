@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ScriptExpression.h"
 
 struct ScriptStatement
@@ -33,4 +33,3 @@ ScriptStatement ParseWhile(vector<BracketGroup> const& groups);
 
 ScriptStatement ParseStatement(vector<BracketGroup> const& groups);
 vector<ScriptStatement> ParseStatements(vector<BracketGroup> const& groups);
-

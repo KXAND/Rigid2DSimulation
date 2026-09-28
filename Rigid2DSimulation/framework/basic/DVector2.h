@@ -1,7 +1,7 @@
-#pragma once
+ï»¿#pragma once
 #include "Utils.h"
 
-// ÕûĞÍÏòÁ¿
+// æ•´å‹å‘é‡
 struct DVector2
 {
     int x = 0;
@@ -23,7 +23,7 @@ struct DVector2
     }
     DVector2 operator-() const
     {
-        return { -x, -y };
+        return {-x, -y};
     }
     DVector2& operator+=(DVector2 other)
     {
@@ -145,5 +145,5 @@ struct DRect
 };
 
 bool IsInside(DVector2 vector, DRect rectangle);
-// ÕâÀï¿ÉÄÜ»á³öÏÖ¸ºµÄ DRect¡£
+// è¿™é‡Œå¯èƒ½ä¼šå‡ºç°è´Ÿçš„ DRectã€‚
 DRect GetOverlapRect(DRect first, DRect second);

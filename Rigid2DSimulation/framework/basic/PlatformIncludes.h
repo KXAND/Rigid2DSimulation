@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <cmath>
 #include <cstdio>
 #include <cfloat>
@@ -74,4 +74,3 @@ using std::to_string;
 using std::to_wstring;
 using std::make_shared;
 using std::stable_sort;
-

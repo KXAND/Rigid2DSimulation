@@ -1,17 +1,17 @@
-#pragma once
+ï»¿#pragma once
 #include "PlatformIncludes.h"
 
 double constexpr kPi = 3.1415926535;
 double constexpr kEulerNumber = 2.7182818284;
 
-// ×¢Òâ insd ÊÇ¿ªÇø¼ä£¬clmp ±ÕÇø¼ä¡£
-template<class T>
+// æ³¨æ„ insd æ˜¯å¼€åŒºé—´ï¼Œclmp é—­åŒºé—´ã€‚
+template <class T>
 bool IsBetween(T value, T low, T high)
 {
     return low <= value && value < high;
 }
 
-template<class T>
+template <class T>
 T const& Clamp(T value, T low, T high)
 {
     return min(high, max(low, value));
@@ -32,7 +32,7 @@ inline double WrapRadians(double angle)
     return PositiveModulo(angle + kPi, 2 * kPi) - kPi;
 }
 
-// ×¢Òâ [a, b] ÊÇ±ÕÇø¼ä£¬µ« sz ÊÇ¿ªµÄ¡£
+// æ³¨æ„ [a, b] æ˜¯é—­åŒºé—´ï¼Œä½† sz æ˜¯å¼€çš„ã€‚
 int GenerateRandomInt(int low, int high);
 int GenerateRandomInt(int size);
 double GenerateRandomFloat(double low, double high);

@@ -1,56 +1,70 @@
-#pragma once
+ï»¿#pragma once
 #include "DVector2.h"
 
-struct AppInput {
-	double mouseWheelDelta = 0;
-	wstring typedCharacters;
-	DVector2 mousePosition, previousMousePosition;
-	array<BYTE, 3> mouseButtonDown{}, previousMouseButtonDown{};
-	array<int, 256> keyMessageCounts{};
-	array<BYTE, 256> keyDown{}, previousKeyDown{};
-	// ±ÈÈçËµ²¥ÒôÀÖ, ÔÚ´°¿ÚÒÆ¶¯Ê±¿ÉÒÔÊ¹ÒôÀÖÔİÍ£¡£
-	bool isTitleBarClicked = false;
+struct AppInput
+{
+    double mouseWheelDelta = 0;
+    wstring typedCharacters;
+    DVector2 mousePosition, previousMousePosition;
+    array<BYTE, 3> mouseButtonDown{}, previousMouseButtonDown{};
+    array<int, 256> keyMessageCounts{};
+    array<BYTE, 256> keyDown{}, previousKeyDown{};
+    // æ¯”å¦‚è¯´æ’­éŸ³ä¹, åœ¨çª—å£ç§»åŠ¨æ—¶å¯ä»¥ä½¿éŸ³ä¹æš‚åœã€‚
+    bool isTitleBarClicked = false;
 
-	// ÎÒ¾õµÃÕâ¸öÊó±êÂß¼­»¹ÊÇ±È½ÏÆæ¹Ö£¬¿ÉÄÜÓĞ¶àÓàÖ®´¦¡£
-	// ÒÔºóÒª¸ÄÒ»ÏÂ£¬µ«Çë×¢ÒâÕâÀï¸÷ÖÖ²»ºÏÀíµÄ²¼ÖÃ¶¼ÊÇÓĞÀíÓÉµÄ¡£
-	bool isMouseInputOwned = false;
-	bool isMouseLeaveTracked = false;
-	TRACKMOUSEEVENT mouseLeaveTracking{};
+    // æˆ‘è§‰å¾—è¿™ä¸ªé¼ æ ‡é€»è¾‘è¿˜æ˜¯æ¯”è¾ƒå¥‡æ€ªï¼Œå¯èƒ½æœ‰å¤šä½™ä¹‹å¤„ã€‚
+    // ä»¥åè¦æ”¹ä¸€ä¸‹ï¼Œä½†è¯·æ³¨æ„è¿™é‡Œå„ç§ä¸åˆç†çš„å¸ƒç½®éƒ½æ˜¯æœ‰ç†ç”±çš„ã€‚
+    bool isMouseInputOwned = false;
+    bool isMouseLeaveTracked = false;
+    TRACKMOUSEEVENT mouseLeaveTracking{};
 
-	bool IsMouseClickedDown(int mouseButtonIndex) { return mouseButtonDown[mouseButtonIndex] && !previousMouseButtonDown[mouseButtonIndex]; }
-	bool IsKeyPressedDown(int keyCode) { return keyDown[keyCode] && !previousKeyDown[keyCode]; }
+    bool IsMouseClickedDown(int mouseButtonIndex)
+    {
+        return mouseButtonDown[mouseButtonIndex] && !previousMouseButtonDown[mouseButtonIndex];
+    }
+    bool IsKeyPressedDown(int keyCode)
+    {
+        return keyDown[keyCode] && !previousKeyDown[keyCode];
+    }
 
-	void TrackMouse();
-	bool SyncMouse(HWND windowHandle);
+    void TrackMouse();
+    bool SyncMouse(HWND windowHandle);
 
-	void Initialize(HWND windowHandle);
-	void Reset();
+    void Initialize(HWND windowHandle);
+    void Reset();
 };
 
-struct FrameRate {
-	int frameCount = 0;
-	int frameSampleCount = 0;
-	long long sampleNanoseconds = 0;
-	double framesPerSecond = 0, averageFrameTime = 0;
-	long long deltaNanoseconds = 0, elapsedNanoseconds = 0;
-	std::chrono::high_resolution_clock::time_point previousFrameTimePoint;
+struct FrameRate
+{
+    int frameCount = 0;
+    int frameSampleCount = 0;
+    long long sampleNanoseconds = 0;
+    double framesPerSecond = 0, averageFrameTime = 0;
+    long long deltaNanoseconds = 0, elapsedNanoseconds = 0;
+    std::chrono::high_resolution_clock::time_point previousFrameTimePoint;
 
-	FrameRate();
-	void Start();
-	void Update();
+    FrameRate();
+    void Start();
+    void Update();
 
-	double GetDeltaTime() const { return deltaNanoseconds / 1e9; }
-	double GetElapsedTime() const { return elapsedNanoseconds / 1e9; }
+    double GetDeltaTime() const
+    {
+        return deltaNanoseconds / 1e9;
+    }
+    double GetElapsedTime() const
+    {
+        return elapsedNanoseconds / 1e9;
+    }
 };
 
-struct InputOwners {
-	void* keyboardOwner = NULL;
-	void* hovered = NULL;
-	void* wheeled = NULL;
-	double hoveredDepth = -DBL_MAX, wheeledDepth = -DBL_MAX;
+struct InputOwners
+{
+    void* keyboardOwner = NULL;
+    void* hovered = NULL;
+    void* wheeled = NULL;
+    double hoveredDepth = -DBL_MAX, wheeledDepth = -DBL_MAX;
 
-	void Reset();
-	void Remove(void* owner);
-	void ReleaseKeyboard(void* owner);
+    void Reset();
+    void Remove(void* owner);
+    void ReleaseKeyboard(void* owner);
 };
-

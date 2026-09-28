@@ -1,4 +1,4 @@
-#include "Vector3.h"
+ï»¿#include "Vector3.h"
 
 Vector3::Vector3(wstring const& text)
 {
@@ -58,7 +58,7 @@ void Camera::Calculate()
     position.z = sin(phi);
     position = position * radian + look;
 
-    // ÏÂÃæ¿ÉÄÜ»á²úÉúÆæÒìµÄÇé¿ö¡£
+    // ä¸‹é¢å¯èƒ½ä¼šäº§ç”Ÿå¥‡å¼‚çš„æƒ…å†µã€‚
     Vector3 verticalAxis = (look - position).GetNormalized();
     Vector3 horizontalAxis = Cross(verticalAxis, Vector3(0, 0, 1)).GetNormalized();
     Vector3 depthAxis = Cross(horizontalAxis, verticalAxis);
@@ -69,7 +69,7 @@ void Camera::Calculate()
 
 void Camera::CalculateFirstPerson()
 {
-    // µÚÒ»ÈË³ÆÄ£Ê½£¬ÉáÆúÁË look, r¡£
+    // ç¬¬ä¸€äººç§°æ¨¡å¼ï¼Œèˆå¼ƒäº† look, rã€‚
     Vector3 verticalAxis;
     verticalAxis.z = sin(phi);
     verticalAxis.x = cos(phi) * sin(theta);

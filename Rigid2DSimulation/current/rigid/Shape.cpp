@@ -1,131 +1,128 @@
-#include "Shape.h"
+Ôªø#include "Shape.h"
 
 Shape::Shape(double radius, Vector2 relativePosition)
 {
-	isCircle = true;
-	this->radius = radius;
-	this->relativePosition = relativePosition;
+    isCircle = true;
+    this->radius = radius;
+    this->relativePosition = relativePosition;
 }
 
 Shape::Shape(vector<Vector2> const& verticesRelative)
 {
-	this->verticesRelative = verticesRelative;
-	vertices.resize(verticesRelative.size());
+    this->verticesRelative = verticesRelative;
+    vertices.resize(verticesRelative.size());
 }
 
 void Shape::Save(FILE* file) const
 {
-	int size = 0;
-	fwrite(&(isCircle), sizeof(isCircle), 1, file);
-	fwrite(&(radius), sizeof(radius), 1, file);
-	fwrite(&(radian), sizeof(radian), 1, file);
-	fwrite(&(relativePosition), sizeof(relativePosition), 1, file);
-	size = (verticesRelative).size();
-	fwrite(&(size), sizeof(size), 1, file);
-	fwrite(&*(verticesRelative).begin(), sizeof(*(&*(verticesRelative).begin())), size, file);
+    int size = 0;
+    fwrite(&(isCircle), sizeof(isCircle), 1, file);
+    fwrite(&(radius), sizeof(radius), 1, file);
+    fwrite(&(radian), sizeof(radian), 1, file);
+    fwrite(&(relativePosition), sizeof(relativePosition), 1, file);
+    size = (verticesRelative).size();
+    fwrite(&(size), sizeof(size), 1, file);
+    fwrite(&*(verticesRelative).begin(), sizeof(*(&*(verticesRelative).begin())), size, file);
 }
 Shape::Shape(FILE* file)
 {
-	int size = 0;
-	fread(&(isCircle), sizeof(isCircle), 1, file);
-	fread(&(radius), sizeof(radius), 1, file);
-	fread(&(radian), sizeof(radian), 1, file);
-	fread(&(relativePosition), sizeof(relativePosition), 1, file);
-	fread(&(size), sizeof(size), 1, file);
-	(verticesRelative).resize(size);
-	fread(&*(verticesRelative).begin(), sizeof(*(&*(verticesRelative).begin())), size, file);
-	vertices.resize(verticesRelative.size());
+    int size = 0;
+    fread(&(isCircle), sizeof(isCircle), 1, file);
+    fread(&(radius), sizeof(radius), 1, file);
+    fread(&(radian), sizeof(radian), 1, file);
+    fread(&(relativePosition), sizeof(relativePosition), 1, file);
+    fread(&(size), sizeof(size), 1, file);
+    (verticesRelative).resize(size);
+    fread(&*(verticesRelative).begin(), sizeof(*(&*(verticesRelative).begin())), size, file);
+    vertices.resize(verticesRelative.size());
 }
 
 Vector2 Shape::GenerateRandomPointInside() const
 {
-	if (isCircle)
-	{
-		double randomRadian = GenerateRandomFloat(2 * kPi);
-		double randomRadius = sqrt(GenerateRandomFloat(1)) * radius;
-		return Vector2(cos(randomRadian), sin(randomRadian)) * randomRadius;
-	}
+    if (isCircle)
+    {
+        double randomRadian = GenerateRandomFloat(2 * kPi);
+        double randomRadius = sqrt(GenerateRandomFloat(1)) * radius;
+        return Vector2(cos(randomRadian), sin(randomRadian)) * randomRadius;
+    }
 
-	double randomArea = GenerateRandomFloat(area);
-	for (int i = (0), iEnd = int(vertices.size()); i < iEnd; ++i)
-	{
-		int j = ((long long) i + 1) % vertices.size();
-		auto p = verticesRelative[i];
-		auto q = verticesRelative[j];
+    double randomArea = GenerateRandomFloat(area);
+    for (int i = (0), iEnd = int(vertices.size()); i < iEnd; ++i)
+    {
+        int j = ((long long)i + 1) % vertices.size();
+        auto p = verticesRelative[i];
+        auto q = verticesRelative[j];
 
-		// ¿˚”√∂˛Œ¨ø’æÿ’Û––¡– ΩΩ·π˚µ»”⁄¡Ω∏ˆœÚ¡ø£®op£¨oq£©ππ≥…µƒ∆Ω––Àƒ±ﬂ–Œµƒ√Êª˝µ√
-		randomArea -= Matrix2(p - relativePosition, q - relativePosition).Determinant() / 2;
+        // Âà©Áî®‰∫åÁª¥Á©∫Áü©ÈòµË°åÂàóÂºèÁªìÊûúÁ≠â‰∫é‰∏§‰∏™ÂêëÈáèÔºàopÔºåoqÔºâÊûÑÊàêÁöÑÂπ≥Ë°åÂõõËæπÂΩ¢ÁöÑÈù¢ÁßØÂæó
+        randomArea -= Matrix2(p - relativePosition, q - relativePosition).Determinant() / 2;
 
-		// ‘⁄µ⁄“ª∏ˆ¡Ó√Êª˝Œ™∏∫µƒ«¯”Ú÷–ÀÊª˙
-		if (randomArea < 0 || i == vertices.size() - 1)
-			return GenerateRandomPointInTriangle(relativePosition, p, q);
-
-	}
-	return {};
+        // Âú®Á¨¨‰∏Ä‰∏™‰ª§Èù¢ÁßØ‰∏∫Ë¥üÁöÑÂå∫Âüü‰∏≠ÈöèÊú∫
+        if (randomArea < 0 || i == vertices.size() - 1)
+            return GenerateRandomPointInTriangle(relativePosition, p, q);
+    }
+    return {};
 }
 
 bool Shape::IsInside(Vector2 p) const
 {
-	if (isCircle)
-		return (p - position).GetLengthSquared() < radius * radius;
+    if (isCircle)
+        return (p - position).GetLengthSquared() < radius * radius;
 
-	for (int i = (0), iEnd = int(vertices.size()); i < iEnd; ++i)
-	{
-		int j = ((long long) i + 1) % vertices.size();
-		if (IsInsideTriangle(p, position, vertices[i], vertices[j]))
-			return true;
-	}
-	return false;
+    for (int i = (0), iEnd = int(vertices.size()); i < iEnd; ++i)
+    {
+        int j = ((long long)i + 1) % vertices.size();
+        if (IsInsideTriangle(p, position, vertices[i], vertices[j]))
+            return true;
+    }
+    return false;
 }
 
 Aabb Shape::GetBoundingBox() const
 {
-	if (isCircle)
-		return Aabb(position.x - radius, position.x + radius, position.y - radius, position.y + radius);
+    if (isCircle)
+        return Aabb(position.x - radius, position.x + radius, position.y - radius, position.y + radius);
 
-	Aabb box;
-	for (auto vertex : vertices)
-	{
-		box.Expand(vertex);
-	}
-	return box;
+    Aabb box;
+    for (auto vertex : vertices)
+    {
+        box.Expand(vertex);
+    }
+    return box;
 }
 
 Vector2 Shape::GenerateRandomPointInTriangle(Vector2 v0, Vector2 v1, Vector2 v2) const
 {
-	double x0 = GenerateRandomFloat(1);
-	double x1 = GenerateRandomFloat(1);
-	if (x0 + x1 > 1)
-	{
-		// @ques£∫’‚¿ÔŒ™ ≤√¥Ωªªª÷µ≤ª «∫‹∂Æ
-		swap(x0, x1);
-		x0 = 1 - x0;
-		x1 = 1 - x1;
-	}
-	return x0 * v0 + x1 * v1 + (1 - x0 - x1) * v2;
+    double x0 = GenerateRandomFloat(1);
+    double x1 = GenerateRandomFloat(1);
+    if (x0 + x1 > 1)
+    {
+        // @quesÔºöËøôÈáå‰∏∫‰ªÄ‰πà‰∫§Êç¢ÂÄº‰∏çÊòØÂæàÊáÇ
+        swap(x0, x1);
+        x0 = 1 - x0;
+        x1 = 1 - x1;
+    }
+    return x0 * v0 + x1 * v1 + (1 - x0 - x1) * v2;
 }
 
 bool Shape::IsInsideTriangle(Vector2 point, Vector2 v0, Vector2 v1, Vector2 v2) const
 {
-	// ∆Î¥Œ◊¯±Í
-	Vector3 u(point.x, point.y, 1);
-	Vector3 u0(v0.x, v0.y, 1);
-	Vector3 u1(v1.x, v1.y, 1);
-	Vector3 u2(v2.x, v2.y, 1);
-	Vector3 t = Matrix3(u0, u1, u2).Inverse() * u;
-	return
-		IsBetween(t.x, 0.0, 1.0) &&
-		IsBetween(t.y, 0.0, 1.0) &&
-		IsBetween(t.z, 0.0, 1.0);
+    // ÈΩêÊ¨°ÂùêÊ†á
+    Vector3 u(point.x, point.y, 1);
+    Vector3 u0(v0.x, v0.y, 1);
+    Vector3 u1(v1.x, v1.y, 1);
+    Vector3 u2(v2.x, v2.y, 1);
+    Vector3 t = Matrix3(u0, u1, u2).Inverse() * u;
+    return IsBetween(t.x, 0.0, 1.0) &&
+           IsBetween(t.y, 0.0, 1.0) &&
+           IsBetween(t.z, 0.0, 1.0);
 }
 
 vector<Vector2> GetRectVerticesByCenter(double halfWidth, double halfHeight)
 {
-	vector<Vector2> vertices;
-	vertices.push_back(Vector2(+halfWidth, +halfHeight) / 2);
-	vertices.push_back(Vector2(-halfWidth, +halfHeight) / 2);
-	vertices.push_back(Vector2(-halfWidth, -halfHeight) / 2);
-	vertices.push_back(Vector2(+halfWidth, -halfHeight) / 2);
-	return vertices;
+    vector<Vector2> vertices;
+    vertices.push_back(Vector2(+halfWidth, +halfHeight) / 2);
+    vertices.push_back(Vector2(-halfWidth, +halfHeight) / 2);
+    vertices.push_back(Vector2(-halfWidth, -halfHeight) / 2);
+    vertices.push_back(Vector2(+halfWidth, -halfHeight) / 2);
+    return vertices;
 }
-

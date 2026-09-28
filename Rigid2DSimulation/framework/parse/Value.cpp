@@ -1,10 +1,10 @@
-#include "Value.h"
+ï»¿#include "Value.h"
 #include "BracketGroup.h"
 #include "Vector3.h"
 #include "ScriptStatement.h"
 
-// Ã¿´Î¶¼ÄÜÕÒµ½ĞÂ bug£¬ºÜ¿ÉÄÜ»¹ÓĞÒ»Ğ© bug¡£0__
-// Ã¿´Î¶¼ÄÜÕÒµ½ĞÂ bug£¬ºÜ¿ÉÄÜ»¹ÓĞÒ»Ğ© bug¡£1__
+// æ¯æ¬¡éƒ½èƒ½æ‰¾åˆ°æ–° bugï¼Œå¾ˆå¯èƒ½è¿˜æœ‰ä¸€äº› bugã€‚0__
+// æ¯æ¬¡éƒ½èƒ½æ‰¾åˆ°æ–° bugï¼Œå¾ˆå¯èƒ½è¿˜æœ‰ä¸€äº› bugã€‚1__
 
 Value::Value(double number) : number(number)
 {
@@ -26,9 +26,8 @@ Value::Value(vector<std::shared_ptr<Value>> const& elements) : elements(elements
     type = L"vec";
 }
 
-Value::Value(Program const& statements, vector<wstring>const& arguments) :
-    bodyStatements(statements),
-    arguments(arguments)
+Value::Value(Program const& statements, vector<wstring> const& arguments) : bodyStatements(statements),
+                                                                            arguments(arguments)
 {
     type = L"fun";
 }
@@ -81,7 +80,7 @@ std::shared_ptr<Value> FindVariable(Scope& globalScope, Scope& scope, wstring va
 bool TryEvaluateDefaultFunction(Scope& globalScope, Scope& scope, ScriptExpression const& expression, Value& result)
 {
     auto const& functionName = expression.functionName;
-    // Ã¿´Î¶¼ÄÜÕÒµ½ĞÂ bug£¬ºÜ¿ÉÄÜ»¹ÓĞÒ»Ğ© bug¡£2__
+    // æ¯æ¬¡éƒ½èƒ½æ‰¾åˆ°æ–° bugï¼Œå¾ˆå¯èƒ½è¿˜æœ‰ä¸€äº› bugã€‚2__
     auto numArg = [&](int index)
     {
         return Evaluate(globalScope, scope, expression.arguments[index])->number;
@@ -218,7 +217,7 @@ std::shared_ptr<Value> EvaluateCall(Scope& globalScope, Scope& scope, ScriptExpr
         return std::make_shared<Value>(defaultValue);
     }
 
-    // Ã¿´Î¶¼ÄÜÕÒµ½ĞÂ bug£¬ºÜ¿ÉÄÜ»¹ÓĞÒ»Ğ© bug¡£3__
+    // æ¯æ¬¡éƒ½èƒ½æ‰¾åˆ°æ–° bugï¼Œå¾ˆå¯èƒ½è¿˜æœ‰ä¸€äº› bugã€‚3__
     auto functionValue = FindVariable(globalScope, scope, expression.functionName, expression.isGlobal);
     if (functionValue->type == L"user" && functionValue->nativeFunction)
     {

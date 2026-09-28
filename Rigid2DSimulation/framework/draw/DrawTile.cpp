@@ -1,59 +1,64 @@
-#include "DrawTile.h"
+ï»¿#include "DrawTile.h"
 
 void DrawTileRaw(Tile& targetTile, DVector2 topLeft, Tile const& sourceTile)
 {
-	auto targetViewport = targetTile.Rect();
-	auto sourceViewport = sourceTile.Rect();
+    auto targetViewport = targetTile.Rect();
+    auto sourceViewport = sourceTile.Rect();
 
-	int left = max(targetViewport.GetLeft(), topLeft.x);
-	int right = min(targetViewport.GetRight(), topLeft.x + sourceViewport.width);
-	int top = max(targetViewport.GetTop(), topLeft.y);
-	int bottom = min(targetViewport.GetBottom(), topLeft.y + sourceViewport.height);
-	if (left >= right || top >= bottom) { return; } // ×ø±êÏµÎª×óÉÏÎªÔ­µã£¬ËùÒÔÕı³£Çé¿öÊÇ left<right, top<bottom
+    int left = max(targetViewport.GetLeft(), topLeft.x);
+    int right = min(targetViewport.GetRight(), topLeft.x + sourceViewport.width);
+    int top = max(targetViewport.GetTop(), topLeft.y);
+    int bottom = min(targetViewport.GetBottom(), topLeft.y + sourceViewport.height);
+    if (left >= right || top >= bottom)
+    {
+        return;
+    } // åæ ‡ç³»ä¸ºå·¦ä¸Šä¸ºåŸç‚¹ï¼Œæ‰€ä»¥æ­£å¸¸æƒ…å†µæ˜¯ left<right, top<bottom
 
-	for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
-	{
-		int targetPixelIndex = j * targetTile.width + left;
-		int sourcePixelIndex = (j - topLeft.y + sourceViewport.GetTop()) * sourceTile.width +
-			(left - topLeft.x + sourceViewport.GetLeft());//½«µã/ÏñËØ´ÓÊÀ½ç×ø±êÏµ×ª»»µ½scrtileµÄÄÚ²¿×ø±êÏµ
-		int rowSize = sizeof(Color) * (right - left);
-		memcpy(targetTile.colors.data() + targetPixelIndex, sourceTile.colors.data() + sourcePixelIndex, rowSize);
-	}
+    for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
+    {
+        int targetPixelIndex = j * targetTile.width + left;
+        int sourcePixelIndex = (j - topLeft.y + sourceViewport.GetTop()) * sourceTile.width +
+                               (left - topLeft.x + sourceViewport.GetLeft()); //å°†ç‚¹/åƒç´ ä»ä¸–ç•Œåæ ‡ç³»è½¬æ¢åˆ°scrtileçš„å†…éƒ¨åæ ‡ç³»
+        int rowSize = sizeof(Color) * (right - left);
+        memcpy(targetTile.colors.data() + targetPixelIndex, sourceTile.colors.data() + sourcePixelIndex, rowSize);
+    }
 }
 
 void DrawTile(Tile& targetTile, DepthBuffer& depthBuffer, double depth, DVector2 topLeft,
-	DRect targetViewport, Tile const& sourceTile, DRect sourceViewport)
+              DRect targetViewport, Tile const& sourceTile, DRect sourceViewport)
 {
-	int left = max(targetViewport.GetLeft(), topLeft.x);
-	int right = min(targetViewport.GetRight(), topLeft.x + sourceViewport.width);
-	int top = max(targetViewport.GetTop(), topLeft.y);
-	int bottom = min(targetViewport.GetBottom(), topLeft.y + sourceViewport.height);
-	if (left >= right || top >= bottom) { return; }
+    int left = max(targetViewport.GetLeft(), topLeft.x);
+    int right = min(targetViewport.GetRight(), topLeft.x + sourceViewport.width);
+    int top = max(targetViewport.GetTop(), topLeft.y);
+    int bottom = min(targetViewport.GetBottom(), topLeft.y + sourceViewport.height);
+    if (left >= right || top >= bottom)
+    {
+        return;
+    }
 
-	for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
-	{
-		int targetPixelIndex = j * targetTile.width + left;
-		int sourcePixelIndex = (j - topLeft.y + sourceViewport.GetTop()) * sourceTile.width +
-			(left - topLeft.x + sourceViewport.GetLeft());
-		for (int i = (left), iEnd = int(right); i < iEnd; ++i)
-		{
-			if (depthBuffer[targetPixelIndex] <= depth && sourceTile.alphaValues[sourcePixelIndex] != 0)
-			{
-				depthBuffer[targetPixelIndex] = depth; targetTile.colors[targetPixelIndex] = sourceTile.colors[sourcePixelIndex];
-			}
-			targetPixelIndex++;
-			sourcePixelIndex++;
-		}
-	}
+    for (int j = (top), jEnd = int(bottom); j < jEnd; ++j)
+    {
+        int targetPixelIndex = j * targetTile.width + left;
+        int sourcePixelIndex = (j - topLeft.y + sourceViewport.GetTop()) * sourceTile.width +
+                               (left - topLeft.x + sourceViewport.GetLeft());
+        for (int i = (left), iEnd = int(right); i < iEnd; ++i)
+        {
+            if (depthBuffer[targetPixelIndex] <= depth && sourceTile.alphaValues[sourcePixelIndex] != 0)
+            {
+                depthBuffer[targetPixelIndex] = depth;
+                targetTile.colors[targetPixelIndex] = sourceTile.colors[sourcePixelIndex];
+            }
+            targetPixelIndex++;
+            sourcePixelIndex++;
+        }
+    }
 }
 
-// ÒÉËÆÆúÓÃ
+// ç–‘ä¼¼å¼ƒç”¨
 bool HitTestTile(DVector2 point, DVector2 topLeft, Tile const& sourceTile, DRect sourceViewport)
 {
-	// ¼ÙÉèÁËvpsrcºÍ tilesrc ×óÉÏ½Ç¶ÔÆë
-	DVector2 sourcePoint = sourceViewport.topLeftPosition + point - topLeft;
-	int pixelIndex = sourcePoint.y * sourceTile.width + sourcePoint.x;
-	return IsInside(sourcePoint, sourceViewport) && sourceTile.alphaValues[pixelIndex] != 0;
+    // å‡è®¾äº†vpsrcå’Œ tilesrc å·¦ä¸Šè§’å¯¹é½
+    DVector2 sourcePoint = sourceViewport.topLeftPosition + point - topLeft;
+    int pixelIndex = sourcePoint.y * sourceTile.width + sourcePoint.x;
+    return IsInside(sourcePoint, sourceViewport) && sourceTile.alphaValues[pixelIndex] != 0;
 }
-
-

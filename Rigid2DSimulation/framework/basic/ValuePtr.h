@@ -1,8 +1,8 @@
-#pragma once
+ï»¿#pragma once
 #include "Utils.h"
 
-// ÒÆ¶¯Ïà¹ØµÄ»¹Ã»Ìí¼Ó£¬¶ÔÕâ·½Ãæ²»ÊÇºÜÓĞ°ÑÎÕ¡£
-template<class T>
+// ç§»åŠ¨ç›¸å…³çš„è¿˜æ²¡æ·»åŠ ï¼Œå¯¹è¿™æ–¹é¢ä¸æ˜¯å¾ˆæœ‰æŠŠæ¡ã€‚
+template <class T>
 struct ValuePtr
 {
     std::shared_ptr<T> pointer;

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Tile.h"
 
 wchar_t extern chineseCharacters[];
@@ -8,23 +8,22 @@ wchar_t extern uppercaseLetters[];
 wchar_t extern lowercaseLetters[];
 wchar_t extern additionalChineseCharacters[];
 
-// ÖĞÎÄ×ÖÌå¹æ¸ñ£º»­²¼£º600x600£¬´ÖÏ¸£º40£¬±£´æºó£º60x60¡£
-// ÓÉÓÚÀúÊ·Ô­Òò£¬ÑÕÉ«Ò»°ãÊÇ: (0,255,0)¡£
-struct Font {
-	int height = 0;
-	wstring chineseCharacters;
-	Tile missing;
-	map<wchar_t, Tile> glyphs;
+// ä¸­æ–‡å­—ä½“è§„æ ¼ï¼šç”»å¸ƒï¼š600x600ï¼Œç²—ç»†ï¼š40ï¼Œä¿å­˜åï¼š60x60ã€‚
+// ç”±äºå†å²åŸå› ï¼Œé¢œè‰²ä¸€èˆ¬æ˜¯: (0,255,0)ã€‚
+struct Font
+{
+    int height = 0;
+    wstring chineseCharacters;
+    Tile missing;
+    map<wchar_t, Tile> glyphs;
 
-	Font();
-	Font(int height);
+    Font();
+    Font(int height);
 
-	Tile const& operator[](wchar_t character) const;
-	// ÑÏ¸ñÀ´ËµÓÃµ¥¶ÀµÄ·½·¨¸üºÃ£¬µ«ÊÇÕâÑùºÜ·½±ã¡£
-	wstring GenerateRandomText(int count) const;
+    Tile const& operator[](wchar_t character) const;
+    // ä¸¥æ ¼æ¥è¯´ç”¨å•ç‹¬çš„æ–¹æ³•æ›´å¥½ï¼Œä½†æ˜¯è¿™æ ·å¾ˆæ–¹ä¾¿ã€‚
+    wstring GenerateRandomText(int count) const;
 
-	bool LoadFont(wstring const& name, wchar_t character);
-	bool Initialize();
+    bool LoadFont(wstring const& name, wchar_t character);
+    bool Initialize();
 };
-
-

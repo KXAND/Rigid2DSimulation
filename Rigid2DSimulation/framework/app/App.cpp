@@ -1,152 +1,213 @@
-#include "App.h"
+ï»¿#include "App.h"
 #include "Tile.h"
 
 App::App()
 {
-	width = 800; height = 600;
-	title = L"³ÌÐò"; windowClassName = L"class";
+    width = 800;
+    height = 600;
+    title = L"ç¨‹åº";
+    windowClassName = L"class";
 }
 void App::Init()
 {
-	AddLog(L"¿ªÊ¼¼ÓÔØ³ÌÐò.\n");
-	SetLocale(); screen = Tile(width, height);
-	depthBuffer = initialDepthBuffer = DepthBuffer(width * height, -DBL_MAX);
-	bool isFontLoaded = font.Initialize();
-	AddLog(isFontLoaded ? L"³É¹¦¼ÓÔØ×ÖÌåÄ£¿é.\n" : L"¼ÓÔØ×ÖÌåÄ£¿éÊ§°Ü.\n");
+    AddLog(L"å¼€å§‹åŠ è½½ç¨‹åº.\n");
+    SetLocale();
+    screen = Tile(width, height);
+    depthBuffer = initialDepthBuffer = DepthBuffer(width * height, -DBL_MAX);
+    bool isFontLoaded = font.Initialize();
+    AddLog(isFontLoaded ? L"æˆåŠŸåŠ è½½å­—ä½“æ¨¡å—.\n" : L"åŠ è½½å­—ä½“æ¨¡å—å¤±è´¥.\n");
 
-	HRESULT dpiAwarenessResult = SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-	AddLog(dpiAwarenessResult == S_OK ? L"³É¹¦ÉèÖÃ DPI ¸ÐÖª.\n" : L"ÉèÖÃ DPI ¸ÐÖªÊ§°Ü.\n");
-	instanceHandle = GetModuleHandle(NULL);
-	AddLog(instanceHandle ? L"³É¹¦È¡µÃÄ£¿é¾ä±ú.\n" : L"È¡µÃÄ£¿é¾ä±úÊ§°Ü.\n");
+    HRESULT dpiAwarenessResult = SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+    AddLog(dpiAwarenessResult == S_OK ? L"æˆåŠŸè®¾ç½® DPI æ„ŸçŸ¥.\n" : L"è®¾ç½® DPI æ„ŸçŸ¥å¤±è´¥.\n");
+    instanceHandle = GetModuleHandle(NULL);
+    AddLog(instanceHandle ? L"æˆåŠŸå–å¾—æ¨¡å—å¥æŸ„.\n" : L"å–å¾—æ¨¡å—å¥æŸ„å¤±è´¥.\n");
 
-	RegisterWindowClass(); CreateApplicationWindow(); bool isAudioLoaded = waveOutput.Initialize();
-	AddLog(isAudioLoaded ? L"³É¹¦¼ÓÔØÉùÒôÄ£¿é.\n" : L"¼ÓÔØÉùÒôÄ£¿éÊ§°Ü.\n");
-	input.Initialize(windowHandle); InitializeBitmapInfo(); LoadLocalizationFile();
+    RegisterWindowClass();
+    CreateApplicationWindow();
+    bool isAudioLoaded = waveOutput.Initialize();
+    AddLog(isAudioLoaded ? L"æˆåŠŸåŠ è½½å£°éŸ³æ¨¡å—.\n" : L"åŠ è½½å£°éŸ³æ¨¡å—å¤±è´¥.\n");
+    input.Initialize(windowHandle);
+    InitializeBitmapInfo();
+    LoadLocalizationFile();
 
-	deviceContext = GetDC(windowHandle);
-	AddLog(deviceContext ? L"³É¹¦È¡µÃÉè±¸»·¾³¾ä±ú.\n" : L"È¡µÃÉè±¸»·¾³¾ä±úÊ§°Ü.\n");
-	systemCursor = LoadCursorW(NULL, IDC_ARROW);
-	AddLog(systemCursor ? L"³É¹¦¼ÓÔØ¹â±ê.\n" : L"¼ÓÔØ¹â±êÊ§°Ü.\n");
+    deviceContext = GetDC(windowHandle);
+    AddLog(deviceContext ? L"æˆåŠŸå–å¾—è®¾å¤‡çŽ¯å¢ƒå¥æŸ„.\n" : L"å–å¾—è®¾å¤‡çŽ¯å¢ƒå¥æŸ„å¤±è´¥.\n");
+    systemCursor = LoadCursorW(NULL, IDC_ARROW);
+    AddLog(systemCursor ? L"æˆåŠŸåŠ è½½å…‰æ ‡.\n" : L"åŠ è½½å…‰æ ‡å¤±è´¥.\n");
 }
 void App::Run(bool showConsole)
 {
-	if (!showConsole) { HideConsole(); }
-	MSG message{}; frameRate.Start(); ShowWindow(windowHandle, SW_SHOW);
+    if (!showConsole)
+    {
+        HideConsole();
+    }
+    MSG message{};
+    frameRate.Start();
+    ShowWindow(windowHandle, SW_SHOW);
 
-	while (true)
-	{
-		if (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE))
-		{
-			if (message.message == WM_QUIT) { break; }
-			TranslateMessage(&message);
-			DispatchMessageW(&message);
-		}
-		else
-		{
-			bool isWindowTitleUpdated = SetWindowText(windowHandle, title.c_str());
-			if (!isWindowTitleUpdated) { AddLog(L"ÉèÖÃ±êÌâÊ§°Ü.\n"); }
-			frameRate.Update(); ResetDepthBuffer();
-			bool isMouseSynchronized = input.SyncMouse(windowHandle);
-			if (!isMouseSynchronized) { AddLog(L"Í¬²½Êó±êÎ»ÖÃÊ§°Ü.\n");
-			}
-			Update(); bool isAudioPlayed = waveOutput.Play();
-			if (!isAudioPlayed) { AddLog(L"²¥·ÅÉùÒôÊ§°Ü.\n"); }
-			PresentScreen(); input.Reset(); inputOwners.Reset();
-		}
-	} ReleaseDC(windowHandle, deviceContext);
-	waveOutput.Shutdown(); AddLog(L"ÍË³ö³ÌÐò.\n\n");
+    while (true)
+    {
+        if (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE))
+        {
+            if (message.message == WM_QUIT)
+            {
+                break;
+            }
+            TranslateMessage(&message);
+            DispatchMessageW(&message);
+        }
+        else
+        {
+            bool isWindowTitleUpdated = SetWindowText(windowHandle, title.c_str());
+            if (!isWindowTitleUpdated)
+            {
+                AddLog(L"è®¾ç½®æ ‡é¢˜å¤±è´¥.\n");
+            }
+            frameRate.Update();
+            ResetDepthBuffer();
+            bool isMouseSynchronized = input.SyncMouse(windowHandle);
+            if (!isMouseSynchronized)
+            {
+                AddLog(L"åŒæ­¥é¼ æ ‡ä½ç½®å¤±è´¥.\n");
+            }
+            Update();
+            bool isAudioPlayed = waveOutput.Play();
+            if (!isAudioPlayed)
+            {
+                AddLog(L"æ’­æ”¾å£°éŸ³å¤±è´¥.\n");
+            }
+            PresentScreen();
+            input.Reset();
+            inputOwners.Reset();
+        }
+    }
+    ReleaseDC(windowHandle, deviceContext);
+    waveOutput.Shutdown();
+    AddLog(L"é€€å‡ºç¨‹åº.\n\n");
 }
 
 void App::ResetDepthBuffer()
 {
-	memcpy(depthBuffer.data(), initialDepthBuffer.data(), depthBuffer.size() * sizeof(double));
+    memcpy(depthBuffer.data(), initialDepthBuffer.data(), depthBuffer.size() * sizeof(double));
 }
 void App::PresentScreen()
 {
-	int isScreenPresented = SetDIBitsToDevice(deviceContext, 0, 0, width, height,
-		0, 0, 0, height, screen.colors.data(), &bitmapInfo, DIB_RGB_COLORS);
-	if (!isScreenPresented) { AddLog(L"Õ¹Ê¾ÆÁÄ»Ê§°Ü.\n"); }
+    int isScreenPresented = SetDIBitsToDevice(deviceContext, 0, 0, width, height,
+                                              0, 0, 0, height, screen.colors.data(), &bitmapInfo, DIB_RGB_COLORS);
+    if (!isScreenPresented)
+    {
+        AddLog(L"å±•ç¤ºå±å¹•å¤±è´¥.\n");
+    }
 }
 void App::AddLog(wstring const& text)
 {
-	FILE* logFile = OpenFile(L"ÔËÐÐ¼ÇÂ¼.log", L"a");
-	if (!logFile) { PrintConsole(L"ÔËÐÐ¼ÇÂ¼´ò¿ªÊ§°Ü¡£", true); }
-	else { fwprintf(logFile, text.c_str()); fclose(logFile); }
+    FILE* logFile = OpenFile(L"è¿è¡Œè®°å½•.log", L"a");
+    if (!logFile)
+    {
+        PrintConsole(L"è¿è¡Œè®°å½•æ‰“å¼€å¤±è´¥ã€‚", true);
+    }
+    else
+    {
+        fwprintf(logFile, text.c_str());
+        fclose(logFile);
+    }
 }
 wstring App::GetLocalizedString(wstring const& id) const
 {
-	if (id.empty()) { return {}; }
+    if (id.empty())
+    {
+        return {};
+    }
 
-	auto it = localizationDict.find(id);
-	if (it == localizationDict.end()) { return {}; }
-	auto const& translations = it->second;
-	return languageIdx >= translations.size() ? L"" : translations[languageIdx];
+    auto it = localizationDict.find(id);
+    if (it == localizationDict.end())
+    {
+        return {};
+    }
+    auto const& translations = it->second;
+    return languageIdx >= translations.size() ? L"" : translations[languageIdx];
 }
 
 void App::InitializeBitmapInfo()
 {
-	BITMAPINFOHEADER bitmapInfoHeader{};
-	bitmapInfoHeader.biSize = sizeof(bitmapInfoHeader);
-	bitmapInfoHeader.biWidth = width;
-	bitmapInfoHeader.biHeight = -height;
-	bitmapInfoHeader.biPlanes = 1;
-	bitmapInfoHeader.biBitCount = 24;
-	bitmapInfoHeader.biCompression = BI_RGB;
-	bitmapInfo.bmiHeader = bitmapInfoHeader;
+    BITMAPINFOHEADER bitmapInfoHeader{};
+    bitmapInfoHeader.biSize = sizeof(bitmapInfoHeader);
+    bitmapInfoHeader.biWidth = width;
+    bitmapInfoHeader.biHeight = -height;
+    bitmapInfoHeader.biPlanes = 1;
+    bitmapInfoHeader.biBitCount = 24;
+    bitmapInfoHeader.biCompression = BI_RGB;
+    bitmapInfo.bmiHeader = bitmapInfoHeader;
 }
 void App::LoadLocalizationFile()
 {
-	FILE* file = OpenFile(L"localization.txt", L"r");
-	if (!file) { return; }
+    FILE* file = OpenFile(L"localization.txt", L"r");
+    if (!file)
+    {
+        return;
+    }
 
-	bool dollar = false;
-	wstringstream textBuffer; wstring id;
-	vector<wstring> translations; wchar_t character = getwc(file);
-	while (character != WEOF)
-	{
-		if (character == L'$')
-		{
-			if (dollar)
-			{
-				translations.push_back(textBuffer.str());
-				textBuffer = wstringstream();
-			} dollar = !dollar;
-		}
-		else if (dollar) { textBuffer << character; }
-		else if (!iswspace(character))
-		{
-			if (!translations.empty())
-			{
-				localizationDict[id] = translations;
-				translations.clear(); id.clear();
-			} id += character;
-		} character = getwc(file);
-	}
-	if (!translations.empty()) { localizationDict[id] = translations; }
-	fclose(file);
+    bool dollar = false;
+    wstringstream textBuffer;
+    wstring id;
+    vector<wstring> translations;
+    wchar_t character = getwc(file);
+    while (character != WEOF)
+    {
+        if (character == L'$')
+        {
+            if (dollar)
+            {
+                translations.push_back(textBuffer.str());
+                textBuffer = wstringstream();
+            }
+            dollar = !dollar;
+        }
+        else if (dollar)
+        {
+            textBuffer << character;
+        }
+        else if (!iswspace(character))
+        {
+            if (!translations.empty())
+            {
+                localizationDict[id] = translations;
+                translations.clear();
+                id.clear();
+            }
+            id += character;
+        }
+        character = getwc(file);
+    }
+    if (!translations.empty())
+    {
+        localizationDict[id] = translations;
+    }
+    fclose(file);
 }
 void App::RegisterWindowClass()
 {
-	WNDCLASSEXW windowClass{};
-	windowClass.cbSize = sizeof(windowClass);
-	windowClass.lpfnWndProc = WindowProcedure;
-	windowClass.hInstance = instanceHandle;
-	windowClass.lpszClassName = windowClassName.c_str();
+    WNDCLASSEXW windowClass{};
+    windowClass.cbSize = sizeof(windowClass);
+    windowClass.lpfnWndProc = WindowProcedure;
+    windowClass.hInstance = instanceHandle;
+    windowClass.lpszClassName = windowClassName.c_str();
 
-	ATOM windowClassAtom = RegisterClassExW(&windowClass);
-	AddLog(windowClassAtom ? L"³É¹¦×¢²á´°¿ÚÀà.\n" : L"×¢²á´°¿ÚÀàÊ§°Ü.\n");
+    ATOM windowClassAtom = RegisterClassExW(&windowClass);
+    AddLog(windowClassAtom ? L"æˆåŠŸæ³¨å†Œçª—å£ç±».\n" : L"æ³¨å†Œçª—å£ç±»å¤±è´¥.\n");
 }
 void App::CreateApplicationWindow()
 {
-	RECT clientRect{}; clientRect.right = width; clientRect.bottom = height;
-	DWORD windowStyle = WS_SYSMENU | WS_CAPTION;
-	BOOL isWindowRectAdjusted = AdjustWindowRect(&clientRect, windowStyle, FALSE);
-	AddLog(isWindowRectAdjusted ? L"³É¹¦µ÷Õû´°¿Ú¾ØÐÎ.\n" : L"µ÷Õû´°¿Ú¾ØÐÎÊ§°Ü.\n");
-	int windowWidth = clientRect.right - clientRect.left;
-	int windowHeight = clientRect.bottom - clientRect.top;
+    RECT clientRect{};
+    clientRect.right = width;
+    clientRect.bottom = height;
+    DWORD windowStyle = WS_SYSMENU | WS_CAPTION;
+    BOOL isWindowRectAdjusted = AdjustWindowRect(&clientRect, windowStyle, FALSE);
+    AddLog(isWindowRectAdjusted ? L"æˆåŠŸè°ƒæ•´çª—å£çŸ©å½¢.\n" : L"è°ƒæ•´çª—å£çŸ©å½¢å¤±è´¥.\n");
+    int windowWidth = clientRect.right - clientRect.left;
+    int windowHeight = clientRect.bottom - clientRect.top;
 
-	windowHandle = CreateWindowExW(0, windowClassName.c_str(),
-		title.c_str(), windowStyle, 0, 0, windowWidth, windowHeight, NULL, NULL, instanceHandle, this);
-	AddLog(windowHandle ? L"³É¹¦´´½¨´°¿Ú.\n" : L"´´½¨´°¿ÚÊ§°Ü.\n");
+    windowHandle = CreateWindowExW(0, windowClassName.c_str(),
+                                   title.c_str(), windowStyle, 0, 0, windowWidth, windowHeight, NULL, NULL, instanceHandle, this);
+    AddLog(windowHandle ? L"æˆåŠŸåˆ›å»ºçª—å£.\n" : L"åˆ›å»ºçª—å£å¤±è´¥.\n");
 }
-

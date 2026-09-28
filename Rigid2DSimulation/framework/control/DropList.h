@@ -1,57 +1,57 @@
-#pragma once
+ï»¿#pragma once
 #include "Font.h"
 #include "Control.h"
 
 typedef function<wstring(int, App&)> DropListItemNameProvider;
-wstring GetDefaultDropListItemName(int id, App &app);
+wstring GetDefaultDropListItemName(int id, App& app);
 
-struct DropList : Control {
-	DVector2 gap;
-	double depth = 0;
-	wstring text;
-	int width = 0, height = 0;
+struct DropList : Control
+{
+    DVector2 gap;
+    double depth = 0;
+    wstring text;
+    int width = 0, height = 0;
 
-	// ¼´Ê¹Ä³Ğ©Éè¼ÆÖĞ selectedIndex ¿ÉÒÔÈ¡ -1£¬Ä¬ÈÏÖµ»¹ÊÇÉè³É 0 °É¡£
-	// ÕâÀï selectedIndex ÄÜÈ¡Ê²Ã´Öµ»¹Ã»ÏëÇå³şµÄ£¬ÄÜ²»ÄÜÈ¡ -1 Ö®Àà£¬ÒªÊµ¼ùÖĞµÃµ½¡£
-	int selectedIndex = 0;
-	int itemHeight = 0;
-	int itemCount = 0;
-	DropListItemNameProvider itemNameProvider = GetDefaultDropListItemName;
+    // å³ä½¿æŸäº›è®¾è®¡ä¸­ selectedIndex å¯ä»¥å– -1ï¼Œé»˜è®¤å€¼è¿˜æ˜¯è®¾æˆ 0 å§ã€‚
+    // è¿™é‡Œ selectedIndex èƒ½å–ä»€ä¹ˆå€¼è¿˜æ²¡æƒ³æ¸…æ¥šçš„ï¼Œèƒ½ä¸èƒ½å– -1 ä¹‹ç±»ï¼Œè¦å®è·µä¸­å¾—åˆ°ã€‚
+    int selectedIndex = 0;
+    int itemHeight = 0;
+    int itemCount = 0;
+    DropListItemNameProvider itemNameProvider = GetDefaultDropListItemName;
 
-	double signRadius = 0;
-	int signMargin = 0;
-	int textMarginX = 0;
-	Color textColor, markColor, editColor, frameColor, normalColor, invalidColor, hoveredColor;
+    double signRadius = 0;
+    int signMargin = 0;
+    int textMarginX = 0;
+    Color textColor, markColor, editColor, frameColor, normalColor, invalidColor, hoveredColor;
 
-	// -1 ´ú±íÃ»ÓĞĞü¸¡ÔÚÈÎºÎÑ¡ÏîÉÏÃæ¡£
-	int hoveredItemIndex = -1;
-	int textWidth = 0;
-	bool edit = false;
-	bool enabled = true;
-	bool hovered = false;
+    // -1 ä»£è¡¨æ²¡æœ‰æ‚¬æµ®åœ¨ä»»ä½•é€‰é¡¹ä¸Šé¢ã€‚
+    int hoveredItemIndex = -1;
+    int textWidth = 0;
+    bool edit = false;
+    bool enabled = true;
+    bool hovered = false;
 
-	DropList(int width = 0, DropListItemNameProvider const &itemNameProvider = GetDefaultDropListItemName);
-	int GetWidth() const override;
-	int GetHeight() const override;
+    DropList(int width = 0, DropListItemNameProvider const& itemNameProvider = GetDefaultDropListItemName);
+    int GetWidth() const override;
+    int GetHeight() const override;
 
-	DVector2 GetBoxTopLeft() const;
-	DVector2 GetItemsTopLeft() const;
-	void RenderMain(App& app);
-	void RenderItems(App& app);
-	void Render(App& app);
-	virtual void Sync(App& app) {}
-	// ÏÖÔÚÄ¬ÈÏµÄÊÇ Upload µÄĞ£Õı²»¸Ä±ä¿Ø¼ş±¾ÉíÖµ£¬Ö»¸Ä±äÄ¿±êÖµ¡£
-	virtual void Upload(App& app) const {}
+    DVector2 GetBoxTopLeft() const;
+    DVector2 GetItemsTopLeft() const;
+    void RenderMain(App& app);
+    void RenderItems(App& app);
+    void Render(App& app);
+    virtual void Sync(App& app) {}
+    // ç°åœ¨é»˜è®¤çš„æ˜¯ Upload çš„æ ¡æ­£ä¸æ”¹å˜æ§ä»¶æœ¬èº«å€¼ï¼Œåªæ”¹å˜ç›®æ ‡å€¼ã€‚
+    virtual void Upload(App& app) const {}
 
-	void Update(App& app) override;
-	void Discard(App& app) override;
-	void PreUpdate(App& app) override;
+    void Update(App& app) override;
+    void Discard(App& app) override;
+    void PreUpdate(App& app) override;
 };
-struct LocalizedDropList : DropList {
-	wstring textId;
-	LocalizedDropList() = default;
-	LocalizedDropList(wstring const& id, int width, DropListItemNameProvider const& itemNameProvider = GetDefaultDropListItemName);
-	void Update(App& app) override;
+struct LocalizedDropList : DropList
+{
+    wstring textId;
+    LocalizedDropList() = default;
+    LocalizedDropList(wstring const& id, int width, DropListItemNameProvider const& itemNameProvider = GetDefaultDropListItemName);
+    void Update(App& app) override;
 };
-
-

@@ -1,4 +1,4 @@
-#include "UserInterface.h"
+ï»¿#include "UserInterface.h"
 #include "SimulationApp.h"
 #include "FloatPanel.h"
 #include "GlobalPanel.h"
@@ -11,34 +11,49 @@
 #include "MenuPanel.h"
 #include "BottomPanel.h"
 
-
-void UserInterface::SortFloatPanels() { sort(floatPanels.begin(), floatPanels.end(), CompareFloatPanels); }
-void UserInterface::Init(SimulationApp& simulationApp) {
-	globalPanel = std::make_shared<GlobalPanel>(simulationApp); floatPanels.push_back(&*globalPanel);
-	bodyPanel = std::make_shared<BodyPanel>(simulationApp); floatPanels.push_back(&*bodyPanel);
-	connectionPanel = std::make_shared<ConnectionPanel>(simulationApp); floatPanels.push_back(&*connectionPanel);
-	commandPanel = std::make_shared<CommandPanel>(simulationApp); floatPanels.push_back(&*commandPanel);
-	parameterPanel = std::make_shared<ParameterPanel>(simulationApp); floatPanels.push_back(&*parameterPanel);
-	languagePanel = std::make_shared<LanguagePanel>(simulationApp); floatPanels.push_back(&*languagePanel);
-	aboutPanel = std::make_shared<AboutPanel>(simulationApp); floatPanels.push_back(&*aboutPanel);
-
-	// menuPanel ·ÅÔÚºóÃæÊÇÒòÎªÒªµÈ float_panel ÏÈ¼ÓÔØÍê¡£
-	// menuPanel ·ÅÔÚºóÃæÊÇÒòÎªÒªµÈ float_panel ÏÈ¼ÓÔØÍê¡£
-	// ÕâÖ÷ÒªÊÇ BtFPn µÄÔ­Òò¡£
-	menuPanel = std::make_shared<MenuPanel>(simulationApp);
-	bottomPanel = std::make_shared<BottomPanel>(simulationApp);
+void UserInterface::SortFloatPanels()
+{
+    sort(floatPanels.begin(), floatPanels.end(), CompareFloatPanels);
 }
-void UserInterface::Update(SimulationApp& simulationApp) {
-	menuPanel->Update(simulationApp);
-	bottomPanel->Update(simulationApp);
-	for (auto floatPanel : floatPanels) { floatPanel->Update(simulationApp); }
+void UserInterface::Init(SimulationApp& simulationApp)
+{
+    globalPanel = std::make_shared<GlobalPanel>(simulationApp);
+    floatPanels.push_back(&*globalPanel);
+    bodyPanel = std::make_shared<BodyPanel>(simulationApp);
+    floatPanels.push_back(&*bodyPanel);
+    connectionPanel = std::make_shared<ConnectionPanel>(simulationApp);
+    floatPanels.push_back(&*connectionPanel);
+    commandPanel = std::make_shared<CommandPanel>(simulationApp);
+    floatPanels.push_back(&*commandPanel);
+    parameterPanel = std::make_shared<ParameterPanel>(simulationApp);
+    floatPanels.push_back(&*parameterPanel);
+    languagePanel = std::make_shared<LanguagePanel>(simulationApp);
+    floatPanels.push_back(&*languagePanel);
+    aboutPanel = std::make_shared<AboutPanel>(simulationApp);
+    floatPanels.push_back(&*aboutPanel);
+
+    // menuPanel æ”¾åœ¨åé¢æ˜¯å› ä¸ºè¦ç­‰ float_panel å…ˆåŠ è½½å®Œã€‚
+    // menuPanel æ”¾åœ¨åé¢æ˜¯å› ä¸ºè¦ç­‰ float_panel å…ˆåŠ è½½å®Œã€‚
+    // è¿™ä¸»è¦æ˜¯ BtFPn çš„åŸå› ã€‚
+    menuPanel = std::make_shared<MenuPanel>(simulationApp);
+    bottomPanel = std::make_shared<BottomPanel>(simulationApp);
 }
-void UserInterface::PreUpdate(SimulationApp& simulationApp) {
-	menuPanel->PreUpdate(simulationApp);
-	bottomPanel->PreUpdate(simulationApp);
-	SortFloatPanels();
-	for (auto floatPanel : floatPanels) { floatPanel->PreUpdate(simulationApp); }
+void UserInterface::Update(SimulationApp& simulationApp)
+{
+    menuPanel->Update(simulationApp);
+    bottomPanel->Update(simulationApp);
+    for (auto floatPanel : floatPanels)
+    {
+        floatPanel->Update(simulationApp);
+    }
 }
-
-
-
+void UserInterface::PreUpdate(SimulationApp& simulationApp)
+{
+    menuPanel->PreUpdate(simulationApp);
+    bottomPanel->PreUpdate(simulationApp);
+    SortFloatPanels();
+    for (auto floatPanel : floatPanels)
+    {
+        floatPanel->PreUpdate(simulationApp);
+    }
+}

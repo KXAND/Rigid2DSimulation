@@ -1,4 +1,4 @@
-#include "ScriptStatement.h"
+ï»¿#include "ScriptStatement.h"
 #include "BracketGroup.h"
 
 ScriptStatement::ScriptStatement(wstring const& type) : type(type)
@@ -66,7 +66,7 @@ ScriptStatement ParseDefinition(vector<BracketGroup> const& groups)
     {
         return ScriptStatement(L"error");
     }
-    // ²»ÏëÈÃÕâÀïµÄº¯ÊıºÍ²ÎÊıÒ²Ç£³¶µ½ global ÀïÃæÈ¥£¬¸Ğ¾õÍêÈ«²»±ØÒª¡£
+    // ä¸æƒ³è®©è¿™é‡Œçš„å‡½æ•°å’Œå‚æ•°ä¹Ÿç‰µæ‰¯åˆ° global é‡Œé¢å»ï¼Œæ„Ÿè§‰å®Œå…¨ä¸å¿…è¦ã€‚
     if (groups[1].token.type != L"var" || groups[1].token.isGlobal)
     {
         return ScriptStatement(L"error");

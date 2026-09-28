@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 #include "Tile.h"
 #include "Aabb.h"
 
@@ -10,84 +10,83 @@ struct SimulationApp;
 struct Shape;
 struct Connection;
 /// <summary>
-/// ∂®“Âµ•∏ˆŒÔÃÂµƒŒÔ¿Ì Ù–‘
+/// ÂÆö‰πâÂçï‰∏™Áâ©‰ΩìÁöÑÁâ©ÁêÜÂ±ûÊÄß
 /// </summary>
 struct Body
 {
-	bool isMarkedForDeletion = false;
-	bool point = false;
-	bool fixed = false;
-	std::shared_ptr<Program> positionProgram, angleProgram, angularVelocityProgram;
-	double inertia = 0;
-	bool hasPositionPreset = false;
-	bool hasAnglePreset = false;
-	bool hasAngularVelocityPreset = false;
-	vector<Vector2> track;
-	vector<std::shared_ptr<Shape>> shapes;
-	vector<Connection*> connections;
-	Vector2 position, velocity;
-	Aabb box;
-	Matrix2 transform = Matrix2::Identity();
-	wstring scriptText, temporaryScriptText;
-	double radian = 0, velocityAngular = 0;
-	double invMass = 0;// ÷ ¡øµπ ˝£¨Œ™0±Ì æ¥ÀŒÔÃÂ≤ª≤Œ”Î‘À∂Øº∆À„
-	double invInertia = 0;// ◊™∂Øπﬂ¡øµπ ˝
-	double area = 0, density = 0;
-	double elasticity = 0;// µØ–‘œµ ˝
-	double frictionStatic = 0, frictionDynamic = 0;
-	double dampCoeff = 0, dampCoeffAngular = 0;
-	double chargeDensity = 0, charge = 0;
+    bool isMarkedForDeletion = false;
+    bool point = false;
+    bool fixed = false;
+    std::shared_ptr<Program> positionProgram, angleProgram, angularVelocityProgram;
+    double inertia = 0;
+    bool hasPositionPreset = false;
+    bool hasAnglePreset = false;
+    bool hasAngularVelocityPreset = false;
+    vector<Vector2> track;
+    vector<std::shared_ptr<Shape>> shapes;
+    vector<Connection*> connections;
+    Vector2 position, velocity;
+    Aabb box;
+    Matrix2 transform = Matrix2::Identity();
+    wstring scriptText, temporaryScriptText;
+    double radian = 0, velocityAngular = 0;
+    double invMass = 0;    // Ë¥®ÈáèÂÄíÊï∞Ôºå‰∏∫0Ë°®Á§∫Ê≠§Áâ©‰Ωì‰∏çÂèÇ‰∏éËøêÂä®ËÆ°ÁÆó
+    double invInertia = 0; // ËΩ¨Âä®ÊÉØÈáèÂÄíÊï∞
+    double area = 0, density = 0;
+    double elasticity = 0; // ÂºπÊÄßÁ≥ªÊï∞
+    double frictionStatic = 0, frictionDynamic = 0;
+    double dampCoeff = 0, dampCoeffAngular = 0;
+    double chargeDensity = 0, charge = 0;
 
-	bool visited = false;
-	bool hovered = false;
-	bool dragged = false;
-	double radianDrag = 0, velocityAngularDrag = 0;
-	Vector2 relativeDragPoint;
-	double depthShape = 0, depthPoint = 0;
-	double pointRadius = 0;
+    bool visited = false;
+    bool hovered = false;
+    bool dragged = false;
+    double radianDrag = 0, velocityAngularDrag = 0;
+    Vector2 relativeDragPoint;
+    double depthShape = 0, depthPoint = 0;
+    double pointRadius = 0;
 
-	Color innerColor;
-	Color borderColor;
-	Color hoveredColor;
-	Color draggedColor;
-	Color selectedColor;
-	Color selectedConnectionColor;
+    Color innerColor;
+    Color borderColor;
+    Color hoveredColor;
+    Color draggedColor;
+    Color selectedColor;
+    Color selectedConnectionColor;
 
-	Body();
-	Body(Vector2 const& position);
-	Body(std::shared_ptr<Shape> shape);
-	Body(vector<std::shared_ptr<Shape>> const& shapes);
-	Body(SimulationApp& simulationApp, FILE* file);
-	void Save(FILE* file) const;
+    Body();
+    Body(Vector2 const& position);
+    Body(std::shared_ptr<Shape> shape);
+    Body(vector<std::shared_ptr<Shape>> const& shapes);
+    Body(SimulationApp& simulationApp, FILE* file);
+    void Save(FILE* file) const;
 
-	Vector2 GenerateRandomPointInside() const;
-	bool IsInside(Vector2 p) const;
-	void RefreshFromScript(SimulationApp& simulationApp);
-	void ReadConfig(Value const& config);
-	void UpdateShapesPositionAndAABB();
-	void Warp(DRect rectangle);
-	void RegisterGrid(SimulationApp& simulationApp);
+    Vector2 GenerateRandomPointInside() const;
+    bool IsInside(Vector2 p) const;
+    void RefreshFromScript(SimulationApp& simulationApp);
+    void ReadConfig(Value const& config);
+    void UpdateShapesPositionAndAABB();
+    void Warp(DRect rectangle);
+    void RegisterGrid(SimulationApp& simulationApp);
+
 private:
-	double GetDepth() const;
-	void UpdateAABB();
+    double GetDepth() const;
+    void UpdateAABB();
 
 public:
-	void Init(bool resetPosition = false);
-	void Render(SimulationApp& simulationApp) const;
-	void Step(SimulationApp& simulationApp, double stepDeltaTime);
-	void Update(SimulationApp& simulationApp);
-	void PreUpdate(SimulationApp& simulationApp);
+    void Init(bool resetPosition = false);
+    void Render(SimulationApp& simulationApp) const;
+    void Step(SimulationApp& simulationApp, double stepDeltaTime);
+    void Update(SimulationApp& simulationApp);
+    void PreUpdate(SimulationApp& simulationApp);
 
 private:
-	void UpdateDragAngle(SimulationApp& simulationApp);
-	void HandleDragWhole(SimulationApp& simulationApp);
-	void HandleDragPoint(SimulationApp& simulationApp);
-	void HandleDragForce(SimulationApp& simulationApp, double stepDeltaTime);
-	void FollowPresetPosition(SimulationApp& simulationApp, double stepDeltaTime);
-	void FollowPresetAngle(SimulationApp& simulationApp, double stepDeltaTime);
-	void FollowPresetAngularVelocity(SimulationApp& simulationApp);
-
+    void UpdateDragAngle(SimulationApp& simulationApp);
+    void HandleDragWhole(SimulationApp& simulationApp);
+    void HandleDragPoint(SimulationApp& simulationApp);
+    void HandleDragForce(SimulationApp& simulationApp, double stepDeltaTime);
+    void FollowPresetPosition(SimulationApp& simulationApp, double stepDeltaTime);
+    void FollowPresetAngle(SimulationApp& simulationApp, double stepDeltaTime);
+    void FollowPresetAngularVelocity(SimulationApp& simulationApp);
 };
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulombConstant);
-

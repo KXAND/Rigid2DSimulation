@@ -1,4 +1,4 @@
-#include "Vector2.h"
+﻿#include "Vector2.h"
 
 Vector2::Vector2(wstring const& text)
 {
@@ -14,9 +14,8 @@ wstring ToWString(Vector2 vector)
 
 bool IsInside(Vector2 vector, Rect rectangle)
 {
-    return
-        IsBetween(vector.x, rectangle.GetLeft(), rectangle.GetRight()) &&
-        IsBetween(vector.y, rectangle.GetTop(), rectangle.GetBottom());
+    return IsBetween(vector.x, rectangle.GetLeft(), rectangle.GetRight()) &&
+           IsBetween(vector.y, rectangle.GetTop(), rectangle.GetBottom());
 }
 
 /// <summary>0__
@@ -61,8 +60,7 @@ double GetDistanceSquare(Vector2 firstPoint, Vector2 secondPoint, Vector2 point)
     double secondDistanceSquare = (point - secondPoint).GetLengthSquared();
     double segmentLengthSquare = (firstPoint - secondPoint).GetLengthSquared();
     double distanceDifference = firstDistanceSquare - secondDistanceSquare;
-    return
-        segmentLengthSquare + secondDistanceSquare < firstDistanceSquare ? secondDistanceSquare : /// <summary>7__
-        segmentLengthSquare + firstDistanceSquare < secondDistanceSquare ? firstDistanceSquare :
-        (firstDistanceSquare + secondDistanceSquare) / 2 - segmentLengthSquare / 4 - distanceDifference * distanceDifference / (4 * segmentLengthSquare); /// <summary>8__
+    return segmentLengthSquare + secondDistanceSquare < firstDistanceSquare ? secondDistanceSquare : /// <summary>7__
+               segmentLengthSquare + firstDistanceSquare < secondDistanceSquare ? firstDistanceSquare
+                                                                                : (firstDistanceSquare + secondDistanceSquare) / 2 - segmentLengthSquare / 4 - distanceDifference * distanceDifference / (4 * segmentLengthSquare); /// <summary>8__
 }

@@ -1,4 +1,4 @@
-#include "ScriptExpression.h"
+Ôªø#include "ScriptExpression.h"
 #include "BracketGroup.h"
 
 ScriptExpression::ScriptExpression(wstring const& type) : type(type)
@@ -10,9 +10,8 @@ ScriptExpression::ScriptExpression(double number) : number(number)
     type = L"num";
 }
 
-ScriptExpression::ScriptExpression(wstring const& functionName, vector<ScriptExpression> const& arguments) :
-    functionName(functionName),
-    arguments(arguments)
+ScriptExpression::ScriptExpression(wstring const& functionName, vector<ScriptExpression> const& arguments) : functionName(functionName),
+                                                                                                             arguments(arguments)
 {
     type = L"call";
 }
@@ -86,7 +85,7 @@ PreExpression::PreExpression(Token const& token) : token(token)
 
 bool IsUnaryOperator(Token const& token)
 {
-    // ”…”⁄ +£¨- µƒÃÿ ‚–‘£¨À¸√«∂º±ªµ±≥…∂˛‘™‘ÀÀ„∑˚¥¶¿Ì°£
+    // Áî±‰∫é +Ôºå- ÁöÑÁâπÊÆäÊÄßÔºåÂÆÉ‰ª¨ÈÉΩË¢´ÂΩìÊàê‰∫åÂÖÉËøêÁÆóÁ¨¶Â§ÑÁêÜ„ÄÇ
     if (token.type.empty())
     {
         return false;
@@ -126,7 +125,7 @@ bool ParseNegation(vector<PreExpression> const& preExpressions, ScriptExpression
             }
 
             auto reducedExpressions = vector<PreExpression>(preExpressions.begin(), preExpressions.begin() + operatorIndex);
-            reducedExpressions.push_back(ScriptExpression(operatorType + operatorType, { preExpressions[operatorIndex + 1].expression }));
+            reducedExpressions.push_back(ScriptExpression(operatorType + operatorType, {preExpressions[operatorIndex + 1].expression}));
             int tailCount = int(preExpressions.size());
             for (int copyIndex = operatorIndex + 2; copyIndex < tailCount; ++copyIndex)
             {
@@ -163,7 +162,7 @@ bool ParseBinary(vector<PreExpression> const& preExpressions, ScriptExpression& 
             }
 
             auto reducedExpressions = vector<PreExpression>(preExpressions.begin(), preExpressions.begin() + operatorIndex - 1);
-            reducedExpressions.push_back(ScriptExpression(operatorType, { preExpressions[operatorIndex - 1].expression, preExpressions[operatorIndex + 1].expression }));
+            reducedExpressions.push_back(ScriptExpression(operatorType, {preExpressions[operatorIndex - 1].expression, preExpressions[operatorIndex + 1].expression}));
             int tailCount = int(preExpressions.size());
             for (int copyIndex = operatorIndex + 2; copyIndex < tailCount; ++copyIndex)
             {
@@ -196,23 +195,23 @@ ScriptExpression ParsePreExpression(vector<PreExpression> const& preExpressions)
     {
         return result;
     }
-    if (ParseBinary(preExpressions, result, { L"*", L"/" }))
+    if (ParseBinary(preExpressions, result, {L"*", L"/"}))
     {
         return result;
     }
-    if (ParseBinary(preExpressions, result, { L"+", L"-" }))
+    if (ParseBinary(preExpressions, result, {L"+", L"-"}))
     {
         return result;
     }
-    if (ParseBinary(preExpressions, result, { L"==", L"!=", L"<=", L">=", L"<", L">" }))
+    if (ParseBinary(preExpressions, result, {L"==", L"!=", L"<=", L">=", L"<", L">"}))
     {
         return result;
     }
-    if (ParseBinary(preExpressions, result, { L"&&", L"||" }))
+    if (ParseBinary(preExpressions, result, {L"&&", L"||"}))
     {
         return result;
     }
-    if (ParseBinary(preExpressions, result, { L"." }))
+    if (ParseBinary(preExpressions, result, {L"."}))
     {
         return result;
     }
@@ -358,7 +357,7 @@ ScriptExpression ParseExpression(vector<BracketGroup> const& groups)
     bool isUnary = groups.size() == 2 && IsUnaryOperator(firstGroup.token);
     if (isUnary)
     {
-        return ScriptExpression(firstGroup.token.type, { ParseExpression({ groups[1] }) });
+        return ScriptExpression(firstGroup.token.type, {ParseExpression({groups[1]})});
     }
 
     for (auto const& group : groups)

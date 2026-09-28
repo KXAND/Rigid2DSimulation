@@ -1,45 +1,44 @@
-#pragma once
+ï»¿#pragma once
 #include "Tile.h"
 
 struct App;
 struct Control;
 struct VerticalScrollBar;
-struct Panel {
-	DVector2 topLeft;
-	double depth = 0;
-	Control* contentControl = NULL;
-	int width = 0, height = 0;
-	double wheelMultiplier = 0;
-	DVector2 contentOffset;
-	DRect contentViewport;
-	Color frameColor, panelColor;
+struct Panel
+{
+    DVector2 topLeft;
+    double depth = 0;
+    Control* contentControl = NULL;
+    int width = 0, height = 0;
+    double wheelMultiplier = 0;
+    DVector2 contentOffset;
+    DRect contentViewport;
+    Color frameColor, panelColor;
 
-	bool useScrollBar = false;
-	// ÎÒÒ²²»Çå³şÎªÉ¶ÒªÓÃÖ¸Õë¡£ÓĞµã¹ßĞÔµÄ¸Ğ¾õÁË¡£
-	std::shared_ptr<VerticalScrollBar> scrollBar;
+    bool useScrollBar = false;
+    // æˆ‘ä¹Ÿä¸æ¸…æ¥šä¸ºå•¥è¦ç”¨æŒ‡é’ˆã€‚æœ‰ç‚¹æƒ¯æ€§çš„æ„Ÿè§‰äº†ã€‚
+    std::shared_ptr<VerticalScrollBar> scrollBar;
 
-	int visibleHeight = 0;
-	bool hasOverflow = false;
-	bool hovered = false;
-	bool wheeled = false;
+    int visibleHeight = 0;
+    bool hasOverflow = false;
+    bool hovered = false;
+    bool wheeled = false;
 
-	Panel();
-	static Panel CreateMenuPanel(App& app);
-	static Panel CreateBottomPanel(App& app);
+    Panel();
+    static Panel CreateMenuPanel(App& app);
+    static Panel CreateBottomPanel(App& app);
 
-	int GetMinY() const;
-	DRect GetVisibleViewport(App& app) const;
-	// ²»ÓÃ delegate ¶øÓÃ×¨ÃÅµÄ SetControl Ö÷ÒªÊÇÏ£ÍûÄÜÖØÖÃ¹ö¶¯¡£
-	void SetControl(App& app, Control* newContentControl);
-	void InitializeControl(App& app);
-	void InitializeScrollBar();
-	void Render(App& app);
+    int GetMinY() const;
+    DRect GetVisibleViewport(App& app) const;
+    // ä¸ç”¨ delegate è€Œç”¨ä¸“é—¨çš„ SetControl ä¸»è¦æ˜¯å¸Œæœ›èƒ½é‡ç½®æ»šåŠ¨ã€‚
+    void SetControl(App& app, Control* newContentControl);
+    void InitializeControl(App& app);
+    void InitializeScrollBar();
+    void Render(App& app);
 
-	void Init(App& app);
-	virtual void Update(App& app);
-	// Èç¹ûÓĞ¿ÉÉ¾³ıµÄ Panel ¾ÍÓÃÕâ¸ö¡£
-	virtual void Discard(App& app);
-	virtual void PreUpdate(App& app);
+    void Init(App& app);
+    virtual void Update(App& app);
+    // å¦‚æœæœ‰å¯åˆ é™¤çš„ Panel å°±ç”¨è¿™ä¸ªã€‚
+    virtual void Discard(App& app);
+    virtual void PreUpdate(App& app);
 };
-
-

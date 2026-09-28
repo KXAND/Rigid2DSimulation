@@ -1,62 +1,157 @@
-#pragma once
+ï»¿#pragma once
 #include "Vector2.h"
 
 struct Vector3;
 inline Vector3 operator/(Vector3 a, double b);
 inline bool operator==(Vector3 a, Vector3 b);
-struct Vector3 {
-	double x = 0, y = 0, z = 0;
-	Vector3() = default;
-	Vector3(double x, double y, double z) : x(x), y(y), z(z) {}
-	Vector3(double a) : Vector3(a, a, a) {}
-	explicit Vector3(wstring const& text);
+struct Vector3
+{
+    double x = 0, y = 0, z = 0;
+    Vector3() = default;
+    Vector3(double x, double y, double z) : x(x), y(y), z(z) {}
+    Vector3(double a) : Vector3(a, a, a) {}
+    explicit Vector3(wstring const& text);
 
-	// @todo:for dColor,Ó¦¸ÃÉ¾³ý
-	double& GetRed() { return x; }
-	double& GetGreen() { return y; }
-	double& GetBlue() { return z; }
-	double GetRed() const { return x; }
-	double GetGreen() const { return y; }
-	double GetBlue() const { return z; }
+    // @todo:for dColor,åº”è¯¥åˆ é™¤
+    double& GetRed()
+    {
+        return x;
+    }
+    double& GetGreen()
+    {
+        return y;
+    }
+    double& GetBlue()
+    {
+        return z;
+    }
+    double GetRed() const
+    {
+        return x;
+    }
+    double GetGreen() const
+    {
+        return y;
+    }
+    double GetBlue() const
+    {
+        return z;
+    }
 
-	Vector3 operator+() const { return *this; }
-	Vector3 operator-() const { return { -x, -y, -z }; }
-	Vector3& operator+=(Vector3 a) { x += a.x; y += a.y; z += a.z; return *this; }
-	Vector3& operator-=(Vector3 a) { return *this += -a; }
-	Vector3& operator*=(Vector3 a) { x *= a.x; y *= a.y; z *= a.z; return *this; }
-	Vector3& operator/=(Vector3 a) { x /= a.x; y /= a.y; z /= a.z; return *this; }
-	Vector3& operator*=(double a) { x *= a; y *= a; z *= a; return *this; }
-	Vector3& operator/=(double a) { return *this *= 1 / a; }
+    Vector3 operator+() const
+    {
+        return *this;
+    }
+    Vector3 operator-() const
+    {
+        return {-x, -y, -z};
+    }
+    Vector3& operator+=(Vector3 a)
+    {
+        x += a.x;
+        y += a.y;
+        z += a.z;
+        return *this;
+    }
+    Vector3& operator-=(Vector3 a)
+    {
+        return *this += -a;
+    }
+    Vector3& operator*=(Vector3 a)
+    {
+        x *= a.x;
+        y *= a.y;
+        z *= a.z;
+        return *this;
+    }
+    Vector3& operator/=(Vector3 a)
+    {
+        x /= a.x;
+        y /= a.y;
+        z /= a.z;
+        return *this;
+    }
+    Vector3& operator*=(double a)
+    {
+        x *= a;
+        y *= a;
+        z *= a;
+        return *this;
+    }
+    Vector3& operator/=(double a)
+    {
+        return *this *= 1 / a;
+    }
 
-	bool IsZero() const { return x == 0 && y == 0 && z == 0; }
-	bool IsNearZero(double eps) const {
-		return abs(x) <= eps && abs(y) <= eps && abs(z) <= eps;
-	}
-	Vector3 GetNormalized() const { return IsZero() ? Vector3{} : *this / GetLength(); }
-	double GetLength() const { return sqrt(GetLengthSquared()); }
-	double GetLengthSquared() const { return x * x + y * y + z * z; }
+    bool IsZero() const
+    {
+        return x == 0 && y == 0 && z == 0;
+    }
+    bool IsNearZero(double eps) const
+    {
+        return abs(x) <= eps && abs(y) <= eps && abs(z) <= eps;
+    }
+    Vector3 GetNormalized() const
+    {
+        return IsZero() ? Vector3{} : *this / GetLength();
+    }
+    double GetLength() const
+    {
+        return sqrt(GetLengthSquared());
+    }
+    double GetLengthSquared() const
+    {
+        return x * x + y * y + z * z;
+    }
 };
-inline double Dot(Vector3 a, Vector3 b) {
-	return a.x * b.x + a.y * b.y + a.z * b.z;
+inline double Dot(Vector3 a, Vector3 b)
+{
+    return a.x * b.x + a.y * b.y + a.z * b.z;
 }
-inline Vector3 Cross(Vector3 a, Vector3 b) {
-	return {
-		a.y * b.z - a.z * b.y,
-		a.z * b.x - a.x * b.z,
-		a.x * b.y - a.y * b.x,
-	};
+inline Vector3 Cross(Vector3 a, Vector3 b)
+{
+    return {
+        a.y * b.z - a.z * b.y,
+        a.z * b.x - a.x * b.z,
+        a.x * b.y - a.y * b.x,
+    };
 }
-inline Vector3 operator+(Vector3 a, Vector3 b) { return a += b; }
-inline Vector3 operator-(Vector3 a, Vector3 b) { return a -= b; }
-inline Vector3 operator*(Vector3 a, Vector3 b) { return a *= b; }
-inline Vector3 operator/(Vector3 a, Vector3 b) { return a /= b; }
-inline Vector3 operator*(Vector3 a, double b) { return a *= b; }
-inline Vector3 operator/(Vector3 a, double b) { return a /= b; }
-inline Vector3 operator*(double a, Vector3 b) { return b * a; }
-inline bool operator==(Vector3 a, Vector3 b) {
-	return memcmp(&a, &b, sizeof(Vector3)) == 0;
+inline Vector3 operator+(Vector3 a, Vector3 b)
+{
+    return a += b;
 }
-inline bool operator!=(Vector3 a, Vector3 b) { return !(a == b); }
+inline Vector3 operator-(Vector3 a, Vector3 b)
+{
+    return a -= b;
+}
+inline Vector3 operator*(Vector3 a, Vector3 b)
+{
+    return a *= b;
+}
+inline Vector3 operator/(Vector3 a, Vector3 b)
+{
+    return a /= b;
+}
+inline Vector3 operator*(Vector3 a, double b)
+{
+    return a *= b;
+}
+inline Vector3 operator/(Vector3 a, double b)
+{
+    return a /= b;
+}
+inline Vector3 operator*(double a, Vector3 b)
+{
+    return b * a;
+}
+inline bool operator==(Vector3 a, Vector3 b)
+{
+    return memcmp(&a, &b, sizeof(Vector3)) == 0;
+}
+inline bool operator!=(Vector3 a, Vector3 b)
+{
+    return !(a == b);
+}
 wstring FormatFixed2(Vector3 vector);
 
 struct Matrix3;
@@ -64,160 +159,239 @@ Matrix3 operator+(Matrix3 a, Matrix3 const& b);
 Matrix3 operator-(Matrix3 a, Matrix3 const& b);
 Matrix3 operator*(double a, Matrix3 b);
 Matrix3 operator/(Matrix3 a, double b);
-struct Matrix3 {
-	double
-		a00 = 0, a01 = 0, a02 = 0,
-		a10 = 0, a11 = 0, a12 = 0,
-		a20 = 0, a21 = 0, a22 = 0;
+struct Matrix3
+{
+    double
+        a00 = 0,
+        a01 = 0, a02 = 0,
+        a10 = 0, a11 = 0, a12 = 0,
+        a20 = 0, a21 = 0, a22 = 0;
 
-	Matrix3() = default;
-	Matrix3(
-		double a00, double a01, double a02,
-		double a10, double a11, double a12,
-		double a20, double a21, double a22) :
-		a00(a00), a01(a01), a02(a02),
-		a10(a10), a11(a11), a12(a12),
-		a20(a20), a21(a21), a22(a22) {}
-	Matrix3(Vector3 v0, Vector3 v1, Vector3 v2) : Matrix3(
-		v0.x, v1.x, v2.x,
-		v0.y, v1.y, v2.y,
-		v0.z, v1.z, v2.z) {}
+    Matrix3() = default;
+    Matrix3(
+        double a00, double a01, double a02,
+        double a10, double a11, double a12,
+        double a20, double a21, double a22) : a00(a00), a01(a01), a02(a02),
+                                              a10(a10), a11(a11), a12(a12),
+                                              a20(a20), a21(a21), a22(a22) {}
+    Matrix3(Vector3 v0, Vector3 v1, Vector3 v2) : Matrix3(
+                                                      v0.x, v1.x, v2.x,
+                                                      v0.y, v1.y, v2.y,
+                                                      v0.z, v1.z, v2.z) {}
 
-	static Matrix3 Identity() {
-		return {
-			1, 0, 0,
-			0, 1, 0,
-			0, 0, 1,
-		};
-	}
-	static Matrix3 Cross(Vector3 v) {
-		// Ö¸µÄÊÇ u = v ¡Á u¡£
-		Matrix3 m;
-		m.a01 = -v.z;  m.a02 = v.y;
-		m.a12 = -v.x;  m.a10 = v.z;
-		m.a20 = -v.y;  m.a21 = v.x; return m;
-	}
+    static Matrix3 Identity()
+    {
+        return {
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+        };
+    }
+    static Matrix3 Cross(Vector3 v)
+    {
+        // æŒ‡çš„æ˜¯ u = v Ã— uã€‚
+        Matrix3 m;
+        m.a01 = -v.z;
+        m.a02 = v.y;
+        m.a12 = -v.x;
+        m.a10 = v.z;
+        m.a20 = -v.y;
+        m.a21 = v.x;
+        return m;
+    }
 
-	// ÕÅÁ¿ b^T * A
-	// @todo: ²ÎÊý»»Î»ÖÃ
-	static Matrix3 OuterProduct(Vector3 a, Vector3 b) {
-		return Matrix3(b.x * a, b.y * a, b.z * a);
-	}
+    // å¼ é‡ b^T * A
+    // @todo: å‚æ•°æ¢ä½ç½®
+    static Matrix3 OuterProduct(Vector3 a, Vector3 b)
+    {
+        return Matrix3(b.x * a, b.y * a, b.z * a);
+    }
 
-	// ÂÞµÂÀï¸ñË¹Ðý×ª¹«Ê½¡£
-	static Matrix3 Rotation(Vector3 axis, double theta) {
-		// ÕâÀï¼ÙÉèÁË axis ÊÇµ¥Î»µÄ¡£
-		Matrix3 mz = OuterProduct(axis, axis);
-		Matrix3 mx = Matrix3::Identity() - mz;
-		Matrix3 my = Cross(axis);
-		return cos(theta) * mx + sin(theta) * my + mz;
-	}
+    // ç½—å¾·é‡Œæ ¼æ–¯æ—‹è½¬å…¬å¼ã€‚
+    static Matrix3 Rotation(Vector3 axis, double theta)
+    {
+        // è¿™é‡Œå‡è®¾äº† axis æ˜¯å•ä½çš„ã€‚
+        Matrix3 mz = OuterProduct(axis, axis);
+        Matrix3 mx = Matrix3::Identity() - mz;
+        Matrix3 my = Cross(axis);
+        return cos(theta) * mx + sin(theta) * my + mz;
+    }
 
-	Vector3 GetColumn0() const { return { a00, a10, a20 }; }
-	Vector3 GetColumn1() const { return { a01, a11, a21 }; }
-	Vector3 GetColumn2() const { return { a02, a12, a22 }; }
-	Matrix3 operator+() const { return *this; }
-	Matrix3 operator-() const {
-		return {
-			-a00, -a01, -a02,
-			-a10, -a11, -a12,
-			-a20, -a21, -a22,
-		};
-	}
-	Matrix3& operator+=(Matrix3 const& a) {
-		a00 += a.a00; a01 += a.a01; a02 += a.a02;
-		a10 += a.a10; a11 += a.a11; a12 += a.a12;
-		a20 += a.a20; a21 += a.a21; a22 += a.a22; return *this;
-	}
-	Matrix3& operator-=(Matrix3 const& a) { return *this += -a; }
-	Matrix3& operator*=(double a) {
-		a00 *= a; a01 *= a; a02 *= a;
-		a10 *= a; a11 *= a; a12 *= a;
-		a20 *= a; a21 *= a; a22 *= a; return *this;
-	}
-	Matrix3& operator/=(double a) { return *this *= 1 / a; }
+    Vector3 GetColumn0() const
+    {
+        return {a00, a10, a20};
+    }
+    Vector3 GetColumn1() const
+    {
+        return {a01, a11, a21};
+    }
+    Vector3 GetColumn2() const
+    {
+        return {a02, a12, a22};
+    }
+    Matrix3 operator+() const
+    {
+        return *this;
+    }
+    Matrix3 operator-() const
+    {
+        return {
+            -a00,
+            -a01,
+            -a02,
+            -a10,
+            -a11,
+            -a12,
+            -a20,
+            -a21,
+            -a22,
+        };
+    }
+    Matrix3& operator+=(Matrix3 const& a)
+    {
+        a00 += a.a00;
+        a01 += a.a01;
+        a02 += a.a02;
+        a10 += a.a10;
+        a11 += a.a11;
+        a12 += a.a12;
+        a20 += a.a20;
+        a21 += a.a21;
+        a22 += a.a22;
+        return *this;
+    }
+    Matrix3& operator-=(Matrix3 const& a)
+    {
+        return *this += -a;
+    }
+    Matrix3& operator*=(double a)
+    {
+        a00 *= a;
+        a01 *= a;
+        a02 *= a;
+        a10 *= a;
+        a11 *= a;
+        a12 *= a;
+        a20 *= a;
+        a21 *= a;
+        a22 *= a;
+        return *this;
+    }
+    Matrix3& operator/=(double a)
+    {
+        return *this *= 1 / a;
+    }
 
-	// ¾ØÕó×ªÖÃ
-	Matrix3 Transpose() const
-	{
-		return {
-			a00, a10, a20,
-			a01, a11, a21,
-			a02, a12, a22,
-		};
-	}
+    // çŸ©é˜µè½¬ç½®
+    Matrix3 Transpose() const
+    {
+        return {
+            a00,
+            a10,
+            a20,
+            a01,
+            a11,
+            a21,
+            a02,
+            a12,
+            a22,
+        };
+    }
 
-	// Äæ¾ØÕó
-	Matrix3 Inverse() const
-	{
-		// m ÊÇ a µÄ°éËæ¾ØÕóµÄ×ªÖÃ¾ØÕó
-		// °éËæ¾ØÕó£ºÔªËØµÄ´úÊýÓà×ÓÊ½¹¹³ÉµÄ¾ØÕó ´úÊýÓà×ÓÊ½£ºÈ¥µôÔªËØ¸ÃÐÐ¸ÃÁÐºó×öÐÐÁÐÊ½¼ÆËãµÃµ½µÄÖµ
-		// Äæ¾ØÕó = °éËæ¾ØÕó / ÐÐÁÐÊ½Öµ
-		Matrix3 m;
-		m.a00 = a11 * a22 - a12 * a21;
-		m.a10 = a12 * a20 - a10 * a22;
-		m.a20 = a10 * a21 - a11 * a20;
-		m.a01 = a02 * a21 - a01 * a22;
-		m.a11 = a00 * a22 - a02 * a20;
-		m.a21 = a01 * a20 - a00 * a21;
-		m.a02 = a01 * a12 - a02 * a11;
-		m.a12 = a02 * a10 - a00 * a12;
-		m.a22 = a00 * a11 - a01 * a10;
-		return m / Determinant();
-	}
+    // é€†çŸ©é˜µ
+    Matrix3 Inverse() const
+    {
+        // m æ˜¯ a çš„ä¼´éšçŸ©é˜µçš„è½¬ç½®çŸ©é˜µ
+        // ä¼´éšçŸ©é˜µï¼šå…ƒç´ çš„ä»£æ•°ä½™å­å¼æž„æˆçš„çŸ©é˜µ ä»£æ•°ä½™å­å¼ï¼šåŽ»æŽ‰å…ƒç´ è¯¥è¡Œè¯¥åˆ—åŽåšè¡Œåˆ—å¼è®¡ç®—å¾—åˆ°çš„å€¼
+        // é€†çŸ©é˜µ = ä¼´éšçŸ©é˜µ / è¡Œåˆ—å¼å€¼
+        Matrix3 m;
+        m.a00 = a11 * a22 - a12 * a21;
+        m.a10 = a12 * a20 - a10 * a22;
+        m.a20 = a10 * a21 - a11 * a20;
+        m.a01 = a02 * a21 - a01 * a22;
+        m.a11 = a00 * a22 - a02 * a20;
+        m.a21 = a01 * a20 - a00 * a21;
+        m.a02 = a01 * a12 - a02 * a11;
+        m.a12 = a02 * a10 - a00 * a12;
+        m.a22 = a00 * a11 - a01 * a10;
+        return m / Determinant();
+    }
 
-	// ÐÐÁÐÊ½ÔËËã
-	double Determinant() const {
-		return
-			a00 * (a11 * a22 - a12 * a21) +
-			a01 * (a12 * a20 - a10 * a22) +
-			a02 * (a10 * a21 - a11 * a20);
-	}
+    // è¡Œåˆ—å¼è¿ç®—
+    double Determinant() const
+    {
+        return a00 * (a11 * a22 - a12 * a21) +
+               a01 * (a12 * a20 - a10 * a22) +
+               a02 * (a10 * a21 - a11 * a20);
+    }
 };
-inline Matrix3 operator+(Matrix3 a, Matrix3 const& b) { return a += b; }
-inline Matrix3 operator-(Matrix3 a, Matrix3 const& b) { return a -= b; }
-inline Matrix3 operator*(Matrix3 a, double b) { return a *= b; }
-inline Matrix3 operator/(Matrix3 a, double b) { return a /= b; }
-inline Matrix3 operator*(double a, Matrix3 b) { return b * a; }
-inline Vector3 operator*(Matrix3 const& a, Vector3 b) {
-	return {
-		a.a00 * b.x + a.a01 * b.y + a.a02 * b.z,
-		a.a10 * b.x + a.a11 * b.y + a.a12 * b.z,
-		a.a20 * b.x + a.a21 * b.y + a.a22 * b.z,
-	};
+inline Matrix3 operator+(Matrix3 a, Matrix3 const& b)
+{
+    return a += b;
 }
-inline Matrix3 operator*(Matrix3 const& a, Matrix3 const& b) {
-	return {
-		a.a00 * b.a00 + a.a01 * b.a10 + a.a02 * b.a20,
-		a.a00 * b.a01 + a.a01 * b.a11 + a.a02 * b.a21,
-		a.a00 * b.a02 + a.a01 * b.a12 + a.a02 * b.a22,
-		a.a10 * b.a00 + a.a11 * b.a10 + a.a12 * b.a20,
-		a.a10 * b.a01 + a.a11 * b.a11 + a.a12 * b.a21,
-		a.a10 * b.a02 + a.a11 * b.a12 + a.a12 * b.a22,
-		a.a20 * b.a00 + a.a21 * b.a10 + a.a22 * b.a20,
-		a.a20 * b.a01 + a.a21 * b.a11 + a.a22 * b.a21,
-		a.a20 * b.a02 + a.a21 * b.a12 + a.a22 * b.a22,
-	};
+inline Matrix3 operator-(Matrix3 a, Matrix3 const& b)
+{
+    return a -= b;
+}
+inline Matrix3 operator*(Matrix3 a, double b)
+{
+    return a *= b;
+}
+inline Matrix3 operator/(Matrix3 a, double b)
+{
+    return a /= b;
+}
+inline Matrix3 operator*(double a, Matrix3 b)
+{
+    return b * a;
+}
+inline Vector3 operator*(Matrix3 const& a, Vector3 b)
+{
+    return {
+        a.a00 * b.x + a.a01 * b.y + a.a02 * b.z,
+        a.a10 * b.x + a.a11 * b.y + a.a12 * b.z,
+        a.a20 * b.x + a.a21 * b.y + a.a22 * b.z,
+    };
+}
+inline Matrix3 operator*(Matrix3 const& a, Matrix3 const& b)
+{
+    return {
+        a.a00 * b.a00 + a.a01 * b.a10 + a.a02 * b.a20,
+        a.a00 * b.a01 + a.a01 * b.a11 + a.a02 * b.a21,
+        a.a00 * b.a02 + a.a01 * b.a12 + a.a02 * b.a22,
+        a.a10 * b.a00 + a.a11 * b.a10 + a.a12 * b.a20,
+        a.a10 * b.a01 + a.a11 * b.a11 + a.a12 * b.a21,
+        a.a10 * b.a02 + a.a11 * b.a12 + a.a12 * b.a22,
+        a.a20 * b.a00 + a.a21 * b.a10 + a.a22 * b.a20,
+        a.a20 * b.a01 + a.a21 * b.a11 + a.a22 * b.a21,
+        a.a20 * b.a02 + a.a21 * b.a12 + a.a22 * b.a22,
+    };
 }
 
-struct Camera {
-	DRect viewport;
-	Vector3 position;
-	Vector3 look;
-	double scale = 0;
-	double radian = 0;
-	// min_y ±ØÐëÎªÕýÊý£¬ÎªÁË·ÀÖ¹³ýÒÔ 0¡£
-	double minimumDistance = 0, maximumDistance = 0;
-	double theta = 0, phi = 0, psi = 0;
+struct Camera
+{
+    DRect viewport;
+    Vector3 position;
+    Vector3 look;
+    double scale = 0;
+    double radian = 0;
+    // min_y å¿…é¡»ä¸ºæ­£æ•°ï¼Œä¸ºäº†é˜²æ­¢é™¤ä»¥ 0ã€‚
+    double minimumDistance = 0, maximumDistance = 0;
+    double theta = 0, phi = 0, psi = 0;
 
-	DVector2 center;
-	Matrix3 transformMatrix;
+    DVector2 center;
+    Matrix3 transformMatrix;
 
-	explicit Camera(DRect viewport = {});
-	void Save(FILE* file);
-	explicit Camera(FILE* file);
+    explicit Camera(DRect viewport = {});
+    void Save(FILE* file);
+    explicit Camera(FILE* file);
 
-	void Calculate();
-	void CalculateFirstPerson();
+    void Calculate();
+    void CalculateFirstPerson();
 };
-

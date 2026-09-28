@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Utils.h"
 
 struct SimulationApp;
@@ -12,27 +12,26 @@ struct LanguagePanel;
 struct AboutPanel;
 struct MenuPanel;
 struct BottomPanel;
-struct UserInterface {
-	vector<FloatPanel*> floatPanels;
-	std::shared_ptr<GlobalPanel> globalPanel;
-	std::shared_ptr<BodyPanel> bodyPanel;
-	std::shared_ptr<ConnectionPanel> connectionPanel;
-	std::shared_ptr<CommandPanel> commandPanel;
-	std::shared_ptr<ParameterPanel> parameterPanel;
-	std::shared_ptr<LanguagePanel> languagePanel;
-	std::shared_ptr<AboutPanel> aboutPanel;
-	std::shared_ptr<MenuPanel> menuPanel;
-	std::shared_ptr<BottomPanel> bottomPanel;
+struct UserInterface
+{
+    vector<FloatPanel*> floatPanels;
+    std::shared_ptr<GlobalPanel> globalPanel;
+    std::shared_ptr<BodyPanel> bodyPanel;
+    std::shared_ptr<ConnectionPanel> connectionPanel;
+    std::shared_ptr<CommandPanel> commandPanel;
+    std::shared_ptr<ParameterPanel> parameterPanel;
+    std::shared_ptr<LanguagePanel> languagePanel;
+    std::shared_ptr<AboutPanel> aboutPanel;
+    std::shared_ptr<MenuPanel> menuPanel;
+    std::shared_ptr<BottomPanel> bottomPanel;
 
-	UserInterface(SimulationApp& simulationApp) {};
-	void SortFloatPanels();
+    UserInterface(SimulationApp& simulationApp) {};
+    void SortFloatPanels();
 
-	// ÕâÀïÓÃ init µÄÔ­ÒòÊÇ¿Ø¼ş»áÓÃ simulationApp->ui À´·ÃÎÊ ui, µ«Õâ¸öÊ±ºò ui ÉĞÎ´³õÊ¼»¯¡£
-	// ÕâÒ²ÊÇÎªÊ²Ã´Ö÷³ÌĞò²»ĞèÒª Init¡£ÕâÓ¦¸ÃÊÇÒ»¸öÆÕ±éµÄÎÊÌâ¡£
-	// ºÃÏñÉÏÃæÕâĞ©»°ÒÑ¾­¹ıÊ±ÁË£¬²»¹ı»¹ÊÇ±£ÁôÕâ¸öÉè¼ÆÒÔ·ÀÍòÒ»¡£
-	void Init(SimulationApp& simulationApp);
-	void Update(SimulationApp& simulationApp);
-	void PreUpdate(SimulationApp& simulationApp);
+    // è¿™é‡Œç”¨ init çš„åŸå› æ˜¯æ§ä»¶ä¼šç”¨ simulationApp->ui æ¥è®¿é—® ui, ä½†è¿™ä¸ªæ—¶å€™ ui å°šæœªåˆå§‹åŒ–ã€‚
+    // è¿™ä¹Ÿæ˜¯ä¸ºä»€ä¹ˆä¸»ç¨‹åºä¸éœ€è¦ Initã€‚è¿™åº”è¯¥æ˜¯ä¸€ä¸ªæ™®éçš„é—®é¢˜ã€‚
+    // å¥½åƒä¸Šé¢è¿™äº›è¯å·²ç»è¿‡æ—¶äº†ï¼Œä¸è¿‡è¿˜æ˜¯ä¿ç•™è¿™ä¸ªè®¾è®¡ä»¥é˜²ä¸‡ä¸€ã€‚
+    void Init(SimulationApp& simulationApp);
+    void Update(SimulationApp& simulationApp);
+    void PreUpdate(SimulationApp& simulationApp);
 };
-
-

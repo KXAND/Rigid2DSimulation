@@ -1,115 +1,168 @@
-#include "Panel.h"
+ï»¿#include "Panel.h"
 #include "App.h"
 #include "Control.h"
 #include "DrawBorderedRectangle.h"
 #include "ScrollBar.h"
 
+Panel::Panel()
+{
+    depth = 1000;
+    wheelMultiplier = 40;
+    contentOffset = {10, 10};
 
-Panel::Panel() {
-	depth = 1000;
-	wheelMultiplier = 40;
-	contentOffset = { 10, 10 };
+    frameColor = {150, 150, 150};
+    panelColor = {0, 0, 0};
+}
+// èœå•æŒ‰é’®çš„å®½åº¦: 150.
+Panel Panel::CreateMenuPanel(App& app)
+{
+    Panel panel;
+    panel.width = 169;
+    panel.height = app.height - 40;
+    panel.visibleHeight = panel.height - 20;
 
-	frameColor = { 150, 150, 150 };
-	panelColor = { 0, 0, 0 };
+    DRect contentViewportRelative;
+    contentViewportRelative.topLeftPosition = DVector2(10 - 2, 10 - 2);
+    contentViewportRelative.width = panel.width - 20 + 4;
+    contentViewportRelative.height = panel.height - 20 + 4;
+    panel.contentViewport = contentViewportRelative;
+    return panel;
 }
-// ²Ëµ¥°´Å¥µÄ¿í¶È: 150.
-Panel Panel::CreateMenuPanel(App& app) {
-	Panel panel;
-	panel.width = 169;
-	panel.height = app.height - 40;
-	panel.visibleHeight = panel.height - 20;
+Panel Panel::CreateBottomPanel(App& app)
+{
+    Panel panel;
+    panel.width = app.width;
+    panel.height = 40;
+    panel.topLeft.y = app.height - panel.height;
+    panel.visibleHeight = panel.height;
 
-	DRect contentViewportRelative;
-	contentViewportRelative.topLeftPosition = DVector2(10 - 2, 10 - 2);
-	contentViewportRelative.width = panel.width - 20 + 4;
-	contentViewportRelative.height = panel.height - 20 + 4;
-	panel.contentViewport = contentViewportRelative; return panel;
-}
-Panel Panel::CreateBottomPanel(App& app) {
-	Panel panel;
-	panel.width = app.width;
-	panel.height = 40;
-	panel.topLeft.y = app.height - panel.height;
-	panel.visibleHeight = panel.height;
-
-	DRect contentViewportRelative;
-	contentViewportRelative.topLeftPosition = DVector2(10 - 2, 10 - 2);
-	contentViewportRelative.width = panel.width - 20 + 4;
-	contentViewportRelative.height = panel.height - 20 + 4;
-	panel.contentViewport = contentViewportRelative; return panel;
-}
-
-int Panel::GetMinY() const {
-	return topLeft.y + contentOffset.y + visibleHeight - contentControl->GetHeight();
-}
-DRect Panel::GetVisibleViewport(App& app) const {
-	DRect visibleViewport = contentViewport;
-	visibleViewport.topLeftPosition += topLeft; return GetOverlapRect(app.screen.Rect(), visibleViewport);
-}
-void Panel::SetControl(App& app, Control* newContentControl) {
-	if (contentControl != newContentControl) {
-		if (contentControl) { contentControl->Discard(app); }
-		if (contentControl = newContentControl) {
-			contentControl->topLeft = topLeft + contentOffset;
-			contentControl->viewport = GetVisibleViewport(app);
-		} scrollBar->contentControl = contentControl;
-	}
-}
-void Panel::InitializeControl(App& app) {
-	if (contentControl) {
-		contentControl->topLeft = topLeft + contentOffset;
-		contentControl->viewport = GetVisibleViewport(app);
-	}
-}
-void Panel::InitializeScrollBar() {
-	scrollBar = std::make_shared<VerticalScrollBar>();
-	scrollBar->contentControl = contentControl;
-	scrollBar->height = height;
-	scrollBar->topLeft = topLeft + DVector2(width - scrollBar->width, 0);
-	scrollBar->visibleHeight = visibleHeight;
-	scrollBar->visibleTop = topLeft.y + contentOffset.y;
-}
-void Panel::Render(App& app) {
-	DrawRectangleWithBorderRaw(app.screen, topLeft, width, height, app.screen.Rect(), panelColor, frameColor);
+    DRect contentViewportRelative;
+    contentViewportRelative.topLeftPosition = DVector2(10 - 2, 10 - 2);
+    contentViewportRelative.width = panel.width - 20 + 4;
+    contentViewportRelative.height = panel.height - 20 + 4;
+    panel.contentViewport = contentViewportRelative;
+    return panel;
 }
 
-void Panel::Init(App& app) { InitializeControl(app); InitializeScrollBar(); }
-void Panel::Update(App& app) {
-	hasOverflow = (contentControl != NULL) && visibleHeight < contentControl->GetHeight();
-	hovered = (app.inputOwners.hovered == this);
-	wheeled = (app.inputOwners.wheeled == this);
-
-	if (hasOverflow) {
-		int contentY = contentControl->topLeft.y;
-		if (wheeled) { contentY += app.input.mouseWheelDelta * wheelMultiplier; }
-		contentControl->topLeft.y = Clamp(contentY, GetMinY(), topLeft.y + contentOffset.y);
-	}
-	else if (contentControl) { contentControl->topLeft.y = topLeft.y + contentOffset.y; }
-
-	// ÏÂÃæ Update Ë³ÐòÊÇÎªÁË·½±ã»æÖÆ£¬±¾À´Ó¦¸Ã¿Ø¼þÏÈ¸üÐÂ¸ß¶ÈµÄ¡£
-	// ÏÂÃæ Update Ë³ÐòÊÇÎªÁË·½±ã»æÖÆ£¬±¾À´Ó¦¸Ã¿Ø¼þÏÈ¸üÐÂ¸ß¶ÈµÄ¡£
-	// Õâ¸öÊÇÎªÁËËÙ¶ÈµÄÎþÉü£¬²»ÖªµÀÓÐÃ»ÓÐ±ØÒª¡£
-	Render(app);
-	if (contentControl) { contentControl->Update(app); }
-	if (useScrollBar) { scrollBar->Update(app); }
+int Panel::GetMinY() const
+{
+    return topLeft.y + contentOffset.y + visibleHeight - contentControl->GetHeight();
 }
-void Panel::Discard(App& app) {
-	app.inputOwners.Remove(this); scrollBar->Discard(app);
-	if (contentControl) { contentControl->Discard(app); }
+DRect Panel::GetVisibleViewport(App& app) const
+{
+    DRect visibleViewport = contentViewport;
+    visibleViewport.topLeftPosition += topLeft;
+    return GetOverlapRect(app.screen.Rect(), visibleViewport);
 }
-void Panel::PreUpdate(App& app) {
-	bool canOwnInput = app.inputOwners.hoveredDepth <= depth &&
-		IsInside(app.input.mousePosition, { topLeft, width, height }) && IsInside(app.input.mousePosition, app.screen.Rect());
-	if (canOwnInput) { app.inputOwners.hoveredDepth = depth; app.inputOwners.hovered = this; }
-
-	canOwnInput = app.inputOwners.wheeledDepth <= depth &&
-		IsInside(app.input.mousePosition, { topLeft, width, height }) && IsInside(app.input.mousePosition, app.screen.Rect());
-	if (canOwnInput) { app.inputOwners.wheeledDepth = depth; app.inputOwners.wheeled = this; }
-
-	if (contentControl) { contentControl->PreUpdate(app); }
-	if (useScrollBar) { scrollBar->PreUpdate(app); }
+void Panel::SetControl(App& app, Control* newContentControl)
+{
+    if (contentControl != newContentControl)
+    {
+        if (contentControl)
+        {
+            contentControl->Discard(app);
+        }
+        if (contentControl = newContentControl)
+        {
+            contentControl->topLeft = topLeft + contentOffset;
+            contentControl->viewport = GetVisibleViewport(app);
+        }
+        scrollBar->contentControl = contentControl;
+    }
+}
+void Panel::InitializeControl(App& app)
+{
+    if (contentControl)
+    {
+        contentControl->topLeft = topLeft + contentOffset;
+        contentControl->viewport = GetVisibleViewport(app);
+    }
+}
+void Panel::InitializeScrollBar()
+{
+    scrollBar = std::make_shared<VerticalScrollBar>();
+    scrollBar->contentControl = contentControl;
+    scrollBar->height = height;
+    scrollBar->topLeft = topLeft + DVector2(width - scrollBar->width, 0);
+    scrollBar->visibleHeight = visibleHeight;
+    scrollBar->visibleTop = topLeft.y + contentOffset.y;
+}
+void Panel::Render(App& app)
+{
+    DrawRectangleWithBorderRaw(app.screen, topLeft, width, height, app.screen.Rect(), panelColor, frameColor);
 }
 
+void Panel::Init(App& app)
+{
+    InitializeControl(app);
+    InitializeScrollBar();
+}
+void Panel::Update(App& app)
+{
+    hasOverflow = (contentControl != NULL) && visibleHeight < contentControl->GetHeight();
+    hovered = (app.inputOwners.hovered == this);
+    wheeled = (app.inputOwners.wheeled == this);
 
+    if (hasOverflow)
+    {
+        int contentY = contentControl->topLeft.y;
+        if (wheeled)
+        {
+            contentY += app.input.mouseWheelDelta * wheelMultiplier;
+        }
+        contentControl->topLeft.y = Clamp(contentY, GetMinY(), topLeft.y + contentOffset.y);
+    }
+    else if (contentControl)
+    {
+        contentControl->topLeft.y = topLeft.y + contentOffset.y;
+    }
 
+    // ä¸‹é¢ Update é¡ºåºæ˜¯ä¸ºäº†æ–¹ä¾¿ç»˜åˆ¶ï¼Œæœ¬æ¥åº”è¯¥æŽ§ä»¶å…ˆæ›´æ–°é«˜åº¦çš„ã€‚
+    // ä¸‹é¢ Update é¡ºåºæ˜¯ä¸ºäº†æ–¹ä¾¿ç»˜åˆ¶ï¼Œæœ¬æ¥åº”è¯¥æŽ§ä»¶å…ˆæ›´æ–°é«˜åº¦çš„ã€‚
+    // è¿™ä¸ªæ˜¯ä¸ºäº†é€Ÿåº¦çš„ç‰ºç‰²ï¼Œä¸çŸ¥é“æœ‰æ²¡æœ‰å¿…è¦ã€‚
+    Render(app);
+    if (contentControl)
+    {
+        contentControl->Update(app);
+    }
+    if (useScrollBar)
+    {
+        scrollBar->Update(app);
+    }
+}
+void Panel::Discard(App& app)
+{
+    app.inputOwners.Remove(this);
+    scrollBar->Discard(app);
+    if (contentControl)
+    {
+        contentControl->Discard(app);
+    }
+}
+void Panel::PreUpdate(App& app)
+{
+    bool canOwnInput = app.inputOwners.hoveredDepth <= depth &&
+                       IsInside(app.input.mousePosition, {topLeft, width, height}) && IsInside(app.input.mousePosition, app.screen.Rect());
+    if (canOwnInput)
+    {
+        app.inputOwners.hoveredDepth = depth;
+        app.inputOwners.hovered = this;
+    }
+
+    canOwnInput = app.inputOwners.wheeledDepth <= depth &&
+                  IsInside(app.input.mousePosition, {topLeft, width, height}) && IsInside(app.input.mousePosition, app.screen.Rect());
+    if (canOwnInput)
+    {
+        app.inputOwners.wheeledDepth = depth;
+        app.inputOwners.wheeled = this;
+    }
+
+    if (contentControl)
+    {
+        contentControl->PreUpdate(app);
+    }
+    if (useScrollBar)
+    {
+        scrollBar->PreUpdate(app);
+    }
+}
