@@ -1,7 +1,7 @@
 ﻿#include "Body.h"
 #include "current/common/utils.h"
 #include "SimulationApp.h"
-#include "Background.h"
+#include "SceneCanvas.h"
 #include "Creator.h"
 #include "Shape.h"
 #include "DrawTriangle.h"
@@ -366,33 +366,33 @@ void Body::Render(SimulationApp& simulationApp) const
 
     if (point)
     {
-        DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, GetDepth(), position, pointRadius, pointRadius, simulationApp.background->GetViewport(), color);
-        DrawEllipseBorder(simulationApp.screen, simulationApp.depthBuffer, GetDepth(), position, pointRadius, pointRadius, simulationApp.background->GetViewport(), borderColor, 20);
+        DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, GetDepth(), position, pointRadius, pointRadius, simulationApp.sceneCanvas->GetViewport(), color);
+        DrawEllipseBorder(simulationApp.screen, simulationApp.depthBuffer, GetDepth(), position, pointRadius, pointRadius, simulationApp.sceneCanvas->GetViewport(), borderColor, 20);
     }
     for (auto& shape : shapes)
     {
         if (shape->isCircle)
         {
             DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, GetDepth(),
-                        shape->position, shape->radius, shape->radius, simulationApp.background->GetViewport(), color);
+                        shape->position, shape->radius, shape->radius, simulationApp.sceneCanvas->GetViewport(), color);
             DrawEllipseBorder(simulationApp.screen, simulationApp.depthBuffer, GetDepth(),
-                              shape->position, shape->radius, shape->radius, simulationApp.background->GetViewport(), borderColor, 30);
+                              shape->position, shape->radius, shape->radius, simulationApp.sceneCanvas->GetViewport(), borderColor, 30);
 
             // 显示一条半径以便于我们判断圆的旋转角度
             auto peakPoint = Vector2(cos(shape->radian), sin(shape->radian)) * shape->radius + shape->position;
-            DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, shape->position, peakPoint, GetDepth(), simulationApp.background->GetViewport(), borderColor);
+            DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, shape->position, peakPoint, GetDepth(), simulationApp.sceneCanvas->GetViewport(), borderColor);
             continue;
         }
 
         for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
         {
             int j = (i + 1) % shape->vertices.size();
-            DrawTriangle(simulationApp.screen, simulationApp.depthBuffer, simulationApp.background->GetViewport(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
+            DrawTriangle(simulationApp.screen, simulationApp.depthBuffer, simulationApp.sceneCanvas->GetViewport(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
         }
         for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
         {
             int j = (i + 1) % shape->vertices.size();
-            DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, shape->vertices[i], shape->vertices[j], GetDepth(), simulationApp.background->GetViewport(), borderColor);
+            DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, shape->vertices[i], shape->vertices[j], GetDepth(), simulationApp.sceneCanvas->GetViewport(), borderColor);
         }
     }
 
@@ -400,7 +400,7 @@ void Body::Render(SimulationApp& simulationApp) const
     {
         Vector2 p1 = Vector2(simulationApp.input.mousePosition);
         Vector2 p0 = position + transform * relativeDragPoint;
-        DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, GetDepth(), simulationApp.background->GetViewport(), Color(0, 255, 255));
+        DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, GetDepth(), simulationApp.sceneCanvas->GetViewport(), Color(0, 255, 255));
     }
 
     if (!track.empty())
@@ -408,7 +408,7 @@ void Body::Render(SimulationApp& simulationApp) const
         Vector2 p0 = track.front();
         for (auto p1 : track)
         {
-            DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, 10, simulationApp.background->GetViewport(), Color(255, 0, 255));
+            DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, 10, simulationApp.sceneCanvas->GetViewport(), Color(255, 0, 255));
             p0 = p1;
         }
     }
@@ -670,7 +670,7 @@ void Body::Update(SimulationApp& simulationApp)
 void Body::PreUpdate(SimulationApp& simulationApp)
 {
     bool canReceiveHover = simulationApp.inputOwners.hoveredDepth <= GetDepth() &&
-                           IsInside((Vector2)simulationApp.input.mousePosition) && ::IsInside(simulationApp.input.mousePosition, simulationApp.background->GetViewport());
+                           IsInside((Vector2)simulationApp.input.mousePosition) && ::IsInside(simulationApp.input.mousePosition, simulationApp.sceneCanvas->GetViewport());
     if (canReceiveHover)
     {
         simulationApp.inputOwners.hoveredDepth = GetDepth();

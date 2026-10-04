@@ -1,7 +1,7 @@
 ﻿#include "Creator.h"
 #include "current/common/utils.h"
 #include "SimulationApp.h"
-#include "Background.h"
+#include "SceneCanvas.h"
 #include "Value.h"
 #include "Body.h"
 #include "Shape.h"
@@ -344,7 +344,7 @@ void Creator::Discard(SimulationApp& simulationApp)
 }
 void Creator::PreUpdate(SimulationApp& simulationApp)
 {
-    if (simulationApp.inputOwners.hoveredDepth <= Depth() && IsInside(simulationApp.input.mousePosition, simulationApp.background->GetViewport()))
+    if (simulationApp.inputOwners.hoveredDepth <= Depth() && IsInside(simulationApp.input.mousePosition, simulationApp.sceneCanvas->GetViewport()))
     {
         simulationApp.inputOwners.hoveredDepth = Depth();
         simulationApp.inputOwners.hovered = this;

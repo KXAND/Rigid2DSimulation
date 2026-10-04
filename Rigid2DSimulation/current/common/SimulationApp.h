@@ -19,13 +19,13 @@ struct Collision;
 struct Connection;
 
 struct UserInterface;
-struct Background;
+struct SceneCanvas;
 struct AudioClip;
 struct SceneParameter;
 struct SimulationApp : App
 {
     std::shared_ptr<UserInterface> userInterface;
-    std::shared_ptr<Background> background;
+    std::shared_ptr<SceneCanvas> sceneCanvas;
 
     Scope currentScope;
     wstring debugString, scriptText, temporaryScriptText;
@@ -71,6 +71,7 @@ struct SimulationApp : App
     void Save(wstring const& name) const;
     void Load(wstring const& name);
     void Reset();
+    void ClearSelection();
     void Update() override;
 
     void SetConfig(Value const& config);

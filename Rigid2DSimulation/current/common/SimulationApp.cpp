@@ -1,7 +1,7 @@
 ﻿#include "SimulationApp.h"
 #include "Utils.h"
 #include "UserInterface.h"
-#include "Background.h"
+#include "SceneCanvas.h"
 #include "SceneParameter.h"
 #include "Shape.h"
 #include "Body.h"
@@ -12,6 +12,7 @@
 #include "Creator.h"
 #include "Collision.h"
 #include "Connection.h"
+#include "DrawString.h"
 
 SimulationApp::SimulationApp()
 {
@@ -28,7 +29,7 @@ SimulationApp::SimulationApp()
     PrintConsole(L"正在加载控件...");
     userInterface = std::make_shared<UserInterface>(*this);
     userInterface->Init(*this);
-    background = std::make_shared<Background>(*this);
+    sceneCanvas = std::make_shared<SceneCanvas>();
     Reset();
 
     PrintConsole(L"控件加载完成.", true);
@@ -122,21 +123,20 @@ void SimulationApp::Reset()
     connections.clear();
     debugString.clear();
 
-    currentScope[L"backgroundLeft"] = std::make_shared<Value>(background->topLeft.x);
-    currentScope[L"backgroundTop"] = std::make_shared<Value>(background->topLeft.y);
-    currentScope[L"backgroundWidth"] = std::make_shared<Value>(background->width);
-    currentScope[L"backgroundHeight"] = std::make_shared<Value>(background->height);
+    currentScope[L"backgroundLeft"] = std::make_shared<Value>(sceneCanvas->topLeft.x);
+    currentScope[L"backgroundTop"] = std::make_shared<Value>(sceneCanvas->topLeft.y);
+    currentScope[L"backgroundWidth"] = std::make_shared<Value>(sceneCanvas->width);
+    currentScope[L"backgroundHeight"] = std::make_shared<Value>(sceneCanvas->height);
 
-    bodySelecting = NULL;
-    connectionSelecting = NULL;
+    ClearSelection();
     isSceneChanged = false;
     gravity = Vector2();
     maxRealDeltaTime = 0.05;
     simulationTime = 0;
     stepNum = 60;
-    rectScene.topLeftPosition = background->topLeft;
-    rectScene.width = background->width;
-    rectScene.height = background->height;
+    rectScene.topLeftPosition = sceneCanvas->topLeft;
+    rectScene.width = sceneCanvas->width;
+    rectScene.height = sceneCanvas->height;
     gridSize = 50;
     energyMultiplier = 4e-6;
     chargeMultiplier = 1;
@@ -151,10 +151,16 @@ void SimulationApp::Reset()
 
     creator = std::make_shared<Creator>();
 }
+void SimulationApp::ClearSelection()
+{
+    bodySelecting = NULL;
+    connectionSelecting = NULL;
+}
+
 void SimulationApp::Update()
 {
     // pre update
-    (*background).PreUpdate(*this);
+    sceneCanvas->PreUpdate(input, inputOwners);
     if (mode == kCreateMode)
     {
         creator->PreUpdate(*this);
@@ -234,9 +240,17 @@ void SimulationApp::Update()
                   }),
         bodies.end());
 
+    if (sceneCanvas->IsEmptyAreaClicked(input, inputOwners))
+    {
+        ClearSelection();
+    }
+
+    // 保持底图与调试文字在物体更新、绘制之前输出。
+    sceneCanvas->Render(screen);
+    DrawString(screen, depthBuffer, 999, debugString,
+               Color(110), font, sceneCanvas->topLeft + DVector2(10, 10), sceneCanvas->width - 20, sceneCanvas->GetViewport());
+
     // 更新运行信息
-    (*background).Update(*this);
-    (*background).Render(*this);
     realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
     currentScope[L"current.frameRate.GetDeltaTime()"] = std::make_shared<Value>(realDeltaTime);
     gridNumX = ceil(rectScene.width / gridSize);

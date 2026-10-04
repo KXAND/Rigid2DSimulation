@@ -1,6 +1,6 @@
 ﻿#include "Collision.h"
 #include "SimulationApp.h"
-#include "Background.h"
+#include "SceneCanvas.h"
 #include "Body.h"
 #include "Shape.h"
 #include "DrawGeometry.h"
@@ -8,7 +8,7 @@
 //	疑似废弃
 void Collision::Render(SimulationApp& simulationApp) const
 {
-    DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, 100, contactPoint, 5, 5, simulationApp.background->GetViewport(), Color::kYellow);
+    DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, 100, contactPoint, 5, 5, simulationApp.sceneCanvas->GetViewport(), Color::kYellow);
 }
 void Collision::Simulate(bool equalResponse)
 {

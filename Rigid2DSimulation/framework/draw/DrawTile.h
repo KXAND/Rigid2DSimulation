@@ -2,7 +2,7 @@
 #include "Vector2.h"
 #include "Tile.h"
 /// <summary>
-/// 最底层的Tile，用于Background，无需检查深度
+/// 最底层的Tile，用于SceneCanvas，无需检查深度
 /// </summary>
 /// <param name="targetTile"></param>
 /// <param name="topLeft"></param>

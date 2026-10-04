@@ -138,7 +138,7 @@
     <ClCompile Include="framework\app\AppItem.cpp" />
     <ClCompile Include="framework\app\AppMessage.cpp" />
     <ClCompile Include="framework\app\WaveOutput.cpp" />
-    <ClCompile Include="current\common\Background.cpp" />
+    <ClCompile Include="current\common\SceneCanvas.cpp" />
     <ClCompile Include="current\rigid\Body.cpp" />
     <ClCompile Include="framework\parse\BracketGroup.cpp" />
     <ClCompile Include="framework\control\Button.cpp" />
@@ -213,7 +213,7 @@
     <ClInclude Include="framework\app\App.h" />
     <ClInclude Include="framework\app\AppItem.h" />
     <ClInclude Include="framework\app\WaveOutput.h" />
-    <ClInclude Include="current\common\Background.h" />
+    <ClInclude Include="current\common\SceneCanvas.h" />
     <ClInclude Include="current\rigid\Body.h" />
     <ClInclude Include="framework\parse\BracketGroup.h" />
     <ClInclude Include="framework\control\Button.h" />

@@ -1,7 +1,7 @@
 ﻿#include "SceneBuilders.h"
 #include "current/common/utils.h"
 #include "SimulationApp.h"
-#include "Background.h"
+#include "SceneCanvas.h"
 #include "Body.h"
 #include "Shape.h"
 #include "Connection.h"
@@ -108,33 +108,33 @@ void CreateConnection(SimulationApp& simulationApp, Value const& configuration)
 
 void Boundary(SimulationApp& simulationApp, Value const& thickness, Value const& configuration)
 {
-    double backgroundWidth = simulationApp.background->width, backgroundHeight = simulationApp.background->height;
-    double left = simulationApp.background->topLeft.x, right = left + backgroundWidth;
-    double top = simulationApp.background->topLeft.y, bottom = top + backgroundHeight;
+    double canvasWidth = simulationApp.sceneCanvas->width, canvasHeight = simulationApp.sceneCanvas->height;
+    double left = simulationApp.sceneCanvas->topLeft.x, right = left + canvasWidth;
+    double top = simulationApp.sceneCanvas->topLeft.y, bottom = top + canvasHeight;
     std::shared_ptr<Body> body;
     Color color = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-    body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thickness.number, backgroundHeight)));
+    body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thickness.number, canvasHeight)));
     body->position = Vector2(left, (top + bottom) / 2);
     body->fixed = true;
     body->innerColor = color;
     body->ReadConfig(configuration);
     body->Init();
     simulationApp.bodies.push_back(body);
-    body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thickness.number, backgroundHeight)));
+    body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thickness.number, canvasHeight)));
     body->position = Vector2(right, (top + bottom) / 2);
     body->fixed = true;
     body->innerColor = color;
     body->ReadConfig(configuration);
     body->Init();
     simulationApp.bodies.push_back(body);
-    body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(backgroundWidth, thickness.number)));
+    body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(canvasWidth, thickness.number)));
     body->position = Vector2((left + right) / 2, top);
     body->fixed = true;
     body->innerColor = color;
     body->ReadConfig(configuration);
     body->Init();
     simulationApp.bodies.push_back(body);
-    body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(backgroundWidth, thickness.number)));
+    body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(canvasWidth, thickness.number)));
     body->position = Vector2((left + right) / 2, bottom);
     body->fixed = true;
     body->innerColor = color;

@@ -3,7 +3,7 @@
 #include "current/common/utils.h"
 #include "SimulationApp.h"
 #include "DrawLineSegment.h"
-#include "Background.h"
+#include "SceneCanvas.h"
 #include "Connection.h"
 
 Connection::Connection()
@@ -267,7 +267,7 @@ void Connection::Render(SimulationApp& simulationApp) const
         color = isTight ? colorSpringStretch : colorSpringCompress;
         break;
     }
-    DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, 2, simulationApp.background->GetViewport(), color);
+    DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, 2, simulationApp.sceneCanvas->GetViewport(), color);
 }
 
 Body* GetOtherBody(Body* body, Connection const& connection)

@@ -220,7 +220,7 @@
     <ClCompile Include="current\ui\UserInterface.cpp">
       <Filter>current\ui</Filter>
     </ClCompile>
-    <ClCompile Include="current\common\Background.cpp">
+    <ClCompile Include="current\common\SceneCanvas.cpp">
       <Filter>current\common</Filter>
     </ClCompile>
     <ClCompile Include="current\common\SimulationApp.cpp">
@@ -441,7 +441,7 @@
     <ClInclude Include="current\ui\UserInterface.h">
       <Filter>current\ui</Filter>
     </ClInclude>
-    <ClInclude Include="current\common\Background.h">
+    <ClInclude Include="current\common\SceneCanvas.h">
       <Filter>current\common</Filter>
     </ClInclude>
     <ClInclude Include="current\common\SimulationApp.h">
