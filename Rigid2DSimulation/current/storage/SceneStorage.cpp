@@ -82,7 +82,10 @@ void SceneStorage::SaveParameters(FILE* file, SceneScriptRuntime const& runtime)
     fwrite(&(size), sizeof(size), 1, file);
     for (auto parameter : runtime.parameters)
     {
-        parameter->Save(file);
+        int nameLen = parameter->name.size();
+        fwrite(&(nameLen), sizeof(nameLen), 1, file);
+        fwrite(&*(parameter->name).begin(), sizeof(*(&*(parameter->name).begin())), nameLen, file);
+        fwrite(&(parameter->value), sizeof(parameter->value), 1, file);
     }
 }
 void SceneStorage::LoadParameters(FILE* file, SceneScriptRuntime& runtime)
@@ -91,7 +94,13 @@ void SceneStorage::LoadParameters(FILE* file, SceneScriptRuntime& runtime)
     fread(&(size), sizeof(size), 1, file);
     for (int i = (0), iEnd = int(size); i < iEnd; ++i)
     {
-        runtime.parameters.push_back(std::make_shared<SceneParameter>(file));
+        auto parameter = std::make_shared<SceneParameter>();
+        int nameLen = 0;
+        fread(&(nameLen), sizeof(nameLen), 1, file);
+        (parameter->name).resize(nameLen);
+        fread(&*(parameter->name).begin(), sizeof(*(&*(parameter->name).begin())), nameLen, file);
+        fread(&(parameter->value), sizeof(parameter->value), 1, file);
+        runtime.parameters.push_back(parameter);
     }
 }
 

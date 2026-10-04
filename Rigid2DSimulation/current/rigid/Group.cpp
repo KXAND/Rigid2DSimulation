@@ -1,7 +1,6 @@
 ﻿#include "Group.h"
 #include "Body.h"
 #include "Connection.h"
-#include "SimulationApp.h"
 
 void Group::Warp(DRect rectangle)
 {

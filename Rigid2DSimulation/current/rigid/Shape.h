@@ -2,7 +2,6 @@
 #include "Tile.h"
 #include "Aabb.h"
 
-struct SimulationApp;
 /// <summary>
 /// 定义一个图形
 /// </summary>

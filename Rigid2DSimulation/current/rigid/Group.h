@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "DVector2.h"
 
-struct SimulationApp;
 struct Body;
 struct Connection;
 /// <summary>
