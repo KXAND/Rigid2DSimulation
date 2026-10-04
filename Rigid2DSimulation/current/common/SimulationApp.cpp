@@ -10,7 +10,6 @@
 #include "AudioClip.h"
 #include "Creator.h"
 #include "Connection.h"
-#include "DrawString.h"
 
 SimulationApp::SimulationApp()
 {
@@ -126,8 +125,8 @@ void SimulationApp::Reset()
     editor.ClearSelection();
     physicsWorld.ResetParameters(DRect(sceneCanvas->topLeft, sceneCanvas->width, sceneCanvas->height));
     maxRealDeltaTime = 0.05;
-    energyMultiplier = 4e-6;
-    chargeMultiplier = 1;
+    sceneRenderer.energyMultiplier = 4e-6;
+    sceneRenderer.chargeMultiplier = 1;
     isTrackShown = false;
 
     editor.ResetTools();
@@ -164,9 +163,7 @@ void SimulationApp::Update()
     }
 
     // 保持底图与调试文字在物体更新、绘制之前输出。
-    sceneCanvas->Render(screen);
-    DrawString(screen, depthBuffer, 999, debugString,
-               Color(110), font, sceneCanvas->topLeft + DVector2(10, 10), sceneCanvas->width - 20, sceneCanvas->GetViewport());
+    sceneRenderer.RenderBackground(*sceneCanvas, debugString, GetSceneRenderContext());
 
     PrepareSimulation();
 
@@ -174,14 +171,14 @@ void SimulationApp::Update()
 
     AdvanceSimulation();
 
-    RenderSceneObjects();
+    sceneRenderer.RenderObjects(physicsWorld, GetSceneRenderContext());
 
     if (editor.mode == kCreateMode)
     {
         editor.creator->Update(physicsWorld, input, inputOwners);
-        editor.creator->RenderPreview(*this);
+        sceneRenderer.RenderCreatorPreview(*editor.creator, GetSceneRenderContext());
     }
-    userInterface->Update(*this);
+    userInterface->UpdateAndRender(*this);
 }
 
 void SimulationApp::ResolveInputOwnership()
@@ -241,26 +238,18 @@ void SimulationApp::AdvanceSimulation()
     }
 }
 
-void SimulationApp::RenderSceneObjects()
+
+SceneRenderContext SimulationApp::GetSceneRenderContext()
 {
-    // 渲染
-    for (auto& body : physicsWorld.bodies)
-    {
-        body->UpdateShapesPositionAndAABB();
-        body->Render(*this);
-    }
-    for (auto& connection : physicsWorld.connections)
-    {
-        connection->UpdatePosition();
-        connection->Render(*this);
-    }
+    return {screen, depthBuffer, font, sceneCanvas->GetViewport(), input.mousePosition,
+            editor.bodySelecting, editor.connectionSelecting};
 }
 
 void SimulationApp::SetConfig(Value const& config)
 {
     TryReadConfigNumber(config, L"volume", volume);
-    TryReadConfigNumber(config, L"energyMultiplier", energyMultiplier);
-    TryReadConfigNumber(config, L"chargeMultiplier", chargeMultiplier);
+    TryReadConfigNumber(config, L"energyMultiplier", sceneRenderer.energyMultiplier);
+    TryReadConfigNumber(config, L"chargeMultiplier", sceneRenderer.chargeMultiplier);
     TryReadConfigNumber(config, L"parallelEpsilon", physicsWorld.parallelEpsilon);
     TryReadConfigNumber(config, L"maxRealDeltaTime", maxRealDeltaTime);
     TryReadConfigNumber(config, L"hasElectrostatic", physicsWorld.hasElectrostatic);

@@ -2,8 +2,6 @@
 #include "Body.h"
 #include "current/common/utils.h"
 #include "SimulationApp.h"
-#include "DrawLineSegment.h"
-#include "SceneCanvas.h"
 #include "Connection.h"
 
 Connection::Connection()
@@ -249,26 +247,6 @@ void Connection::Simulate(double deltaTime, bool useEqualPositionCorrection)
     }
 }
 
-void Connection::Render(SimulationApp& simulationApp) const
-{
-    Color color;
-    switch (type)
-    {
-    case kRopeConnection:
-        color = isTight ? colorRopeTight : colorRope;
-        break;
-    case kLinkConnection:
-        color = colorLink;
-        break;
-    case kCordConnection:
-        color = isTight ? colorCordTight : colorCord;
-        break;
-    case kSpringConnection:
-        color = isTight ? colorSpringStretch : colorSpringCompress;
-        break;
-    }
-    DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, 2, simulationApp.sceneCanvas->GetViewport(), color);
-}
 
 Body* GetOtherBody(Body* body, Connection const& connection)
 {

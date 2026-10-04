@@ -219,14 +219,69 @@ body.UpdateShapesPositionAndAABB()
 4. 检查 UTF-8 BOM、CRLF、注释无损、diff 和原有未提交文件哈希；GUI 拖拽、脚本预设、创建预览等仍列入用户验收，不用局部测试冒充完整验收。
 5. 完成后停止，等待用户检查；确认后再提交本步代码与文档并开始第四步。
 
-## 7. 进度
+## 7. 第四步：集中场景渲染，保留交错时序
+
+### 7.1 类型和状态
+
+新增 `Rigid2DSimulation/current/render/SceneRenderer.h/.cpp`，类型为 `class SceneRenderer`；App 按值持有 `SceneRenderer sceneRenderer`。工程全部配置增加 current/render 包含目录，filters 登记该目录。
+
+- App 的 `display`、`energyMultiplier`、`chargeMultiplier` 迁为 SceneRenderer 同名公开成员；四个 `k*Display` 常量迁至其头文件。Reset 仍只重置两个倍率，不重置显示模式；DSL 配置键和菜单按钮行为不变。
+- 同头文件定义 `SceneRenderContext`：`Tile& screen`、`DepthBuffer& depthBuffer`、`Font const& font`、`DRect viewport`、`DVector2 mousePosition`、`Body const* selectedBody`、`Connection const* selectedConnection`。只表示一次绘制所需输出目标和只读显示输入，不含 App、物理参数、DSL 或完整输入对象。
+- App 私有 `GetSceneRenderContext()` 在每个绘制阶段调用前生成该对象，不跨帧保存，也不在帧首缓存选择，以免交互后还使用旧选择。Renderer 不保存 context 或对象指针，不依赖 SimulationApp 类型。
+- `isTrackShown` 留在 App 供轨迹采集使用，不把轨迹采集改成绘制时执行。Body/Connection 的颜色、深度、几何和轨迹数据暂留原类型，不扩展成新的外观对象系统，也不改存储布局。
+
+### 7.2 函数映射
+
+以下 SceneRenderer 成员均为 const 函数：
+
+| 新接口 | 搬入内容 |
+| --- | --- |
+| `RenderBackground(SceneCanvas const&, std::wstring const& debugString, SceneRenderContext const&)` | 原 App 的画布 Render 及紧随的调试文字 DrawString；Canvas 保留自己的底图 Render，不搬走输入区域职责 |
+| `RenderObjects(PhysicsWorld&, SceneRenderContext const&)` | 原 App::RenderSceneObjects 的逐刚体几何更新/绘制，然后逐连接端点更新/绘制；删除旧 App 包装函数 |
+| `RenderCreatorPreview(Creator&, SceneRenderContext const&)` | 原 Creator::RenderPreview；保留连接预览端点更新，再绘制，不重新调用创建逻辑 |
+| `RenderCollision(Collision const&, SceneRenderContext const&)` | 原 Collision::Render 的接触点绘制；只迁移入口，不启用原本没有调用的调试显示 |
+| 私有 `RenderBody(Body const&, SceneRenderContext const&)` | 原 Body::Render 的颜色选择、轮廓、填充、拖拽线和轨迹绘制，规则和优先级不变 |
+| 私有 `RenderConnection(Connection const&, SceneRenderContext const&)` | 原 Connection::Render 的颜色规则与线段绘制 |
+
+移除 Body、Connection、Collision 的 Render 声明/定义和不再需要的绘图包含；Creator 删除 RenderPreview 及 SimulationApp 依赖，并直接包含创建逻辑需要的 AppItem/PhysicsWorld 等头文件。Body/Connection 仍因脚本或存储依赖 App，不宣称全库完全解耦。
+
+RenderObjects 与 RenderCreatorPreview 明确接收可变世界/工具，因为本步仍在原位置更新几何/端点。仅 RenderBody/RenderConnection 只读对象。物理子步内的 AABB 更新不删除，不把所有几何更新集中提前，也不强称整个 Renderer 无状态副作用。
+
+### 7.3 UI 的实际边界
+
+审查发现基础控件已经有 Render/RenderMain/RenderCursor 等独立绘制函数：按钮在回调后立即绘制，Panel 先画底板再更新子控件，FloatPanel 按自身状态决定是否继续绘制。为了保留现有可见行为，不能简单改成“更新所有控件，再统一绘制”。
+
+本步不再次拆 UI 文件，不改 framework/control 内已有函数；`UserInterface::Update` 重命名为 `UpdateAndRender`，明确当前仍是交错入口，其内部调用顺序和实现不变。场景 Renderer 不接管 UI 控件树。UI 全局更新/绘制解交错需另行确定回调生效和布局规则，不是此步骤完成的承诺；本步完成的是场景渲染职责迁移及显式标明 UI 的保留边界。
+
+### 7.4 帧流程和改动范围
+
+```text
+原输入、脚本、音乐、暂停与删除/选择阶段
+sceneRenderer.RenderBackground(..., GetSceneRenderContext())
+原 PrepareSimulation、editor.UpdateBodies、AdvanceSimulation
+sceneRenderer.RenderObjects(physicsWorld, GetSceneRenderContext())
+若创建模式：creator.Update(...) → sceneRenderer.RenderCreatorPreview(..., GetSceneRenderContext())
+userInterface.UpdateAndRender(app)
+```
+
+修改 App、Body、Connection、Collision、Creator 的 .h/.cpp，UserInterface 的 .h/.cpp，MenuButtons.cpp、工程和本方案；新增 SceneRenderer 两文件。SceneCanvas、framework 绘图算法、物理解算、编辑交互实现、存储、脚本字符串及原有未提交文件均不修改。不修复 Body 原显示分支中的不可达代码或既有物理注释乱码。
+
+### 7.5 验证及停止点
+
+1. 对照第三步提交，逐段核对搬迁实现、调用时序和参数替换；检查没有遗留旧 Render 入口或 App 显示成员访问。
+2. Debug|x64 构建；在忽略的 x64 目录建立无窗口像素对照测试，以原渲染实现为参考，对照颜色、透明度和深度缓冲。覆盖点、圆、多边形、显示模式、选择/悬停/拖拽、轨迹、各连接类型、创建预览及碰撞标记；字体/背景另设检查。
+3. 重新链接交互与物理本地测试，确认几何和编辑行为不回退；不恢复 tests 目录文件，不提交本地测试。
+4. 检查 UTF-8 BOM、CRLF、注释、diff 及原有未提交文件哈希，独立审查规范和方案一致性。测试不代替 GUI/音乐/脚本场景验收。
+5. 完成后停下等待用户确认，不提交第四步、不开始第五步。
+
+## 8. 进度
 
 | 步骤 | 状态 |
 | --- | --- |
 | 1. 整理帧流程 | 用户已于 2026-10-05 确认，已提交 `362956d` |
 | 2. 提取物理世界 | 用户已于 2026-10-05 确认，已提交 `13ba108` |
-| 3. 提取编辑交互 | 用户已于 2026-10-05 确认，代码与本方案一起提交 |
-| 4. 整理渲染职责 | 未开始 |
+| 3. 提取编辑交互 | 用户已于 2026-10-05 确认，已提交 `6542dde` |
+| 4. 整理渲染职责 | 用户已确认，代码与本方案一起提交 |
 | 5. 移出脚本和存储 | 未开始 |
 
 第一步验证记录（2026-10-05）：
@@ -263,3 +318,15 @@ body.UpdateShapesPositionAndAABB()
 - Standards 与 Spec 两项独立只读审查均未发现本次新增问题。原有 SceneParameter.cpp、rigid 审计和 UI 回调文档的 SHA256 未变化；没有恢复已删除的 tests 文件，本地测试保持忽略、不提交。
 
 第三步已获用户确认，代码与本文一起提交；随后在同轮开始第四步的详细设计与实施，第四步完成后再次等待用户检查。
+
+第四步验证记录（2026-10-05）：
+
+- 第三步已提交为 `6542dde`。第四步主工程 `Debug|x64` 构建通过；首次构建发现迁移时漏带 DrawCurve.h，导致 DrawEllipseBorder 未声明，已补齐并重建通过。未修改底层绘图算法。
+- 本地 `x64/renderer-check/` 保留第三步基线的原绘制实现作对照。960 组场景分别在背景/调试文字、物体/连接、创建预览、碰撞标记四个阶段比较全部颜色、透明度和深度缓冲，均完全一致，预览端点也一致。覆盖四种显示模式、点/圆/旋转矩形、16 组悬停/拖拽/选择组合、五个位置及视口裁剪、轨迹、四类连接和紧绷状态。
+- 字体对照使用本地构造的小型字形，包括缺字和换行，不依赖窗口或字体资源加载；点物体能量测试使用有效面积/惯量，未将原有无效数值路径当作本次修复或验收范围。没有做完整 GUI/脚本场景验收。
+- 本地交互与物理测试已重新链接最新生产对象：2048 组输入、6144 次拖拽子步、选择/删除/模式及七种创建工具检查通过；10 个物理场景、800 个子步、关联删除和重置检查通过。
+- Body、Connection、Collision、Creator 除绘制搬出及直接包含调整外，其余实现与第三步基线一致；UserInterface 除入口重命名外实现完全一致。旧 Render 入口、App 显示成员访问及旧 UI 总入口没有残留。
+- Standards 审查指出 SceneRenderContext 缺少 DVector2.h 的直接包含，已修正并检查；Spec 审查未发现新增时序或行为偏差。UI 全局分阶段调度并未实现，仍按第7.3节保留交错语义。
+- 15 个相关 C++ 文件通过 UTF-8 BOM、CRLF、无 Tab 检查，`git diff --check` 通过。原有 SceneParameter.cpp、rigid 审计和 UI 回调文档的 SHA256 未变化。测试仍位于已忽略的 x64 下，不提交，不恢复 tests 目录文件。
+
+第四步已获用户确认，代码与本文一起提交；随后开始第五步的详细设计与实施，完成后再次等待用户检查。

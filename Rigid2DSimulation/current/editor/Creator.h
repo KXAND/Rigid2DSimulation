@@ -10,7 +10,6 @@ int constexpr kCreatePoint = 5;
 int constexpr kCreateNail = 6;
 
 struct Value;
-struct SimulationApp;
 struct AppInput;
 struct InputOwners;
 class PhysicsWorld;
@@ -38,7 +37,6 @@ struct Creator
     Creator(Value const& config);
     double Depth() const;
     void Update(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners);
-    void RenderPreview(SimulationApp& simulationApp);
     void Discard(InputOwners& inputOwners);
     void PreUpdate(AppInput const& input, InputOwners& inputOwners, DRect viewport);
 

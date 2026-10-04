@@ -1,7 +1,6 @@
 ﻿#include "Creator.h"
+#include "AppItem.h"
 #include "current/common/utils.h"
-#include "SimulationApp.h"
-#include "SceneCanvas.h"
 #include "Value.h"
 #include "PhysicsWorld.h"
 #include "Body.h"
@@ -325,19 +324,6 @@ void Creator::Update(PhysicsWorld& world, AppInput& input, InputOwners const& in
     }
 }
 
-void Creator::RenderPreview(SimulationApp& simulationApp)
-{
-    if (body)
-    {
-        body->Render(simulationApp);
-    }
-    if (connection && body0)
-    {
-        connection->p0 = body0->position + body0->transform * p0Relative;
-        connection->p1 = (Vector2)simulationApp.input.mousePosition;
-        connection->Render(simulationApp);
-    }
-}
 void Creator::Discard(InputOwners& inputOwners)
 {
     inputOwners.Remove(this);

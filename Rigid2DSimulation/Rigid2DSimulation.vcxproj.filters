@@ -28,6 +28,9 @@
     <Filter Include="current\common">
       <UniqueIdentifier>{1084d84c-4808-4d4e-b325-c93493777584}</UniqueIdentifier>
     </Filter>
+    <Filter Include="current\render">
+      <UniqueIdentifier>{E06DF75A-3E59-445A-ABAD-C635AA02A2F8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="current\editor">
       <UniqueIdentifier>{E83C7447-9A5A-4179-88DC-BE8DF3B8958E}</UniqueIdentifier>
     </Filter>
@@ -246,6 +249,9 @@
     </ClCompile>
     <ClCompile Include="current\editor\SceneEditor.cpp">
       <Filter>current\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="current\render\SceneRenderer.cpp">
+      <Filter>current\render</Filter>
     </ClCompile>
     <ClCompile Include="current\rigid\Collision.cpp">
       <Filter>current\rigid</Filter>
@@ -476,6 +482,9 @@
     </ClInclude>
     <ClInclude Include="current\editor\SceneEditor.h">
       <Filter>current\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="current\render\SceneRenderer.h">
+      <Filter>current\render</Filter>
     </ClInclude>
     <ClInclude Include="current\rigid\Aabb.h">
       <Filter>current\rigid</Filter>

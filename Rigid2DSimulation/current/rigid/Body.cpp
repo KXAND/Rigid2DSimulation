@@ -1,12 +1,7 @@
 ﻿#include "Body.h"
 #include "current/common/utils.h"
 #include "SimulationApp.h"
-#include "SceneCanvas.h"
 #include "Shape.h"
-#include "DrawTriangle.h"
-#include "DrawGeometry.h"
-#include "DrawCurve.h"
-#include "DrawLineSegment.h"
 #include "Connection.h"
 
 // 这些构造函数真的很混乱。
@@ -302,90 +297,6 @@ void Body::Init(bool resetPosition)
         }
     }
     UpdateShapesPositionAndAABB();
-}
-void Body::Render(SimulationApp& simulationApp) const
-{
-    bool isSelectedConnection = simulationApp.editor.connectionSelecting &&
-                                (simulationApp.editor.connectionSelecting->body0 == this || simulationApp.editor.connectionSelecting->body1 == this);
-    Color normalColor;
-    switch (simulationApp.display)
-    {
-    case kColorDisplay:
-        normalColor = innerColor;
-        break;
-        if (point)
-        {
-            break;
-        }
-    case kEnergyDisplay:
-    {
-        double energy = velocity.GetLengthSquared() + velocityAngular * velocityAngular * inertia / area;
-        normalColor = (Color)Vector3(energy * simulationApp.energyMultiplier, 0, 0);
-        break;
-    }
-    case kChargesDisplay:
-    {
-        normalColor = chargeDensity > 0 ? (Color)Vector3(chargeDensity * simulationApp.chargeMultiplier, 0, 0) : (Color)Vector3(0, 0, -chargeDensity * simulationApp.chargeMultiplier);
-        break;
-    }
-    default:
-        break;
-    }
-
-    Color color =
-        dragged ? draggedColor : (simulationApp.editor.bodySelecting == this) ? selectedColor
-                             : hovered                                 ? hoveredColor
-                             : isSelectedConnection                    ? selectedConnectionColor
-                                                                       : normalColor;
-
-    if (point)
-    {
-        DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, GetDepth(), position, pointRadius, pointRadius, simulationApp.sceneCanvas->GetViewport(), color);
-        DrawEllipseBorder(simulationApp.screen, simulationApp.depthBuffer, GetDepth(), position, pointRadius, pointRadius, simulationApp.sceneCanvas->GetViewport(), borderColor, 20);
-    }
-    for (auto& shape : shapes)
-    {
-        if (shape->isCircle)
-        {
-            DrawEllipse(simulationApp.screen, simulationApp.depthBuffer, GetDepth(),
-                        shape->position, shape->radius, shape->radius, simulationApp.sceneCanvas->GetViewport(), color);
-            DrawEllipseBorder(simulationApp.screen, simulationApp.depthBuffer, GetDepth(),
-                              shape->position, shape->radius, shape->radius, simulationApp.sceneCanvas->GetViewport(), borderColor, 30);
-
-            // 显示一条半径以便于我们判断圆的旋转角度
-            auto peakPoint = Vector2(cos(shape->radian), sin(shape->radian)) * shape->radius + shape->position;
-            DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, shape->position, peakPoint, GetDepth(), simulationApp.sceneCanvas->GetViewport(), borderColor);
-            continue;
-        }
-
-        for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
-        {
-            int j = (i + 1) % shape->vertices.size();
-            DrawTriangle(simulationApp.screen, simulationApp.depthBuffer, simulationApp.sceneCanvas->GetViewport(), shape->position, shape->vertices[i], shape->vertices[j], GetDepth(), color);
-        }
-        for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
-        {
-            int j = (i + 1) % shape->vertices.size();
-            DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, shape->vertices[i], shape->vertices[j], GetDepth(), simulationApp.sceneCanvas->GetViewport(), borderColor);
-        }
-    }
-
-    if (dragged)
-    {
-        Vector2 p1 = Vector2(simulationApp.input.mousePosition);
-        Vector2 p0 = position + transform * relativeDragPoint;
-        DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, GetDepth(), simulationApp.sceneCanvas->GetViewport(), Color(0, 255, 255));
-    }
-
-    if (!track.empty())
-    {
-        Vector2 p0 = track.front();
-        for (auto p1 : track)
-        {
-            DrawLineSegment(simulationApp.screen, simulationApp.depthBuffer, p0, p1, 10, simulationApp.sceneCanvas->GetViewport(), Color(255, 0, 255));
-            p0 = p1;
-        }
-    }
 }
 
 void Body::Step(SimulationApp& simulationApp, double stepDeltaTime)

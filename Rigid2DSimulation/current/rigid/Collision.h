@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Vector2.h"
 
-struct SimulationApp;
 struct Body;
 struct Shape;
 struct Collision
@@ -11,7 +10,6 @@ struct Collision
     double depth = DBL_MAX;
     double difference = DBL_MAX;
     Vector2 normal, contactPoint;
-    void Render(SimulationApp& simulationApp) const;
     void Simulate(bool useEqualPositionCorrection);
 };
 

@@ -73,7 +73,6 @@ private:
 
 public:
     void Init(bool resetPosition = false);
-    void Render(SimulationApp& simulationApp) const;
     void Step(SimulationApp& simulationApp, double stepDeltaTime);
 
 private:

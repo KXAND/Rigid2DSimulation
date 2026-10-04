@@ -42,7 +42,6 @@ struct Connection
     void SimulateRopeOrLink(bool useEqualPositionCorrection);
     void SimulateCordOrSpring(double stepDeltaTime);
     void Simulate(double stepDeltaTime, bool useEqualPositionCorrection);
-    void Render(SimulationApp& simulationApp) const;
 };
 
 Body* GetOtherBody(Body* body, Connection const& connection);

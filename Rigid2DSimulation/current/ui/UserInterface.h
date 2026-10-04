@@ -32,6 +32,7 @@ struct UserInterface
     // 这也是为什么主程序不需要 Init。这应该是一个普遍的问题。
     // 好像上面这些话已经过时了，不过还是保留这个设计以防万一。
     void Init(SimulationApp& simulationApp);
-    void Update(SimulationApp& simulationApp);
+    // 控件仍在更新过程中按原顺序绘制，不表示全局更新/渲染已分阶段。
+    void UpdateAndRender(SimulationApp& simulationApp);
     void PreUpdate(SimulationApp& simulationApp);
 };

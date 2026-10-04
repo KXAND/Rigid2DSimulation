@@ -74,7 +74,7 @@ DisplayModeButton::DisplayModeButton() : Button(150) {}
 void DisplayModeButton::Update(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    switch (simulationApp.display)
+    switch (simulationApp.sceneRenderer.display)
     {
     case kColorDisplay:
         text = simulationApp.GetLocalizedString(L"colorDisplay");
@@ -95,5 +95,5 @@ void DisplayModeButton::Update(App& app)
 void DisplayModeButton::OnClick(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.display = (simulationApp.display + 1) % 4;
+    simulationApp.sceneRenderer.display = (simulationApp.sceneRenderer.display + 1) % 4;
 }

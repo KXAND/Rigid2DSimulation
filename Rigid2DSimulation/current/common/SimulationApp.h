@@ -2,13 +2,8 @@
 #include "App.h"
 #include "PhysicsWorld.h"
 #include "SceneEditor.h"
+#include "SceneRenderer.h"
 #include "Value.h"
-
-int constexpr kColorDisplay = 0;
-int constexpr kEnergyDisplay = 1;
-int constexpr kChargesDisplay = 2;
-int constexpr kNoDisplay = 3;
-
 
 struct UserInterface;
 struct SceneCanvas;
@@ -20,6 +15,7 @@ struct SimulationApp : App
     std::shared_ptr<SceneCanvas> sceneCanvas;
     PhysicsWorld physicsWorld;
     SceneEditor editor;
+    SceneRenderer sceneRenderer;
 
     Scope currentScope;
     wstring debugString, scriptText, temporaryScriptText;
@@ -29,9 +25,6 @@ struct SimulationApp : App
     AudioClip* currentMusicClip = NULL;
     double volume = 0;
 
-    int display = 0;
-    double energyMultiplier = 0;
-    double chargeMultiplier = 0;
     bool isTrackShown = false;
     bool isMuted = false;
     bool isPaused = false;
@@ -57,5 +50,5 @@ private:
     void RemoveDeletedObjects();
     void PrepareSimulation();
     void AdvanceSimulation();
-    void RenderSceneObjects();
+    SceneRenderContext GetSceneRenderContext();
 };

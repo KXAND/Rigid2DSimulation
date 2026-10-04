@@ -38,7 +38,7 @@ void UserInterface::Init(SimulationApp& simulationApp)
     menuPanel = std::make_shared<MenuPanel>(simulationApp);
     bottomPanel = std::make_shared<BottomPanel>(simulationApp);
 }
-void UserInterface::Update(SimulationApp& simulationApp)
+void UserInterface::UpdateAndRender(SimulationApp& simulationApp)
 {
     menuPanel->Update(simulationApp);
     bottomPanel->Update(simulationApp);
