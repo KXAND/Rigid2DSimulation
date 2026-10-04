@@ -64,7 +64,7 @@ void SceneRenderer::RenderBody(Body const& body, SceneRenderContext const& conte
     switch (display)
     {
     case kColorDisplay:
-        normalColor = body.innerColor;
+        normalColor = body.appearance.innerColor;
         break;
         if (body.point)
         {
@@ -85,16 +85,16 @@ void SceneRenderer::RenderBody(Body const& body, SceneRenderContext const& conte
         break;
     }
 
-    Color color = body.dragged ? body.draggedColor
-                : (context.selectedBody == &body) ? body.selectedColor
-                : body.hovered ? body.hoveredColor
-                : isSelectedConnection ? body.selectedConnectionColor
+    Color color = body.dragged ? body.appearance.draggedColor
+                : (context.selectedBody == &body) ? body.appearance.selectedColor
+                : body.hovered ? body.appearance.hoveredColor
+                : isSelectedConnection ? body.appearance.selectedConnectionColor
                 : normalColor;
 
     if (body.point)
     {
-        DrawEllipse(context.screen, context.depthBuffer, body.GetDepth(), body.position, body.pointRadius, body.pointRadius, context.viewport, color);
-        DrawEllipseBorder(context.screen, context.depthBuffer, body.GetDepth(), body.position, body.pointRadius, body.pointRadius, context.viewport, body.borderColor, 20);
+        DrawEllipse(context.screen, context.depthBuffer, body.GetDepth(), body.position, body.appearance.pointRadius, body.appearance.pointRadius, context.viewport, color);
+        DrawEllipseBorder(context.screen, context.depthBuffer, body.GetDepth(), body.position, body.appearance.pointRadius, body.appearance.pointRadius, context.viewport, body.appearance.borderColor, 20);
     }
     for (auto& shape : body.shapes)
     {
@@ -103,11 +103,11 @@ void SceneRenderer::RenderBody(Body const& body, SceneRenderContext const& conte
             DrawEllipse(context.screen, context.depthBuffer, body.GetDepth(),
                         shape->position, shape->radius, shape->radius, context.viewport, color);
             DrawEllipseBorder(context.screen, context.depthBuffer, body.GetDepth(),
-                              shape->position, shape->radius, shape->radius, context.viewport, body.borderColor, 30);
+                              shape->position, shape->radius, shape->radius, context.viewport, body.appearance.borderColor, 30);
 
             // 显示一条半径以便于我们判断圆的旋转角度
             auto peakPoint = Vector2(cos(shape->radian), sin(shape->radian)) * shape->radius + shape->position;
-            DrawLineSegment(context.screen, context.depthBuffer, shape->position, peakPoint, body.GetDepth(), context.viewport, body.borderColor);
+            DrawLineSegment(context.screen, context.depthBuffer, shape->position, peakPoint, body.GetDepth(), context.viewport, body.appearance.borderColor);
             continue;
         }
 
@@ -119,7 +119,7 @@ void SceneRenderer::RenderBody(Body const& body, SceneRenderContext const& conte
         for (int i = (0), iEnd = int(shape->vertices.size()); i < iEnd; ++i)
         {
             int j = (i + 1) % shape->vertices.size();
-            DrawLineSegment(context.screen, context.depthBuffer, shape->vertices[i], shape->vertices[j], body.GetDepth(), context.viewport, body.borderColor);
+            DrawLineSegment(context.screen, context.depthBuffer, shape->vertices[i], shape->vertices[j], body.GetDepth(), context.viewport, body.appearance.borderColor);
         }
     }
 

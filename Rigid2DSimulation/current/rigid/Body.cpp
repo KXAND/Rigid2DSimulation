@@ -1,5 +1,5 @@
 ﻿#include "Body.h"
-#include "current/common/utils.h"
+#include "framework/basic/Utils.h"
 #include "Shape.h"
 #include "Connection.h"
 
@@ -12,15 +12,6 @@ Body::Body()
     elasticity = 0.7;
     frictionStatic = 0.5;
     frictionDynamic = 0.3;
-
-    depthShape = 0;
-    depthPoint = 1;
-    pointRadius = 8;
-    borderColor = {255, 255, 255};
-    hoveredColor = {0, 0, 255};
-    draggedColor = {255, 0, 0};
-    selectedColor = {255, 0, 255};
-    selectedConnectionColor = {255, 255, 0};
 }
 Body::Body(Vector2 const& position) : Body()
 {
@@ -35,71 +26,15 @@ Body::Body(vector<std::shared_ptr<Shape>> const& shapes) : Body()
 {
     this->shapes = shapes;
 }
-void Body::Save(FILE* file) const
-{
-    int size = 0;
-    fwrite(&(point), sizeof(point), 1, file);
-    fwrite(&(fixed), sizeof(fixed), 1, file);
-    size = shapes.size();
-    fwrite(&(size), sizeof(size), 1, file);
-    for (auto shape : shapes)
-    {
-        shape->Save(file);
-    }
-    fwrite(&(position), sizeof(position), 1, file);
-    fwrite(&(velocity), sizeof(velocity), 1, file);
-    size = (scriptText).size();
-    fwrite(&(size), sizeof(size), 1, file);
-    fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
-    fwrite(&(radian), sizeof(radian), 1, file);
-    fwrite(&(velocityAngular), sizeof(velocityAngular), 1, file);
-    fwrite(&(density), sizeof(density), 1, file);
-    fwrite(&(elasticity), sizeof(elasticity), 1, file);
-    fwrite(&(frictionStatic), sizeof(frictionStatic), 1, file);
-    fwrite(&(frictionDynamic), sizeof(frictionDynamic), 1, file);
-    fwrite(&(dampCoeff), sizeof(dampCoeff), 1, file);
-    fwrite(&(dampCoeffAngular), sizeof(dampCoeffAngular), 1, file);
-    fwrite(&(chargeDensity), sizeof(chargeDensity), 1, file);
-    fwrite(&(innerColor), sizeof(innerColor), 1, file);
-}
-Body::Body(FILE* file) : Body()
-{
-    int size = 0;
-    fread(&(point), sizeof(point), 1, file);
-    fread(&(fixed), sizeof(fixed), 1, file);
-    fread(&(size), sizeof(size), 1, file);
-    for (int i = (0), iEnd = int(size); i < iEnd; ++i)
-    {
-        shapes.push_back(std::make_shared<Shape>(file));
-    }
-    fread(&(position), sizeof(position), 1, file);
-    fread(&(velocity), sizeof(velocity), 1, file);
-    fread(&(size), sizeof(size), 1, file);
-    (scriptText).resize(size);
-    fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
-    temporaryScriptText = scriptText;
-    fread(&(radian), sizeof(radian), 1, file);
-    fread(&(velocityAngular), sizeof(velocityAngular), 1, file);
-    fread(&(density), sizeof(density), 1, file);
-    fread(&(elasticity), sizeof(elasticity), 1, file);
-    fread(&(frictionStatic), sizeof(frictionStatic), 1, file);
-    fread(&(frictionDynamic), sizeof(frictionDynamic), 1, file);
-    fread(&(dampCoeff), sizeof(dampCoeff), 1, file);
-    fread(&(dampCoeffAngular), sizeof(dampCoeffAngular), 1, file);
-    fread(&(chargeDensity), sizeof(chargeDensity), 1, file);
-    fread(&(innerColor), sizeof(innerColor), 1, file);
-
-}
-
 double Body::GetDepth() const
 {
-    return point ? depthPoint : depthShape;
+    return point ? appearance.depthPoint : appearance.depthShape;
 }
 bool Body::IsInside(Vector2 p) const
 {
     if (point)
     {
-        return (p - position).GetLengthSquared() < pointRadius * pointRadius;
+        return (p - position).GetLengthSquared() < appearance.pointRadius * appearance.pointRadius;
     }
 
     for (auto shape : shapes)
@@ -110,32 +45,6 @@ bool Body::IsInside(Vector2 p) const
     return false;
 }
 
-
-void Body::ReadConfig(Value const& config)
-{
-    if (auto value = FindConfigValue(config, L"position"))
-    {
-        position = ToVector2(*value);
-    }
-    if (auto value = FindConfigValue(config, L"velocity"))
-    {
-        velocity = ToVector2(*value);
-    }
-    if (auto value = FindConfigValue(config, L"innerColor"))
-    {
-        innerColor = (Color)ToVector3(*value);
-    }
-    TryReadConfigNumber(config, L"radian", radian);
-    TryReadConfigNumber(config, L"velocityAngular", velocityAngular);
-    TryReadConfigNumber(config, L"elasticity", elasticity);
-    TryReadConfigNumber(config, L"frictionStatic", frictionStatic);
-    TryReadConfigNumber(config, L"frictionDynamic", frictionDynamic);
-    TryReadConfigNumber(config, L"dampCoeff", dampCoeff);
-    TryReadConfigNumber(config, L"dampCoeffAngular", dampCoeffAngular);
-    TryReadConfigNumber(config, L"fixed", fixed);
-    TryReadConfigNumber(config, L"density", density);
-    TryReadConfigNumber(config, L"chargeDensity", chargeDensity);
-}
 
 Vector2 Body::GenerateRandomPointInside() const
 {

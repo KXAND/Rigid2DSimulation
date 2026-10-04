@@ -1,5 +1,6 @@
 ﻿#include "SceneScriptRuntime.h"
 #include "Body.h"
+#include "BodyConfig.h"
 #include "Connection.h"
 #include "Creator.h"
 #include "PhysicsWorld.h"
@@ -284,29 +285,29 @@ void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings
 void SceneScriptRuntime::RefreshBodyScript(Body& body)
 {
     currentScope[L"body"] = std::make_shared<Value>();
-    Execute(currentScope, Compile(body.scriptText));
+    Execute(currentScope, Compile(body.scriptData.scriptText));
     if (currentScope.find(L"body") == currentScope.end())
     {
         return;
     }
     auto const& bodyConfig = *currentScope[L"body"];
-    body.ReadConfig(bodyConfig);
+    ApplyBodyConfig(body, bodyConfig);
 
     // 这些单独放是因为它们无法只能通过 scriptText 获得，无法保存。
-    TryReadConfigNumber(bodyConfig, L"hasPositionPreset", body.hasPositionPreset);
-    TryReadConfigNumber(bodyConfig, L"hasAnglePreset", body.hasAnglePreset);
-    TryReadConfigNumber(bodyConfig, L"hasAngularVelocityPreset", body.hasAngularVelocityPreset);
+    TryReadConfigNumber(bodyConfig, L"hasPositionPreset", body.scriptData.hasPositionPreset);
+    TryReadConfigNumber(bodyConfig, L"hasAnglePreset", body.scriptData.hasAnglePreset);
+    TryReadConfigNumber(bodyConfig, L"hasAngularVelocityPreset", body.scriptData.hasAngularVelocityPreset);
     if (auto value = FindConfigValue(bodyConfig, L"positionProgram"))
     {
-        body.positionProgram = std::make_shared<Program>(value->bodyStatements);
+        body.scriptData.positionProgram = std::make_shared<Program>(value->bodyStatements);
     }
     if (auto value = FindConfigValue(bodyConfig, L"angleProgram"))
     {
-        body.angleProgram = std::make_shared<Program>(value->bodyStatements);
+        body.scriptData.angleProgram = std::make_shared<Program>(value->bodyStatements);
     }
     if (auto value = FindConfigValue(bodyConfig, L"angularVelocityProgram"))
     {
-        body.angularVelocityProgram = std::make_shared<Program>(value->bodyStatements);
+        body.scriptData.angularVelocityProgram = std::make_shared<Program>(value->bodyStatements);
     }
     body.Init();
 }
@@ -329,18 +330,18 @@ void SceneScriptRuntime::ApplyMotionPresets(Body& body, bool isDynamic,
 {
     if (isDynamic)
     {
-        if (body.hasAngularVelocityPreset)
+        if (body.scriptData.hasAngularVelocityPreset)
         {
             FollowPresetAngularVelocity(body, simulationTime);
         }
     }
     else
     {
-        if (body.hasPositionPreset)
+        if (body.scriptData.hasPositionPreset)
         {
             FollowPresetPosition(body, simulationTime, stepDeltaTime);
         }
-        if (body.hasAnglePreset)
+        if (body.scriptData.hasAnglePreset)
         {
             FollowPresetAngle(body, simulationTime, stepDeltaTime);
         }
@@ -349,18 +350,18 @@ void SceneScriptRuntime::ApplyMotionPresets(Body& body, bool isDynamic,
 
 void SceneScriptRuntime::FollowPresetPosition(Body& body, double const& simulationTime, double stepDeltaTime)
 {
-    if (!body.positionProgram)
+    if (!body.scriptData.positionProgram)
     {
         return;
     }
     Scope scope;
     bool hasReturned = false;
     scope[L"time"] = std::make_shared<Value>(simulationTime);
-    auto positionOld = ToVector2(Execute(hasReturned, currentScope, scope, *body.positionProgram)->elements);
+    auto positionOld = ToVector2(Execute(hasReturned, currentScope, scope, *body.scriptData.positionProgram)->elements);
     scope.clear();
     scope[L"time"] = std::make_shared<Value>(simulationTime + stepDeltaTime);
     hasReturned = false;
-    auto positionNew = ToVector2(Execute(hasReturned, currentScope, scope, *body.positionProgram)->elements);
+    auto positionNew = ToVector2(Execute(hasReturned, currentScope, scope, *body.scriptData.positionProgram)->elements);
     auto velocityNew = (positionNew - positionOld) / stepDeltaTime;
 
     // 其实我觉得应当选用时间较小的值。
@@ -370,7 +371,7 @@ void SceneScriptRuntime::FollowPresetPosition(Body& body, double const& simulati
 
 void SceneScriptRuntime::FollowPresetAngle(Body& body, double const& simulationTime, double stepDeltaTime)
 {
-    if (!body.angleProgram)
+    if (!body.scriptData.angleProgram)
     {
         return;
     }
@@ -378,11 +379,11 @@ void SceneScriptRuntime::FollowPresetAngle(Body& body, double const& simulationT
     Scope scope;
     bool hasReturned = false;
     scope[L"time"] = std::make_shared<Value>(simulationTime);
-    auto radianOld = Execute(hasReturned, currentScope, scope, *body.angleProgram)->number;
+    auto radianOld = Execute(hasReturned, currentScope, scope, *body.scriptData.angleProgram)->number;
     scope.clear();
     scope[L"time"] = std::make_shared<Value>(simulationTime + stepDeltaTime);
     hasReturned = false;
-    auto radianNew = Execute(hasReturned, currentScope, scope, *body.angleProgram)->number;
+    auto radianNew = Execute(hasReturned, currentScope, scope, *body.scriptData.angleProgram)->number;
     auto velocityAngularNew = (radianNew - radianOld) / stepDeltaTime;
 
     body.radian = radianNew;
@@ -391,7 +392,7 @@ void SceneScriptRuntime::FollowPresetAngle(Body& body, double const& simulationT
 
 void SceneScriptRuntime::FollowPresetAngularVelocity(Body& body, double const& simulationTime)
 {
-    if (!body.angularVelocityProgram)
+    if (!body.scriptData.angularVelocityProgram)
     {
         return;
     }
@@ -399,7 +400,7 @@ void SceneScriptRuntime::FollowPresetAngularVelocity(Body& body, double const& s
     Scope scope;
     bool hasReturned = false;
     scope[L"time"] = std::make_shared<Value>(simulationTime);
-    auto velocityAngularNew = Execute(hasReturned, currentScope, scope, *body.angularVelocityProgram)->number;
+    auto velocityAngularNew = Execute(hasReturned, currentScope, scope, *body.scriptData.angularVelocityProgram)->number;
 
     body.velocityAngular = velocityAngularNew;
 }

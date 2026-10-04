@@ -12,13 +12,13 @@ BodyScriptEditor::BodyScriptEditor() : RichTextBox(360, 400) {}
 void BodyScriptEditor::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    value = simulationApp.editor.bodySelecting->temporaryScriptText;
+    value = simulationApp.editor.bodySelecting->scriptData.temporaryScriptText;
 }
 
 void BodyScriptEditor::Upload(App& app) const
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.editor.bodySelecting->temporaryScriptText = value;
+    simulationApp.editor.bodySelecting->scriptData.temporaryScriptText = value;
 }
 
 BodyConnectionLabel::BodyConnectionLabel(int id) : id(id), Label()

@@ -252,6 +252,9 @@
     <ClCompile Include="current\editor\SceneEditor.cpp">
       <Filter>current\editor</Filter>
     </ClCompile>
+    <ClCompile Include="current\script\BodyConfig.cpp">
+      <Filter>current\script</Filter>
+    </ClCompile>
     <ClCompile Include="current\script\SceneScriptRuntime.cpp">
       <Filter>current\script</Filter>
     </ClCompile>
@@ -490,6 +493,9 @@
     </ClInclude>
     <ClInclude Include="current\editor\SceneEditor.h">
       <Filter>current\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="current\script\BodyConfig.h">
+      <Filter>current\script</Filter>
     </ClInclude>
     <ClInclude Include="current\script\SceneScriptRuntime.h">
       <Filter>current\script</Filter>

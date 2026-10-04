@@ -9,7 +9,7 @@ void BodyScriptApplicationButton::OnClick(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
     auto& selectedBody = *simulationApp.editor.bodySelecting;
-    selectedBody.scriptText = selectedBody.temporaryScriptText;
+    selectedBody.scriptData.scriptText = selectedBody.scriptData.temporaryScriptText;
     simulationApp.scriptRuntime.RefreshBodyScript(selectedBody);
 }
 

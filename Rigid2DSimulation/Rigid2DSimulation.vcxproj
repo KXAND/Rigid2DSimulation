@@ -152,6 +152,7 @@
     <ClCompile Include="current\editor\Creator.cpp" />
     <ClCompile Include="current\editor\SceneEditor.cpp" />
     <ClCompile Include="current\render\SceneRenderer.cpp" />
+    <ClCompile Include="current\script\BodyConfig.cpp" />
     <ClCompile Include="current\script\SceneScriptRuntime.cpp" />
     <ClCompile Include="current\storage\SceneStorage.cpp" />
     <ClCompile Include="framework\control\ControlList.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="current\editor\Creator.h" />
     <ClInclude Include="current\editor\SceneEditor.h" />
     <ClInclude Include="current\render\SceneRenderer.h" />
+    <ClInclude Include="current\script\BodyConfig.h" />
     <ClInclude Include="current\script\SceneScriptRuntime.h" />
     <ClInclude Include="current\storage\SceneStorage.h" />
     <ClInclude Include="framework\control\ControlList.h" />

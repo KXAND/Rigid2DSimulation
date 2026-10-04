@@ -4,6 +4,7 @@
 #include "Value.h"
 #include "PhysicsWorld.h"
 #include "Body.h"
+#include "BodyConfig.h"
 #include "Shape.h"
 #include "Connection.h"
 
@@ -91,10 +92,10 @@ void Creator::UpdateBox(PhysicsWorld& world, AppInput& input)
         {
             body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(x1 - x0, y1 - y0)));
             body->position = Vector2(x0 + x1, y0 + y1) / 2;
-            body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+            body->appearance.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
             if (bodyConfiguration)
             {
-                body->ReadConfig(*bodyConfiguration);
+                ApplyBodyConfig(*body, *bodyConfiguration);
             }
             body->Init();
         }
@@ -129,10 +130,10 @@ void Creator::UpdateBall(PhysicsWorld& world, AppInput& input)
         {
             body = std::make_shared<Body>(std::make_shared<Shape>(dragRadius));
             body->position = Vector2(creationStartPoint);
-            body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+            body->appearance.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
             if (bodyConfiguration)
             {
-                body->ReadConfig(*bodyConfiguration);
+                ApplyBodyConfig(*body, *bodyConfiguration);
             }
             body->Init();
         }
@@ -170,10 +171,10 @@ void Creator::UpdatePlate(PhysicsWorld& world, AppInput& input)
             body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(dragLen + plateThickness, plateThickness)));
             body->position = Vector2(creationStartPoint + input.mousePosition) / 2;
             body->radian = atan2(dragVector.y, dragVector.x);
-            body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+            body->appearance.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
             if (bodyConfiguration)
             {
-                body->ReadConfig(*bodyConfiguration);
+                ApplyBodyConfig(*body, *bodyConfiguration);
             }
             body->Init();
         }
@@ -242,10 +243,10 @@ void Creator::UpdatePoint(PhysicsWorld& world, AppInput& input)
     if (hovered && input.IsMouseClickedDown(0))
     {
         body = std::make_shared<Body>((Vector2)input.mousePosition);
-        body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+        body->appearance.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
         if (bodyConfiguration)
         {
-            body->ReadConfig(*bodyConfiguration);
+            ApplyBodyConfig(*body, *bodyConfiguration);
         }
         body->Init();
         world.bodies.push_back(body);
@@ -281,10 +282,10 @@ void Creator::UpdateParticle(PhysicsWorld& world, AppInput& input)
     {
         body = std::make_shared<Body>(std::make_shared<Shape>(radius));
         body->position = (Vector2)input.mousePosition;
-        body->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+        body->appearance.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
         if (bodyConfiguration)
         {
-            body->ReadConfig(*bodyConfiguration);
+            ApplyBodyConfig(*body, *bodyConfiguration);
         }
         body->Init();
         world.bodies.push_back(body);
