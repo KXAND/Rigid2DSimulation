@@ -81,4 +81,12 @@ struct SimulationApp : App
     void LoadParameters(FILE* file);
     void InitializeDefaultFunctions();
     void UpdateBasicState();
+
+private:
+    void ResolveInputOwnership();
+    void UpdateMusic();
+    void RemoveDeletedObjects();
+    void PrepareSimulation();
+    void AdvanceSimulation();
+    void RenderSceneObjects();
 };

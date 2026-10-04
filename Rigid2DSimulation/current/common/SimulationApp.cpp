@@ -159,6 +159,59 @@ void SimulationApp::ClearSelection()
 
 void SimulationApp::Update()
 {
+    ResolveInputOwnership();
+
+    UpdateBasicState();
+
+    if (currentScope.find(L"Update") != currentScope.end())
+    {
+        auto updateFunction = *currentScope[L"Update"];
+        Execute(currentScope, updateFunction.bodyStatements);
+    }
+
+    UpdateMusic();
+
+    // 检查暂停
+    if (!inputOwners.keyboardOwner)
+    {
+        if (input.IsKeyPressedDown(L' '))
+        {
+            isPaused = !isPaused;
+        }
+    }
+
+    RemoveDeletedObjects();
+
+    if (sceneCanvas->IsEmptyAreaClicked(input, inputOwners))
+    {
+        ClearSelection();
+    }
+
+    // 保持底图与调试文字在物体更新、绘制之前输出。
+    sceneCanvas->Render(screen);
+    DrawString(screen, depthBuffer, 999, debugString,
+               Color(110), font, sceneCanvas->topLeft + DVector2(10, 10), sceneCanvas->width - 20, sceneCanvas->GetViewport());
+
+    PrepareSimulation();
+
+    for (const auto& body : bodies)
+    {
+        body->Update(*this);
+    }
+
+    AdvanceSimulation();
+
+    RenderSceneObjects();
+
+    if (mode == kCreateMode)
+    {
+        creator->Update(*this);
+    }
+    userInterface->Update(*this);
+}
+
+void SimulationApp::ResolveInputOwnership()
+{
     // pre update
     sceneCanvas->PreUpdate(input, inputOwners);
     if (mode == kCreateMode)
@@ -170,14 +223,10 @@ void SimulationApp::Update()
         body->PreUpdate(*this);
     }
     userInterface->PreUpdate(*this);
-    UpdateBasicState();
+}
 
-    if (currentScope.find(L"Update") != currentScope.end())
-    {
-        auto updateFunction = *currentScope[L"Update"];
-        Execute(currentScope, updateFunction.bodyStatements);
-    }
-
+void SimulationApp::UpdateMusic()
+{
     // 音乐
     if (firstMusicClip && secondMusicClip)
     {
@@ -191,16 +240,10 @@ void SimulationApp::Update()
             currentMusicClip->Play(waveOutput.inputSamples);
         }
     }
+}
 
-    // 检查暂停
-    if (!inputOwners.keyboardOwner)
-    {
-        if (input.IsKeyPressedDown(L' '))
-        {
-            isPaused = !isPaused;
-        }
-    }
-
+void SimulationApp::RemoveDeletedObjects()
+{
     // 删除被标记为删除的图形和其上的连接
     for (auto body : bodies)
         if (body->isMarkedForDeletion)
@@ -239,17 +282,10 @@ void SimulationApp::Update()
                       return body->isMarkedForDeletion;
                   }),
         bodies.end());
+}
 
-    if (sceneCanvas->IsEmptyAreaClicked(input, inputOwners))
-    {
-        ClearSelection();
-    }
-
-    // 保持底图与调试文字在物体更新、绘制之前输出。
-    sceneCanvas->Render(screen);
-    DrawString(screen, depthBuffer, 999, debugString,
-               Color(110), font, sceneCanvas->topLeft + DVector2(10, 10), sceneCanvas->width - 20, sceneCanvas->GetViewport());
-
+void SimulationApp::PrepareSimulation()
+{
     // 更新运行信息
     realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
     currentScope[L"current.frameRate.GetDeltaTime()"] = std::make_shared<Value>(realDeltaTime);
@@ -260,11 +296,10 @@ void SimulationApp::Update()
         isSceneChanged = false;
         groups = FormGroups(bodies);
     }
-    for (const auto& body : bodies)
-    {
-        body->Update(*this);
-    }
+}
 
+void SimulationApp::AdvanceSimulation()
+{
     // 物理模拟
     if (!isPaused && realDeltaTime != 0)
     {
@@ -321,7 +356,10 @@ void SimulationApp::Update()
             simulationTime += stepDeltaTime;
         }
     }
+}
 
+void SimulationApp::RenderSceneObjects()
+{
     // 渲染
     for (auto& body : bodies)
     {
@@ -333,12 +371,6 @@ void SimulationApp::Update()
         connection->UpdatePosition();
         connection->Render(*this);
     }
-
-    if (mode == kCreateMode)
-    {
-        creator->Update(*this);
-    }
-    userInterface->Update(*this);
 }
 
 void SimulationApp::SetConfig(Value const& config)
