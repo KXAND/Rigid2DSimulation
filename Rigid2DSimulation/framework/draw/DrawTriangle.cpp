@@ -2,6 +2,12 @@
 
 namespace
 {
+enum class BoundaryAxis
+{
+    X,
+    Y
+};
+
 enum class BoundarySide
 {
     Minimum,
@@ -9,45 +15,57 @@ enum class BoundarySide
 };
 
 bool IsOutsideBoundary(DVector2 const& point, long long boundary,
-                       BoundarySide boundarySide)
+                       BoundaryAxis boundaryAxis, BoundarySide boundarySide)
 {
+    int coordinate = boundaryAxis == BoundaryAxis::X ? point.x : point.y;
     return boundarySide == BoundarySide::Minimum
-               ? point.y < boundary
-               : point.y > boundary;
+               ? coordinate < boundary
+               : coordinate > boundary;
 }
 
-bool ClipTriangleAtHorizontalBoundary(Tile& targetTile, DepthBuffer& zBuffer,
-                                      DRect const& viewport, DVector2 const& firstPoint,
-                                      DVector2 const& middlePoint, DVector2 const& lastPoint, double depth,
-                                      Color color, long long boundary, BoundarySide boundarySide)
+DVector2 IntersectEdgeAtBoundary(DVector2 const& firstPoint, DVector2 const& lastPoint,
+                                long long boundary, BoundaryAxis boundaryAxis)
 {
-    if (IsOutsideBoundary(lastPoint, boundary, boundarySide))
+    DVector2 intersection = lastPoint;
+    if (boundaryAxis == BoundaryAxis::X)
+    {
+        intersection.x = boundary;
+        intersection.y += (firstPoint.y - lastPoint.y) * (boundary - lastPoint.x) / (firstPoint.x - lastPoint.x);
+    }
+    else
+    {
+        intersection.y = boundary;
+        intersection.x += (firstPoint.x - lastPoint.x) * (boundary - lastPoint.y) / (firstPoint.y - lastPoint.y);
+    }
+    return intersection;
+}
+
+bool ClipTriangleAtBoundary(Tile& targetTile, DepthBuffer& zBuffer,
+                            DRect const& viewport, DVector2 const& firstPoint,
+                            DVector2 const& middlePoint, DVector2 const& lastPoint, double depth,
+                            Color color, long long boundary, BoundaryAxis boundaryAxis, BoundarySide boundarySide)
+{
+    if (IsOutsideBoundary(lastPoint, boundary, boundaryAxis, boundarySide))
     {
         return true;
     }
 
-    if (!IsOutsideBoundary(firstPoint, boundary, boundarySide))
+    if (!IsOutsideBoundary(firstPoint, boundary, boundaryAxis, boundarySide))
     {
         return false;
     }
 
-    DVector2 firstLastIntersection = lastPoint;
-    firstLastIntersection.y = boundary;
-    firstLastIntersection.x += (firstPoint.x - lastPoint.x) * (boundary - lastPoint.y) / (firstPoint.y - lastPoint.y);
+    DVector2 firstLastIntersection = IntersectEdgeAtBoundary(firstPoint, lastPoint, boundary, boundaryAxis);
 
-    if (IsOutsideBoundary(middlePoint, boundary, boundarySide))
+    if (IsOutsideBoundary(middlePoint, boundary, boundaryAxis, boundarySide))
     {
-        DVector2 middleLastIntersection = lastPoint;
-        middleLastIntersection.y = boundary;
-        middleLastIntersection.x += (middlePoint.x - lastPoint.x) * (boundary - lastPoint.y) / (middlePoint.y - lastPoint.y);
+        DVector2 middleLastIntersection = IntersectEdgeAtBoundary(middlePoint, lastPoint, boundary, boundaryAxis);
         DrawTriangle(targetTile, zBuffer, viewport, firstLastIntersection,
                      middleLastIntersection, lastPoint, depth, color);
         return true;
     }
 
-    DVector2 firstMiddleIntersection = middlePoint;
-    firstMiddleIntersection.y = boundary;
-    firstMiddleIntersection.x += (firstPoint.x - middlePoint.x) * (boundary - middlePoint.y) / (firstPoint.y - middlePoint.y);
+    DVector2 firstMiddleIntersection = IntersectEdgeAtBoundary(firstPoint, middlePoint, boundary, boundaryAxis);
     DrawTriangle(targetTile, zBuffer, viewport, firstLastIntersection,
                  middlePoint, lastPoint, depth, color);
     DrawTriangle(targetTile, zBuffer, viewport, firstLastIntersection,
@@ -104,14 +122,15 @@ void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewport,
     int dx = firstPoint.x - lastPoint.x;
 
     // 用屏幕边切割图形
-    if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewport, firstPoint, middlePoint,
-                                         lastPoint, depth, color, (long long)viewport.GetRight() - 1,
-                                         BoundarySide::Maximum))
+    if (ClipTriangleAtBoundary(targetTile, zBuffer, viewport, firstPoint, middlePoint,
+                              lastPoint, depth, color, (long long)viewport.GetRight() - 1,
+                              BoundaryAxis::X, BoundarySide::Maximum))
     {
         return;
     }
-    if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewport, lastPoint, middlePoint,
-                                         firstPoint, depth, color, (long long)viewport.GetLeft(), BoundarySide::Minimum))
+    if (ClipTriangleAtBoundary(targetTile, zBuffer, viewport, lastPoint, middlePoint,
+                              firstPoint, depth, color, (long long)viewport.GetLeft(),
+                              BoundaryAxis::X, BoundarySide::Minimum))
     {
         return;
     }
@@ -133,14 +152,15 @@ void DrawTriangle(Tile& targetTile, DepthBuffer& zBuffer, DRect const& viewport,
         return;
     }
     int dy = firstPoint.y - lastPoint.y;
-    if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewport, firstPoint, middlePoint,
-                                         lastPoint, depth, color, (long long)viewport.GetBottom() - 1,
-                                         BoundarySide::Maximum))
+    if (ClipTriangleAtBoundary(targetTile, zBuffer, viewport, firstPoint, middlePoint,
+                              lastPoint, depth, color, (long long)viewport.GetBottom() - 1,
+                              BoundaryAxis::Y, BoundarySide::Maximum))
     {
         return;
     }
-    if (ClipTriangleAtHorizontalBoundary(targetTile, zBuffer, viewport, lastPoint, middlePoint,
-                                         firstPoint, depth, color, (long long)viewport.GetTop(), BoundarySide::Minimum))
+    if (ClipTriangleAtBoundary(targetTile, zBuffer, viewport, lastPoint, middlePoint,
+                              firstPoint, depth, color, (long long)viewport.GetTop(),
+                              BoundaryAxis::Y, BoundarySide::Minimum))
     {
         return;
     }
