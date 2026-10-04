@@ -274,15 +274,63 @@ userInterface.UpdateAndRender(app)
 4. 检查 UTF-8 BOM、CRLF、注释、diff 及原有未提交文件哈希，独立审查规范和方案一致性。测试不代替 GUI/音乐/脚本场景验收。
 5. 完成后停下等待用户确认，不提交第四步、不开始第五步。
 
-## 8. 进度
+## 8. 第五步：脚本运行与场景存储
+
+### 8.1 文件、状态和依赖
+
+新增 `current/script/SceneScriptRuntime.h/.cpp` 和 `current/storage/SceneStorage.h/.cpp`（路径均在 `Rigid2DSimulation/` 下），同步工程四套配置的包含目录及 filters。不移动 framework/parse，不重命名 DSL，也不再次拆 UI 文件。
+
+| 原位置 | 新位置 / 处理 |
+| --- | --- |
+| App 的 currentScope、scriptText、temporaryScriptText、parameters、debugString | `SceneScriptRuntime` 持有；App 组合成员命名为 scriptRuntime |
+| App::InitializeDefaultFunctions、SetConfig | Runtime 私有实现；ResetScope 注册原有内建函数 |
+| App::UpdateBasicState 及紧随的第二次脚本 Update | App 仅保留 title 更新；Runtime::Update 保留调试文字读取、第一次 Update、参数删除/同步、第二次 Update 的顺序 |
+| App 中帧时间和子步时间作用域赋值 | Runtime::SetFrameDeltaTime、SetSimulationTime；仍在原调用位置 |
+| Body/Connection::RefreshFromScript | Runtime::RefreshBodyScript / RefreshConnectionScript；UI 及加载调用新入口 |
+| Body 三个 FollowPreset 函数 | Runtime 私有函数；公式、局部作用域和每次时间读取保持不变 |
+| App::Save、Load、SaveParameters、LoadParameters 的实现 | SceneStorage 静态 Save/Load 和私有参数读写函数；App 的 Save/Load 仅转交请求 |
+| SceneBuilders 的 SimulationApp 参数 | PhysicsWorld&；Boundary 额外接收 DRect 画布范围；几何和随机调用顺序不变 |
+
+`SceneScriptBindings` 是注册所需依赖的具名引用集合：PhysicsWorld、SceneEditor、SceneRenderer、只读 SceneCanvas，以及 volume、maxRealDeltaTime、isTrackShown 三个应用配置引用。ResetScope 按值接收这组引用，注册的闭包按值保存引用集合；不保存整个 App，也不复制引用目标。引用目标均由 App 持有，生命周期覆盖脚本调用。配置解析仍按原字段顺序更新各自的拥有者；不为三个标量新增配置管理器。
+
+Runtime 的 scope 供脚本执行使用，编辑文本、参数和调试文字供原 UI/渲染调用点访问。本步不重新设计参数编辑控件。原有 SceneParameter.cpp 未提交修改原样保留。
+
+### 8.2 物理与脚本的衔接
+
+Body::Step 改为接收 gravity、stepDeltaTime 和 `applyPresets(bool isDynamic)` 回调。动态分支仍先阻尼、重力和角阻尼，再回调，再积分；固定分支仍先清零速度，再回调。分支选择在回调之前完成，不能在脚本修改质量后重新判断。
+
+App 在此回调中调用 Runtime::ApplyMotionPresets(body, isDynamic, simulationTime, stepDeltaTime)。该入口动态分支只执行角速度预设；固定分支依次执行位置、角度预设。simulationTime 以 const 引用传入，保持同一次预设的两次脚本求值分别读取当前世界时间，而非预先复制时间。Script 不承接阻尼、重力或积分；Body 不再包含 SimulationApp 或调用 Execute。
+
+PhysicsWorld::Advance 的对象推进回调继续由 App 协调，因为必须保持 `Body::Step → editor.ApplyDrag → 几何/AABB 更新` 的逐对象交错顺序。这里保留的是模块调度，不把拖拽或 DSL 实现重新塞回物理世界，也不为隐藏三行调度新增调度器。
+
+Body/Connection 的脚本文本、预设数据、ReadConfig 和逐对象二进制编解码本步保留，不能据此宣称 rigid 已经完全纯物理。移出的是脚本执行及 App 依赖；全对象数据模型分层不属于本次五步的承诺。
+
+### 8.3 重置、加载和调用顺序
+
+1. App::Reset：Runtime::ResetScope（清 scope、注册、清 parameters）→ World::ClearObjects → Runtime::ResetSceneVariables（清 debugString，写画布四键）→ 原选择、物理参数、应用配置、工具重置。Reset 不额外清脚本文本或暂停/模式状态。
+2. SceneStorage::Load 接收文件名、World、Runtime 和 resetScene 回调；打开成功后才调用 resetScene。打开失败不能改变现有场景。
+3. Body(FILE*) 只读取原记录；Storage 紧接调用 RefreshBodyScript，再 push_back。Connection(PhysicsWorld&, FILE*) 只读取原记录并解析刚体索引；Storage 依次 RefreshConnectionScript、SignUpToBodies、UpdatePosition，再 push_back。脚本执行时该新对象仍未加入世界。
+4. 对象读完后标记场景变化、执行场景脚本、关闭文件，顺序不变。二进制字段类型、数量、顺序和字符串布局不变，不顺手修复空字符串/损坏文件处理。
+5. 场景编译按钮改为 Runtime::ApplySceneScript；对象按钮仍先接受编辑文本再调用相应 Runtime 入口。参数及命令控件仅改成员访问路径。不改变按钮回调机制。
+
+每帧脚本 Update 原本执行两次，第一次保持 shared_ptr 副本，第二次保持 Value 副本，二者间仍同步参数。本步不去重、不修复现有 DSL 参数检查或索引边界问题。音乐、底层绘图和物理公式不修改。
+
+### 8.4 验证与停止点
+
+- 主工程 Debug|x64 构建；重新链接既有物理、交互、渲染本地对照测试。
+- 在忽略的 x64 下增加无窗口脚本/存储检查，覆盖内建注册、配置、两次 Update 与参数同步、预设求值、对象脚本、存储字节和重载顺序；不提交测试。
+- 核对迁移函数、全部调用点、旧 App 依赖残留、UTF-8 BOM/CRLF、注释和既有未提交文件哈希；独立检查规范及方案一致性。
+- 完成第五步后停下来等待用户检查。确认后才将该步代码与本文一起提交，不自行扩展后续架构工作。
+
+## 9. 进度
 
 | 步骤 | 状态 |
 | --- | --- |
 | 1. 整理帧流程 | 用户已于 2026-10-05 确认，已提交 `362956d` |
 | 2. 提取物理世界 | 用户已于 2026-10-05 确认，已提交 `13ba108` |
 | 3. 提取编辑交互 | 用户已于 2026-10-05 确认，已提交 `6542dde` |
-| 4. 整理渲染职责 | 用户已确认，代码与本方案一起提交 |
-| 5. 移出脚本和存储 | 未开始 |
+| 4. 整理渲染职责 | 用户已确认，已提交 `e67f886` |
+| 5. 移出脚本和存储 | 用户已确认，代码与本方案一起提交；五步方案完成 |
 
 第一步验证记录（2026-10-05）：
 
@@ -330,3 +378,19 @@ userInterface.UpdateAndRender(app)
 - 15 个相关 C++ 文件通过 UTF-8 BOM、CRLF、无 Tab 检查，`git diff --check` 通过。原有 SceneParameter.cpp、rigid 审计和 UI 回调文档的 SHA256 未变化。测试仍位于已忽略的 x64 下，不提交，不恢复 tests 目录文件。
 
 第四步已获用户确认，代码与本文一起提交；随后开始第五步的详细设计与实施，完成后再次等待用户检查。
+
+第五步验证记录（2026-10-05）：
+
+- 第四步已提交为 `e67f886`。新增脚本运行和场景存储模块，App 仅保留模块组装、帧阶段和加载重置协调；Body、Connection、SceneBuilders 不再依赖 SimulationApp。其余 rigid 中既有的无用 App 声明/包含未顺手清理。
+- 主工程 `Debug|x64` 构建通过。首次链接发现新增前置声明将 PhysicsWorld 写作 struct，与实际 class 不一致；已统一 PhysicsWorld、SceneEditor、SceneRenderer 的前置声明并重建。原有数值转换警告不在本步处理。
+- 本地 `x64/script-check/` 保存第四步基线的旧脚本、预设与场景存储实现作为对照，使用无窗口上下文，不构造 App。内建注册集合、配置、各创建入口、场景脚本应用、重置保留文本及帧/子步时间键检查通过；创建函数适配到缩窄后的参数，其函数实现另经逐段静态对照确认仅依赖替换，随机颜色未要求逐次相等。
+- 10 帧双次 Update 与参数删除/同步对照通过，首次累计值明确验证参数在两次调用之间生效。128 组动态/固定、预设开关、程序缺失、脚本修改世界时间及质量分支组合，共 512 次子步，位置、速度、角度、角速度、调用次数及世界时间读取序列与基线一致。
+- 6 组场景分别比较直接保存字节、加载后的状态及再次保存字节，结果一致。包含空世界、点/三角形/矩形、中文参数名、四类连接、同体连接，以及对象脚本在入队前看到的刚体数量。打开不存在文件时未调用重置、未清空场景。
+- 初次存储对照在旧实现保存圆形时，触发未修改的 Shape::Save 对空 verticesRelative 使用 `&*begin()` 的 Debug 断言；未修复生产代码，也未关闭断言以宣称通过。有效字节对照改用非空顶点多边形；圆形存储、空字符串和损坏文件路径不在通过范围。
+- 既有本地测试已重新链接最新生产对象：物理 10 场景、800 子步及删除/重置检查；交互 2048 组输入、6144 拖拽子步及七种创建模式；渲染 960 场景、四阶段全部颜色/透明度/深度缓冲及预览端点对照，全部通过。
+- Body 的普通配置、几何、惯量和静电实现，Connection 求解/端点实现，以及 App 构造、音乐和删除协调均与基线逐段一致；SceneBuilders 仅替换依赖参数。未更改物理公式、DSL 键或底层绘图。
+- Standards、Spec 两项独立只读审查未发现本次新增规范或方案偏差。本地测试不提交，不能替代实际窗口、音频和完整用户脚本场景验收。
+- 原有 SceneParameter.cpp、AppItem.h、rigid 审计和 UI 回调方案的 SHA256 未变化。AppItem.h 的原有空白修改会使全工作区 `git diff --check` 报第 66 行行尾空白；不擅自修正，也不将它算成本步骤的修改。
+- 本步 18 个 C++ 文件均通过 UTF-8 BOM、CRLF、无 Tab 和无替换字符检查；仅针对本步文件的 `git diff --check` 通过。工程引用包含全部四个新文件，测试仍处于忽略目录，暂存区为空。
+
+第五步已获用户确认，代码与本文一起提交。五步方案完成，完成范围是 SimulationApp 的职责提取与显式调度，不代表 UI、物理数据模型及帧阶段已经完全解耦。不继续展开 UI 回调化或完整物理数据模型拆分。

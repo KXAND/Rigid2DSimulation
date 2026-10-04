@@ -1,15 +1,10 @@
 ﻿#include "SimulationApp.h"
-#include "Utils.h"
 #include "UserInterface.h"
 #include "SceneCanvas.h"
-#include "SceneParameter.h"
-#include "Shape.h"
 #include "Body.h"
-#include "ShapeBuiltins.h"
-#include "SceneBuilders.h"
 #include "AudioClip.h"
 #include "Creator.h"
-#include "Connection.h"
+#include "SceneStorage.h"
 
 SimulationApp::SimulationApp()
 {
@@ -51,76 +46,23 @@ SimulationApp::SimulationApp()
 
 void SimulationApp::Save(wstring const& name) const
 {
-    FILE* file = OpenFile(name, L"wb");
-    if (!file)
-    {
-        return;
-    }
-    int size = 0;
-    size = (scriptText).size();
-    fwrite(&(size), sizeof(size), 1, file);
-    fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
-    SaveParameters(file);
-
-    // 可能会保存一些即将被删除的元素，但是也无所谓。
-    size = physicsWorld.bodies.size();
-    fwrite(&(size), sizeof(size), 1, file);
-    for (auto body : physicsWorld.bodies)
-    {
-        body->Save(file);
-    }
-    size = physicsWorld.connections.size();
-    fwrite(&(size), sizeof(size), 1, file);
-    for (auto connection : physicsWorld.connections)
-    {
-        connection->Save(*this, file);
-    }
-
-    fclose(file);
+    SceneStorage::Save(name, physicsWorld, scriptRuntime);
 }
+
 void SimulationApp::Load(wstring const& name)
 {
-    FILE* file = OpenFile(name, L"rb");
-    if (!file)
+    SceneStorage::Load(name, physicsWorld, scriptRuntime, [this]()
     {
-        return;
-    }
-    Reset();
-    int size = 0;
-    fread(&(size), sizeof(size), 1, file);
-    (scriptText).resize(size);
-    fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
-    temporaryScriptText = scriptText;
-    LoadParameters(file);
-
-    fread(&(size), sizeof(size), 1, file);
-    for (int i = (0), iEnd = int(size); i < iEnd; ++i)
-    {
-        physicsWorld.bodies.push_back(std::make_shared<Body>(*this, file));
-    }
-    fread(&(size), sizeof(size), 1, file);
-    for (int i = (0), iEnd = int(size); i < iEnd; ++i)
-    {
-        physicsWorld.connections.push_back(std::make_shared<Connection>(*this, file));
-    }
-    physicsWorld.isSceneChanged = true;
-
-    Execute(currentScope, Compile(scriptText));
-    fclose(file);
+        Reset();
+    });
 }
 void SimulationApp::Reset()
 {
-    currentScope.clear();
-    InitializeDefaultFunctions();
-    parameters.clear();
+    scriptRuntime.ResetScope({physicsWorld, editor, sceneRenderer, *sceneCanvas,
+                              volume, maxRealDeltaTime, isTrackShown});
 
     physicsWorld.ClearObjects();
-    debugString.clear();
-
-    currentScope[L"backgroundLeft"] = std::make_shared<Value>(sceneCanvas->topLeft.x);
-    currentScope[L"backgroundTop"] = std::make_shared<Value>(sceneCanvas->topLeft.y);
-    currentScope[L"backgroundWidth"] = std::make_shared<Value>(sceneCanvas->width);
-    currentScope[L"backgroundHeight"] = std::make_shared<Value>(sceneCanvas->height);
+    scriptRuntime.ResetSceneVariables(*sceneCanvas);
 
     editor.ClearSelection();
     physicsWorld.ResetParameters(DRect(sceneCanvas->topLeft, sceneCanvas->width, sceneCanvas->height));
@@ -136,13 +78,8 @@ void SimulationApp::Update()
 {
     ResolveInputOwnership();
 
-    UpdateBasicState();
-
-    if (currentScope.find(L"Update") != currentScope.end())
-    {
-        auto updateFunction = *currentScope[L"Update"];
-        Execute(currentScope, updateFunction.bodyStatements);
-    }
+    title = GetLocalizedString(L"title");
+    scriptRuntime.Update();
 
     UpdateMusic();
 
@@ -163,7 +100,7 @@ void SimulationApp::Update()
     }
 
     // 保持底图与调试文字在物体更新、绘制之前输出。
-    sceneRenderer.RenderBackground(*sceneCanvas, debugString, GetSceneRenderContext());
+    sceneRenderer.RenderBackground(*sceneCanvas, scriptRuntime.debugString, GetSceneRenderContext());
 
     PrepareSimulation();
 
@@ -216,7 +153,7 @@ void SimulationApp::PrepareSimulation()
 {
     // 更新运行信息
     realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
-    currentScope[L"current.frameRate.GetDeltaTime()"] = std::make_shared<Value>(realDeltaTime);
+    scriptRuntime.SetFrameDeltaTime(realDeltaTime);
     physicsWorld.Prepare();
 }
 
@@ -227,11 +164,14 @@ void SimulationApp::AdvanceSimulation()
         physicsWorld.Advance(realDeltaTime,
             [this](double time)
             {
-                currentScope[L"time"] = std::make_shared<Value>(time);
+                scriptRuntime.SetSimulationTime(time);
             },
             [this](Body& body, double stepDeltaTime)
             {
-                body.Step(*this, stepDeltaTime);
+                body.Step(physicsWorld.gravity, stepDeltaTime, [this, &body, stepDeltaTime](bool isDynamic)
+                {
+                    scriptRuntime.ApplyMotionPresets(body, isDynamic, physicsWorld.simulationTime, stepDeltaTime);
+                });
                 editor.ApplyDrag(body, input, inputOwners, realDeltaTime, stepDeltaTime);
                 body.UpdateShapesPositionAndAABB();
             });
@@ -243,248 +183,4 @@ SceneRenderContext SimulationApp::GetSceneRenderContext()
 {
     return {screen, depthBuffer, font, sceneCanvas->GetViewport(), input.mousePosition,
             editor.bodySelecting, editor.connectionSelecting};
-}
-
-void SimulationApp::SetConfig(Value const& config)
-{
-    TryReadConfigNumber(config, L"volume", volume);
-    TryReadConfigNumber(config, L"energyMultiplier", sceneRenderer.energyMultiplier);
-    TryReadConfigNumber(config, L"chargeMultiplier", sceneRenderer.chargeMultiplier);
-    TryReadConfigNumber(config, L"parallelEpsilon", physicsWorld.parallelEpsilon);
-    TryReadConfigNumber(config, L"maxRealDeltaTime", maxRealDeltaTime);
-    TryReadConfigNumber(config, L"hasElectrostatic", physicsWorld.hasElectrostatic);
-    TryReadConfigNumber(config, L"coulombConstant", physicsWorld.coulombConstant);
-    TryReadConfigNumber(config, L"stepCount", physicsWorld.stepNum);
-    physicsWorld.stepNum = max(1, physicsWorld.stepNum);
-    TryReadConfigNumber(config, L"gridSize", physicsWorld.gridSize);
-    TryReadConfigNumber(config, L"useEqualPositionCorrection", physicsWorld.useEqualPositionCorrection);
-    TryReadConfigNumber(config, L"time", physicsWorld.simulationTime);
-    TryReadConfigNumber(config, L"isTrackShown", isTrackShown);
-    if (auto value = FindConfigValue(config, L"sceneLeft"))
-    {
-        physicsWorld.rectScene.topLeftPosition.x = value->number;
-    }
-    if (auto value = FindConfigValue(config, L"sceneTop"))
-    {
-        physicsWorld.rectScene.topLeftPosition.y = value->number;
-    }
-    if (auto value = FindConfigValue(config, L"sceneWidth"))
-    {
-        physicsWorld.rectScene.width = value->number;
-    }
-    if (auto value = FindConfigValue(config, L"sceneHeight"))
-    {
-        physicsWorld.rectScene.height = value->number;
-    }
-    if (auto value = FindConfigValue(config, L"gravity"))
-    {
-        physicsWorld.gravity = ToVector2(*value);
-    }
-
-    physicsWorld.isSceneChanged = true;
-}
-
-void SimulationApp::SaveParameters(FILE* file) const
-{
-    int size = parameters.size();
-    fwrite(&(size), sizeof(size), 1, file);
-    for (auto parameter : parameters)
-    {
-        parameter->Save(file);
-    }
-}
-void SimulationApp::LoadParameters(FILE* file)
-{
-    int size = 0;
-    fread(&(size), sizeof(size), 1, file);
-    for (int i = (0), iEnd = int(size); i < iEnd; ++i)
-    {
-        parameters.push_back(std::make_shared<SceneParameter>(file));
-    }
-}
-void SimulationApp::InitializeDefaultFunctions()
-{
-    auto setCreatorFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 1)
-        {
-            editor.creator = std::make_shared<Creator>(*arguments[0]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"SetCreator"] = std::make_shared<Value>(setCreatorFunction);
-
-    auto createBodyFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 2)
-        {
-            CreateBody(*this, *arguments[0], *arguments[1]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"CreateBody"] = std::make_shared<Value>(createBodyFunction);
-
-    auto boxFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 2)
-        {
-            return Box(*arguments[0], *arguments[1]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"Box"] = std::make_shared<Value>(boxFunction);
-
-    auto ballFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 1)
-        {
-            return Ball(*arguments[0]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"Ball"] = std::make_shared<Value>(ballFunction);
-
-    auto parallelogramFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 2)
-        {
-            return Parallelogram(*arguments[0], *arguments[1], *arguments[2]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"Parallelogram"] = std::make_shared<Value>(parallelogramFunction);
-
-    auto trapezoidFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 3)
-        {
-            return Trapezoid(*arguments[0], *arguments[1], *arguments[2]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"Trapezoid"] = std::make_shared<Value>(trapezoidFunction);
-
-    auto regularPolygonFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 2)
-        {
-            return RegularPolygon(*arguments[0], *arguments[1]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"RegularPolygon"] = std::make_shared<Value>(regularPolygonFunction);
-
-    auto crossFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 2)
-        {
-            return Cross(*arguments[0], *arguments[1]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"Cross"] = std::make_shared<Value>(crossFunction);
-
-    auto getBodyCountFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        return std::make_shared<Value>(physicsWorld.bodies.size());
-    };
-    currentScope[L"GetBodyCount"] = std::make_shared<Value>(getBodyCountFunction);
-
-    auto createConnectionFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 1)
-        {
-            CreateConnection(*this, *arguments[0]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"CreateConnection"] = std::make_shared<Value>(createConnectionFunction);
-
-    auto setConfigFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 1)
-        {
-            SetConfig(*arguments[0]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"SetConfig"] = std::make_shared<Value>(setConfigFunction);
-
-    auto boundaryFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 2)
-        {
-            Boundary(*this, *arguments[0], *arguments[1]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"Boundary"] = std::make_shared<Value>(boundaryFunction);
-
-    auto framedBoxFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 3)
-        {
-            return FramedBox(*arguments[0], *arguments[1], *arguments[2]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"FramedBox"] = std::make_shared<Value>(framedBoxFunction);
-
-    auto gearFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 4)
-        {
-            Gear(*this, *arguments[0], *arguments[1], *arguments[2], *arguments[3]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"Gear"] = std::make_shared<Value>(gearFunction);
-
-    auto strandFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 6)
-        {
-            Strand(*this, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"Strand"] = std::make_shared<Value>(strandFunction);
-
-    auto necklaceFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
-    {
-        if (arguments.size() >= 6)
-        {
-            Necklace(*this, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
-        }
-        return std::make_shared<Value>();
-    };
-    currentScope[L"Necklace"] = std::make_shared<Value>(necklaceFunction);
-}
-void SimulationApp::UpdateBasicState()
-{
-    title = GetLocalizedString(L"title");
-    if (currentScope.find(L"current.debugString") != currentScope.end())
-    {
-        debugString = currentScope[L"current.debugString"]->stringValue;
-    }
-    if (currentScope.find(L"Update") != currentScope.end())
-    {
-        auto file = currentScope[L"Update"];
-        Execute(currentScope, file->bodyStatements);
-    }
-
-    // 删除标记为删除的键
-    parameters.erase(
-        remove_if(parameters.begin(), parameters.end(),
-                  [](std::shared_ptr<SceneParameter> parameter)
-                  {
-                      return parameter->isMarkedForDeletion;
-                  }),
-        parameters.end());
-
-    //更新对应键的值
-    for (auto& parameter : parameters)
-    {
-        currentScope[parameter->name] = std::make_shared<Value>(parameter->value);
-    }
 }

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <functional>
 #include "Tile.h"
 #include "Aabb.h"
 
@@ -6,7 +7,6 @@ struct ScriptStatement;
 typedef vector<ScriptStatement> Program;
 
 struct Value;
-struct SimulationApp;
 struct Shape;
 struct Connection;
 /// <summary>
@@ -57,12 +57,11 @@ struct Body
     Body(Vector2 const& position);
     Body(std::shared_ptr<Shape> shape);
     Body(vector<std::shared_ptr<Shape>> const& shapes);
-    Body(SimulationApp& simulationApp, FILE* file);
+    Body(FILE* file);
     void Save(FILE* file) const;
 
     Vector2 GenerateRandomPointInside() const;
     bool IsInside(Vector2 p) const;
-    void RefreshFromScript(SimulationApp& simulationApp);
     void ReadConfig(Value const& config);
     void UpdateShapesPositionAndAABB();
     void Warp(DRect rectangle);
@@ -73,12 +72,7 @@ private:
 
 public:
     void Init(bool resetPosition = false);
-    void Step(SimulationApp& simulationApp, double stepDeltaTime);
-
-private:
-    void FollowPresetPosition(SimulationApp& simulationApp, double stepDeltaTime);
-    void FollowPresetAngle(SimulationApp& simulationApp, double stepDeltaTime);
-    void FollowPresetAngularVelocity(SimulationApp& simulationApp);
+    void Step(Vector2 const& gravity, double stepDeltaTime, std::function<void(bool)> const& applyPresets);
 };
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulombConstant);

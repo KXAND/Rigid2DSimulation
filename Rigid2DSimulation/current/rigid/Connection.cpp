@@ -1,7 +1,7 @@
 ﻿#include "Connection.h"
 #include "Body.h"
 #include "current/common/utils.h"
-#include "SimulationApp.h"
+#include "PhysicsWorld.h"
 #include "Connection.h"
 
 Connection::Connection()
@@ -14,7 +14,7 @@ Connection::Connection()
     colorCord = Color::kCyan;
     colorCordTight = Color::kMagenta;
 }
-void Connection::Save(SimulationApp const& simulationApp, FILE* file) const
+void Connection::Save(PhysicsWorld const& physicsWorld, FILE* file) const
 {
     int size = 0;
     fwrite(&(type), sizeof(type), 1, file);
@@ -25,12 +25,12 @@ void Connection::Save(SimulationApp const& simulationApp, FILE* file) const
     {
         return &*b == body0;
     };
-    int bodyIndex0 = find_if(simulationApp.physicsWorld.bodies.begin(), simulationApp.physicsWorld.bodies.end(), pred0) - simulationApp.physicsWorld.bodies.begin();
+    int bodyIndex0 = find_if(physicsWorld.bodies.begin(), physicsWorld.bodies.end(), pred0) - physicsWorld.bodies.begin();
     auto pred1 = [this](std::shared_ptr<Body> b)
     {
         return &*b == body1;
     };
-    int bodyIndex1 = find_if(simulationApp.physicsWorld.bodies.begin(), simulationApp.physicsWorld.bodies.end(), pred1) - simulationApp.physicsWorld.bodies.begin();
+    int bodyIndex1 = find_if(physicsWorld.bodies.begin(), physicsWorld.bodies.end(), pred1) - physicsWorld.bodies.begin();
     fwrite(&(bodyIndex0), sizeof(bodyIndex0), 1, file);
     fwrite(&(bodyIndex1), sizeof(bodyIndex1), 1, file);
     fwrite(&(p0Relative), sizeof(p0Relative), 1, file);
@@ -38,7 +38,7 @@ void Connection::Save(SimulationApp const& simulationApp, FILE* file) const
     fwrite(&(length), sizeof(length), 1, file);
     fwrite(&(springConstant), sizeof(springConstant), 1, file);
 }
-Connection::Connection(SimulationApp& simulationApp, FILE* file) : Connection()
+Connection::Connection(PhysicsWorld& physicsWorld, FILE* file) : Connection()
 {
     int size = 0;
     fread(&(type), sizeof(type), 1, file);
@@ -49,15 +49,12 @@ Connection::Connection(SimulationApp& simulationApp, FILE* file) : Connection()
     int bodyIndex0 = 0, bodyIndex1 = 0;
     fread(&(bodyIndex0), sizeof(bodyIndex0), 1, file);
     fread(&(bodyIndex1), sizeof(bodyIndex1), 1, file);
-    body0 = &*simulationApp.physicsWorld.bodies[bodyIndex0];
-    body1 = &*simulationApp.physicsWorld.bodies[bodyIndex1];
+    body0 = &*physicsWorld.bodies[bodyIndex0];
+    body1 = &*physicsWorld.bodies[bodyIndex1];
     fread(&(p0Relative), sizeof(p0Relative), 1, file);
     fread(&(p1Relative), sizeof(p1Relative), 1, file);
     fread(&(length), sizeof(length), 1, file);
     fread(&(springConstant), sizeof(springConstant), 1, file);
-    RefreshFromScript(simulationApp);
-    SignUpToBodies();
-    UpdatePosition();
 }
 
 void Connection::ReadConfig(Value const& configuration)
@@ -105,19 +102,6 @@ void Connection::UpdatePosition()
 {
     p0 = body0->position + body0->transform * p0Relative;
     p1 = body1->position + body1->transform * p1Relative;
-}
-
-void Connection::RefreshFromScript(SimulationApp& simulationApp)
-{
-    simulationApp.currentScope[L"connection"] = std::make_shared<Value>();
-    Execute(simulationApp.currentScope, Compile(scriptText));
-    if (simulationApp.currentScope.find(L"connection") == simulationApp.currentScope.end())
-    {
-        return;
-    }
-    ReadConfig(*simulationApp.currentScope[L"connection"]);
-
-    UpdatePosition();
 }
 
 void Connection::SimulateRopeOrLink(bool equalReponse)

@@ -3,12 +3,11 @@
 #include "PhysicsWorld.h"
 #include "SceneEditor.h"
 #include "SceneRenderer.h"
-#include "Value.h"
+#include "SceneScriptRuntime.h"
 
 struct UserInterface;
 struct SceneCanvas;
 struct AudioClip;
-struct SceneParameter;
 struct SimulationApp : App
 {
     std::shared_ptr<UserInterface> userInterface;
@@ -17,9 +16,7 @@ struct SimulationApp : App
     SceneEditor editor;
     SceneRenderer sceneRenderer;
 
-    Scope currentScope;
-    wstring debugString, scriptText, temporaryScriptText;
-    vector<std::shared_ptr<SceneParameter>> parameters;
+    SceneScriptRuntime scriptRuntime;
 
     std::shared_ptr<AudioClip> firstMusicClip, secondMusicClip;
     AudioClip* currentMusicClip = NULL;
@@ -36,13 +33,6 @@ struct SimulationApp : App
     void Load(wstring const& name);
     void Reset();
     void Update() override;
-
-    void SetConfig(Value const& config);
-
-    void SaveParameters(FILE* file) const;
-    void LoadParameters(FILE* file);
-    void InitializeDefaultFunctions();
-    void UpdateBasicState();
 
 private:
     void ResolveInputOwnership();

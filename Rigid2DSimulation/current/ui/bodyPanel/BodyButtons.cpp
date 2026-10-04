@@ -10,7 +10,7 @@ void BodyScriptApplicationButton::OnClick(App& app)
     auto& simulationApp = static_cast<SimulationApp&>(app);
     auto& selectedBody = *simulationApp.editor.bodySelecting;
     selectedBody.scriptText = selectedBody.temporaryScriptText;
-    selectedBody.RefreshFromScript(simulationApp);
+    simulationApp.scriptRuntime.RefreshBodyScript(selectedBody);
 }
 
 BodyDeletionButton::BodyDeletionButton() : LocalizedButton(70, L"deleteBodyButton") {}

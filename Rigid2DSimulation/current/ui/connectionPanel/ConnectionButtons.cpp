@@ -10,7 +10,7 @@ void ConnectionScriptApplicationButton::OnClick(App& app)
     auto& simulationApp = static_cast<SimulationApp&>(app);
     auto& selectedConnection = *simulationApp.editor.connectionSelecting;
     selectedConnection.scriptText = selectedConnection.temporaryScriptText;
-    selectedConnection.RefreshFromScript(simulationApp);
+    simulationApp.scriptRuntime.RefreshConnectionScript(selectedConnection);
 }
 
 ConnectionDeletionButton::ConnectionDeletionButton() : LocalizedButton(70, L"deleteConnectionButton") {}

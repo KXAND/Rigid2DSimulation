@@ -1,6 +1,5 @@
 ﻿#include "Body.h"
 #include "current/common/utils.h"
-#include "SimulationApp.h"
 #include "Shape.h"
 #include "Connection.h"
 
@@ -63,7 +62,7 @@ void Body::Save(FILE* file) const
     fwrite(&(chargeDensity), sizeof(chargeDensity), 1, file);
     fwrite(&(innerColor), sizeof(innerColor), 1, file);
 }
-Body::Body(SimulationApp& simulationApp, FILE* file) : Body()
+Body::Body(FILE* file) : Body()
 {
     int size = 0;
     fread(&(point), sizeof(point), 1, file);
@@ -90,7 +89,6 @@ Body::Body(SimulationApp& simulationApp, FILE* file) : Body()
     fread(&(chargeDensity), sizeof(chargeDensity), 1, file);
     fread(&(innerColor), sizeof(innerColor), 1, file);
 
-    RefreshFromScript(simulationApp);
 }
 
 double Body::GetDepth() const
@@ -112,35 +110,6 @@ bool Body::IsInside(Vector2 p) const
     return false;
 }
 
-void Body::RefreshFromScript(SimulationApp& simulationApp)
-{
-    simulationApp.currentScope[L"body"] = std::make_shared<Value>();
-    Execute(simulationApp.currentScope, Compile(scriptText));
-    if (simulationApp.currentScope.find(L"body") == simulationApp.currentScope.end())
-    {
-        return;
-    }
-    auto const& bodyConfig = *simulationApp.currentScope[L"body"];
-    ReadConfig(bodyConfig);
-
-    // 这些单独放是因为它们无法只能通过 scriptText 获得，无法保存。
-    TryReadConfigNumber(bodyConfig, L"hasPositionPreset", hasPositionPreset);
-    TryReadConfigNumber(bodyConfig, L"hasAnglePreset", hasAnglePreset);
-    TryReadConfigNumber(bodyConfig, L"hasAngularVelocityPreset", hasAngularVelocityPreset);
-    if (auto value = FindConfigValue(bodyConfig, L"positionProgram"))
-    {
-        positionProgram = std::make_shared<Program>(value->bodyStatements);
-    }
-    if (auto value = FindConfigValue(bodyConfig, L"angleProgram"))
-    {
-        angleProgram = std::make_shared<Program>(value->bodyStatements);
-    }
-    if (auto value = FindConfigValue(bodyConfig, L"angularVelocityProgram"))
-    {
-        angularVelocityProgram = std::make_shared<Program>(value->bodyStatements);
-    }
-    Init();
-}
 
 void Body::ReadConfig(Value const& config)
 {
@@ -299,17 +268,15 @@ void Body::Init(bool resetPosition)
     UpdateShapesPositionAndAABB();
 }
 
-void Body::Step(SimulationApp& simulationApp, double stepDeltaTime)
+void Body::Step(Vector2 const& gravity, double stepDeltaTime, std::function<void(bool)> const& applyPresets)
 {
+    // 预设可能修改物体属性，但本次推进仍沿用调用前选定的运动分支。
     if (invMass)
     {
         velocity -= dampCoeff * velocity * stepDeltaTime;
-        velocity += simulationApp.physicsWorld.gravity * stepDeltaTime;
+        velocity += gravity * stepDeltaTime;
         velocityAngular -= dampCoeffAngular * velocityAngular * stepDeltaTime;
-        if (hasAngularVelocityPreset)
-        {
-            FollowPresetAngularVelocity(simulationApp);
-        }
+        applyPresets(true);
         position += velocity * stepDeltaTime;
         radian += velocityAngular * stepDeltaTime;
     }
@@ -317,73 +284,10 @@ void Body::Step(SimulationApp& simulationApp, double stepDeltaTime)
     {
         velocity = {};
         velocityAngular = 0;
-        if (hasPositionPreset)
-        {
-            FollowPresetPosition(simulationApp, stepDeltaTime);
-        }
-        if (hasAnglePreset)
-        {
-            FollowPresetAngle(simulationApp, stepDeltaTime);
-        }
+        applyPresets(false);
     }
 }
 
-void Body::FollowPresetPosition(SimulationApp& simulationApp, double stepDeltaTime)
-{
-    if (!positionProgram)
-    {
-        return;
-    }
-    Scope scope;
-    bool hasReturned = false;
-    scope[L"time"] = std::make_shared<Value>(simulationApp.physicsWorld.simulationTime);
-    auto positionOld = ToVector2(Execute(hasReturned, simulationApp.currentScope, scope, *positionProgram)->elements);
-    scope.clear();
-    scope[L"time"] = std::make_shared<Value>(simulationApp.physicsWorld.simulationTime + stepDeltaTime);
-    hasReturned = false;
-    auto positionNew = ToVector2(Execute(hasReturned, simulationApp.currentScope, scope, *positionProgram)->elements);
-    auto velocityNew = (positionNew - positionOld) / stepDeltaTime;
-
-    // 其实我觉得应当选用时间较小的值。
-    position = positionNew;
-    velocity = velocityNew;
-}
-
-void Body::FollowPresetAngle(SimulationApp& simulationApp, double stepDeltaTime)
-{
-    if (!angleProgram)
-    {
-        return;
-    }
-
-    Scope scope;
-    bool hasReturned = false;
-    scope[L"time"] = std::make_shared<Value>(simulationApp.physicsWorld.simulationTime);
-    auto radianOld = Execute(hasReturned, simulationApp.currentScope, scope, *angleProgram)->number;
-    scope.clear();
-    scope[L"time"] = std::make_shared<Value>(simulationApp.physicsWorld.simulationTime + stepDeltaTime);
-    hasReturned = false;
-    auto radianNew = Execute(hasReturned, simulationApp.currentScope, scope, *angleProgram)->number;
-    auto velocityAngularNew = (radianNew - radianOld) / stepDeltaTime;
-
-    radian = radianNew;
-    velocityAngular = velocityAngularNew;
-}
-
-void Body::FollowPresetAngularVelocity(SimulationApp& simulationApp)
-{
-    if (!angularVelocityProgram)
-    {
-        return;
-    }
-
-    Scope scope;
-    bool hasReturned = false;
-    scope[L"time"] = std::make_shared<Value>(simulationApp.physicsWorld.simulationTime);
-    auto velocityAngularNew = Execute(hasReturned, simulationApp.currentScope, scope, *angularVelocityProgram)->number;
-
-    velocityAngular = velocityAngularNew;
-}
 
 
 

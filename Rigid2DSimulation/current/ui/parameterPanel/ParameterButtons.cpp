@@ -10,7 +10,7 @@ ParameterDeletionButton::ParameterDeletionButton(int id) : id(id), LocalizedButt
 void ParameterDeletionButton::OnClick(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.parameters[id]->isMarkedForDeletion = true;
+    simulationApp.scriptRuntime.parameters[id]->isMarkedForDeletion = true;
 }
 
 ParameterAdditionButton::ParameterAdditionButton() : LocalizedButton(160, L"addParameterButton") {}
@@ -18,5 +18,5 @@ ParameterAdditionButton::ParameterAdditionButton() : LocalizedButton(160, L"addP
 void ParameterAdditionButton::OnClick(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.parameters.push_back(std::make_shared<SceneParameter>(simulationApp.GetLocalizedString(L"unnamedParameter")));
+    simulationApp.scriptRuntime.parameters.push_back(std::make_shared<SceneParameter>(simulationApp.GetLocalizedString(L"unnamedParameter")));
 }

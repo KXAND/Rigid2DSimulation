@@ -1,12 +1,12 @@
 ﻿#include "SceneBuilders.h"
 #include "current/common/utils.h"
-#include "SimulationApp.h"
-#include "SceneCanvas.h"
+#include "PhysicsWorld.h"
+#include "DVector2.h"
 #include "Body.h"
 #include "Shape.h"
 #include "Connection.h"
 
-void CreateBody(SimulationApp& simulationApp, Value const& shapeConfigurations, Value const& configuration)
+void CreateBody(PhysicsWorld& physicsWorld, Value const& shapeConfigurations, Value const& configuration)
 {
     bool point = false;
     TryReadConfigNumber(configuration, L"point", point);
@@ -60,12 +60,12 @@ void CreateBody(SimulationApp& simulationApp, Value const& shapeConfigurations, 
     bool resetPosition = false;
     TryReadConfigNumber(configuration, L"resetPosition", resetPosition);
     body->Init(resetPosition);
-    simulationApp.physicsWorld.bodies.push_back(body);
-    simulationApp.physicsWorld.isSceneChanged = true;
+    physicsWorld.bodies.push_back(body);
+    physicsWorld.isSceneChanged = true;
 }
-void CreateConnection(SimulationApp& simulationApp, Value const& configuration)
+void CreateConnection(PhysicsWorld& physicsWorld, Value const& configuration)
 {
-    auto& bodies = simulationApp.physicsWorld.bodies;
+    auto& bodies = physicsWorld.bodies;
     int idx0 = GenerateRandomInt(bodies.size());
     int idx1 = GenerateRandomInt(bodies.size());
     TryReadConfigNumber(configuration, L"index0", idx0);
@@ -102,15 +102,15 @@ void CreateConnection(SimulationApp& simulationApp, Value const& configuration)
     connection->UpdatePosition();
     connection->length = (connection->p0 - connection->p1).GetLength();
     connection->ReadConfig(configuration);
-    simulationApp.physicsWorld.connections.push_back(connection);
-    simulationApp.physicsWorld.isSceneChanged = true;
+    physicsWorld.connections.push_back(connection);
+    physicsWorld.isSceneChanged = true;
 }
 
-void Boundary(SimulationApp& simulationApp, Value const& thickness, Value const& configuration)
+void Boundary(PhysicsWorld& physicsWorld, DRect canvasRect, Value const& thickness, Value const& configuration)
 {
-    double canvasWidth = simulationApp.sceneCanvas->width, canvasHeight = simulationApp.sceneCanvas->height;
-    double left = simulationApp.sceneCanvas->topLeft.x, right = left + canvasWidth;
-    double top = simulationApp.sceneCanvas->topLeft.y, bottom = top + canvasHeight;
+    double canvasWidth = canvasRect.width, canvasHeight = canvasRect.height;
+    double left = canvasRect.topLeftPosition.x, right = left + canvasWidth;
+    double top = canvasRect.topLeftPosition.y, bottom = top + canvasHeight;
     std::shared_ptr<Body> body;
     Color color = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
     body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thickness.number, canvasHeight)));
@@ -119,31 +119,31 @@ void Boundary(SimulationApp& simulationApp, Value const& thickness, Value const&
     body->innerColor = color;
     body->ReadConfig(configuration);
     body->Init();
-    simulationApp.physicsWorld.bodies.push_back(body);
+    physicsWorld.bodies.push_back(body);
     body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(thickness.number, canvasHeight)));
     body->position = Vector2(right, (top + bottom) / 2);
     body->fixed = true;
     body->innerColor = color;
     body->ReadConfig(configuration);
     body->Init();
-    simulationApp.physicsWorld.bodies.push_back(body);
+    physicsWorld.bodies.push_back(body);
     body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(canvasWidth, thickness.number)));
     body->position = Vector2((left + right) / 2, top);
     body->fixed = true;
     body->innerColor = color;
     body->ReadConfig(configuration);
     body->Init();
-    simulationApp.physicsWorld.bodies.push_back(body);
+    physicsWorld.bodies.push_back(body);
     body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(canvasWidth, thickness.number)));
     body->position = Vector2((left + right) / 2, bottom);
     body->fixed = true;
     body->innerColor = color;
     body->ReadConfig(configuration);
     body->Init();
-    simulationApp.physicsWorld.bodies.push_back(body);
-    simulationApp.physicsWorld.isSceneChanged = true;
+    physicsWorld.bodies.push_back(body);
+    physicsWorld.isSceneChanged = true;
 }
-void Gear(SimulationApp& simulationApp, Value const& radius, Value const& toothCount, Value const& toothHeight, Value const& configuration)
+void Gear(PhysicsWorld& physicsWorld, Value const& radius, Value const& toothCount, Value const& toothHeight, Value const& configuration)
 {
     vector<std::shared_ptr<Shape>> shapes;
     shapes.push_back(std::make_shared<Shape>(radius.number));
@@ -161,21 +161,21 @@ void Gear(SimulationApp& simulationApp, Value const& radius, Value const& toothC
     wheel->innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
     wheel->ReadConfig(configuration);
     wheel->Init();
-    simulationApp.physicsWorld.bodies.push_back(wheel);
+    physicsWorld.bodies.push_back(wheel);
     auto root = std::make_shared<Body>(wheel->position);
     root->innerColor = wheel->innerColor;
     root->Init();
-    simulationApp.physicsWorld.bodies.push_back(root);
+    physicsWorld.bodies.push_back(root);
     auto connection = std::make_shared<Connection>();
     connection->type = kLinkConnection;
     connection->body0 = &*root;
     connection->body1 = &*wheel;
     connection->SignUpToBodies();
     connection->UpdatePosition();
-    simulationApp.physicsWorld.connections.push_back(connection);
-    simulationApp.physicsWorld.isSceneChanged = true;
+    physicsWorld.connections.push_back(connection);
+    physicsWorld.isSceneChanged = true;
 }
-void Strand(SimulationApp& simulationApp, Value const& point0Value, Value const& point1Value,
+void Strand(PhysicsWorld& physicsWorld, Value const& point0Value, Value const& point1Value,
             Value const& countValue, Value const& ratio, Value const& bodyConfiguration, Value const& connectionConfiguration)
 {
     Vector2 p0 = ToVector2(point0Value), p1 = ToVector2(point1Value);
@@ -191,7 +191,7 @@ void Strand(SimulationApp& simulationApp, Value const& point0Value, Value const&
     previousBody->position = p0;
     previousBody->ReadConfig(bodyConfiguration);
     previousBody->Init();
-    simulationApp.physicsWorld.bodies.push_back(previousBody);
+    physicsWorld.bodies.push_back(previousBody);
     for (int i = (1), iEnd = int(bodyCount + 1); i < iEnd; ++i)
     {
         currentBody = std::make_shared<Body>(std::make_shared<Shape>(bodyRadius));
@@ -199,7 +199,7 @@ void Strand(SimulationApp& simulationApp, Value const& point0Value, Value const&
         currentBody->position = (p0 * (bodyCount - i) + p1 * i) / bodyCount;
         currentBody->ReadConfig(bodyConfiguration);
         currentBody->Init();
-        simulationApp.physicsWorld.bodies.push_back(currentBody);
+        physicsWorld.bodies.push_back(currentBody);
         connection = std::make_shared<Connection>();
         connection->body0 = &*previousBody;
         connection->body1 = &*currentBody;
@@ -209,12 +209,12 @@ void Strand(SimulationApp& simulationApp, Value const& point0Value, Value const&
         connection->ReadConfig(connectionConfiguration);
         connection->SignUpToBodies();
         connection->UpdatePosition();
-        simulationApp.physicsWorld.connections.push_back(connection);
+        physicsWorld.connections.push_back(connection);
         previousBody = currentBody;
     }
-    simulationApp.physicsWorld.isSceneChanged = true;
+    physicsWorld.isSceneChanged = true;
 }
-void Necklace(SimulationApp& simulationApp, Value const& centerValue, Value const& radius,
+void Necklace(PhysicsWorld& physicsWorld, Value const& centerValue, Value const& radius,
               Value const& countValue, Value const& ratio, Value const& bodyConfiguration, Value const& connectionConfiguration)
 {
     std::shared_ptr<Body> firstBody, previousBody, currentBody;
@@ -230,7 +230,7 @@ void Necklace(SimulationApp& simulationApp, Value const& centerValue, Value cons
     previousBody->position = center + Vector2(radius.number, 0);
     previousBody->ReadConfig(bodyConfiguration);
     previousBody->Init();
-    simulationApp.physicsWorld.bodies.push_back(previousBody);
+    physicsWorld.bodies.push_back(previousBody);
     firstBody = previousBody;
     for (int i = (1), iEnd = int(bodyCount); i < iEnd; ++i)
     {
@@ -240,7 +240,7 @@ void Necklace(SimulationApp& simulationApp, Value const& centerValue, Value cons
         currentBody->position = center + Vector2(cos(phi), sin(phi)) * radius.number;
         currentBody->ReadConfig(bodyConfiguration);
         currentBody->Init();
-        simulationApp.physicsWorld.bodies.push_back(currentBody);
+        physicsWorld.bodies.push_back(currentBody);
         connection = std::make_shared<Connection>();
         connection->body0 = &*previousBody;
         connection->body1 = &*currentBody;
@@ -251,7 +251,7 @@ void Necklace(SimulationApp& simulationApp, Value const& centerValue, Value cons
         connection->ReadConfig(connectionConfiguration);
         connection->SignUpToBodies();
         connection->UpdatePosition();
-        simulationApp.physicsWorld.connections.push_back(connection);
+        physicsWorld.connections.push_back(connection);
         previousBody = currentBody;
     }
     double phi = 2 * kPi * bodyCount / bodyCount;
@@ -266,6 +266,6 @@ void Necklace(SimulationApp& simulationApp, Value const& centerValue, Value cons
     connection->ReadConfig(connectionConfiguration);
     connection->SignUpToBodies();
     connection->UpdatePosition();
-    simulationApp.physicsWorld.connections.push_back(connection);
-    simulationApp.physicsWorld.isSceneChanged = true;
+    physicsWorld.connections.push_back(connection);
+    physicsWorld.isSceneChanged = true;
 }
