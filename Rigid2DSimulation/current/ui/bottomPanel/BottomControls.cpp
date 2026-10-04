@@ -24,7 +24,7 @@ TimeLabel::TimeLabel()
 void TimeLabel::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    text = simulationApp.GetLocalizedString(L"timeLabel") + FormatFixed2(simulationApp.simulationTime);
+    text = simulationApp.GetLocalizedString(L"timeLabel") + FormatFixed2(simulationApp.physicsWorld.simulationTime);
 }
 
 MousePositionLabel::MousePositionLabel()

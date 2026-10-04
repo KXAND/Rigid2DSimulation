@@ -104,9 +104,9 @@ void Creator::UpdateBox(SimulationApp& simulationApp)
             active = false;
             if (body)
             {
-                simulationApp.bodies.push_back(body);
+                simulationApp.physicsWorld.bodies.push_back(body);
                 body = NULL;
-                simulationApp.isSceneChanged = true;
+                simulationApp.physicsWorld.isSceneChanged = true;
             }
         }
     }
@@ -142,9 +142,9 @@ void Creator::UpdateBall(SimulationApp& simulationApp)
             active = false;
             if (body)
             {
-                simulationApp.bodies.push_back(body);
+                simulationApp.physicsWorld.bodies.push_back(body);
                 body = NULL;
-                simulationApp.isSceneChanged = true;
+                simulationApp.physicsWorld.isSceneChanged = true;
             }
         }
     }
@@ -183,9 +183,9 @@ void Creator::UpdatePlate(SimulationApp& simulationApp)
             active = false;
             if (body)
             {
-                simulationApp.bodies.push_back(body);
+                simulationApp.physicsWorld.bodies.push_back(body);
                 body = NULL;
-                simulationApp.isSceneChanged = true;
+                simulationApp.physicsWorld.isSceneChanged = true;
             }
         }
     }
@@ -221,8 +221,8 @@ void Creator::UpdateConnection(SimulationApp& simulationApp)
                 connection->SignUpToBodies();
                 connection->UpdatePosition();
                 connection->length = (connection->p0 - connection->p1).GetLength();
-                simulationApp.connections.push_back(connection);
-                simulationApp.isSceneChanged = true;
+                simulationApp.physicsWorld.connections.push_back(connection);
+                simulationApp.physicsWorld.isSceneChanged = true;
             }
             connection = NULL;
             body0 = body1 = NULL;
@@ -248,9 +248,9 @@ void Creator::UpdatePoint(SimulationApp& simulationApp)
             body->ReadConfig(*bodyConfiguration);
         }
         body->Init();
-        simulationApp.bodies.push_back(body);
+        simulationApp.physicsWorld.bodies.push_back(body);
         body = NULL;
-        simulationApp.isSceneChanged = true;
+        simulationApp.physicsWorld.isSceneChanged = true;
     }
 }
 void Creator::UpdateNail(SimulationApp& simulationApp)
@@ -259,7 +259,7 @@ void Creator::UpdateNail(SimulationApp& simulationApp)
     {
         body = std::make_shared<Body>(body0->position + body0->transform * p0Relative);
         body->Init();
-        simulationApp.bodies.push_back(body);
+        simulationApp.physicsWorld.bodies.push_back(body);
         connection = std::make_shared<Connection>();
         connection->type = kLinkConnection;
         connection->body0 = body0;
@@ -267,12 +267,12 @@ void Creator::UpdateNail(SimulationApp& simulationApp)
         connection->p0Relative = p0Relative;
         connection->SignUpToBodies();
         connection->UpdatePosition();
-        simulationApp.connections.push_back(connection);
+        simulationApp.physicsWorld.connections.push_back(connection);
 
         body0 = NULL;
         connection = NULL;
         body = NULL;
-        simulationApp.isSceneChanged = true;
+        simulationApp.physicsWorld.isSceneChanged = true;
     }
 }
 void Creator::UpdateParticle(SimulationApp& simulationApp)
@@ -287,9 +287,9 @@ void Creator::UpdateParticle(SimulationApp& simulationApp)
             body->ReadConfig(*bodyConfiguration);
         }
         body->Init();
-        simulationApp.bodies.push_back(body);
+        simulationApp.physicsWorld.bodies.push_back(body);
         body = NULL;
-        simulationApp.isSceneChanged = true;
+        simulationApp.physicsWorld.isSceneChanged = true;
     }
 }
 void Creator::Update(SimulationApp& simulationApp)

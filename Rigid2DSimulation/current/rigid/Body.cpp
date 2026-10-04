@@ -244,31 +244,6 @@ void Body::Warp(DRect rectangle)
     }
 }
 
-void Body::RegisterGrid(SimulationApp& simulationApp)
-{
-    if (point)
-    {
-        return;
-    }
-
-    auto const& topLeft = simulationApp.rectScene.topLeftPosition;
-    int x0 = floor((box.x0 - topLeft.x) / simulationApp.gridSize);
-    int y0 = floor((box.y0 - topLeft.y) / simulationApp.gridSize);
-    int x1 = floor((box.x1 - topLeft.x) / simulationApp.gridSize);
-    int y1 = floor((box.y1 - topLeft.y) / simulationApp.gridSize);
-    x0 = Clamp(x0, 0, simulationApp.gridNumX - 1);
-    x1 = Clamp(x1, 0, simulationApp.gridNumX - 1);
-    y0 = Clamp(y0, 0, simulationApp.gridNumY - 1);
-    y1 = Clamp(y1, 0, simulationApp.gridNumY - 1);
-    if (x1 > x0 + 1 || y1 > y0 + 1)
-    {
-        // 是多个跨越多个grid的物体
-        simulationApp.multiGridBodies.push_back(this);
-        return;
-    }
-    simulationApp.grid[y0 * simulationApp.gridNumX + x0].push_back(this);
-}
-
 void Body::Init(bool resetPosition)
 {
     // 这里假设是之前没有乱改成员。
@@ -419,7 +394,7 @@ void Body::Step(SimulationApp& simulationApp, double stepDeltaTime)
     if (invMass)
     {
         velocity -= dampCoeff * velocity * stepDeltaTime;
-        velocity += simulationApp.gravity * stepDeltaTime;
+        velocity += simulationApp.physicsWorld.gravity * stepDeltaTime;
         velocityAngular -= dampCoeffAngular * velocityAngular * stepDeltaTime;
         if (hasAngularVelocityPreset)
         {
@@ -473,10 +448,10 @@ void Body::FollowPresetPosition(SimulationApp& simulationApp, double stepDeltaTi
     }
     Scope scope;
     bool hasReturned = false;
-    scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime);
+    scope[L"time"] = std::make_shared<Value>(simulationApp.physicsWorld.simulationTime);
     auto positionOld = ToVector2(Execute(hasReturned, simulationApp.currentScope, scope, *positionProgram)->elements);
     scope.clear();
-    scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime + stepDeltaTime);
+    scope[L"time"] = std::make_shared<Value>(simulationApp.physicsWorld.simulationTime + stepDeltaTime);
     hasReturned = false;
     auto positionNew = ToVector2(Execute(hasReturned, simulationApp.currentScope, scope, *positionProgram)->elements);
     auto velocityNew = (positionNew - positionOld) / stepDeltaTime;
@@ -495,10 +470,10 @@ void Body::FollowPresetAngle(SimulationApp& simulationApp, double stepDeltaTime)
 
     Scope scope;
     bool hasReturned = false;
-    scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime);
+    scope[L"time"] = std::make_shared<Value>(simulationApp.physicsWorld.simulationTime);
     auto radianOld = Execute(hasReturned, simulationApp.currentScope, scope, *angleProgram)->number;
     scope.clear();
-    scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime + stepDeltaTime);
+    scope[L"time"] = std::make_shared<Value>(simulationApp.physicsWorld.simulationTime + stepDeltaTime);
     hasReturned = false;
     auto radianNew = Execute(hasReturned, simulationApp.currentScope, scope, *angleProgram)->number;
     auto velocityAngularNew = (radianNew - radianOld) / stepDeltaTime;
@@ -516,7 +491,7 @@ void Body::FollowPresetAngularVelocity(SimulationApp& simulationApp)
 
     Scope scope;
     bool hasReturned = false;
-    scope[L"time"] = std::make_shared<Value>(simulationApp.simulationTime);
+    scope[L"time"] = std::make_shared<Value>(simulationApp.physicsWorld.simulationTime);
     auto velocityAngularNew = Execute(hasReturned, simulationApp.currentScope, scope, *angularVelocityProgram)->number;
 
     velocityAngular = velocityAngularNew;

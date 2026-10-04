@@ -27,12 +27,12 @@ void Connection::Save(SimulationApp const& simulationApp, FILE* file) const
     {
         return &*b == body0;
     };
-    int bodyIndex0 = find_if(simulationApp.bodies.begin(), simulationApp.bodies.end(), pred0) - simulationApp.bodies.begin();
+    int bodyIndex0 = find_if(simulationApp.physicsWorld.bodies.begin(), simulationApp.physicsWorld.bodies.end(), pred0) - simulationApp.physicsWorld.bodies.begin();
     auto pred1 = [this](std::shared_ptr<Body> b)
     {
         return &*b == body1;
     };
-    int bodyIndex1 = find_if(simulationApp.bodies.begin(), simulationApp.bodies.end(), pred1) - simulationApp.bodies.begin();
+    int bodyIndex1 = find_if(simulationApp.physicsWorld.bodies.begin(), simulationApp.physicsWorld.bodies.end(), pred1) - simulationApp.physicsWorld.bodies.begin();
     fwrite(&(bodyIndex0), sizeof(bodyIndex0), 1, file);
     fwrite(&(bodyIndex1), sizeof(bodyIndex1), 1, file);
     fwrite(&(p0Relative), sizeof(p0Relative), 1, file);
@@ -51,8 +51,8 @@ Connection::Connection(SimulationApp& simulationApp, FILE* file) : Connection()
     int bodyIndex0 = 0, bodyIndex1 = 0;
     fread(&(bodyIndex0), sizeof(bodyIndex0), 1, file);
     fread(&(bodyIndex1), sizeof(bodyIndex1), 1, file);
-    body0 = &*simulationApp.bodies[bodyIndex0];
-    body1 = &*simulationApp.bodies[bodyIndex1];
+    body0 = &*simulationApp.physicsWorld.bodies[bodyIndex0];
+    body1 = &*simulationApp.physicsWorld.bodies[bodyIndex1];
     fread(&(p0Relative), sizeof(p0Relative), 1, file);
     fread(&(p1Relative), sizeof(p1Relative), 1, file);
     fread(&(length), sizeof(length), 1, file);

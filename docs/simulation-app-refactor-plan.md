@@ -96,12 +96,71 @@ SimulationApp::Update()
 
 供用户检查的运行场景：暂停/恢复、选择/空白取消选择、拖拽和创建、删除带连接的刚体、显示及调试文字、静音/音乐切换、脚本场景。不能把源码展开对比和构建通过等同于完整 GUI 验收。
 
-## 5. 进度
+## 5. 第二步：提取 PhysicsWorld
+
+### 5.1 类型、成员和文件
+
+新增 `Rigid2DSimulation/current/rigid/PhysicsWorld.h/.cpp`，类型为 `class PhysicsWorld`。`SimulationApp` 按值持有公开成员 `PhysicsWorld physicsWorld`，不保留旧成员别名。工程及 filters 文件登记新文件。
+
+| 原 SimulationApp 成员 | 新归属 | 访问方式 |
+| --- | --- | --- |
+| `bodies`、`connections` | PhysicsWorld 公开成员 | 现有创建、UI、脚本和存储代码改为 `simulationApp.physicsWorld.bodies/connections`，暂不同时引入对象句柄或命令系统 |
+| `gravity`、`coulombConstant`、`hasElectrostatic`、`simulationTime`、`stepNum`、`rectScene`、`parallelEpsilon`、`useEqualPositionCorrection`、`gridSize`、`isSceneChanged` | PhysicsWorld 公开成员 | 配置、创建工具及 UI 的现有读写点直接迁移，名称和赋值条件不变 |
+| `groups`、`collisions`、`gridNumX`、`gridNumY`、`multiGridBodies`、`grid` | PhysicsWorld 私有成员 | 仅物理世界实现使用，不向 App/UI 暴露缓存 |
+| `maxRealDeltaTime`、`realDeltaTime`、`isPaused` | 保留 SimulationApp | 应用决定本帧时间和是否推进 |
+| `velocityAngularDrag`、选择、模式、Creator、显示参数、音乐和 DSL 成员 | 保留 SimulationApp | 分别属于后续编辑、渲染、脚本步骤，不误当物理世界参数 |
+
+### 5.2 函数迁移与接口
+
+| 新接口 | 搬入内容与调用位置 |
+| --- | --- |
+| `ClearObjects()` | 原 Reset 中依次清空 bodies、groups、collisions、connections；仍在清空 debugString 前调用 |
+| `ResetParameters(DRect const& sceneRect)` | 原 Reset 的物理参数默认值和场景范围赋值；在 ClearSelection 后调用。保留未重置网格缓存的原行为，不顺手修复 |
+| `MarkDeletedConnections()` | 原 RemoveDeletedObjects 中给被删除刚体的连接打标记的循环 |
+| `RemoveDeletedObjects()` | 原连接两端引用清理、先移除连接再移除刚体的代码 |
+| `Prepare()` | 原 PrepareSimulation 中网格尺寸计算、isSceneChanged 清除和 FormGroups 调用；仍在逐 Body::Update 前运行，暂停时也运行 |
+| `Advance(double deltaTime, std::function<void(double)> const& beginStep, std::function<void(Body&, double)> const& stepBody)` | 原 AdvanceSimulation 的步长、整个子步循环、分组越界、静电、网格、碰撞与连接求解、时间累加；暂停和零时间判断留在 App |
+| 私有 `RegisterBody(Body& body)` | 原 Body::RegisterGrid，转为物理世界维护自己的网格；Body 移除该声明和定义 |
+| 私有 `DetectCollisions()` | 原 SimulationApp::DetectCollisions，算法及邻格遍历顺序不变；App 移除该声明和定义 |
+
+清理选择仍由 `SimulationApp::RemoveDeletedObjects()` 协调：调用 `MarkDeletedConnections()` → 原两个选择指针检查与清空 → 调用世界的 `RemoveDeletedObjects()`。不在世界中保存选择指针，也不延后到对象销毁后才解引用检查。
+
+### 5.3 逐子步的过渡接口
+
+现有 `Body::Step()` 在运动积分内部调用脚本预设，随后处理拖拽并更新 AABB。第二步不提前实施第三、第五步，不改变这些调用的次数和位置。因此两个回调是针对现存耦合的同步过渡接口，不是新事件系统：
+
+- `beginStep(time)`：每个子步开始时由 App 写入原 `currentScope[L"time"]`。
+- `stepBody(body, stepDeltaTime)`：物理世界按原 bodies 顺序调用；App 回调只调用原 `body.Step(*this, stepDeltaTime)`，Body 的物理参数读取改指向 physicsWorld。
+- 回调只在 Advance 返回前执行，不保存、不异步、不允许空回调；不复制刚体列表或预先计算脚本结果。
+- PhysicsWorld 的声明和实现均不依赖 SimulationApp、输入、UI 或 DSL 类型，不接收或存储整个 App 引用。世界实际持有物理状态并实现多体求解，不能只把原 App 函数包一层。
+- 本步并不宣称 Body 已成为纯物理对象。第三步移出 Body 的拖拽处理，第五步移出预设脚本执行时，应一并收敛这个整段 Body::Step 回调；不得将过渡接口误认为最终模型。
+
+App 的 AdvanceSimulation 最终只有原暂停/零时间条件和一次 `physicsWorld.Advance(...)` 调用。子步顺序保持：beginStep → 逐 Body stepBody → Group::Warp → Electrostatic → 网格重建 → 碰撞检测/求解 → 连接求解 → simulationTime 累加。
+
+### 5.4 其他调用点与不变项
+
+- `SimulationApp.cpp/.h`：迁移成员、函数，更新 Save/Load、Reset、配置、遍历、DSL GetBodyCount 的访问点。存储仍留在 App，二进制顺序、DSL 字符串键不变。
+- `Body.cpp/.h`：移除 RegisterGrid；重力与预设脚本时间改读 physicsWorld，其余运动、脚本和拖拽实现不变。
+- `Connection.cpp`：保存/加载时刚体索引改从 physicsWorld.bodies 查找，索引算法和文件布局不变。
+- `SceneBuilders.cpp`、`Creator.cpp`：容器与 isSceneChanged 访问点迁移；不新增缺失的脏标记，不改变创建时机。
+- `ui/bodyPanel/BodyButtons.cpp`、`ui/connectionPanel/ConnectionButtons.cpp`：isSceneChanged 访问点迁移。
+- `ui/globalPanel/GlobalControls.cpp`、`ui/bottomPanel/BottomControls.cpp`：显示值从物理世界读取，本地化键不变。
+- 不修改其他物理算法、绘制函数或现有未提交文件。不清理已发现的旧边界问题，例如空容器的旧循环边界、删除后分组刷新的旧触发条件。
+
+### 5.5 验证范围
+
+1. 主工程 Debug|x64 构建；核对所有迁移成员访问点，无旧公开入口或兼容别名。
+2. 逐段核对新旧求解、网格登记、删除逻辑；只允许归属/限定名和上述同步回调替换，保持公式、条件和调用顺序。
+3. 本地补充物理世界回归检查，覆盖子步次数/时间、静电、碰撞、连接、分组以及关联删除；测试文件不提交，不引入生产测试专用 API。
+4. 保留既有绘制回归检查；核对编码、CRLF、diff 和原有未提交文件未变。
+5. GUI 拖拽、脚本预设、创建删除、暂停/恢复和存储往返仍需用户检查；不得用构建或局部测试冒充完整交互验收。
+
+## 6. 进度
 
 | 步骤 | 状态 |
 | --- | --- |
-| 1. 整理帧流程 | 用户已于 2026-10-05 确认，随本步骤代码提交 |
-| 2. 提取物理世界 | 第一步提交后开始详细设计和实施 |
+| 1. 整理帧流程 | 用户已于 2026-10-05 确认，已提交 `362956d` |
+| 2. 提取物理世界 | 用户已于 2026-10-05 确认，代码与本方案一起提交 |
 | 3. 提取编辑交互 | 未开始 |
 | 4. 整理渲染职责 | 未开始 |
 | 5. 移出脚本和存储 | 未开始 |
@@ -116,4 +175,15 @@ SimulationApp::Update()
 - 两项独立只读审查已完成：Standards 未发现本次引入的规范问题；Spec 未发现迁移映射、作用域、生命周期或时序偏差。
 - 代理未执行 GUI 人工回归；用户已明确确认第一步代码和方案，不额外推断其具体人工测试范围。
 
-第一步已获用户明确确认，本次仅提交两个源码文件和本文件。随后细化第二步迁移表并开始第二步；第二步完成后再次停下，等待用户检查确认，不自动提交第二步。
+第一步已按用户确认提交两个源码文件和本文件（`362956d`）。第二步也已获用户确认，代码与本文更新一起提交；下一步为第三步编辑交互职责迁移。
+
+第二步验证记录（2026-10-05）：
+
+- 主工程 `Debug|x64` 构建通过。首次构建前新文件未补 BOM，造成默认 GBK 解码错误；已补齐 UTF-8 BOM 并重新构建通过。原有 C4244/C4267 转换警告不在本步修复。
+- 8 个外部调用点源码文件与修改前逐文件比较，除物理成员访问路径迁移及 Body::RegisterGrid 搬出外一致。6 段迁移实现核对通过，差异限于明确的归属/回调替换、为旧无括号循环补齐括号及删除两行失效的注释代码；子步和邻格遍历顺序不变。
+- 本地 `x64/physics-world-check/` 保存来自第一步基线的原求解流程对照。10 个场景各运行 20 帧、每帧 4 子步，共 800 个子步；逐帧刚体位置、速度、角度、角速度、AABB、连接端点及状态与对照完全一致，回调顺序和次数一致。
+- 场景包含空世界、单点、静电、圆形/矩形碰撞、刚性连接、弹簧、分组越界、多格物体及等位置校正。另有连接单独删除、带连接刚体删除及重置默认值检查，全部通过。
+- 上述测试链接实际生产物理算法，但 Body 推进回调使用普通运动积分，不构造 GUI App；不覆盖脚本预设、输入拖拽或完整场景存储往返。这些仍列入用户运行检查，不宣称全功能等价已获动态验证。
+- 原有 12 项三角形绘制回归检查通过。所有本次修改的 13 个 C++ 文件通过 UTF-8 BOM、CRLF 和无 Tab 检查；`git diff --check` 通过。原有未提交源码、两份文档及 tests 文件 SHA256 均未变化。
+- 独立 Standards、Spec 只读审查均未发现新增问题；它们不替代运行验收。新增本地测试位于已忽略的 x64 目录，不提交，也未修改原 tests。
+- 用户确认第二步后，按其要求删除未跟踪的 `tests/DrawTriangleTests.cpp` 和 `tests/DrawTriangleTests.vcxproj`；上述测试记录为删除前的验证结果，不将测试文件纳入提交。其他原有未提交内容不并入本次提交。

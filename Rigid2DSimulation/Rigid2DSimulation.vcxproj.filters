@@ -280,6 +280,9 @@
     <ClCompile Include="current\rigid\Group.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
+    <ClCompile Include="current\rigid\PhysicsWorld.cpp">
+      <Filter>current\rigid</Filter>
+    </ClCompile>
     <ClCompile Include="framework\media\AudioClip.cpp">
       <Filter>framework\media</Filter>
     </ClCompile>
@@ -502,6 +505,9 @@
       <Filter>current\ui\connectionPanel</Filter>
     </ClInclude>
     <ClInclude Include="current\rigid\Group.h">
+      <Filter>current\rigid</Filter>
+    </ClInclude>
+    <ClInclude Include="current\rigid\PhysicsWorld.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
     <ClInclude Include="framework\media\AudioClip.h">

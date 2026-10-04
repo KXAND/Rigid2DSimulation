@@ -8,9 +8,7 @@
 #include "ShapeBuiltins.h"
 #include "SceneBuilders.h"
 #include "AudioClip.h"
-#include "Group.h"
 #include "Creator.h"
-#include "Collision.h"
 #include "Connection.h"
 #include "DrawString.h"
 
@@ -66,15 +64,15 @@ void SimulationApp::Save(wstring const& name) const
     SaveParameters(file);
 
     // 可能会保存一些即将被删除的元素，但是也无所谓。
-    size = bodies.size();
+    size = physicsWorld.bodies.size();
     fwrite(&(size), sizeof(size), 1, file);
-    for (auto body : bodies)
+    for (auto body : physicsWorld.bodies)
     {
         body->Save(file);
     }
-    size = connections.size();
+    size = physicsWorld.connections.size();
     fwrite(&(size), sizeof(size), 1, file);
-    for (auto connection : connections)
+    for (auto connection : physicsWorld.connections)
     {
         connection->Save(*this, file);
     }
@@ -99,14 +97,14 @@ void SimulationApp::Load(wstring const& name)
     fread(&(size), sizeof(size), 1, file);
     for (int i = (0), iEnd = int(size); i < iEnd; ++i)
     {
-        bodies.push_back(std::make_shared<Body>(*this, file));
+        physicsWorld.bodies.push_back(std::make_shared<Body>(*this, file));
     }
     fread(&(size), sizeof(size), 1, file);
     for (int i = (0), iEnd = int(size); i < iEnd; ++i)
     {
-        connections.push_back(std::make_shared<Connection>(*this, file));
+        physicsWorld.connections.push_back(std::make_shared<Connection>(*this, file));
     }
-    isSceneChanged = true;
+    physicsWorld.isSceneChanged = true;
 
     Execute(currentScope, Compile(scriptText));
     fclose(file);
@@ -117,10 +115,7 @@ void SimulationApp::Reset()
     InitializeDefaultFunctions();
     parameters.clear();
 
-    bodies.clear();
-    groups.clear();
-    collisions.clear();
-    connections.clear();
+    physicsWorld.ClearObjects();
     debugString.clear();
 
     currentScope[L"backgroundLeft"] = std::make_shared<Value>(sceneCanvas->topLeft.x);
@@ -129,24 +124,12 @@ void SimulationApp::Reset()
     currentScope[L"backgroundHeight"] = std::make_shared<Value>(sceneCanvas->height);
 
     ClearSelection();
-    isSceneChanged = false;
-    gravity = Vector2();
+    physicsWorld.ResetParameters(DRect(sceneCanvas->topLeft, sceneCanvas->width, sceneCanvas->height));
     maxRealDeltaTime = 0.05;
-    simulationTime = 0;
-    stepNum = 60;
-    rectScene.topLeftPosition = sceneCanvas->topLeft;
-    rectScene.width = sceneCanvas->width;
-    rectScene.height = sceneCanvas->height;
-    gridSize = 50;
     energyMultiplier = 4e-6;
     chargeMultiplier = 1;
     isTrackShown = false;
 
-    hasElectrostatic = false;
-    coulombConstant = 1e5;
-
-    parallelEpsilon = 1e-3;
-    useEqualPositionCorrection = false;
     velocityAngularDrag = 2;
 
     creator = std::make_shared<Creator>();
@@ -194,7 +177,7 @@ void SimulationApp::Update()
 
     PrepareSimulation();
 
-    for (const auto& body : bodies)
+    for (const auto& body : physicsWorld.bodies)
     {
         body->Update(*this);
     }
@@ -218,7 +201,7 @@ void SimulationApp::ResolveInputOwnership()
     {
         creator->PreUpdate(*this);
     }
-    for (auto& body : bodies)
+    for (auto& body : physicsWorld.bodies)
     {
         body->PreUpdate(*this);
     }
@@ -244,13 +227,7 @@ void SimulationApp::UpdateMusic()
 
 void SimulationApp::RemoveDeletedObjects()
 {
-    // 删除被标记为删除的图形和其上的连接
-    for (auto body : bodies)
-        if (body->isMarkedForDeletion)
-            for (auto connection : body->connections)
-            {
-                connection->isMarkedForDeletion = true;
-            }
+    physicsWorld.MarkDeletedConnections();
     if (bodySelecting && bodySelecting->isMarkedForDeletion)
     {
         bodySelecting = NULL;
@@ -259,29 +236,7 @@ void SimulationApp::RemoveDeletedObjects()
     {
         connectionSelecting = NULL;
     }
-    for (auto& connection : connections)
-        if (connection->isMarkedForDeletion)
-        {
-            //将该连接从其两端的物体的连接列表中移除。
-            auto& firstBodyConnections = connection->body0->connections;
-            firstBodyConnections.erase(remove(firstBodyConnections.begin(), firstBodyConnections.end(), &*connection), firstBodyConnections.end());
-            auto& secondBodyConnections = connection->body1->connections;
-            secondBodyConnections.erase(remove(secondBodyConnections.begin(), secondBodyConnections.end(), &*connection), secondBodyConnections.end());
-        }
-    connections.erase(
-        remove_if(connections.begin(), connections.end(),
-                  [](std::shared_ptr<Connection> connection)
-                  {
-                      return connection->isMarkedForDeletion;
-                  }),
-        connections.end());
-    bodies.erase(
-        remove_if(bodies.begin(), bodies.end(),
-                  [](std::shared_ptr<Body> body)
-                  {
-                      return body->isMarkedForDeletion;
-                  }),
-        bodies.end());
+    physicsWorld.RemoveDeletedObjects();
 }
 
 void SimulationApp::PrepareSimulation()
@@ -289,84 +244,34 @@ void SimulationApp::PrepareSimulation()
     // 更新运行信息
     realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
     currentScope[L"current.frameRate.GetDeltaTime()"] = std::make_shared<Value>(realDeltaTime);
-    gridNumX = ceil(rectScene.width / gridSize);
-    gridNumY = ceil(rectScene.height / gridSize);
-    if (isSceneChanged)
-    {
-        isSceneChanged = false;
-        groups = FormGroups(bodies);
-    }
+    physicsWorld.Prepare();
 }
 
 void SimulationApp::AdvanceSimulation()
 {
-    // 物理模拟
     if (!isPaused && realDeltaTime != 0)
     {
-        // 标准时长
-        double stepDeltaTime = realDeltaTime / stepNum;
-
-        for (int i = (0), iEnd = int(stepNum); i < iEnd; ++i)
-        {
-            currentScope[L"time"] = std::make_shared<Value>(simulationTime);
-            for (const auto& body : bodies)
+        physicsWorld.Advance(realDeltaTime,
+            [this](double time)
             {
-                body->Step(*this, stepDeltaTime);
-            }
-            // for (auto b : bodies) { b->warp(rectScene); }
-            for (auto& group : groups)
+                currentScope[L"time"] = std::make_shared<Value>(time);
+            },
+            [this](Body& body, double stepDeltaTime)
             {
-                group->Warp(rectScene);
-            }
-
-            //计算静电
-            if (hasElectrostatic)
-            {
-                for (int i = (0), iEnd = int(bodies.size() - 1); i < iEnd; ++i)
-                    for (int j = (i + 1), jEnd = int(bodies.size()); j < jEnd; ++j)
-                    {
-                        Electrostatic(*bodies[i], *bodies[j], stepDeltaTime, coulombConstant);
-                    }
-            }
-
-            // 重新检查物体在grid中的情况
-            multiGridBodies.clear();
-            grid.clear();
-            grid.resize(gridNumX * gridNumY);
-            for (auto& body : bodies)
-            {
-                body->RegisterGrid(*this);
-            }
-
-            // 碰撞
-            collisions.clear();
-            DetectCollisions();
-            for (auto& collision : collisions)
-            {
-                collision->Simulate(useEqualPositionCorrection);
-            }
-            // for (auto collision : collisions) { collision->Render(*this); }
-
-            // 连接
-            for (auto& connection : connections)
-            {
-                connection->Simulate(stepDeltaTime, useEqualPositionCorrection);
-            }
-
-            simulationTime += stepDeltaTime;
-        }
+                body.Step(*this, stepDeltaTime);
+            });
     }
 }
 
 void SimulationApp::RenderSceneObjects()
 {
     // 渲染
-    for (auto& body : bodies)
+    for (auto& body : physicsWorld.bodies)
     {
         body->UpdateShapesPositionAndAABB();
         body->Render(*this);
     }
-    for (auto& connection : connections)
+    for (auto& connection : physicsWorld.connections)
     {
         connection->UpdatePosition();
         connection->Render(*this);
@@ -378,107 +283,38 @@ void SimulationApp::SetConfig(Value const& config)
     TryReadConfigNumber(config, L"volume", volume);
     TryReadConfigNumber(config, L"energyMultiplier", energyMultiplier);
     TryReadConfigNumber(config, L"chargeMultiplier", chargeMultiplier);
-    TryReadConfigNumber(config, L"parallelEpsilon", parallelEpsilon);
+    TryReadConfigNumber(config, L"parallelEpsilon", physicsWorld.parallelEpsilon);
     TryReadConfigNumber(config, L"maxRealDeltaTime", maxRealDeltaTime);
-    TryReadConfigNumber(config, L"hasElectrostatic", hasElectrostatic);
-    TryReadConfigNumber(config, L"coulombConstant", coulombConstant);
-    TryReadConfigNumber(config, L"stepCount", stepNum);
-    stepNum = max(1, stepNum);
-    TryReadConfigNumber(config, L"gridSize", gridSize);
-    TryReadConfigNumber(config, L"useEqualPositionCorrection", useEqualPositionCorrection);
-    TryReadConfigNumber(config, L"time", simulationTime);
+    TryReadConfigNumber(config, L"hasElectrostatic", physicsWorld.hasElectrostatic);
+    TryReadConfigNumber(config, L"coulombConstant", physicsWorld.coulombConstant);
+    TryReadConfigNumber(config, L"stepCount", physicsWorld.stepNum);
+    physicsWorld.stepNum = max(1, physicsWorld.stepNum);
+    TryReadConfigNumber(config, L"gridSize", physicsWorld.gridSize);
+    TryReadConfigNumber(config, L"useEqualPositionCorrection", physicsWorld.useEqualPositionCorrection);
+    TryReadConfigNumber(config, L"time", physicsWorld.simulationTime);
     TryReadConfigNumber(config, L"isTrackShown", isTrackShown);
     if (auto value = FindConfigValue(config, L"sceneLeft"))
     {
-        rectScene.topLeftPosition.x = value->number;
+        physicsWorld.rectScene.topLeftPosition.x = value->number;
     }
     if (auto value = FindConfigValue(config, L"sceneTop"))
     {
-        rectScene.topLeftPosition.y = value->number;
+        physicsWorld.rectScene.topLeftPosition.y = value->number;
     }
     if (auto value = FindConfigValue(config, L"sceneWidth"))
     {
-        rectScene.width = value->number;
+        physicsWorld.rectScene.width = value->number;
     }
     if (auto value = FindConfigValue(config, L"sceneHeight"))
     {
-        rectScene.height = value->number;
+        physicsWorld.rectScene.height = value->number;
     }
     if (auto value = FindConfigValue(config, L"gravity"))
     {
-        gravity = ToVector2(*value);
+        physicsWorld.gravity = ToVector2(*value);
     }
 
-    isSceneChanged = true;
-}
-
-void SimulationApp::DetectCollisions()
-{
-    for (int i = (0), iEnd = int(gridNumX); i < iEnd; ++i)
-        for (int j = (0), jEnd = int(gridNumY); j < jEnd; ++j)
-        {
-            auto& bodies = grid[j * gridNumX + i];
-            for (int k = (0), kEnd = int(bodies.size()); k < kEnd; ++k)
-            {
-                auto& body = *bodies[k];
-
-                // 检查同grid和跨grid的情况，输出到collisions中
-                for (int m = (k + 1), mEnd = int(bodies.size()); m < mEnd; ++m)
-                {
-                    Collide(body, *bodies[m], collisions, parallelEpsilon);
-                }
-                for (auto otherBody : multiGridBodies)
-                {
-                    Collide(body, *otherBody, collisions, parallelEpsilon);
-                }
-
-                // 检查右邻
-                if (i + 1 < gridNumX)
-                {
-                    int a = i + 1, b = j;
-                    for (auto otherBody : grid[b * gridNumX + a])
-                    {
-                        Collide(body, *otherBody, collisions, parallelEpsilon);
-                    }
-                }
-                if (j + 1 >= gridNumY)
-                {
-                    continue;
-                } // 检查下邻，没有下邻就无法进行下列操作了
-
-                //检查左下
-                if (i - 1 >= 0)
-                {
-                    int a = i - 1, b = j + 1;
-                    for (auto otherBody : grid[b * gridNumX + a])
-                    {
-                        Collide(body, *otherBody, collisions, parallelEpsilon);
-                    }
-                }
-                // 检查右下
-                if (i + 1 < gridNumX)
-                {
-                    int a = i + 1, b = j + 1;
-                    for (auto otherBody : grid[b * gridNumX + a])
-                    {
-                        Collide(body, *otherBody, collisions, parallelEpsilon);
-                    }
-                }
-                // 检查正下
-                int a = i, b = j + 1;
-                for (auto otherBody : grid[b * gridNumX + a])
-                {
-                    Collide(body, *otherBody, collisions, parallelEpsilon);
-                }
-            }
-        }
-
-    // 检查多gird和多gird本身的碰撞
-    for (int i = (0), iEnd = int(multiGridBodies.size() - 1); i < iEnd; ++i)
-        for (int j = (i + 1), jEnd = int(multiGridBodies.size()); j < jEnd; ++j)
-        {
-            Collide(*multiGridBodies[i], *multiGridBodies[j], collisions, parallelEpsilon);
-        }
+    physicsWorld.isSceneChanged = true;
 }
 
 void SimulationApp::SaveParameters(FILE* file) const
@@ -583,7 +419,7 @@ void SimulationApp::InitializeDefaultFunctions()
 
     auto getBodyCountFunction = [this](vector<std::shared_ptr<Value>> const& arguments)
     {
-        return std::make_shared<Value>(bodies.size());
+        return std::make_shared<Value>(physicsWorld.bodies.size());
     };
     currentScope[L"GetBodyCount"] = std::make_shared<Value>(getBodyCountFunction);
 

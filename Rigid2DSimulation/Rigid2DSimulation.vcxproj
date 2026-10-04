@@ -185,6 +185,7 @@
     <ClCompile Include="current\ui\parameterPanel\ParameterControls.cpp" />
     <ClCompile Include="framework\media\FontCharacters.cpp" />
     <ClCompile Include="current\rigid\Group.cpp" />
+    <ClCompile Include="current\rigid\PhysicsWorld.cpp" />
     <ClCompile Include="framework\control\Label.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="framework\control\Panel.cpp" />
@@ -260,6 +261,7 @@
     <ClInclude Include="current\ui\parameterPanel\ParameterButtons.h" />
     <ClInclude Include="current\ui\parameterPanel\ParameterControls.h" />
     <ClInclude Include="current\rigid\Group.h" />
+    <ClInclude Include="current\rigid\PhysicsWorld.h" />
     <ClInclude Include="framework\basic\PlatformIncludes.h" />
     <ClInclude Include="framework\control\Label.h" />
     <ClInclude Include="framework\control\Panel.h" />

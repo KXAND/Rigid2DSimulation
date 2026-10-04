@@ -66,7 +66,6 @@ struct Body
     void ReadConfig(Value const& config);
     void UpdateShapesPositionAndAABB();
     void Warp(DRect rectangle);
-    void RegisterGrid(SimulationApp& simulationApp);
 
 private:
     double GetDepth() const;

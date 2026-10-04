@@ -19,5 +19,5 @@ void ConnectionDeletionButton::OnClick(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
     simulationApp.connectionSelecting->isMarkedForDeletion = true;
-    simulationApp.isSceneChanged = true;
+    simulationApp.physicsWorld.isSceneChanged = true;
 }
