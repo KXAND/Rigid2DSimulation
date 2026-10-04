@@ -12,13 +12,13 @@ BodyScriptEditor::BodyScriptEditor() : RichTextBox(360, 400) {}
 void BodyScriptEditor::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    value = simulationApp.bodySelecting->temporaryScriptText;
+    value = simulationApp.editor.bodySelecting->temporaryScriptText;
 }
 
 void BodyScriptEditor::Upload(App& app) const
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.bodySelecting->temporaryScriptText = value;
+    simulationApp.editor.bodySelecting->temporaryScriptText = value;
 }
 
 BodyConnectionLabel::BodyConnectionLabel(int id) : id(id), Label()
@@ -30,7 +30,7 @@ BodyConnectionLabel::BodyConnectionLabel(int id) : id(id), Label()
 void BodyConnectionLabel::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    auto* connection = simulationApp.bodySelecting->connections[id];
+    auto* connection = simulationApp.editor.bodySelecting->connections[id];
     wstring type;
     switch (connection->type)
     {
@@ -55,13 +55,13 @@ SelectBodyConnectionCheckBox::SelectBodyConnectionCheckBox(int id) : id(id), Loc
 void SelectBodyConnectionCheckBox::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    checked = (simulationApp.connectionSelecting == simulationApp.bodySelecting->connections[id]);
+    checked = (simulationApp.editor.connectionSelecting == simulationApp.editor.bodySelecting->connections[id]);
 }
 
 void SelectBodyConnectionCheckBox::Upload(App& app) const
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.connectionSelecting = checked ? simulationApp.bodySelecting->connections[id] : NULL;
+    simulationApp.editor.connectionSelecting = checked ? simulationApp.editor.bodySelecting->connections[id] : NULL;
 }
 
 BodyConnectionControlRow::BodyConnectionControlRow(int id)
@@ -74,7 +74,7 @@ BodyConnectionControlRow::BodyConnectionControlRow(int id)
 void BodyConnectionControlList::Update(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    auto& selectedBody = *simulationApp.bodySelecting;
+    auto& selectedBody = *simulationApp.editor.bodySelecting;
     for (int i = (connectionRows.size()), iEnd = int(selectedBody.connections.size()); i < iEnd; ++i)
     {
         connectionRows.push_back(std::make_shared<BodyConnectionControlRow>(i));
@@ -107,7 +107,7 @@ BodyEditorControls::BodyEditorControls()
 void BodyEditorControls::Update(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    auto* appSelectedBody = simulationApp.bodySelecting;
+    auto* appSelectedBody = simulationApp.editor.bodySelecting;
     if (selectedBody != appSelectedBody)
     {
         selectedBody = appSelectedBody;
@@ -137,7 +137,7 @@ void BodyEditorControls::Discard(App& app)
 void BodyDetailsLabel::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    auto* selectedBody = simulationApp.bodySelecting;
+    auto* selectedBody = simulationApp.editor.bodySelecting;
     if (!selectedBody)
     {
         text = simulationApp.GetLocalizedString(L"noBodySelected");

@@ -11,13 +11,13 @@ ConnectionScriptEditor::ConnectionScriptEditor() : RichTextBox(360, 400) {}
 void ConnectionScriptEditor::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    value = simulationApp.connectionSelecting->temporaryScriptText;
+    value = simulationApp.editor.connectionSelecting->temporaryScriptText;
 }
 
 void ConnectionScriptEditor::Upload(App& app) const
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.connectionSelecting->temporaryScriptText = value;
+    simulationApp.editor.connectionSelecting->temporaryScriptText = value;
 }
 
 ConnectionEditorControls::ConnectionEditorControls()
@@ -35,7 +35,7 @@ ConnectionEditorControls::ConnectionEditorControls()
 void ConnectionEditorControls::Update(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    auto* appSelectedConnection = simulationApp.connectionSelecting;
+    auto* appSelectedConnection = simulationApp.editor.connectionSelecting;
     if (selectedConnection != appSelectedConnection)
     {
         selectedConnection = appSelectedConnection;
@@ -65,7 +65,7 @@ void ConnectionEditorControls::Discard(App& app)
 void ConnectionDetailsLabel::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    auto* selectedConnection = simulationApp.connectionSelecting;
+    auto* selectedConnection = simulationApp.editor.connectionSelecting;
     if (!selectedConnection)
     {
         text = simulationApp.GetLocalizedString(L"noConnectionSelected");

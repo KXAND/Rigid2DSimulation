@@ -2,7 +2,6 @@
 #include "current/common/utils.h"
 #include "SimulationApp.h"
 #include "SceneCanvas.h"
-#include "Creator.h"
 #include "Shape.h"
 #include "DrawTriangle.h"
 #include "DrawGeometry.h"
@@ -306,8 +305,8 @@ void Body::Init(bool resetPosition)
 }
 void Body::Render(SimulationApp& simulationApp) const
 {
-    bool isSelectedConnection = simulationApp.connectionSelecting &&
-                                (simulationApp.connectionSelecting->body0 == this || simulationApp.connectionSelecting->body1 == this);
+    bool isSelectedConnection = simulationApp.editor.connectionSelecting &&
+                                (simulationApp.editor.connectionSelecting->body0 == this || simulationApp.editor.connectionSelecting->body1 == this);
     Color normalColor;
     switch (simulationApp.display)
     {
@@ -334,7 +333,7 @@ void Body::Render(SimulationApp& simulationApp) const
     }
 
     Color color =
-        dragged ? draggedColor : (simulationApp.bodySelecting == this) ? selectedColor
+        dragged ? draggedColor : (simulationApp.editor.bodySelecting == this) ? selectedColor
                              : hovered                                 ? hoveredColor
                              : isSelectedConnection                    ? selectedConnectionColor
                                                                        : normalColor;
@@ -416,28 +415,6 @@ void Body::Step(SimulationApp& simulationApp, double stepDeltaTime)
             FollowPresetAngle(simulationApp, stepDeltaTime);
         }
     }
-
-    if (dragged)
-    {
-        if (simulationApp.input.mouseButtonDown[2])
-        {
-            HandleDragWhole(simulationApp);
-        }
-        else if (!simulationApp.inputOwners.keyboardOwner && simulationApp.input.keyDown[L'F'])
-        {
-            HandleDragForce(simulationApp, stepDeltaTime);
-        }
-        else if (invMass == 0)
-        {
-            HandleDragWhole(simulationApp);
-        }
-        else
-        {
-            HandleDragPoint(simulationApp);
-        }
-    }
-
-    UpdateShapesPositionAndAABB();
 }
 
 void Body::FollowPresetPosition(SimulationApp& simulationApp, double stepDeltaTime)
@@ -497,161 +474,9 @@ void Body::FollowPresetAngularVelocity(SimulationApp& simulationApp)
     velocityAngular = velocityAngularNew;
 }
 
-void Body::UpdateDragAngle(SimulationApp& simulationApp)
-{
-    velocityAngularDrag = 0;
-    if (!simulationApp.inputOwners.keyboardOwner)
-    {
-        if (simulationApp.input.keyDown[L'Q'])
-        {
-            velocityAngularDrag = -simulationApp.velocityAngularDrag;
-        }
-        if (simulationApp.input.keyDown[L'E'])
-        {
-            velocityAngularDrag = +simulationApp.velocityAngularDrag;
-        }
-    }
-    radianDrag = radian + velocityAngularDrag * simulationApp.realDeltaTime;
-}
 
-void Body::HandleDragPoint(SimulationApp& simulationApp)
-{
-    // 下列命名指定o,p,m三点为body中心、被拖拽点及鼠标现在点
-    Vector2 mousePos = Vector2(simulationApp.input.mousePosition);
-    Vector2 pPos = position + transform * relativeDragPoint;
-    Vector2 mouseVelocity = Vector2(simulationApp.input.mousePosition - simulationApp.input.previousMousePosition) / simulationApp.realDeltaTime;
-    Vector2 pmDir = (mousePos - pPos).GetNormalized();
 
-    Vector2 opDir = pPos - position;
-    opDir = Vector2(-opDir.y, opDir.x);
-    Vector2 pVelocity = velocity + velocityAngular * opDir;
-    double rd0 = Dot(opDir, pmDir);
-    double effectiveInvMass = invMass + rd0 * rd0 * invInertia;
 
-    Vector2 impulse = Dot(mouseVelocity - pVelocity, pmDir) * pmDir / effectiveInvMass;
-
-    velocity += impulse * invMass;
-    velocityAngular += Dot(impulse, opDir) * invInertia;
-    position += mousePos - pPos;
-}
-
-/// <summary>
-/// 所有点同步被拖拽位移
-/// </summary>
-/// <param name="simulationApp"></param>
-void Body::HandleDragWhole(SimulationApp& simulationApp)
-{
-    Vector2 mousePos = Vector2(simulationApp.input.mousePosition);
-    Vector2 dragPointPos = position + transform * relativeDragPoint;
-    Vector2 newVelocity = Vector2(simulationApp.input.mousePosition - simulationApp.input.previousMousePosition) / simulationApp.realDeltaTime;
-
-    velocity = newVelocity;
-    radian = radianDrag;
-    velocityAngular = velocityAngularDrag;
-    position += mousePos - dragPointPos; // 中心平行位移
-}
-
-void Body::HandleDragForce(SimulationApp& simulationApp, double deltaTime)
-{
-    // 运动路径方向
-    Vector2 p1 = Vector2(simulationApp.input.mousePosition);
-    Vector2 p0 = position + transform * relativeDragPoint;
-    Vector2 d = (p1 - p0).GetNormalized();
-
-    // 力
-    double k = 1e6;
-    Vector2 impulse = k * (p1 - p0).GetLength() * deltaTime * d;
-
-    // 刚体半径
-    Vector2 r0 = p0 - position;
-    r0 = Vector2(-r0.y, r0.x);
-
-    velocity += impulse * invMass;
-    velocityAngular += Dot(impulse, r0) * invInertia;
-}
-void Body::Update(SimulationApp& simulationApp)
-{
-    hovered = (simulationApp.inputOwners.hovered == this);
-
-    if (simulationApp.mode == kDeleteMode && hovered && simulationApp.input.IsMouseClickedDown(0))
-    {
-        isMarkedForDeletion = true;
-    }
-    if (simulationApp.mode == kSelectMode && hovered && simulationApp.input.IsMouseClickedDown(0))
-    {
-        simulationApp.bodySelecting = this;
-    }
-    if (dragged)
-    {
-        // 检查拖拽模式，应用函数
-        UpdateDragAngle(simulationApp);
-        if (simulationApp.input.mouseButtonDown[2])
-        {
-            HandleDragWhole(simulationApp);
-        }
-        else if (!simulationApp.inputOwners.keyboardOwner && simulationApp.input.keyDown[L'F'])
-        {
-        }
-        else if (invMass == 0)
-        {
-            HandleDragWhole(simulationApp);
-        }
-        else
-        {
-            HandleDragPoint(simulationApp);
-        }
-        dragged = simulationApp.input.mouseButtonDown[0] && (simulationApp.mode == kDragMode);
-    }
-    else
-    {
-        // 检查 draged是否判断正确，更新被拖拽角度
-        dragged = hovered && simulationApp.input.IsMouseClickedDown(0) && (simulationApp.mode == kDragMode);
-        if (dragged)
-        {
-            // p移到m，那么mo = 变换*原距离 = 变换*原相对位置=po，故有。
-            relativeDragPoint = transform.Inverse() * ((Vector2)simulationApp.input.mousePosition - position);
-            UpdateDragAngle(simulationApp);
-        }
-    }
-
-    if (this == simulationApp.bodySelecting && simulationApp.isTrackShown && !simulationApp.isPaused)
-    {
-        // 绘制运动轨迹
-        track.push_back(position);
-    }
-    else if (this != simulationApp.bodySelecting || !simulationApp.isTrackShown)
-    {
-        //不符合条件时清空轨迹信息
-        track.clear();
-    }
-
-    // 创造连接
-    bool canCreate = hovered && simulationApp.mode == kCreateMode &&
-                     (simulationApp.creator->mode == kCreateConnection || simulationApp.creator->mode == kCreateNail);
-    if (canCreate)
-    {
-        if (simulationApp.input.IsMouseClickedDown(0) && !simulationApp.creator->active)
-        {
-            simulationApp.creator->body0 = this;
-            simulationApp.creator->p0Relative = transform.Inverse() * ((Vector2)simulationApp.input.mousePosition - position);
-        }
-        else if (!simulationApp.input.mouseButtonDown[0] && simulationApp.input.previousMouseButtonDown[0] && simulationApp.creator->active)
-        {
-            simulationApp.creator->body1 = this;
-            simulationApp.creator->p1Relative = transform.Inverse() * ((Vector2)simulationApp.input.mousePosition - position);
-        }
-    }
-}
-void Body::PreUpdate(SimulationApp& simulationApp)
-{
-    bool canReceiveHover = simulationApp.inputOwners.hoveredDepth <= GetDepth() &&
-                           IsInside((Vector2)simulationApp.input.mousePosition) && ::IsInside(simulationApp.input.mousePosition, simulationApp.sceneCanvas->GetViewport());
-    if (canReceiveHover)
-    {
-        simulationApp.inputOwners.hoveredDepth = GetDepth();
-        simulationApp.inputOwners.hovered = this;
-    }
-}
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulombConstant)
 {

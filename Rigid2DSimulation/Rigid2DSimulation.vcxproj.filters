@@ -28,6 +28,9 @@
     <Filter Include="current\common">
       <UniqueIdentifier>{1084d84c-4808-4d4e-b325-c93493777584}</UniqueIdentifier>
     </Filter>
+    <Filter Include="current\editor">
+      <UniqueIdentifier>{E83C7447-9A5A-4179-88DC-BE8DF3B8958E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="current\rigid">
       <UniqueIdentifier>{0269ee0a-945a-4f6f-97bf-0522c2535559}</UniqueIdentifier>
     </Filter>
@@ -238,8 +241,11 @@
     <ClCompile Include="current\rigid\Shape.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\Creator.cpp">
-      <Filter>current\rigid</Filter>
+    <ClCompile Include="current\editor\Creator.cpp">
+      <Filter>current\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="current\editor\SceneEditor.cpp">
+      <Filter>current\editor</Filter>
     </ClCompile>
     <ClCompile Include="current\rigid\Collision.cpp">
       <Filter>current\rigid</Filter>
@@ -465,8 +471,11 @@
     <ClInclude Include="current\rigid\Collision.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="current\rigid\Creator.h">
-      <Filter>current\rigid</Filter>
+    <ClInclude Include="current\editor\Creator.h">
+      <Filter>current\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="current\editor\SceneEditor.h">
+      <Filter>current\editor</Filter>
     </ClInclude>
     <ClInclude Include="current\rigid\Aabb.h">
       <Filter>current\rigid</Filter>

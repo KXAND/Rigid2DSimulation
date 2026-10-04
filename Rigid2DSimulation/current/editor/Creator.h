@@ -11,6 +11,9 @@ int constexpr kCreateNail = 6;
 
 struct Value;
 struct SimulationApp;
+struct AppInput;
+struct InputOwners;
+class PhysicsWorld;
 struct Body;
 struct Connection;
 struct Creator
@@ -34,28 +37,29 @@ struct Creator
     Creator();
     Creator(Value const& config);
     double Depth() const;
-    void Update(SimulationApp& simulationApp);
-    void Discard(SimulationApp& simulationApp);
-    void PreUpdate(SimulationApp& simulationApp);
+    void Update(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners);
+    void RenderPreview(SimulationApp& simulationApp);
+    void Discard(InputOwners& inputOwners);
+    void PreUpdate(AppInput const& input, InputOwners& inputOwners, DRect viewport);
 
 private:
-    void UpdateBox(SimulationApp& simulationApp);
-    void UpdateBall(SimulationApp& simulationApp);
-    void UpdatePlate(SimulationApp& simulationApp);
-    void UpdateConnection(SimulationApp& simulationApp);
+    void UpdateBox(PhysicsWorld& world, AppInput& input);
+    void UpdateBall(PhysicsWorld& world, AppInput& input);
+    void UpdatePlate(PhysicsWorld& world, AppInput& input);
+    void UpdateConnection(PhysicsWorld& world, AppInput& input);
     /// <summary>
     /// 在一个空地方点击，开始创建一个新物体
     /// </summary>
-    /// <param name="simulationApp"></param>
-    void UpdatePoint(SimulationApp& simulationApp);
+    /// <param name="input"></param>
+    void UpdatePoint(PhysicsWorld& world, AppInput& input);
     /// <summary>
     /// 将body0固定钉在原地
     /// </summary>
-    /// <param name="simulationApp"></param>
-    void UpdateNail(SimulationApp& simulationApp);
+    /// <param name="input"></param>
+    void UpdateNail(PhysicsWorld& world, AppInput& input);
     /// <summary>
     /// 在鼠标位置创建一个半径为 radius 的圆/粒子
     /// </summary>
-    /// <param name="simulationApp"></param>
-    void UpdateParticle(SimulationApp& simulationApp);
+    /// <param name="input"></param>
+    void UpdateParticle(PhysicsWorld& world, AppInput& input);
 };

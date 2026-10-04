@@ -123,21 +123,14 @@ void SimulationApp::Reset()
     currentScope[L"backgroundWidth"] = std::make_shared<Value>(sceneCanvas->width);
     currentScope[L"backgroundHeight"] = std::make_shared<Value>(sceneCanvas->height);
 
-    ClearSelection();
+    editor.ClearSelection();
     physicsWorld.ResetParameters(DRect(sceneCanvas->topLeft, sceneCanvas->width, sceneCanvas->height));
     maxRealDeltaTime = 0.05;
     energyMultiplier = 4e-6;
     chargeMultiplier = 1;
     isTrackShown = false;
 
-    velocityAngularDrag = 2;
-
-    creator = std::make_shared<Creator>();
-}
-void SimulationApp::ClearSelection()
-{
-    bodySelecting = NULL;
-    connectionSelecting = NULL;
+    editor.ResetTools();
 }
 
 void SimulationApp::Update()
@@ -167,7 +160,7 @@ void SimulationApp::Update()
 
     if (sceneCanvas->IsEmptyAreaClicked(input, inputOwners))
     {
-        ClearSelection();
+        editor.ClearSelection();
     }
 
     // 保持底图与调试文字在物体更新、绘制之前输出。
@@ -177,34 +170,24 @@ void SimulationApp::Update()
 
     PrepareSimulation();
 
-    for (const auto& body : physicsWorld.bodies)
-    {
-        body->Update(*this);
-    }
+    editor.UpdateBodies(physicsWorld, input, inputOwners, realDeltaTime, isTrackShown, isPaused);
 
     AdvanceSimulation();
 
     RenderSceneObjects();
 
-    if (mode == kCreateMode)
+    if (editor.mode == kCreateMode)
     {
-        creator->Update(*this);
+        editor.creator->Update(physicsWorld, input, inputOwners);
+        editor.creator->RenderPreview(*this);
     }
     userInterface->Update(*this);
 }
 
 void SimulationApp::ResolveInputOwnership()
 {
-    // pre update
     sceneCanvas->PreUpdate(input, inputOwners);
-    if (mode == kCreateMode)
-    {
-        creator->PreUpdate(*this);
-    }
-    for (auto& body : physicsWorld.bodies)
-    {
-        body->PreUpdate(*this);
-    }
+    editor.PreUpdate(physicsWorld, input, inputOwners, sceneCanvas->GetViewport());
     userInterface->PreUpdate(*this);
 }
 
@@ -228,14 +211,7 @@ void SimulationApp::UpdateMusic()
 void SimulationApp::RemoveDeletedObjects()
 {
     physicsWorld.MarkDeletedConnections();
-    if (bodySelecting && bodySelecting->isMarkedForDeletion)
-    {
-        bodySelecting = NULL;
-    }
-    if (connectionSelecting && connectionSelecting->isMarkedForDeletion)
-    {
-        connectionSelecting = NULL;
-    }
+    editor.ClearDeletedSelection();
     physicsWorld.RemoveDeletedObjects();
 }
 
@@ -259,6 +235,8 @@ void SimulationApp::AdvanceSimulation()
             [this](Body& body, double stepDeltaTime)
             {
                 body.Step(*this, stepDeltaTime);
+                editor.ApplyDrag(body, input, inputOwners, realDeltaTime, stepDeltaTime);
+                body.UpdateShapesPositionAndAABB();
             });
     }
 }
@@ -341,7 +319,7 @@ void SimulationApp::InitializeDefaultFunctions()
     {
         if (arguments.size() >= 1)
         {
-            creator = std::make_shared<Creator>(*arguments[0]);
+            editor.creator = std::make_shared<Creator>(*arguments[0]);
         }
         return std::make_shared<Value>();
     };

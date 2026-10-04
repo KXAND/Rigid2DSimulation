@@ -76,7 +76,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\editor;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -91,7 +91,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\editor;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -106,7 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\editor;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -121,7 +121,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\editor;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>4244;4267;26451</DisableSpecificWarnings>
     </ClCompile>
@@ -149,7 +149,8 @@
     <ClCompile Include="current\rigid\ShapeBuiltins.cpp" />
     <ClCompile Include="current\rigid\Connection.cpp" />
     <ClCompile Include="framework\control\Control.cpp" />
-    <ClCompile Include="current\rigid\Creator.cpp" />
+    <ClCompile Include="current\editor\Creator.cpp" />
+    <ClCompile Include="current\editor\SceneEditor.cpp" />
     <ClCompile Include="framework\control\ControlList.cpp" />
     <ClCompile Include="current\common\SimulationApp.cpp" />
     <ClCompile Include="framework\control\DragBar.cpp" />
@@ -226,7 +227,8 @@
     <ClInclude Include="current\rigid\ShapeBuiltins.h" />
     <ClInclude Include="current\rigid\Connection.h" />
     <ClInclude Include="framework\control\Control.h" />
-    <ClInclude Include="current\rigid\Creator.h" />
+    <ClInclude Include="current\editor\Creator.h" />
+    <ClInclude Include="current\editor\SceneEditor.h" />
     <ClInclude Include="framework\control\ControlList.h" />
     <ClInclude Include="current\common\SimulationApp.h" />
     <ClInclude Include="framework\control\DragBar.h" />

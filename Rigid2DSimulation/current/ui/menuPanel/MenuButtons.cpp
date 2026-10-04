@@ -1,6 +1,5 @@
 ﻿#include "MenuButtons.h"
 
-#include "Creator.h"
 #include "SimulationApp.h"
 
 SimulationPauseButton::SimulationPauseButton() : Button(150) {}
@@ -46,7 +45,7 @@ InteractionModeButton::InteractionModeButton() : Button(150) {}
 void InteractionModeButton::Update(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    switch (simulationApp.mode)
+    switch (simulationApp.editor.mode)
     {
     case kDragMode:
         text = simulationApp.GetLocalizedString(L"dragMode");
@@ -67,8 +66,7 @@ void InteractionModeButton::Update(App& app)
 void InteractionModeButton::OnClick(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.creator->Discard(simulationApp);
-    simulationApp.mode = (simulationApp.mode + 1) % 4;
+    simulationApp.editor.CycleMode(simulationApp.inputOwners);
 }
 
 DisplayModeButton::DisplayModeButton() : Button(150) {}

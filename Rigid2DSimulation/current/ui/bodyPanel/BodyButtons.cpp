@@ -8,7 +8,7 @@ BodyScriptApplicationButton::BodyScriptApplicationButton() : LocalizedButton(70,
 void BodyScriptApplicationButton::OnClick(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    auto& selectedBody = *simulationApp.bodySelecting;
+    auto& selectedBody = *simulationApp.editor.bodySelecting;
     selectedBody.scriptText = selectedBody.temporaryScriptText;
     selectedBody.RefreshFromScript(simulationApp);
 }
@@ -18,6 +18,5 @@ BodyDeletionButton::BodyDeletionButton() : LocalizedButton(70, L"deleteBodyButto
 void BodyDeletionButton::OnClick(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.bodySelecting->isMarkedForDeletion = true;
-    simulationApp.physicsWorld.isSceneChanged = true;
+    simulationApp.editor.RequestBodyDeletion(simulationApp.physicsWorld);
 }

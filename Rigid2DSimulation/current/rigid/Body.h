@@ -66,23 +66,17 @@ struct Body
     void ReadConfig(Value const& config);
     void UpdateShapesPositionAndAABB();
     void Warp(DRect rectangle);
+    double GetDepth() const;
 
 private:
-    double GetDepth() const;
     void UpdateAABB();
 
 public:
     void Init(bool resetPosition = false);
     void Render(SimulationApp& simulationApp) const;
     void Step(SimulationApp& simulationApp, double stepDeltaTime);
-    void Update(SimulationApp& simulationApp);
-    void PreUpdate(SimulationApp& simulationApp);
 
 private:
-    void UpdateDragAngle(SimulationApp& simulationApp);
-    void HandleDragWhole(SimulationApp& simulationApp);
-    void HandleDragPoint(SimulationApp& simulationApp);
-    void HandleDragForce(SimulationApp& simulationApp, double stepDeltaTime);
     void FollowPresetPosition(SimulationApp& simulationApp, double stepDeltaTime);
     void FollowPresetAngle(SimulationApp& simulationApp, double stepDeltaTime);
     void FollowPresetAngularVelocity(SimulationApp& simulationApp);
