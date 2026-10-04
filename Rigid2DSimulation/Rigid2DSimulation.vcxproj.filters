@@ -255,6 +255,9 @@
     <ClCompile Include="current\script\BodyConfig.cpp">
       <Filter>current\script</Filter>
     </ClCompile>
+    <ClCompile Include="current\script\ConnectionConfig.cpp">
+      <Filter>current\script</Filter>
+    </ClCompile>
     <ClCompile Include="current\script\SceneScriptRuntime.cpp">
       <Filter>current\script</Filter>
     </ClCompile>
@@ -276,8 +279,8 @@
     <ClCompile Include="current\rigid\SceneBuilders.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\ShapeBuiltins.cpp">
-      <Filter>current\rigid</Filter>
+    <ClCompile Include="current\script\ShapeBuiltins.cpp">
+      <Filter>current\script</Filter>
     </ClCompile>
     <ClCompile Include="current\ui\bodyPanel\BodyPanel.cpp">
       <Filter>current\ui\bodyPanel</Filter>
@@ -497,6 +500,9 @@
     <ClInclude Include="current\script\BodyConfig.h">
       <Filter>current\script</Filter>
     </ClInclude>
+    <ClInclude Include="current\script\ConnectionConfig.h">
+      <Filter>current\script</Filter>
+    </ClInclude>
     <ClInclude Include="current\script\SceneScriptRuntime.h">
       <Filter>current\script</Filter>
     </ClInclude>
@@ -518,8 +524,8 @@
     <ClInclude Include="current\rigid\SceneBuilders.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="current\rigid\ShapeBuiltins.h">
-      <Filter>current\rigid</Filter>
+    <ClInclude Include="current\script\ShapeBuiltins.h">
+      <Filter>current\script</Filter>
     </ClInclude>
     <ClInclude Include="current\ui\bodyPanel\BodyPanel.h">
       <Filter>current\ui\bodyPanel</Filter>

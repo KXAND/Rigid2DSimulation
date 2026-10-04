@@ -13,30 +13,6 @@ Shape::Shape(vector<Vector2> const& verticesRelative)
     vertices.resize(verticesRelative.size());
 }
 
-void Shape::Save(FILE* file) const
-{
-    int size = 0;
-    fwrite(&(isCircle), sizeof(isCircle), 1, file);
-    fwrite(&(radius), sizeof(radius), 1, file);
-    fwrite(&(radian), sizeof(radian), 1, file);
-    fwrite(&(relativePosition), sizeof(relativePosition), 1, file);
-    size = (verticesRelative).size();
-    fwrite(&(size), sizeof(size), 1, file);
-    fwrite(&*(verticesRelative).begin(), sizeof(*(&*(verticesRelative).begin())), size, file);
-}
-Shape::Shape(FILE* file)
-{
-    int size = 0;
-    fread(&(isCircle), sizeof(isCircle), 1, file);
-    fread(&(radius), sizeof(radius), 1, file);
-    fread(&(radian), sizeof(radian), 1, file);
-    fread(&(relativePosition), sizeof(relativePosition), 1, file);
-    fread(&(size), sizeof(size), 1, file);
-    (verticesRelative).resize(size);
-    fread(&*(verticesRelative).begin(), sizeof(*(&*(verticesRelative).begin())), size, file);
-    vertices.resize(verticesRelative.size());
-}
-
 Vector2 Shape::GenerateRandomPointInside() const
 {
     if (isCircle)

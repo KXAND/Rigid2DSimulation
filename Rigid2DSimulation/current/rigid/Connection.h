@@ -6,8 +6,6 @@ int constexpr kLinkConnection = 1;
 int constexpr kSpringConnection = 3;
 int constexpr kCordConnection = 4;
 
-struct Value;
-class PhysicsWorld;
 struct Body;
 /// <summary>
 /// 定义一个两两连接关系，根据连接物理材质的不同，更新位置
@@ -32,10 +30,7 @@ struct Connection
     Color colorSpringStretch, colorSpringCompress;
 
     Connection();
-    Connection(PhysicsWorld& physicsWorld, FILE* file);
-    void Save(PhysicsWorld const& physicsWorld, FILE* file) const;
 
-    void ReadConfig(Value const& configuration);
     void SignUpToBodies();
     void UpdatePosition();
     void SimulateRopeOrLink(bool useEqualPositionCorrection);

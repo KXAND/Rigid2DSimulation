@@ -32,7 +32,7 @@ void SceneStorage::Save(std::wstring const& name, PhysicsWorld const& physicsWor
     fwrite(&(size), sizeof(size), 1, file);
     for (auto connection : physicsWorld.connections)
     {
-        connection->Save(physicsWorld, file);
+        SaveConnection(file, *connection, physicsWorld);
     }
 
     fclose(file);
@@ -64,7 +64,7 @@ void SceneStorage::Load(std::wstring const& name, PhysicsWorld& physicsWorld,
     fread(&(size), sizeof(size), 1, file);
     for (int i = (0), iEnd = int(size); i < iEnd; ++i)
     {
-        auto connection = std::make_shared<Connection>(physicsWorld, file);
+        auto connection = LoadConnection(file, physicsWorld);
         runtime.RefreshConnectionScript(*connection);
         connection->SignUpToBodies();
         connection->UpdatePosition();
@@ -104,7 +104,7 @@ void SceneStorage::SaveBody(FILE* file, Body const& body)
     fwrite(&(size), sizeof(size), 1, file);
     for (auto shape : body.shapes)
     {
-        shape->Save(file);
+        SaveShape(file, *shape);
     }
     fwrite(&(body.position), sizeof(body.position), 1, file);
     fwrite(&(body.velocity), sizeof(body.velocity), 1, file);
@@ -132,7 +132,7 @@ std::shared_ptr<Body> SceneStorage::LoadBody(FILE* file)
     fread(&(size), sizeof(size), 1, file);
     for (int i = (0), iEnd = int(size); i < iEnd; ++i)
     {
-        body->shapes.push_back(std::make_shared<Shape>(file));
+        body->shapes.push_back(LoadShape(file));
     }
     fread(&(body->position), sizeof(body->position), 1, file);
     fread(&(body->velocity), sizeof(body->velocity), 1, file);
@@ -151,4 +151,77 @@ std::shared_ptr<Body> SceneStorage::LoadBody(FILE* file)
     fread(&(body->chargeDensity), sizeof(body->chargeDensity), 1, file);
     fread(&(body->appearance.innerColor), sizeof(body->appearance.innerColor), 1, file);
     return body;
+}
+
+void SceneStorage::SaveShape(FILE* file, Shape const& shape)
+{
+    int size = 0;
+    fwrite(&(shape.isCircle), sizeof(shape.isCircle), 1, file);
+    fwrite(&(shape.radius), sizeof(shape.radius), 1, file);
+    fwrite(&(shape.radian), sizeof(shape.radian), 1, file);
+    fwrite(&(shape.relativePosition), sizeof(shape.relativePosition), 1, file);
+    size = (shape.verticesRelative).size();
+    fwrite(&(size), sizeof(size), 1, file);
+    fwrite(&*(shape.verticesRelative).begin(), sizeof(*(&*(shape.verticesRelative).begin())), size, file);
+}
+
+std::shared_ptr<Shape> SceneStorage::LoadShape(FILE* file)
+{
+    auto shape = std::make_shared<Shape>();
+    int size = 0;
+    fread(&(shape->isCircle), sizeof(shape->isCircle), 1, file);
+    fread(&(shape->radius), sizeof(shape->radius), 1, file);
+    fread(&(shape->radian), sizeof(shape->radian), 1, file);
+    fread(&(shape->relativePosition), sizeof(shape->relativePosition), 1, file);
+    fread(&(size), sizeof(size), 1, file);
+    (shape->verticesRelative).resize(size);
+    fread(&*(shape->verticesRelative).begin(), sizeof(*(&*(shape->verticesRelative).begin())), size, file);
+    shape->vertices.resize(shape->verticesRelative.size());
+    return shape;
+}
+
+void SceneStorage::SaveConnection(FILE* file, Connection const& connection, PhysicsWorld const& physicsWorld)
+{
+    int size = 0;
+    fwrite(&(connection.type), sizeof(connection.type), 1, file);
+    size = (connection.scriptText).size();
+    fwrite(&(size), sizeof(size), 1, file);
+    fwrite(&*(connection.scriptText).begin(), sizeof(*(&*(connection.scriptText).begin())), size, file);
+    auto pred0 = [&connection](std::shared_ptr<Body> b)
+    {
+        return &*b == connection.body0;
+    };
+    int bodyIndex0 = find_if(physicsWorld.bodies.begin(), physicsWorld.bodies.end(), pred0) - physicsWorld.bodies.begin();
+    auto pred1 = [&connection](std::shared_ptr<Body> b)
+    {
+        return &*b == connection.body1;
+    };
+    int bodyIndex1 = find_if(physicsWorld.bodies.begin(), physicsWorld.bodies.end(), pred1) - physicsWorld.bodies.begin();
+    fwrite(&(bodyIndex0), sizeof(bodyIndex0), 1, file);
+    fwrite(&(bodyIndex1), sizeof(bodyIndex1), 1, file);
+    fwrite(&(connection.p0Relative), sizeof(connection.p0Relative), 1, file);
+    fwrite(&(connection.p1Relative), sizeof(connection.p1Relative), 1, file);
+    fwrite(&(connection.length), sizeof(connection.length), 1, file);
+    fwrite(&(connection.springConstant), sizeof(connection.springConstant), 1, file);
+}
+
+std::shared_ptr<Connection> SceneStorage::LoadConnection(FILE* file, PhysicsWorld const& physicsWorld)
+{
+    auto connection = std::make_shared<Connection>();
+    int size = 0;
+    fread(&(connection->type), sizeof(connection->type), 1, file);
+    fread(&(size), sizeof(size), 1, file);
+    (connection->scriptText).resize(size);
+    fread(&*(connection->scriptText).begin(), sizeof(*(&*(connection->scriptText).begin())), size, file);
+    connection->temporaryScriptText = connection->scriptText;
+    int bodyIndex0 = 0, bodyIndex1 = 0;
+    fread(&(bodyIndex0), sizeof(bodyIndex0), 1, file);
+    fread(&(bodyIndex1), sizeof(bodyIndex1), 1, file);
+    connection->body0 = &*physicsWorld.bodies[bodyIndex0];
+    connection->body1 = &*physicsWorld.bodies[bodyIndex1];
+    fread(&(connection->p0Relative), sizeof(connection->p0Relative), 1, file);
+    fread(&(connection->p1Relative), sizeof(connection->p1Relative), 1, file);
+    fread(&(connection->length), sizeof(connection->length), 1, file);
+    fread(&(connection->springConstant), sizeof(connection->springConstant), 1, file);
+    return connection;
 }

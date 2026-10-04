@@ -1,11 +1,12 @@
 ﻿#include "SceneBuilders.h"
-#include "current/common/utils.h"
-#include "PhysicsWorld.h"
-#include "DVector2.h"
 #include "Body.h"
 #include "BodyConfig.h"
-#include "Shape.h"
 #include "Connection.h"
+#include "ConnectionConfig.h"
+#include "DVector2.h"
+#include "PhysicsWorld.h"
+#include "Shape.h"
+#include "current/common/utils.h"
 
 void CreateBody(PhysicsWorld& physicsWorld, Value const& shapeConfigurations, Value const& configuration)
 {
@@ -102,7 +103,7 @@ void CreateConnection(PhysicsWorld& physicsWorld, Value const& configuration)
     connection->SignUpToBodies();
     connection->UpdatePosition();
     connection->length = (connection->p0 - connection->p1).GetLength();
-    connection->ReadConfig(configuration);
+    ApplyConnectionConfig(*connection, configuration);
     physicsWorld.connections.push_back(connection);
     physicsWorld.isSceneChanged = true;
 }
@@ -207,7 +208,7 @@ void Strand(PhysicsWorld& physicsWorld, Value const& point0Value, Value const& p
         connection->length = gap;
         connection->p0Relative = +bodyRadius * (p1 - p0).GetNormalized();
         connection->p1Relative = -bodyRadius * (p1 - p0).GetNormalized();
-        connection->ReadConfig(connectionConfiguration);
+        ApplyConnectionConfig(*connection, connectionConfiguration);
         connection->SignUpToBodies();
         connection->UpdatePosition();
         physicsWorld.connections.push_back(connection);
@@ -249,7 +250,7 @@ void Necklace(PhysicsWorld& physicsWorld, Value const& centerValue, Value const&
         connection->p1Relative = ballRadius * Vector2(+sin(phi), -cos(phi));
         phi = 2 * kPi * (i - 1) / bodyCount;
         connection->p0Relative = ballRadius * Vector2(-sin(phi), +cos(phi));
-        connection->ReadConfig(connectionConfiguration);
+        ApplyConnectionConfig(*connection, connectionConfiguration);
         connection->SignUpToBodies();
         connection->UpdatePosition();
         physicsWorld.connections.push_back(connection);
@@ -264,7 +265,7 @@ void Necklace(PhysicsWorld& physicsWorld, Value const& centerValue, Value const&
     connection->p1Relative = ballRadius * Vector2(+sin(phi), -cos(phi));
     phi = 2 * kPi * (bodyCount - 1) / bodyCount;
     connection->p0Relative = ballRadius * Vector2(-sin(phi), +cos(phi));
-    connection->ReadConfig(connectionConfiguration);
+    ApplyConnectionConfig(*connection, connectionConfiguration);
     connection->SignUpToBodies();
     connection->UpdatePosition();
     physicsWorld.connections.push_back(connection);

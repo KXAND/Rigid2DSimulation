@@ -2,6 +2,7 @@
 #include "Body.h"
 #include "BodyConfig.h"
 #include "Connection.h"
+#include "ConnectionConfig.h"
 #include "Creator.h"
 #include "PhysicsWorld.h"
 #include "SceneBuilders.h"
@@ -320,7 +321,7 @@ void SceneScriptRuntime::RefreshConnectionScript(Connection& connection)
     {
         return;
     }
-    connection.ReadConfig(*currentScope[L"connection"]);
+    ApplyConnectionConfig(connection, *currentScope[L"connection"]);
 
     connection.UpdatePosition();
 }

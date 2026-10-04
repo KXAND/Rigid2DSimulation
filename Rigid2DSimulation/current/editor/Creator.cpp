@@ -1,12 +1,13 @@
 ﻿#include "Creator.h"
 #include "AppItem.h"
-#include "current/common/utils.h"
-#include "Value.h"
-#include "PhysicsWorld.h"
 #include "Body.h"
 #include "BodyConfig.h"
-#include "Shape.h"
 #include "Connection.h"
+#include "ConnectionConfig.h"
+#include "PhysicsWorld.h"
+#include "Shape.h"
+#include "Value.h"
+#include "current/common/utils.h"
 
 Creator::Creator()
 {
@@ -206,7 +207,7 @@ void Creator::UpdateConnection(PhysicsWorld& world, AppInput& input)
         connection = std::make_shared<Connection>();
         if (connectionConfiguration)
         {
-            connection->ReadConfig(*connectionConfiguration);
+            ApplyConnectionConfig(*connection, *connectionConfiguration);
         }
         // 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
         // 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。

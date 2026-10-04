@@ -1,8 +1,5 @@
 ﻿#include "Connection.h"
 #include "Body.h"
-#include "current/common/utils.h"
-#include "PhysicsWorld.h"
-#include "Connection.h"
 
 Connection::Connection()
 {
@@ -13,81 +10,6 @@ Connection::Connection()
     colorSpringStretch = Color::kYellow;
     colorCord = Color::kCyan;
     colorCordTight = Color::kMagenta;
-}
-void Connection::Save(PhysicsWorld const& physicsWorld, FILE* file) const
-{
-    int size = 0;
-    fwrite(&(type), sizeof(type), 1, file);
-    size = (scriptText).size();
-    fwrite(&(size), sizeof(size), 1, file);
-    fwrite(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
-    auto pred0 = [this](std::shared_ptr<Body> b)
-    {
-        return &*b == body0;
-    };
-    int bodyIndex0 = find_if(physicsWorld.bodies.begin(), physicsWorld.bodies.end(), pred0) - physicsWorld.bodies.begin();
-    auto pred1 = [this](std::shared_ptr<Body> b)
-    {
-        return &*b == body1;
-    };
-    int bodyIndex1 = find_if(physicsWorld.bodies.begin(), physicsWorld.bodies.end(), pred1) - physicsWorld.bodies.begin();
-    fwrite(&(bodyIndex0), sizeof(bodyIndex0), 1, file);
-    fwrite(&(bodyIndex1), sizeof(bodyIndex1), 1, file);
-    fwrite(&(p0Relative), sizeof(p0Relative), 1, file);
-    fwrite(&(p1Relative), sizeof(p1Relative), 1, file);
-    fwrite(&(length), sizeof(length), 1, file);
-    fwrite(&(springConstant), sizeof(springConstant), 1, file);
-}
-Connection::Connection(PhysicsWorld& physicsWorld, FILE* file) : Connection()
-{
-    int size = 0;
-    fread(&(type), sizeof(type), 1, file);
-    fread(&(size), sizeof(size), 1, file);
-    (scriptText).resize(size);
-    fread(&*(scriptText).begin(), sizeof(*(&*(scriptText).begin())), size, file);
-    temporaryScriptText = scriptText;
-    int bodyIndex0 = 0, bodyIndex1 = 0;
-    fread(&(bodyIndex0), sizeof(bodyIndex0), 1, file);
-    fread(&(bodyIndex1), sizeof(bodyIndex1), 1, file);
-    body0 = &*physicsWorld.bodies[bodyIndex0];
-    body1 = &*physicsWorld.bodies[bodyIndex1];
-    fread(&(p0Relative), sizeof(p0Relative), 1, file);
-    fread(&(p1Relative), sizeof(p1Relative), 1, file);
-    fread(&(length), sizeof(length), 1, file);
-    fread(&(springConstant), sizeof(springConstant), 1, file);
-}
-
-void Connection::ReadConfig(Value const& configuration)
-{
-    TryReadConfigNumber(configuration, L"length", length);
-    TryReadConfigNumber(configuration, L"springConstant", springConstant);
-    if (auto typeValue = FindConfigValue(configuration, L"type"))
-    {
-        if (typeValue->type == L"str")
-        {
-            auto typeName = typeValue->stringValue;
-            if (typeName == L"rope")
-            {
-                type = kRopeConnection;
-            }
-            else if (typeName == L"link")
-            {
-                type = kLinkConnection;
-            }
-            else if (typeName == L"spring")
-            {
-                type = kSpringConnection;
-            }
-            else if (typeName == L"cord")
-            {
-                type = kCordConnection;
-            }
-        }
-        else
-        {
-            type = typeValue->number;
-        }
-    }
 }
 void Connection::SignUpToBodies()
 {

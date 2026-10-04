@@ -21,10 +21,9 @@ public:
     Vector2 position;
     vector<Vector2> verticesRelative, vertices;
 
+    Shape() = default;
     Shape(double radius, Vector2 relativePosition = {});
     Shape(vector<Vector2> const& verticesRelative);
-    Shape(FILE* file);
-    void Save(FILE* file) const;
 
     Vector2 GenerateRandomPointInside() const;
     bool IsInside(Vector2 p) const;
