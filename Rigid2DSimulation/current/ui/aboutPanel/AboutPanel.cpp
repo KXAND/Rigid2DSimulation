@@ -1,5 +1,7 @@
 ﻿#include "AboutPanel.h"
-#include "SimulationApp.h"
+
+#include <memory>
+#include <vector>
 
 AboutPanel::AboutPanel(App& app) : LocalizedFloatPanel(app, 600, 540, L"aboutPanelTitle")
 {

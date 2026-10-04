@@ -34,6 +34,33 @@
     <Filter Include="framework\media">
       <UniqueIdentifier>{bbaa05cb-33d7-473c-be25-a00f5540e832}</UniqueIdentifier>
     </Filter>
+    <Filter Include="current\ui\aboutPanel">
+      <UniqueIdentifier>{6688c83f-0d71-4931-9d11-4bec921afd35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="current\ui\bodyPanel">
+      <UniqueIdentifier>{60389870-2db4-4961-b9a6-f61a58e4ab8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="current\ui\bottomPanel">
+      <UniqueIdentifier>{e4a4e34f-063f-47e7-91a1-717bc65e8e96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="current\ui\commandPanel">
+      <UniqueIdentifier>{46b12dce-f3e6-456d-80f0-4979ceefa68b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="current\ui\connectionPanel">
+      <UniqueIdentifier>{5c1c18a8-9ad5-4178-ab61-6a93b8e44101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="current\ui\globalPanel">
+      <UniqueIdentifier>{5cc75a31-8c34-40e0-9e61-e592aad01b9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="current\ui\languagePanel">
+      <UniqueIdentifier>{442181d7-159d-4635-89f8-04767fa984a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="current\ui\menuPanel">
+      <UniqueIdentifier>{abc0acb7-cfec-4ad9-8ce7-ad5ee646aa33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="current\ui\parameterPanel">
+      <UniqueIdentifier>{e0a02764-b14d-4b8e-9074-0efa20361f0c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
@@ -142,26 +169,53 @@
     <ClCompile Include="framework\control\TextBox.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\AboutPanel.cpp">
-      <Filter>current\ui</Filter>
+    <ClCompile Include="current\ui\aboutPanel\AboutPanel.cpp">
+      <Filter>current\ui\aboutPanel</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\CommandPanel.cpp">
-      <Filter>current\ui</Filter>
+    <ClCompile Include="current\ui\commandPanel\CommandPanel.cpp">
+      <Filter>current\ui\commandPanel</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\GlobalPanel.cpp">
-      <Filter>current\ui</Filter>
+    <ClCompile Include="current\ui\commandPanel\CommandButtons.cpp">
+      <Filter>current\ui\commandPanel</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\LanguagePanel.cpp">
-      <Filter>current\ui</Filter>
+    <ClCompile Include="current\ui\commandPanel\CommandControls.cpp">
+      <Filter>current\ui\commandPanel</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\ParameterPanel.cpp">
-      <Filter>current\ui</Filter>
+    <ClCompile Include="current\ui\globalPanel\GlobalPanel.cpp">
+      <Filter>current\ui\globalPanel</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\BottomPanel.cpp">
-      <Filter>current\ui</Filter>
+    <ClCompile Include="current\ui\globalPanel\GlobalButtons.cpp">
+      <Filter>current\ui\globalPanel</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\MenuPanel.cpp">
-      <Filter>current\ui</Filter>
+    <ClCompile Include="current\ui\globalPanel\GlobalControls.cpp">
+      <Filter>current\ui\globalPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\languagePanel\LanguagePanel.cpp">
+      <Filter>current\ui\languagePanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\languagePanel\LanguageButtons.cpp">
+      <Filter>current\ui\languagePanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\parameterPanel\ParameterPanel.cpp">
+      <Filter>current\ui\parameterPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\parameterPanel\ParameterButtons.cpp">
+      <Filter>current\ui\parameterPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\parameterPanel\ParameterControls.cpp">
+      <Filter>current\ui\parameterPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\bottomPanel\BottomPanel.cpp">
+      <Filter>current\ui\bottomPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\bottomPanel\BottomControls.cpp">
+      <Filter>current\ui\bottomPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\menuPanel\MenuPanel.cpp">
+      <Filter>current\ui\menuPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\menuPanel\MenuButtons.cpp">
+      <Filter>current\ui\menuPanel</Filter>
     </ClCompile>
     <ClCompile Include="current\ui\UserInterface.cpp">
       <Filter>current\ui</Filter>
@@ -202,14 +256,26 @@
     <ClCompile Include="current\rigid\ShapeBuiltins.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\BodyPanel.cpp">
-      <Filter>current\ui</Filter>
+    <ClCompile Include="current\ui\bodyPanel\BodyPanel.cpp">
+      <Filter>current\ui\bodyPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\bodyPanel\BodyButtons.cpp">
+      <Filter>current\ui\bodyPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\bodyPanel\BodyControls.cpp">
+      <Filter>current\ui\bodyPanel</Filter>
     </ClCompile>
     <ClCompile Include="current\rigid\Connection.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\ConnectionPanel.cpp">
-      <Filter>current\ui</Filter>
+    <ClCompile Include="current\ui\connectionPanel\ConnectionPanel.cpp">
+      <Filter>current\ui\connectionPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\connectionPanel\ConnectionButtons.cpp">
+      <Filter>current\ui\connectionPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\connectionPanel\ConnectionControls.cpp">
+      <Filter>current\ui\connectionPanel</Filter>
     </ClCompile>
     <ClCompile Include="current\rigid\Group.cpp">
       <Filter>current\rigid</Filter>
@@ -324,26 +390,53 @@
     <ClInclude Include="framework\control\TextBox.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\AboutPanel.h">
-      <Filter>current\ui</Filter>
+    <ClInclude Include="current\ui\aboutPanel\AboutPanel.h">
+      <Filter>current\ui\aboutPanel</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\CommandPanel.h">
-      <Filter>current\ui</Filter>
+    <ClInclude Include="current\ui\commandPanel\CommandPanel.h">
+      <Filter>current\ui\commandPanel</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\GlobalPanel.h">
-      <Filter>current\ui</Filter>
+    <ClInclude Include="current\ui\commandPanel\CommandButtons.h">
+      <Filter>current\ui\commandPanel</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\LanguagePanel.h">
-      <Filter>current\ui</Filter>
+    <ClInclude Include="current\ui\commandPanel\CommandControls.h">
+      <Filter>current\ui\commandPanel</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\ParameterPanel.h">
-      <Filter>current\ui</Filter>
+    <ClInclude Include="current\ui\globalPanel\GlobalPanel.h">
+      <Filter>current\ui\globalPanel</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\BottomPanel.h">
-      <Filter>current\ui</Filter>
+    <ClInclude Include="current\ui\globalPanel\GlobalButtons.h">
+      <Filter>current\ui\globalPanel</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\MenuPanel.h">
-      <Filter>current\ui</Filter>
+    <ClInclude Include="current\ui\globalPanel\GlobalControls.h">
+      <Filter>current\ui\globalPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\languagePanel\LanguagePanel.h">
+      <Filter>current\ui\languagePanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\languagePanel\LanguageButtons.h">
+      <Filter>current\ui\languagePanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\parameterPanel\ParameterPanel.h">
+      <Filter>current\ui\parameterPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\parameterPanel\ParameterButtons.h">
+      <Filter>current\ui\parameterPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\parameterPanel\ParameterControls.h">
+      <Filter>current\ui\parameterPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\bottomPanel\BottomPanel.h">
+      <Filter>current\ui\bottomPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\bottomPanel\BottomControls.h">
+      <Filter>current\ui\bottomPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\menuPanel\MenuPanel.h">
+      <Filter>current\ui\menuPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\menuPanel\MenuButtons.h">
+      <Filter>current\ui\menuPanel</Filter>
     </ClInclude>
     <ClInclude Include="current\ui\UserInterface.h">
       <Filter>current\ui</Filter>
@@ -387,14 +480,26 @@
     <ClInclude Include="current\rigid\ShapeBuiltins.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\BodyPanel.h">
-      <Filter>current\ui</Filter>
+    <ClInclude Include="current\ui\bodyPanel\BodyPanel.h">
+      <Filter>current\ui\bodyPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\bodyPanel\BodyButtons.h">
+      <Filter>current\ui\bodyPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\bodyPanel\BodyControls.h">
+      <Filter>current\ui\bodyPanel</Filter>
     </ClInclude>
     <ClInclude Include="current\rigid\Connection.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\ConnectionPanel.h">
-      <Filter>current\ui</Filter>
+    <ClInclude Include="current\ui\connectionPanel\ConnectionPanel.h">
+      <Filter>current\ui\connectionPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\connectionPanel\ConnectionButtons.h">
+      <Filter>current\ui\connectionPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\connectionPanel\ConnectionControls.h">
+      <Filter>current\ui\connectionPanel</Filter>
     </ClInclude>
     <ClInclude Include="current\rigid\Group.h">
       <Filter>current\rigid</Filter>

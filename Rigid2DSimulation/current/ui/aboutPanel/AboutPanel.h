@@ -1,7 +1,10 @@
 ﻿#pragma once
+
+#include <memory>
+
 #include "ControlList.h"
-#include "RichLabel.h"
 #include "FloatPanel.h"
+#include "RichLabel.h"
 
 struct AboutPanel : LocalizedFloatPanel
 {

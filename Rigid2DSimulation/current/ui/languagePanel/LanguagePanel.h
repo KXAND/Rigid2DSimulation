@@ -1,18 +1,10 @@
 ﻿#pragma once
-#include "Button.h"
+
+#include <memory>
+
 #include "ControlList.h"
 #include "FloatPanel.h"
-
-struct ChineseLanguageButton : Button
-{
-    ChineseLanguageButton();
-    void OnClick(App& app) override;
-};
-struct EnglishLanguageButton : Button
-{
-    EnglishLanguageButton();
-    void OnClick(App& app) override;
-};
+#include "LanguageButtons.h"
 
 struct LanguagePanel : LocalizedFloatPanel
 {

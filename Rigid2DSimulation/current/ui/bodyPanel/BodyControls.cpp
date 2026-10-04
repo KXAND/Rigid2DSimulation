@@ -1,34 +1,24 @@
-﻿#include "BodyPanel.h"
-#include "SimulationApp.h"
+﻿#include "BodyControls.h"
+
+#include <memory>
+#include <vector>
+
 #include "Body.h"
 #include "Connection.h"
+#include "SimulationApp.h"
 
 BodyScriptEditor::BodyScriptEditor() : RichTextBox(360, 400) {}
+
 void BodyScriptEditor::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
     value = simulationApp.bodySelecting->temporaryScriptText;
 }
+
 void BodyScriptEditor::Upload(App& app) const
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
     simulationApp.bodySelecting->temporaryScriptText = value;
-}
-
-ApplyBodyButton::ApplyBodyButton() : LocalizedButton(70, L"applyBodyButton") {}
-void ApplyBodyButton::OnClick(App& app)
-{
-    auto& simulationApp = static_cast<SimulationApp&>(app);
-    auto& selectedBody = *simulationApp.bodySelecting;
-    selectedBody.scriptText = selectedBody.temporaryScriptText;
-    selectedBody.RefreshFromScript(simulationApp);
-}
-DeleteBodyButton::DeleteBodyButton() : LocalizedButton(70, L"deleteBodyButton") {}
-void DeleteBodyButton::OnClick(App& app)
-{
-    auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.bodySelecting->isMarkedForDeletion = true;
-    simulationApp.isSceneChanged = true;
 }
 
 BodyConnectionLabel::BodyConnectionLabel(int id) : id(id), Label()
@@ -36,6 +26,7 @@ BodyConnectionLabel::BodyConnectionLabel(int id) : id(id), Label()
     fixedWidth = true;
     width = 270;
 }
+
 void BodyConnectionLabel::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
@@ -60,11 +51,13 @@ void BodyConnectionLabel::Sync(App& app)
 }
 
 SelectBodyConnectionCheckBox::SelectBodyConnectionCheckBox(int id) : id(id), LocalizedCheckBox(L"selectBodyConnection") {}
+
 void SelectBodyConnectionCheckBox::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
     checked = (simulationApp.connectionSelecting == simulationApp.bodySelecting->connections[id]);
 }
+
 void SelectBodyConnectionCheckBox::Upload(App& app) const
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
@@ -77,6 +70,7 @@ BodyConnectionControlRow::BodyConnectionControlRow(int id)
     connectionLabel = std::make_shared<BodyConnectionLabel>(id);
     controls = {&*connectionLabel, &*selectCheckBox};
 }
+
 void BodyConnectionControlList::Update(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
@@ -101,14 +95,15 @@ BodyEditorControls::BodyEditorControls()
 {
     vector<Control*> controls;
     scriptEditor = std::make_shared<BodyScriptEditor>();
-    applyButton = std::make_shared<ApplyBodyButton>();
-    deleteButton = std::make_shared<DeleteBodyButton>();
+    applyButton = std::make_shared<BodyScriptApplicationButton>();
+    deleteButton = std::make_shared<BodyDeletionButton>();
     controls = {&*applyButton, &*deleteButton};
     actionButtons = std::make_shared<HorizontalControlList>(controls);
     controls = {};
     connectionList = std::make_shared<BodyConnectionControlList>();
     separator = std::make_shared<HorizontalSeparator>(400);
 }
+
 void BodyEditorControls::Update(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
@@ -131,6 +126,7 @@ void BodyEditorControls::Update(App& app)
     }
     VerticalControlList::Update(app);
 }
+
 void BodyEditorControls::Discard(App& app)
 {
     VerticalControlList::Discard(app);
@@ -162,15 +158,4 @@ void BodyDetailsLabel::Sync(App& app)
     text += simulationApp.GetLocalizedString(L"bodyDynamicFriction") + FormatFixed2(body.frictionDynamic) + L"\n";
     text += simulationApp.GetLocalizedString(L"bodyVelocityDamping") + FormatFixed2(body.dampCoeff) + L"\n";
     text += simulationApp.GetLocalizedString(L"bodyAngularVelocityDamping") + FormatFixed2(body.dampCoeffAngular) + L"\n";
-}
-
-BodyPanel ::BodyPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"bodyPanelTitle")
-{
-    vector<Control*> controls;
-    editorControls = std::make_shared<BodyEditorControls>();
-    detailsLabel = std::make_shared<BodyDetailsLabel>();
-    controls = {&*editorControls, &*detailsLabel};
-    this->controls = std::make_shared<VerticalControlList>(controls);
-    contentControl = &*this->controls;
-    Init(app);
 }
