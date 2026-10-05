@@ -28,9 +28,7 @@ struct UserInterface
     UserInterface(SimulationApp& simulationApp) {};
     void SortFloatPanels();
 
-    // 这里用 init 的原因是控件会用 simulationApp->ui 来访问 ui, 但这个时候 ui 尚未初始化。
-    // 这也是为什么主程序不需要 Init。这应该是一个普遍的问题。
-    // 好像上面这些话已经过时了，不过还是保留这个设计以防万一。
+    // 先将实例赋给 SimulationApp::userInterface，再初始化需要通过它访问浮动面板的菜单。
     void Init(SimulationApp& simulationApp);
     // 控件仍在更新过程中按原顺序绘制，不表示全局更新/渲染已分阶段。
     void UpdateAndRender(SimulationApp& simulationApp);

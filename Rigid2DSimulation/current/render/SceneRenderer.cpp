@@ -147,16 +147,16 @@ void SceneRenderer::RenderConnection(Connection const& connection, SceneRenderCo
     switch (connection.type)
     {
     case kRopeConnection:
-        color = connection.isTight ? connection.colorRopeTight : connection.colorRope;
+        color = connection.isTight ? connection.appearance.colorRopeTight : connection.appearance.colorRope;
         break;
     case kLinkConnection:
-        color = connection.colorLink;
+        color = connection.appearance.colorLink;
         break;
     case kCordConnection:
-        color = connection.isTight ? connection.colorCordTight : connection.colorCord;
+        color = connection.isTight ? connection.appearance.colorCordTight : connection.appearance.colorCord;
         break;
     case kSpringConnection:
-        color = connection.isTight ? connection.colorSpringStretch : connection.colorSpringCompress;
+        color = connection.isTight ? connection.appearance.colorSpringStretch : connection.appearance.colorSpringCompress;
         break;
     }
     DrawLineSegment(context.screen, context.depthBuffer, connection.p0, connection.p1, 2, context.viewport, color);

@@ -32,9 +32,7 @@ void UserInterface::Init(SimulationApp& simulationApp)
     aboutPanel = std::make_shared<AboutPanel>(simulationApp);
     floatPanels.push_back(&*aboutPanel);
 
-    // menuPanel 放在后面是因为要等 float_panel 先加载完。
-    // menuPanel 放在后面是因为要等 float_panel 先加载完。
-    // 这主要是 BtFPn 的原因。
+    // MenuPanel 的 ShowFloatPanelButton 保存浮动面板指针，因此须在这些面板创建后构造菜单。
     menuPanel = std::make_shared<MenuPanel>(simulationApp);
     bottomPanel = std::make_shared<BottomPanel>(simulationApp);
 }

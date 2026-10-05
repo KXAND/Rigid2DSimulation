@@ -7,6 +7,18 @@ int constexpr kSpringConnection = 3;
 int constexpr kCordConnection = 4;
 
 struct Body;
+
+struct ConnectionAppearance
+{
+    Color colorRopeTight = Color::kRed;
+    Color colorRope = Color::kWhite;
+    Color colorLink = Color::kBlue;
+    Color colorCordTight = Color::kMagenta;
+    Color colorCord = Color::kCyan;
+    Color colorSpringStretch = Color::kYellow;
+    Color colorSpringCompress = Color::kGreen;
+};
+
 /// <summary>
 /// 定义一个两两连接关系，根据连接物理材质的不同，更新位置
 /// </summary>
@@ -23,13 +35,9 @@ struct Connection
     double springConstant = 0;
     bool isTight = false;
 
-    // @todo:应该根据变connection的类型决定这几个量的出现的
-    Color colorRopeTight, colorRope;
-    Color colorLink;
-    Color colorCordTight, colorCord;
-    Color colorSpringStretch, colorSpringCompress;
+    ConnectionAppearance appearance;
 
-    Connection();
+    Connection() = default;
 
     void SignUpToBodies();
     void UpdatePosition();

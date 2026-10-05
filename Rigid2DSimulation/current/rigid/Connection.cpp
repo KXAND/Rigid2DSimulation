@@ -1,16 +1,6 @@
 ﻿#include "Connection.h"
 #include "Body.h"
 
-Connection::Connection()
-{
-    colorRope = Color::kWhite;
-    colorRopeTight = Color::kRed;
-    colorLink = Color::kBlue;
-    colorSpringCompress = Color::kGreen;
-    colorSpringStretch = Color::kYellow;
-    colorCord = Color::kCyan;
-    colorCordTight = Color::kMagenta;
-}
 void Connection::SignUpToBodies()
 {
     body0->connections.push_back(this);

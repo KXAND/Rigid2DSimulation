@@ -5,67 +5,85 @@
 void Group::Warp(DRect rectangle)
 {
     for (auto body : bodies)
+    {
         if (body->invMass == 0 || body->dragged)
         {
             return;
         }
+    }
     bool isInRect = false;
 
     isInRect = true;
     for (auto body : bodies)
+    {
         if (body->position.x > rectangle.GetLeft())
         {
             isInRect = false;
             break;
         }
+    }
     if (isInRect)
+    {
         for (auto body : bodies)
         {
             body->position.x += rectangle.width;
             body->track.clear();
         }
+    }
 
     isInRect = true;
     for (auto body : bodies)
+    {
         if (body->position.x < rectangle.GetRight())
         {
             isInRect = false;
             break;
         }
+    }
     if (isInRect)
+    {
         for (auto body : bodies)
         {
             body->position.x -= rectangle.width;
             body->track.clear();
         }
+    }
 
     isInRect = true;
     for (auto body : bodies)
+    {
         if (body->position.y > rectangle.GetTop())
         {
             isInRect = false;
             break;
         }
+    }
     if (isInRect)
+    {
         for (auto body : bodies)
         {
             body->position.y += rectangle.height;
             body->track.clear();
         }
+    }
 
     isInRect = true;
     for (auto body : bodies)
+    {
         if (body->position.y < rectangle.GetBottom())
         {
             isInRect = false;
             break;
         }
+    }
     if (isInRect)
+    {
         for (auto body : bodies)
         {
             body->position.y -= rectangle.height;
             body->track.clear();
         }
+    }
 }
 
 void FindBodiesInGroup(vector<Body*>& bodies, Body* body)
