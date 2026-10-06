@@ -35,7 +35,7 @@ public:
     void Prepare();
 
     // 同步过渡接口：保留每个子步内脚本预设与拖拽的原有执行位置，不保存回调。
-    void Advance(double deltaTime,
+    void Advance(double deltaTime, Body const* warpExcludedBody,
                  std::function<void(double)> const& beginStep,
                  std::function<void(Body&, double)> const& stepBody);
 

@@ -59,10 +59,6 @@ struct Body
     double chargeDensity = 0, charge = 0;
 
     bool visited = false;
-    bool hovered = false;
-    bool dragged = false;
-    double radianDrag = 0, velocityAngularDrag = 0;
-    Vector2 relativeDragPoint;
     BodyAppearance appearance;
     BodyScriptData scriptData;
 
@@ -74,7 +70,7 @@ struct Body
     Vector2 GenerateRandomPointInside() const;
     bool IsInside(Vector2 p) const;
     void UpdateShapesPositionAndAABB();
-    void Warp(DRect rectangle);
+    void Warp(DRect rectangle, bool isWarpBlocked);
     double GetDepth() const;
 
 private:

@@ -61,10 +61,10 @@ void SimulationApp::Reset()
     scriptRuntime.ResetScope({physicsWorld, editor, sceneRenderer, *sceneCanvas,
                               volume, maxRealDeltaTime, isTrackShown});
 
+    editor.ResetInteraction();
     physicsWorld.ClearObjects();
     scriptRuntime.ResetSceneVariables(*sceneCanvas);
 
-    editor.ClearSelection();
     physicsWorld.ResetParameters(DRect(sceneCanvas->topLeft, sceneCanvas->width, sceneCanvas->height));
     maxRealDeltaTime = 0.05;
     sceneRenderer.energyMultiplier = 4e-6;
@@ -145,7 +145,7 @@ void SimulationApp::UpdateMusic()
 void SimulationApp::RemoveDeletedObjects()
 {
     physicsWorld.MarkDeletedConnections();
-    editor.ClearDeletedSelection();
+    editor.PrepareForDeletion();
     physicsWorld.RemoveDeletedObjects();
 }
 
@@ -161,7 +161,7 @@ void SimulationApp::AdvanceSimulation()
 {
     if (!isPaused && realDeltaTime != 0)
     {
-        physicsWorld.Advance(realDeltaTime,
+        physicsWorld.Advance(realDeltaTime, editor.GetDrag().body,
             [this](double time)
             {
                 scriptRuntime.SetSimulationTime(time);
@@ -182,5 +182,6 @@ void SimulationApp::AdvanceSimulation()
 SceneRenderContext SimulationApp::GetSceneRenderContext()
 {
     return {screen, depthBuffer, font, sceneCanvas->GetViewport(), input.mousePosition,
-            editor.bodySelecting, editor.connectionSelecting};
+            editor.bodySelecting, editor.connectionSelecting,
+            editor.GetHoveredBody(), editor.GetDrag().body, editor.GetDrag().relativePoint};
 }

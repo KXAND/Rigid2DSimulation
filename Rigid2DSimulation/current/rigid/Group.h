@@ -14,7 +14,7 @@ struct Group
     /// @todo
     /// </summary>
     /// <param name="rectangle"></param>
-    void Warp(DRect rectangle);
+    void Warp(DRect rectangle, Body const* warpExcludedBody);
 };
 
 void FindBodiesInGroup(vector<Body*>& bodies, Body* body);

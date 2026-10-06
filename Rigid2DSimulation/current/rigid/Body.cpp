@@ -91,9 +91,9 @@ void Body::UpdateAABB()
 }
 
 // 这个方法已经过时了。
-void Body::Warp(DRect rectangle)
+void Body::Warp(DRect rectangle, bool isWarpBlocked)
 {
-    if (invMass == 0 || dragged)
+    if (invMass == 0 || isWarpBlocked)
     {
         return;
     }

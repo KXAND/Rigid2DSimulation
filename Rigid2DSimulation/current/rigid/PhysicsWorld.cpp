@@ -86,7 +86,7 @@ void PhysicsWorld::Prepare()
     }
 }
 
-void PhysicsWorld::Advance(double deltaTime,
+void PhysicsWorld::Advance(double deltaTime, Body const* warpExcludedBody,
                            std::function<void(double)> const& beginStep,
                            std::function<void(Body&, double)> const& stepBody)
 {
@@ -102,7 +102,7 @@ void PhysicsWorld::Advance(double deltaTime,
         }
         for (auto& group : groups)
         {
-            group->Warp(rectScene);
+            group->Warp(rectScene, warpExcludedBody);
         }
 
         //计算静电

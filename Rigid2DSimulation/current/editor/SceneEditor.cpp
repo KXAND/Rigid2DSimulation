@@ -12,7 +12,14 @@ void SceneEditor::ClearSelection()
     connectionSelecting = NULL;
 }
 
-void SceneEditor::ClearDeletedSelection()
+void SceneEditor::ResetInteraction()
+{
+    ClearSelection();
+    hoveredBody = nullptr;
+    drag = {};
+}
+
+void SceneEditor::PrepareForDeletion()
 {
     if (bodySelecting && bodySelecting->isMarkedForDeletion)
     {
@@ -21,6 +28,14 @@ void SceneEditor::ClearDeletedSelection()
     if (connectionSelecting && connectionSelecting->isMarkedForDeletion)
     {
         connectionSelecting = NULL;
+    }
+    if (hoveredBody && hoveredBody->isMarkedForDeletion)
+    {
+        hoveredBody = nullptr;
+    }
+    if (drag.body && drag.body->isMarkedForDeletion)
+    {
+        drag = {};
     }
 }
 
@@ -70,6 +85,7 @@ void SceneEditor::PreUpdate(PhysicsWorld const& world, AppInput const& input,
 void SceneEditor::UpdateBodies(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners,
                                double realDeltaTime, bool isTrackShown, bool isPaused)
 {
+    hoveredBody = nullptr;
     for (const auto& body : world.bodies)
     {
         UpdateBody(*body, input, inputOwners, realDeltaTime, isTrackShown, isPaused);
@@ -79,7 +95,7 @@ void SceneEditor::UpdateBodies(PhysicsWorld& world, AppInput& input, InputOwners
 void SceneEditor::ApplyDrag(Body& body, AppInput const& input, InputOwners const& inputOwners,
                             double realDeltaTime, double stepDeltaTime)
 {
-    if (body.dragged)
+    if (drag.body == &body)
     {
         if (input.mouseButtonDown[2])
         {
@@ -102,26 +118,26 @@ void SceneEditor::ApplyDrag(Body& body, AppInput const& input, InputOwners const
 
 void SceneEditor::UpdateDragAngle(Body& body, AppInput const& input, InputOwners const& inputOwners, double realDeltaTime)
 {
-    body.velocityAngularDrag = 0;
+    drag.velocityAngular = 0;
     if (!inputOwners.keyboardOwner)
     {
         if (input.keyDown[L'Q'])
         {
-            body.velocityAngularDrag = -velocityAngularDrag;
+            drag.velocityAngular = -velocityAngularDrag;
         }
         if (input.keyDown[L'E'])
         {
-            body.velocityAngularDrag = +velocityAngularDrag;
+            drag.velocityAngular = +velocityAngularDrag;
         }
     }
-    body.radianDrag = body.radian + body.velocityAngularDrag * realDeltaTime;
+    drag.radian = body.radian + drag.velocityAngular * realDeltaTime;
 }
 
 void SceneEditor::HandleDragPoint(Body& body, AppInput const& input, double realDeltaTime)
 {
     // 下列命名指定o,p,m三点为body中心、被拖拽点及鼠标现在点
     Vector2 mousePos = Vector2(input.mousePosition);
-    Vector2 pPos = body.position + body.transform * body.relativeDragPoint;
+    Vector2 pPos = body.position + body.transform * drag.relativePoint;
     Vector2 mouseVelocity = Vector2(input.mousePosition - input.previousMousePosition) / realDeltaTime;
     Vector2 pmDir = (mousePos - pPos).GetNormalized();
 
@@ -142,12 +158,12 @@ void SceneEditor::HandleDragPoint(Body& body, AppInput const& input, double real
 void SceneEditor::HandleDragWhole(Body& body, AppInput const& input, double realDeltaTime)
 {
     Vector2 mousePos = Vector2(input.mousePosition);
-    Vector2 dragPointPos = body.position + body.transform * body.relativeDragPoint;
+    Vector2 dragPointPos = body.position + body.transform * drag.relativePoint;
     Vector2 newVelocity = Vector2(input.mousePosition - input.previousMousePosition) / realDeltaTime;
 
     body.velocity = newVelocity;
-    body.radian = body.radianDrag;
-    body.velocityAngular = body.velocityAngularDrag;
+    body.radian = drag.radian;
+    body.velocityAngular = drag.velocityAngular;
     body.position += mousePos - dragPointPos; // 中心平行位移
 }
 
@@ -155,7 +171,7 @@ void SceneEditor::HandleDragForce(Body& body, AppInput const& input, double delt
 {
     // 运动路径方向
     Vector2 p1 = Vector2(input.mousePosition);
-    Vector2 p0 = body.position + body.transform * body.relativeDragPoint;
+    Vector2 p0 = body.position + body.transform * drag.relativePoint;
     Vector2 d = (p1 - p0).GetNormalized();
 
     // 力
@@ -173,17 +189,21 @@ void SceneEditor::HandleDragForce(Body& body, AppInput const& input, double delt
 void SceneEditor::UpdateBody(Body& body, AppInput& input, InputOwners const& inputOwners,
                              double realDeltaTime, bool isTrackShown, bool isPaused)
 {
-    body.hovered = (inputOwners.hovered == &body);
+    bool isHovered = inputOwners.hovered == &body;
+    if (isHovered)
+    {
+        hoveredBody = &body;
+    }
 
-    if (mode == kDeleteMode && body.hovered && input.IsMouseClickedDown(0))
+    if (mode == kDeleteMode && isHovered && input.IsMouseClickedDown(0))
     {
         body.isMarkedForDeletion = true;
     }
-    if (mode == kSelectMode && body.hovered && input.IsMouseClickedDown(0))
+    if (mode == kSelectMode && isHovered && input.IsMouseClickedDown(0))
     {
         bodySelecting = &body;
     }
-    if (body.dragged)
+    if (drag.body == &body)
     {
         // 检查拖拽模式，应用函数
         UpdateDragAngle(body, input, inputOwners, realDeltaTime);
@@ -202,18 +222,17 @@ void SceneEditor::UpdateBody(Body& body, AppInput& input, InputOwners const& inp
         {
             HandleDragPoint(body, input, realDeltaTime);
         }
-        body.dragged = input.mouseButtonDown[0] && (mode == kDragMode);
-    }
-    else
-    {
-        // 检查 draged是否判断正确，更新被拖拽角度
-        body.dragged = body.hovered && input.IsMouseClickedDown(0) && (mode == kDragMode);
-        if (body.dragged)
+        // 保留释放帧先应用拖拽、再结束会话的顺序。
+        if (!input.mouseButtonDown[0] || mode != kDragMode)
         {
-            // p移到m，那么mo = 变换*原距离 = 变换*原相对位置=po，故有。
-            body.relativeDragPoint = body.transform.Inverse() * ((Vector2)input.mousePosition - body.position);
-            UpdateDragAngle(body, input, inputOwners, realDeltaTime);
+            drag = {};
         }
+    }
+    else if (!drag.body && isHovered && input.IsMouseClickedDown(0) && mode == kDragMode)
+    {
+        drag.body = &body;
+        drag.relativePoint = body.transform.Inverse() * ((Vector2)input.mousePosition - body.position);
+        UpdateDragAngle(body, input, inputOwners, realDeltaTime);
     }
 
     if (&body == bodySelecting && isTrackShown && !isPaused)
@@ -228,7 +247,7 @@ void SceneEditor::UpdateBody(Body& body, AppInput& input, InputOwners const& inp
     }
 
     // 创造连接
-    bool canCreate = body.hovered && mode == kCreateMode &&
+    bool canCreate = isHovered && mode == kCreateMode &&
                      (creator->mode == kCreateConnection || creator->mode == kCreateNail);
     if (canCreate)
     {

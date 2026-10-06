@@ -3,6 +3,7 @@
 
 #include "DVector2.h"
 #include "Tile.h"
+#include "Vector2.h"
 
 struct Body;
 struct Collision;
@@ -27,6 +28,9 @@ struct SceneRenderContext
     DVector2 mousePosition;
     Body const* selectedBody;
     Connection const* selectedConnection;
+    Body const* hoveredBody;
+    Body const* draggedBody;
+    Vector2 relativeDragPoint;
 };
 
 class SceneRenderer

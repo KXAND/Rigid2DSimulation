@@ -85,9 +85,9 @@ void SceneRenderer::RenderBody(Body const& body, SceneRenderContext const& conte
         break;
     }
 
-    Color color = body.dragged ? body.appearance.draggedColor
+    Color color = (context.draggedBody == &body) ? body.appearance.draggedColor
                 : (context.selectedBody == &body) ? body.appearance.selectedColor
-                : body.hovered ? body.appearance.hoveredColor
+                : (context.hoveredBody == &body) ? body.appearance.hoveredColor
                 : isSelectedConnection ? body.appearance.selectedConnectionColor
                 : normalColor;
 
@@ -123,10 +123,10 @@ void SceneRenderer::RenderBody(Body const& body, SceneRenderContext const& conte
         }
     }
 
-    if (body.dragged)
+    if (context.draggedBody == &body)
     {
         Vector2 p1 = Vector2(context.mousePosition);
-        Vector2 p0 = body.position + body.transform * body.relativeDragPoint;
+        Vector2 p0 = body.position + body.transform * context.relativeDragPoint;
         DrawLineSegment(context.screen, context.depthBuffer, p0, p1, body.GetDepth(), context.viewport, Color(0, 255, 255));
     }
 

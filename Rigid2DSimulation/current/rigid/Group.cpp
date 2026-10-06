@@ -2,11 +2,11 @@
 #include "Body.h"
 #include "Connection.h"
 
-void Group::Warp(DRect rectangle)
+void Group::Warp(DRect rectangle, Body const* warpExcludedBody)
 {
     for (auto body : bodies)
     {
-        if (body->invMass == 0 || body->dragged)
+        if (body->invMass == 0 || body == warpExcludedBody)
         {
             return;
         }
