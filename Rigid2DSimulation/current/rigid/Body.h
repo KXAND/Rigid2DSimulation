@@ -39,6 +39,11 @@ struct BodyAppearance
     Color draggedColor = {255, 0, 0};
     Color selectedColor = {255, 0, 255};
     Color selectedConnectionColor = {255, 255, 0};
+
+    double GetDepth(bool isPoint) const
+    {
+        return isPoint ? depthPoint : depthShape;
+    }
 };
 
 struct BodyScriptData
@@ -96,10 +101,8 @@ struct Body
     }
 
     Vector2 GenerateRandomPointInside() const;
-    bool IsInside(Vector2 p) const;
     void UpdateShapesPositionAndAABB();
     void Warp(DRect rectangle, bool isWarpBlocked);
-    double GetDepth() const;
 
     void Step(Vector2 const& gravity, double stepDeltaTime, std::function<void(bool)> const& applyPresets);
 

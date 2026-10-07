@@ -93,26 +93,6 @@ void Body::ApplyProperties(BodyProperties const& properties)
     UpdateShapesPositionAndAABB();
 }
 
-double Body::GetDepth() const
-{
-    return point ? appearance.depthPoint : appearance.depthShape;
-}
-bool Body::IsInside(Vector2 p) const
-{
-    if (point)
-    {
-        return (p - position).GetLengthSquared() < appearance.pointRadius * appearance.pointRadius;
-    }
-
-    for (auto shape : shapes)
-    {
-        if (shape->IsInside(p))
-            return true;
-    }
-    return false;
-}
-
-
 Vector2 Body::GenerateRandomPointInside() const
 {
     if (point)

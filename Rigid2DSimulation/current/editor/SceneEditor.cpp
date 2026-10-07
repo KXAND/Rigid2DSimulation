@@ -5,6 +5,7 @@
 #include "Connection.h"
 #include "Creator.h"
 #include "PhysicsWorld.h"
+#include "Shape.h"
 
 void SceneEditor::ClearSelection()
 {
@@ -78,6 +79,23 @@ void SceneEditor::RequestConnectionDeletion(PhysicsWorld& world)
     world.RequestConnectionDeletion(*connectionSelecting);
 }
 
+bool SceneEditor::HitTestBody(Body const& body, Vector2 mousePosition)
+{
+    if (body.point)
+    {
+        return (mousePosition - body.position).GetLengthSquared() < body.appearance.pointRadius * body.appearance.pointRadius;
+    }
+
+    for (auto const& shape : body.shapes)
+    {
+        if (shape->IsInside(mousePosition))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void SceneEditor::PreUpdate(PhysicsWorld const& world, AppInput const& input,
                             InputOwners& inputOwners, DRect viewport)
 {
@@ -87,11 +105,12 @@ void SceneEditor::PreUpdate(PhysicsWorld const& world, AppInput const& input,
     }
     for (auto& body : world.GetBodies())
     {
-        bool canReceiveHover = inputOwners.hoveredDepth <= body->GetDepth() &&
-                               body->IsInside((Vector2)input.mousePosition) && ::IsInside(input.mousePosition, viewport);
+        double depth = body->appearance.GetDepth(body->point);
+        bool canReceiveHover = inputOwners.hoveredDepth <= depth &&
+                               HitTestBody(*body, (Vector2)input.mousePosition) && ::IsInside(input.mousePosition, viewport);
         if (canReceiveHover)
         {
-            inputOwners.hoveredDepth = body->GetDepth();
+            inputOwners.hoveredDepth = depth;
             inputOwners.hovered = body.get();
         }
     }

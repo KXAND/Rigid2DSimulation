@@ -69,6 +69,7 @@ private:
     BodyDrag drag;
     std::unordered_map<Body const*, std::vector<Vector2>> tracks;
 
+    static bool HitTestBody(Body const& body, Vector2 mousePosition);
     void UpdateBody(PhysicsWorld& world, Body& body, AppInput& input, InputOwners const& inputOwners,
                     double realDeltaTime, bool isTrackShown, bool isPaused);
     void UpdateDragAngle(Body& body, AppInput const& input, InputOwners const& inputOwners, double realDeltaTime);
