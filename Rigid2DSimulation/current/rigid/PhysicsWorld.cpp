@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 
 #include "Body.h"
 #include "Collision.h"
@@ -9,12 +10,97 @@
 #include "Group.h"
 #include "Utils.h"
 
+void PhysicsWorld::AddBody(std::shared_ptr<Body> const& body)
+{
+    if (!body || std::find(bodies.begin(), bodies.end(), body) != bodies.end() ||
+        !body->connections.empty())
+    {
+        throw std::invalid_argument("Body must be non-null, unregistered and have no connections.");
+    }
+    bodies.push_back(body);
+    isSceneChanged = true;
+}
+
+void PhysicsWorld::AddConnection(std::shared_ptr<Connection> const& connection)
+{
+    auto containsBody = [this](Body const* body)
+    {
+        return std::any_of(bodies.begin(), bodies.end(), [body](std::shared_ptr<Body> const& item)
+        {
+            return item.get() == body;
+        });
+    };
+    if (!connection || std::find(connections.begin(), connections.end(), connection) != connections.end() ||
+        !containsBody(connection->body0) || !containsBody(connection->body1))
+    {
+        throw std::invalid_argument("Connection must be unregistered and both endpoints must belong to this world.");
+    }
+
+    auto& firstBodyConnections = connection->body0->connections;
+    auto& secondBodyConnections = connection->body1->connections;
+    // 在修改三个容器前准备容量，避免分配失败留下不完整的关联。
+    if (connections.size() == connections.capacity())
+    {
+        connections.reserve(connections.size() * 2 + 1);
+    }
+    if (firstBodyConnections.size() == firstBodyConnections.capacity())
+    {
+        firstBodyConnections.reserve(firstBodyConnections.size() * 2 + 1);
+    }
+    if (secondBodyConnections.size() == secondBodyConnections.capacity())
+    {
+        secondBodyConnections.reserve(secondBodyConnections.size() * 2 + 1);
+    }
+    connections.push_back(connection);
+    firstBodyConnections.push_back(connection.get());
+    if (connection->body0 != connection->body1)
+    {
+        secondBodyConnections.push_back(connection.get());
+    }
+    isSceneChanged = true;
+}
+
+void PhysicsWorld::RequestBodyDeletion(Body& body)
+{
+    auto found = std::find_if(bodies.begin(), bodies.end(), [&body](std::shared_ptr<Body> const& item)
+    {
+        return item.get() == &body;
+    });
+    if (found == bodies.end())
+    {
+        throw std::invalid_argument("Body must belong to this world.");
+    }
+    body.isMarkedForDeletion = true;
+    isSceneChanged = true;
+}
+
+void PhysicsWorld::RequestConnectionDeletion(Connection& connection)
+{
+    auto found = std::find_if(connections.begin(), connections.end(), [&connection](std::shared_ptr<Connection> const& item)
+    {
+        return item.get() == &connection;
+    });
+    if (found == connections.end())
+    {
+        throw std::invalid_argument("Connection must belong to this world.");
+    }
+    connection.isMarkedForDeletion = true;
+    isSceneChanged = true;
+}
+
 void PhysicsWorld::ClearObjects()
 {
-    bodies.clear();
+    for (auto const& body : bodies)
+    {
+        body->connections.clear();
+    }
     groups.clear();
     collisions.clear();
+    grid.clear();
+    multiGridBodies.clear();
     connections.clear();
+    bodies.clear();
+    isSceneChanged = true;
 }
 
 void PhysicsWorld::ResetParameters(DRect const& sceneRect)
@@ -88,7 +174,8 @@ void PhysicsWorld::Prepare()
 
 void PhysicsWorld::Advance(double deltaTime, Body const* warpExcludedBody,
                            std::function<void(double)> const& beginStep,
-                           std::function<void(Body&, double)> const& stepBody)
+                           std::function<void(Body&, double)> const& stepBody,
+                           std::function<void(Body const&)> const& onBodyWarped)
 {
     // 标准时长
     double stepDeltaTime = deltaTime / stepNum;
@@ -102,7 +189,7 @@ void PhysicsWorld::Advance(double deltaTime, Body const* warpExcludedBody,
         }
         for (auto& group : groups)
         {
-            group->Warp(rectScene, warpExcludedBody);
+            group->Warp(rectScene, warpExcludedBody, onBodyWarped);
         }
 
         //计算静电

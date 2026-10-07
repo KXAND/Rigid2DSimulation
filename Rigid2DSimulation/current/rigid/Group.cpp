@@ -2,7 +2,8 @@
 #include "Body.h"
 #include "Connection.h"
 
-void Group::Warp(DRect rectangle, Body const* warpExcludedBody)
+void Group::Warp(DRect rectangle, Body const* warpExcludedBody,
+                 std::function<void(Body const&)> const& onBodyWarped)
 {
     for (auto body : bodies)
     {
@@ -27,7 +28,7 @@ void Group::Warp(DRect rectangle, Body const* warpExcludedBody)
         for (auto body : bodies)
         {
             body->position.x += rectangle.width;
-            body->track.clear();
+            onBodyWarped(*body);
         }
     }
 
@@ -45,7 +46,7 @@ void Group::Warp(DRect rectangle, Body const* warpExcludedBody)
         for (auto body : bodies)
         {
             body->position.x -= rectangle.width;
-            body->track.clear();
+            onBodyWarped(*body);
         }
     }
 
@@ -63,7 +64,7 @@ void Group::Warp(DRect rectangle, Body const* warpExcludedBody)
         for (auto body : bodies)
         {
             body->position.y += rectangle.height;
-            body->track.clear();
+            onBodyWarped(*body);
         }
     }
 
@@ -81,7 +82,7 @@ void Group::Warp(DRect rectangle, Body const* warpExcludedBody)
         for (auto body : bodies)
         {
             body->position.y -= rectangle.height;
-            body->track.clear();
+            onBodyWarped(*body);
         }
     }
 }
@@ -90,7 +91,7 @@ void FindBodiesInGroup(vector<Body*>& bodies, Body* body)
 {
     body->visited = true;
     bodies.push_back(body);
-    for (auto connection : body->connections)
+    for (auto connection : body->GetConnections())
     {
         auto tmp = GetOtherBody(body, *connection);
         if (tmp && !tmp->visited)

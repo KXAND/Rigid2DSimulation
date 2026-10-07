@@ -208,7 +208,7 @@ void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings
 
     auto getBodyCountFunction = [bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
-        return std::make_shared<Value>(bindings.physicsWorld.bodies.size());
+        return std::make_shared<Value>(bindings.physicsWorld.GetBodies().size());
     };
     currentScope[L"GetBodyCount"] = std::make_shared<Value>(getBodyCountFunction);
 

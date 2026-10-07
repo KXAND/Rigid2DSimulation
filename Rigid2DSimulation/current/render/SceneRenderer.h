@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "DVector2.h"
 #include "Tile.h"
@@ -31,6 +33,7 @@ struct SceneRenderContext
     Body const* hoveredBody;
     Body const* draggedBody;
     Vector2 relativeDragPoint;
+    std::unordered_map<Body const*, std::vector<Vector2>> const& tracks;
 };
 
 class SceneRenderer

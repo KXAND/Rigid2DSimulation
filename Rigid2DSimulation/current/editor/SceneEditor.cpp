@@ -17,26 +17,43 @@ void SceneEditor::ResetInteraction()
     ClearSelection();
     hoveredBody = nullptr;
     drag = {};
+    tracks.clear();
 }
 
 void SceneEditor::PrepareForDeletion()
 {
-    if (bodySelecting && bodySelecting->isMarkedForDeletion)
+    for (auto it = tracks.begin(); it != tracks.end();)
+    {
+        if (it->first->IsMarkedForDeletion())
+        {
+            it = tracks.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+    if (bodySelecting && bodySelecting->IsMarkedForDeletion())
     {
         bodySelecting = NULL;
     }
-    if (connectionSelecting && connectionSelecting->isMarkedForDeletion)
+    if (connectionSelecting && connectionSelecting->IsMarkedForDeletion())
     {
         connectionSelecting = NULL;
     }
-    if (hoveredBody && hoveredBody->isMarkedForDeletion)
+    if (hoveredBody && hoveredBody->IsMarkedForDeletion())
     {
         hoveredBody = nullptr;
     }
-    if (drag.body && drag.body->isMarkedForDeletion)
+    if (drag.body && drag.body->IsMarkedForDeletion())
     {
         drag = {};
     }
+}
+
+void SceneEditor::ClearTrack(Body const& body)
+{
+    tracks.erase(&body);
 }
 
 void SceneEditor::ResetTools()
@@ -53,14 +70,12 @@ void SceneEditor::CycleMode(InputOwners& inputOwners)
 
 void SceneEditor::RequestBodyDeletion(PhysicsWorld& world)
 {
-    bodySelecting->isMarkedForDeletion = true;
-    world.isSceneChanged = true;
+    world.RequestBodyDeletion(*bodySelecting);
 }
 
 void SceneEditor::RequestConnectionDeletion(PhysicsWorld& world)
 {
-    connectionSelecting->isMarkedForDeletion = true;
-    world.isSceneChanged = true;
+    world.RequestConnectionDeletion(*connectionSelecting);
 }
 
 void SceneEditor::PreUpdate(PhysicsWorld const& world, AppInput const& input,
@@ -70,7 +85,7 @@ void SceneEditor::PreUpdate(PhysicsWorld const& world, AppInput const& input,
     {
         creator->PreUpdate(input, inputOwners, viewport);
     }
-    for (auto& body : world.bodies)
+    for (auto& body : world.GetBodies())
     {
         bool canReceiveHover = inputOwners.hoveredDepth <= body->GetDepth() &&
                                body->IsInside((Vector2)input.mousePosition) && ::IsInside(input.mousePosition, viewport);
@@ -86,9 +101,9 @@ void SceneEditor::UpdateBodies(PhysicsWorld& world, AppInput& input, InputOwners
                                double realDeltaTime, bool isTrackShown, bool isPaused)
 {
     hoveredBody = nullptr;
-    for (const auto& body : world.bodies)
+    for (const auto& body : world.GetBodies())
     {
-        UpdateBody(*body, input, inputOwners, realDeltaTime, isTrackShown, isPaused);
+        UpdateBody(world, *body, input, inputOwners, realDeltaTime, isTrackShown, isPaused);
     }
 }
 
@@ -186,7 +201,7 @@ void SceneEditor::HandleDragForce(Body& body, AppInput const& input, double delt
     body.velocityAngular += Dot(impulse, r0) * body.invInertia;
 }
 
-void SceneEditor::UpdateBody(Body& body, AppInput& input, InputOwners const& inputOwners,
+void SceneEditor::UpdateBody(PhysicsWorld& world, Body& body, AppInput& input, InputOwners const& inputOwners,
                              double realDeltaTime, bool isTrackShown, bool isPaused)
 {
     bool isHovered = inputOwners.hovered == &body;
@@ -197,7 +212,7 @@ void SceneEditor::UpdateBody(Body& body, AppInput& input, InputOwners const& inp
 
     if (mode == kDeleteMode && isHovered && input.IsMouseClickedDown(0))
     {
-        body.isMarkedForDeletion = true;
+        world.RequestBodyDeletion(body);
     }
     if (mode == kSelectMode && isHovered && input.IsMouseClickedDown(0))
     {
@@ -238,12 +253,12 @@ void SceneEditor::UpdateBody(Body& body, AppInput& input, InputOwners const& inp
     if (&body == bodySelecting && isTrackShown && !isPaused)
     {
         // 绘制运动轨迹
-        body.track.push_back(body.position);
+        tracks[&body].push_back(body.position);
     }
     else if (&body != bodySelecting || !isTrackShown)
     {
         //不符合条件时清空轨迹信息
-        body.track.clear();
+        ClearTrack(body);
     }
 
     // 创造连接

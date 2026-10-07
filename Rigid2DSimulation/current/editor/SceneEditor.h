@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include <memory>
+#include <unordered_map>
+#include <vector>
 
 #include "DVector2.h"
 #include "Vector2.h"
@@ -35,10 +37,15 @@ public:
     double velocityAngularDrag = 0;
 
     void ClearSelection();
-    // 场景重置时清空选择、悬停和拖拽，不改变工具或模式。
+    // 场景重置时清空选择、悬停、拖拽和轨迹，不改变工具或模式。
     void ResetInteraction();
-    // 删除前仅清理指向待删除对象的引用，不标记或删除对象。
+    // 删除前清理待删除对象的交互引用和轨迹，不标记或删除对象。
     void PrepareForDeletion();
+    void ClearTrack(Body const& body);
+    std::unordered_map<Body const*, std::vector<Vector2>> const& GetTracks() const
+    {
+        return tracks;
+    }
     Body const* GetHoveredBody() const
     {
         return hoveredBody;
@@ -60,8 +67,9 @@ public:
 private:
     Body const* hoveredBody = nullptr;
     BodyDrag drag;
+    std::unordered_map<Body const*, std::vector<Vector2>> tracks;
 
-    void UpdateBody(Body& body, AppInput& input, InputOwners const& inputOwners,
+    void UpdateBody(PhysicsWorld& world, Body& body, AppInput& input, InputOwners const& inputOwners,
                     double realDeltaTime, bool isTrackShown, bool isPaused);
     void UpdateDragAngle(Body& body, AppInput const& input, InputOwners const& inputOwners, double realDeltaTime);
     void HandleDragWhole(Body& body, AppInput const& input, double realDeltaTime);

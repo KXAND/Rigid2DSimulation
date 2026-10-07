@@ -174,6 +174,10 @@ void SimulationApp::AdvanceSimulation()
                 });
                 editor.ApplyDrag(body, input, inputOwners, realDeltaTime, stepDeltaTime);
                 body.UpdateShapesPositionAndAABB();
+            },
+            [this](Body const& body)
+            {
+                editor.ClearTrack(body);
             });
     }
 }
@@ -183,5 +187,5 @@ SceneRenderContext SimulationApp::GetSceneRenderContext()
 {
     return {screen, depthBuffer, font, sceneCanvas->GetViewport(), input.mousePosition,
             editor.bodySelecting, editor.connectionSelecting,
-            editor.GetHoveredBody(), editor.GetDrag().body, editor.GetDrag().relativePoint};
+            editor.GetHoveredBody(), editor.GetDrag().body, editor.GetDrag().relativePoint, editor.GetTracks()};
 }

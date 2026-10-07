@@ -24,11 +24,8 @@ struct ConnectionAppearance
 /// </summary>
 struct Connection
 {
-    bool isMarkedForDeletion = false;
     int type = 0;
     wstring scriptText, temporaryScriptText;
-    Body* body0 = NULL;
-    Body* body1 = NULL;
     Vector2 p0Relative, p1Relative;
     Vector2 p0, p1;
     double length = 0;
@@ -37,13 +34,33 @@ struct Connection
 
     ConnectionAppearance appearance;
 
-    Connection() = default;
+    explicit Connection(Body* body0 = nullptr, Body* body1 = nullptr) : body0(body0), body1(body1) {}
 
-    void SignUpToBodies();
+    Body* GetBody0() const
+    {
+        return body0;
+    }
+    Body* GetBody1() const
+    {
+        return body1;
+    }
+    bool IsMarkedForDeletion() const
+    {
+        return isMarkedForDeletion;
+    }
+
     void UpdatePosition();
     void SimulateRopeOrLink(bool useEqualPositionCorrection);
     void SimulateCordOrSpring(double stepDeltaTime);
     void Simulate(double stepDeltaTime, bool useEqualPositionCorrection);
+
+private:
+    friend class PhysicsWorld;
+    friend struct SceneStorage;
+
+    Body* body0 = nullptr;
+    Body* body1 = nullptr;
+    bool isMarkedForDeletion = false;
 };
 
 Body* GetOtherBody(Body* body, Connection const& connection);

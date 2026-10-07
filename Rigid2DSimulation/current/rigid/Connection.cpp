@@ -1,15 +1,6 @@
 ﻿#include "Connection.h"
 #include "Body.h"
 
-void Connection::SignUpToBodies()
-{
-    body0->connections.push_back(this);
-    if (body0 != body1)
-    {
-        body1->connections.push_back(this);
-    }
-}
-
 void Connection::UpdatePosition()
 {
     p0 = body0->position + body0->transform * p0Relative;
@@ -146,13 +137,13 @@ void Connection::Simulate(double deltaTime, bool useEqualPositionCorrection)
 
 Body* GetOtherBody(Body* body, Connection const& connection)
 {
-    if (connection.body0 == body && connection.body1 == body)
+    if (connection.GetBody0() == body && connection.GetBody1() == body)
     {
         return NULL;
     }
-    if (connection.body0 != body && connection.body1 != body)
+    if (connection.GetBody0() != body && connection.GetBody1() != body)
     {
         return NULL;
     }
-    return connection.body0 == body ? connection.body1 : connection.body0;
+    return connection.GetBody0() == body ? connection.GetBody1() : connection.GetBody0();
 }

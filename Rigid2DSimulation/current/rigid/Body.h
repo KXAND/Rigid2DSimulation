@@ -55,13 +55,10 @@ struct BodyScriptData
 /// </summary>
 struct Body
 {
-    bool isMarkedForDeletion = false;
     bool point = false;
     bool fixed = false;
     double inertia = 0;
-    vector<Vector2> track;
     vector<std::shared_ptr<Shape>> shapes;
-    vector<Connection*> connections;
     Vector2 position, velocity;
     Aabb box;
     Matrix2 transform = Matrix2::Identity();
@@ -89,6 +86,15 @@ struct Body
     BodyProperties GetProperties() const;
     void ApplyProperties(BodyProperties const& properties);
 
+    vector<Connection*> const& GetConnections() const
+    {
+        return connections;
+    }
+    bool IsMarkedForDeletion() const
+    {
+        return isMarkedForDeletion;
+    }
+
     Vector2 GenerateRandomPointInside() const;
     bool IsInside(Vector2 p) const;
     void UpdateShapesPositionAndAABB();
@@ -99,6 +105,10 @@ struct Body
 
 private:
     friend struct SceneStorage;
+    friend class PhysicsWorld;
+
+    vector<Connection*> connections;
+    bool isMarkedForDeletion = false;
 
     // 存档需先读取字段、执行对象脚本，再按原时点计算。
     Body();

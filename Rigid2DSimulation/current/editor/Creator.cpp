@@ -107,9 +107,8 @@ void Creator::UpdateBox(PhysicsWorld& world, AppInput& input)
             active = false;
             if (body)
             {
-                world.bodies.push_back(body);
+                world.AddBody(body);
                 body = NULL;
-                world.isSceneChanged = true;
             }
         }
     }
@@ -146,9 +145,8 @@ void Creator::UpdateBall(PhysicsWorld& world, AppInput& input)
             active = false;
             if (body)
             {
-                world.bodies.push_back(body);
+                world.AddBody(body);
                 body = NULL;
-                world.isSceneChanged = true;
             }
         }
     }
@@ -188,9 +186,8 @@ void Creator::UpdatePlate(PhysicsWorld& world, AppInput& input)
             active = false;
             if (body)
             {
-                world.bodies.push_back(body);
+                world.AddBody(body);
                 body = NULL;
-                world.isSceneChanged = true;
             }
         }
     }
@@ -207,7 +204,7 @@ void Creator::UpdateConnection(PhysicsWorld& world, AppInput& input)
 {
     if (active)
     {
-        connection = std::make_shared<Connection>();
+        connection = std::make_shared<Connection>(body0, body1);
         if (connectionConfiguration)
         {
             ApplyConnectionConfig(*connection, *connectionConfiguration);
@@ -218,16 +215,11 @@ void Creator::UpdateConnection(PhysicsWorld& world, AppInput& input)
         {
             if (body1)
             {
-                connection->body0 = body0;
-                connection->body1 = body1;
                 connection->p0Relative = p0Relative;
                 connection->p1Relative = p1Relative;
-
-                connection->SignUpToBodies();
                 connection->UpdatePosition();
                 connection->length = (connection->p0 - connection->p1).GetLength();
-                world.connections.push_back(connection);
-                world.isSceneChanged = true;
+                world.AddConnection(connection);
             }
             connection = NULL;
             body0 = body1 = NULL;
@@ -254,9 +246,8 @@ void Creator::UpdatePoint(PhysicsWorld& world, AppInput& input)
             properties = ParseBodyProperties(*bodyConfiguration, properties);
         }
         body = Body::CreatePoint(properties);
-        world.bodies.push_back(body);
+        world.AddBody(body);
         body = NULL;
-        world.isSceneChanged = true;
     }
 }
 void Creator::UpdateNail(PhysicsWorld& world, AppInput& input)
@@ -264,20 +255,16 @@ void Creator::UpdateNail(PhysicsWorld& world, AppInput& input)
     if (body0)
     {
         body = Body::CreatePoint(body0->position + body0->transform * p0Relative);
-        world.bodies.push_back(body);
-        connection = std::make_shared<Connection>();
+        world.AddBody(body);
+        connection = std::make_shared<Connection>(body0, body.get());
         connection->type = kLinkConnection;
-        connection->body0 = body0;
-        connection->body1 = &*body;
         connection->p0Relative = p0Relative;
-        connection->SignUpToBodies();
         connection->UpdatePosition();
-        world.connections.push_back(connection);
+        world.AddConnection(connection);
 
         body0 = NULL;
         connection = NULL;
         body = NULL;
-        world.isSceneChanged = true;
     }
 }
 void Creator::UpdateParticle(PhysicsWorld& world, AppInput& input)
@@ -293,9 +280,8 @@ void Creator::UpdateParticle(PhysicsWorld& world, AppInput& input)
             properties = ParseBodyProperties(*bodyConfiguration, properties);
         }
         body = std::make_shared<Body>(shape, properties);
-        world.bodies.push_back(body);
+        world.AddBody(body);
         body = NULL;
-        world.isSceneChanged = true;
     }
 }
 void Creator::Update(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners)

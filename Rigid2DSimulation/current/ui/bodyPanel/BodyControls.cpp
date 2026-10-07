@@ -30,7 +30,7 @@ BodyConnectionLabel::BodyConnectionLabel(int id) : id(id), Label()
 void BodyConnectionLabel::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    auto* connection = simulationApp.editor.bodySelecting->connections[id];
+    auto* connection = simulationApp.editor.bodySelecting->GetConnections()[id];
     wstring type;
     switch (connection->type)
     {
@@ -55,13 +55,13 @@ SelectBodyConnectionCheckBox::SelectBodyConnectionCheckBox(int id) : id(id), Loc
 void SelectBodyConnectionCheckBox::Sync(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    checked = (simulationApp.editor.connectionSelecting == simulationApp.editor.bodySelecting->connections[id]);
+    checked = (simulationApp.editor.connectionSelecting == simulationApp.editor.bodySelecting->GetConnections()[id]);
 }
 
 void SelectBodyConnectionCheckBox::Upload(App& app) const
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.editor.connectionSelecting = checked ? simulationApp.editor.bodySelecting->connections[id] : NULL;
+    simulationApp.editor.connectionSelecting = checked ? simulationApp.editor.bodySelecting->GetConnections()[id] : NULL;
 }
 
 BodyConnectionControlRow::BodyConnectionControlRow(int id)
@@ -75,16 +75,16 @@ void BodyConnectionControlList::Update(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
     auto& selectedBody = *simulationApp.editor.bodySelecting;
-    for (int i = (connectionRows.size()), iEnd = int(selectedBody.connections.size()); i < iEnd; ++i)
+    for (int i = (connectionRows.size()), iEnd = int(selectedBody.GetConnections().size()); i < iEnd; ++i)
     {
         connectionRows.push_back(std::make_shared<BodyConnectionControlRow>(i));
     }
     controls.clear();
-    for (int i = (0), iEnd = int(selectedBody.connections.size()); i < iEnd; ++i)
+    for (int i = (0), iEnd = int(selectedBody.GetConnections().size()); i < iEnd; ++i)
     {
         controls.push_back(&*connectionRows[i]);
     }
-    for (int i = (selectedBody.connections.size()), iEnd = int(connectionRows.size()); i < iEnd; ++i)
+    for (int i = (selectedBody.GetConnections().size()), iEnd = int(connectionRows.size()); i < iEnd; ++i)
     {
         connectionRows[i]->Discard(app);
     }

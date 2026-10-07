@@ -22,15 +22,15 @@ void SceneStorage::Save(std::wstring const& name, PhysicsWorld const& physicsWor
     SaveParameters(file, runtime);
 
     // 可能会保存一些即将被删除的元素，但是也无所谓。
-    size = physicsWorld.bodies.size();
+    size = physicsWorld.GetBodies().size();
     fwrite(&(size), sizeof(size), 1, file);
-    for (auto body : physicsWorld.bodies)
+    for (auto body : physicsWorld.GetBodies())
     {
         SaveBody(file, *body);
     }
-    size = physicsWorld.connections.size();
+    size = physicsWorld.GetConnections().size();
     fwrite(&(size), sizeof(size), 1, file);
-    for (auto connection : physicsWorld.connections)
+    for (auto connection : physicsWorld.GetConnections())
     {
         SaveConnection(file, *connection, physicsWorld);
     }
@@ -59,18 +59,16 @@ void SceneStorage::Load(std::wstring const& name, PhysicsWorld& physicsWorld,
     {
         auto body = LoadBody(file);
         runtime.RefreshBodyScript(*body);
-        physicsWorld.bodies.push_back(body);
+        physicsWorld.AddBody(body);
     }
     fread(&(size), sizeof(size), 1, file);
     for (int i = (0), iEnd = int(size); i < iEnd; ++i)
     {
         auto connection = LoadConnection(file, physicsWorld);
         runtime.RefreshConnectionScript(*connection);
-        connection->SignUpToBodies();
         connection->UpdatePosition();
-        physicsWorld.connections.push_back(connection);
+        physicsWorld.AddConnection(connection);
     }
-    physicsWorld.isSceneChanged = true;
 
     runtime.ExecuteSceneScript();
     fclose(file);
@@ -201,12 +199,12 @@ void SceneStorage::SaveConnection(FILE* file, Connection const& connection, Phys
     {
         return &*b == connection.body0;
     };
-    int bodyIndex0 = find_if(physicsWorld.bodies.begin(), physicsWorld.bodies.end(), pred0) - physicsWorld.bodies.begin();
+    int bodyIndex0 = find_if(physicsWorld.GetBodies().begin(), physicsWorld.GetBodies().end(), pred0) - physicsWorld.GetBodies().begin();
     auto pred1 = [&connection](std::shared_ptr<Body> b)
     {
         return &*b == connection.body1;
     };
-    int bodyIndex1 = find_if(physicsWorld.bodies.begin(), physicsWorld.bodies.end(), pred1) - physicsWorld.bodies.begin();
+    int bodyIndex1 = find_if(physicsWorld.GetBodies().begin(), physicsWorld.GetBodies().end(), pred1) - physicsWorld.GetBodies().begin();
     fwrite(&(bodyIndex0), sizeof(bodyIndex0), 1, file);
     fwrite(&(bodyIndex1), sizeof(bodyIndex1), 1, file);
     fwrite(&(connection.p0Relative), sizeof(connection.p0Relative), 1, file);
@@ -227,8 +225,8 @@ std::shared_ptr<Connection> SceneStorage::LoadConnection(FILE* file, PhysicsWorl
     int bodyIndex0 = 0, bodyIndex1 = 0;
     fread(&(bodyIndex0), sizeof(bodyIndex0), 1, file);
     fread(&(bodyIndex1), sizeof(bodyIndex1), 1, file);
-    connection->body0 = &*physicsWorld.bodies[bodyIndex0];
-    connection->body1 = &*physicsWorld.bodies[bodyIndex1];
+    connection->body0 = &*physicsWorld.GetBodies()[bodyIndex0];
+    connection->body1 = &*physicsWorld.GetBodies()[bodyIndex1];
     fread(&(connection->p0Relative), sizeof(connection->p0Relative), 1, file);
     fread(&(connection->p1Relative), sizeof(connection->p1Relative), 1, file);
     fread(&(connection->length), sizeof(connection->length), 1, file);

@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <functional>
+
 #include "DVector2.h"
 
 struct Body;
@@ -14,7 +16,9 @@ struct Group
     /// @todo
     /// </summary>
     /// <param name="rectangle"></param>
-    void Warp(DRect rectangle, Body const* warpExcludedBody);
+    // 每次越界位移后同步通知，不保存回调。
+    void Warp(DRect rectangle, Body const* warpExcludedBody,
+              std::function<void(Body const&)> const& onBodyWarped);
 };
 
 void FindBodiesInGroup(vector<Body*>& bodies, Body* body);

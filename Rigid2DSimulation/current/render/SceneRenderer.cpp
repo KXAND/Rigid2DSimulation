@@ -24,12 +24,12 @@ void SceneRenderer::RenderBackground(SceneCanvas const& canvas, std::wstring con
 void SceneRenderer::RenderObjects(PhysicsWorld& world, SceneRenderContext const& context) const
 {
     // 渲染
-    for (auto& body : world.bodies)
+    for (auto& body : world.GetBodies())
     {
         body->UpdateShapesPositionAndAABB();
         RenderBody(*body, context);
     }
-    for (auto& connection : world.connections)
+    for (auto& connection : world.GetConnections())
     {
         connection->UpdatePosition();
         RenderConnection(*connection, context);
@@ -59,7 +59,7 @@ void SceneRenderer::RenderCollision(Collision const& collision, SceneRenderConte
 void SceneRenderer::RenderBody(Body const& body, SceneRenderContext const& context) const
 {
     bool isSelectedConnection = context.selectedConnection &&
-                                (context.selectedConnection->body0 == &body || context.selectedConnection->body1 == &body);
+                                (context.selectedConnection->GetBody0() == &body || context.selectedConnection->GetBody1() == &body);
     Color normalColor;
     switch (display)
     {
@@ -130,10 +130,11 @@ void SceneRenderer::RenderBody(Body const& body, SceneRenderContext const& conte
         DrawLineSegment(context.screen, context.depthBuffer, p0, p1, body.GetDepth(), context.viewport, Color(0, 255, 255));
     }
 
-    if (!body.track.empty())
+    auto track = context.tracks.find(&body);
+    if (track != context.tracks.end() && !track->second.empty())
     {
-        Vector2 p0 = body.track.front();
-        for (auto p1 : body.track)
+        Vector2 p0 = track->second.front();
+        for (auto p1 : track->second)
         {
             DrawLineSegment(context.screen, context.depthBuffer, p0, p1, 10, context.viewport, Color(255, 0, 255));
             p0 = p1;

@@ -68,13 +68,12 @@ void CreateBody(PhysicsWorld& physicsWorld, Value const& shapeConfigurations, Va
     {
         body = std::make_shared<Body>(shapes, properties);
     }
-    physicsWorld.bodies.push_back(body);
-    physicsWorld.isSceneChanged = true;
+    physicsWorld.AddBody(body);
 }
 
 void CreateConnection(PhysicsWorld& physicsWorld, Value const& configuration)
 {
-    auto& bodies = physicsWorld.bodies;
+    auto& bodies = physicsWorld.GetBodies();
     int idx0 = GenerateRandomInt(bodies.size());
     int idx1 = GenerateRandomInt(bodies.size());
     TryReadConfigNumber(configuration, L"index0", idx0);
@@ -82,11 +81,9 @@ void CreateConnection(PhysicsWorld& physicsWorld, Value const& configuration)
     idx0 = Clamp(idx0, 0, (int)bodies.size());
     idx1 = Clamp(idx1, 0, (int)bodies.size());
 
-    auto connection = std::make_shared<Connection>();
-    connection->body0 = &*bodies[idx0];
-    connection->body1 = &*bodies[idx1];
-    connection->p0Relative = connection->body0->GenerateRandomPointInside();
-    connection->p1Relative = connection->body1->GenerateRandomPointInside();
+    auto connection = std::make_shared<Connection>(&*bodies[idx0], &*bodies[idx1]);
+    connection->p0Relative = connection->GetBody0()->GenerateRandomPointInside();
+    connection->p1Relative = connection->GetBody1()->GenerateRandomPointInside();
 
     bool absolute = false;
     TryReadConfigNumber(configuration, L"absolute", absolute);
@@ -95,8 +92,8 @@ void CreateConnection(PhysicsWorld& physicsWorld, Value const& configuration)
         connection->p0Relative = ToVector2(*value);
         if (absolute)
         {
-            connection->p0Relative -= connection->body0->position;
-            connection->p0Relative = connection->body0->transform.Inverse() * connection->p0Relative;
+            connection->p0Relative -= connection->GetBody0()->position;
+            connection->p0Relative = connection->GetBody0()->transform.Inverse() * connection->p0Relative;
         }
     }
     if (auto value = FindConfigValue(configuration, L"point1"))
@@ -104,17 +101,14 @@ void CreateConnection(PhysicsWorld& physicsWorld, Value const& configuration)
         connection->p1Relative = ToVector2(*value);
         if (absolute)
         {
-            connection->p1Relative -= connection->body1->position;
-            connection->p1Relative = connection->body1->transform.Inverse() * connection->p1Relative;
+            connection->p1Relative -= connection->GetBody1()->position;
+            connection->p1Relative = connection->GetBody1()->transform.Inverse() * connection->p1Relative;
         }
     }
-
-    connection->SignUpToBodies();
     connection->UpdatePosition();
     connection->length = (connection->p0 - connection->p1).GetLength();
     ApplyConnectionConfig(*connection, configuration);
-    physicsWorld.connections.push_back(connection);
-    physicsWorld.isSceneChanged = true;
+    physicsWorld.AddConnection(connection);
 }
 
 void Boundary(PhysicsWorld& physicsWorld, DRect canvasRect, Value const& thickness, Value const& configuration)
@@ -133,14 +127,13 @@ void Boundary(PhysicsWorld& physicsWorld, DRect canvasRect, Value const& thickne
         properties.innerColor = color;
         properties = ParseBodyProperties(configuration, properties);
         auto body = std::make_shared<Body>(shape, properties);
-        physicsWorld.bodies.push_back(body);
+        physicsWorld.AddBody(body);
     };
 
     addBoundaryBody(thickness.number, canvasHeight, Vector2(left, (top + bottom) / 2));
     addBoundaryBody(thickness.number, canvasHeight, Vector2(right, (top + bottom) / 2));
     addBoundaryBody(canvasWidth, thickness.number, Vector2((left + right) / 2, top));
     addBoundaryBody(canvasWidth, thickness.number, Vector2((left + right) / 2, bottom));
-    physicsWorld.isSceneChanged = true;
 }
 
 void Gear(PhysicsWorld& physicsWorld, Value const& radius, Value const& toothCount, Value const& toothHeight, Value const& configuration)
@@ -164,22 +157,18 @@ void Gear(PhysicsWorld& physicsWorld, Value const& radius, Value const& toothCou
     wheelProperties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
     wheelProperties = ParseBodyProperties(configuration, wheelProperties);
     auto wheel = std::make_shared<Body>(shapes, wheelProperties);
-    physicsWorld.bodies.push_back(wheel);
+    physicsWorld.AddBody(wheel);
 
     BodyProperties rootProperties;
     rootProperties.position = wheel->position;
     rootProperties.innerColor = wheel->appearance.innerColor;
     auto root = Body::CreatePoint(rootProperties);
-    physicsWorld.bodies.push_back(root);
+    physicsWorld.AddBody(root);
 
-    auto connection = std::make_shared<Connection>();
+    auto connection = std::make_shared<Connection>(root.get(), wheel.get());
     connection->type = kLinkConnection;
-    connection->body0 = &*root;
-    connection->body1 = &*wheel;
-    connection->SignUpToBodies();
     connection->UpdatePosition();
-    physicsWorld.connections.push_back(connection);
-    physicsWorld.isSceneChanged = true;
+    physicsWorld.AddConnection(connection);
 }
 
 void Strand(PhysicsWorld& physicsWorld, Value const& point0Value, Value const& point1Value,
@@ -200,7 +189,7 @@ void Strand(PhysicsWorld& physicsWorld, Value const& point0Value, Value const& p
     firstProperties.position = p0;
     firstProperties = ParseBodyProperties(bodyConfiguration, firstProperties);
     previousBody = std::make_shared<Body>(firstShape, firstProperties);
-    physicsWorld.bodies.push_back(previousBody);
+    physicsWorld.AddBody(previousBody);
 
     for (int i = (1), iEnd = int(bodyCount + 1); i < iEnd; ++i)
     {
@@ -210,21 +199,17 @@ void Strand(PhysicsWorld& physicsWorld, Value const& point0Value, Value const& p
         properties.position = (p0 * (bodyCount - i) + p1 * i) / bodyCount;
         properties = ParseBodyProperties(bodyConfiguration, properties);
         currentBody = std::make_shared<Body>(shape, properties);
-        physicsWorld.bodies.push_back(currentBody);
+        physicsWorld.AddBody(currentBody);
 
-        connection = std::make_shared<Connection>();
-        connection->body0 = &*previousBody;
-        connection->body1 = &*currentBody;
+        connection = std::make_shared<Connection>(&*previousBody, &*currentBody);
         connection->length = gap;
         connection->p0Relative = +bodyRadius * (p1 - p0).GetNormalized();
         connection->p1Relative = -bodyRadius * (p1 - p0).GetNormalized();
         ApplyConnectionConfig(*connection, connectionConfiguration);
-        connection->SignUpToBodies();
         connection->UpdatePosition();
-        physicsWorld.connections.push_back(connection);
+        physicsWorld.AddConnection(connection);
         previousBody = currentBody;
     }
-    physicsWorld.isSceneChanged = true;
 }
 
 void Necklace(PhysicsWorld& physicsWorld, Value const& centerValue, Value const& radius,
@@ -245,7 +230,7 @@ void Necklace(PhysicsWorld& physicsWorld, Value const& centerValue, Value const&
     firstProperties.position = center + Vector2(radius.number, 0);
     firstProperties = ParseBodyProperties(bodyConfiguration, firstProperties);
     previousBody = std::make_shared<Body>(firstShape, firstProperties);
-    physicsWorld.bodies.push_back(previousBody);
+    physicsWorld.AddBody(previousBody);
     firstBody = previousBody;
 
     for (int i = (1), iEnd = int(bodyCount); i < iEnd; ++i)
@@ -257,34 +242,27 @@ void Necklace(PhysicsWorld& physicsWorld, Value const& centerValue, Value const&
         properties.position = center + Vector2(cos(phi), sin(phi)) * radius.number;
         properties = ParseBodyProperties(bodyConfiguration, properties);
         currentBody = std::make_shared<Body>(shape, properties);
-        physicsWorld.bodies.push_back(currentBody);
+        physicsWorld.AddBody(currentBody);
 
-        connection = std::make_shared<Connection>();
-        connection->body0 = &*previousBody;
-        connection->body1 = &*currentBody;
+        connection = std::make_shared<Connection>(&*previousBody, &*currentBody);
         connection->length = gap;
         connection->p1Relative = ballRadius * Vector2(+sin(phi), -cos(phi));
         phi = 2 * kPi * (i - 1) / bodyCount;
         connection->p0Relative = ballRadius * Vector2(-sin(phi), +cos(phi));
         ApplyConnectionConfig(*connection, connectionConfiguration);
-        connection->SignUpToBodies();
         connection->UpdatePosition();
-        physicsWorld.connections.push_back(connection);
+        physicsWorld.AddConnection(connection);
         previousBody = currentBody;
     }
 
     double phi = 2 * kPi * bodyCount / bodyCount;
     currentBody = firstBody;
-    connection = std::make_shared<Connection>();
-    connection->body0 = &*previousBody;
-    connection->body1 = &*currentBody;
+    connection = std::make_shared<Connection>(&*previousBody, &*currentBody);
     connection->length = gap;
     connection->p1Relative = ballRadius * Vector2(+sin(phi), -cos(phi));
     phi = 2 * kPi * (bodyCount - 1) / bodyCount;
     connection->p0Relative = ballRadius * Vector2(-sin(phi), +cos(phi));
     ApplyConnectionConfig(*connection, connectionConfiguration);
-    connection->SignUpToBodies();
     connection->UpdatePosition();
-    physicsWorld.connections.push_back(connection);
-    physicsWorld.isSceneChanged = true;
+    physicsWorld.AddConnection(connection);
 }
