@@ -12,6 +12,22 @@ typedef vector<ScriptStatement> Program;
 
 struct Shape;
 struct Connection;
+struct SceneStorage;
+
+// 创建输入或刷新快照；派生量仍由 Body 计算。
+struct BodyProperties
+{
+    Vector2 position, velocity;
+    double radian = 0, velocityAngular = 0;
+    bool fixed = false;
+    double density = 1;
+    double elasticity = 0.7;
+    double frictionStatic = 0.5, frictionDynamic = 0.3;
+    double dampCoeff = 0.1, dampCoeffAngular = 0.1;
+    double chargeDensity = 0;
+    Color innerColor;
+};
+
 struct BodyAppearance
 {
     double depthShape = 0, depthPoint = 1;
@@ -62,10 +78,16 @@ struct Body
     BodyAppearance appearance;
     BodyScriptData scriptData;
 
-    Body();
-    Body(Vector2 const& position);
-    Body(std::shared_ptr<Shape> shape);
-    Body(vector<std::shared_ptr<Shape>> const& shapes);
+    Body(std::shared_ptr<Shape> shape, BodyProperties const& properties = {});
+    Body(vector<std::shared_ptr<Shape>> const& shapes, BodyProperties const& properties = {});
+    // 使用输入形状的中心作为位置，覆盖 properties.position。
+    static std::shared_ptr<Body> CreateAtShapeCenter(vector<std::shared_ptr<Shape>> const& shapes,
+                                                   BodyProperties const& properties = {});
+    static std::shared_ptr<Body> CreatePoint(Vector2 const& position);
+    static std::shared_ptr<Body> CreatePoint(BodyProperties const& properties);
+
+    BodyProperties GetProperties() const;
+    void ApplyProperties(BodyProperties const& properties);
 
     Vector2 GenerateRandomPointInside() const;
     bool IsInside(Vector2 p) const;
@@ -73,12 +95,17 @@ struct Body
     void Warp(DRect rectangle, bool isWarpBlocked);
     double GetDepth() const;
 
-private:
-    void UpdateAABB();
-
-public:
-    void Init(bool resetPosition = false);
     void Step(Vector2 const& gravity, double stepDeltaTime, std::function<void(bool)> const& applyPresets);
+
+private:
+    friend struct SceneStorage;
+
+    // 存档需先读取字段、执行对象脚本，再按原时点计算。
+    Body();
+    void AssignProperties(BodyProperties const& properties);
+    // 重算普通物体的派生量和局部几何，返回输入形状中心；不设置位置或同步世界几何。
+    Vector2 Recalculate();
+    void UpdateAABB();
 };
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulombConstant);

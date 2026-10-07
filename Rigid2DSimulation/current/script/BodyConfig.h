@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-struct Body;
+#include "Body.h"
+
 struct Value;
 
-void ApplyBodyConfig(Body& body, Value const& config);
+BodyProperties ParseBodyProperties(Value const& config, BodyProperties defaults = {});

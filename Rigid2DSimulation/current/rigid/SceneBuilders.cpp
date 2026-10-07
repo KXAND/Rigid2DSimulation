@@ -51,20 +51,23 @@ void CreateBody(PhysicsWorld& physicsWorld, Value const& shapeConfigurations, Va
         shapes.push_back(shape);
     }
 
+    BodyProperties properties;
+    properties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+    properties = ParseBodyProperties(configuration, properties);
+    bool resetPosition = false;
+    TryReadConfigNumber(configuration, L"resetPosition", resetPosition);
     if (point)
     {
-        body = std::make_shared<Body>(Vector2());
+        body = Body::CreatePoint(properties);
+    }
+    else if (resetPosition)
+    {
+        body = Body::CreateAtShapeCenter(shapes, properties);
     }
     else
     {
-        body = std::make_shared<Body>(shapes);
+        body = std::make_shared<Body>(shapes, properties);
     }
-
-    body->appearance.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-    ApplyBodyConfig(*body, configuration);
-    bool resetPosition = false;
-    TryReadConfigNumber(configuration, L"resetPosition", resetPosition);
-    body->Init(resetPosition);
     physicsWorld.bodies.push_back(body);
     physicsWorld.isSceneChanged = true;
 }
@@ -124,12 +127,12 @@ void Boundary(PhysicsWorld& physicsWorld, DRect canvasRect, Value const& thickne
     auto addBoundaryBody = [&physicsWorld, &configuration, color](double width, double height, Vector2 position)
     {
         auto shape = std::make_shared<Shape>(GetRectVerticesByCenter(width, height));
-        auto body = std::make_shared<Body>(shape);
-        body->position = position;
-        body->fixed = true;
-        body->appearance.innerColor = color;
-        ApplyBodyConfig(*body, configuration);
-        body->Init();
+        BodyProperties properties;
+        properties.position = position;
+        properties.fixed = true;
+        properties.innerColor = color;
+        properties = ParseBodyProperties(configuration, properties);
+        auto body = std::make_shared<Body>(shape, properties);
         physicsWorld.bodies.push_back(body);
     };
 
@@ -157,15 +160,16 @@ void Gear(PhysicsWorld& physicsWorld, Value const& radius, Value const& toothCou
         shapes.push_back(toothShape);
     }
 
-    auto wheel = std::make_shared<Body>(shapes);
-    wheel->appearance.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-    ApplyBodyConfig(*wheel, configuration);
-    wheel->Init();
+    BodyProperties wheelProperties;
+    wheelProperties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+    wheelProperties = ParseBodyProperties(configuration, wheelProperties);
+    auto wheel = std::make_shared<Body>(shapes, wheelProperties);
     physicsWorld.bodies.push_back(wheel);
 
-    auto root = std::make_shared<Body>(wheel->position);
-    root->appearance.innerColor = wheel->appearance.innerColor;
-    root->Init();
+    BodyProperties rootProperties;
+    rootProperties.position = wheel->position;
+    rootProperties.innerColor = wheel->appearance.innerColor;
+    auto root = Body::CreatePoint(rootProperties);
     physicsWorld.bodies.push_back(root);
 
     auto connection = std::make_shared<Connection>();
@@ -191,21 +195,21 @@ void Strand(PhysicsWorld& physicsWorld, Value const& point0Value, Value const& p
     Color bodyColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 
     auto firstShape = std::make_shared<Shape>(bodyRadius);
-    previousBody = std::make_shared<Body>(firstShape);
-    previousBody->appearance.innerColor = bodyColor;
-    previousBody->position = p0;
-    ApplyBodyConfig(*previousBody, bodyConfiguration);
-    previousBody->Init();
+    BodyProperties firstProperties;
+    firstProperties.innerColor = bodyColor;
+    firstProperties.position = p0;
+    firstProperties = ParseBodyProperties(bodyConfiguration, firstProperties);
+    previousBody = std::make_shared<Body>(firstShape, firstProperties);
     physicsWorld.bodies.push_back(previousBody);
 
     for (int i = (1), iEnd = int(bodyCount + 1); i < iEnd; ++i)
     {
         auto shape = std::make_shared<Shape>(bodyRadius);
-        currentBody = std::make_shared<Body>(shape);
-        currentBody->appearance.innerColor = bodyColor;
-        currentBody->position = (p0 * (bodyCount - i) + p1 * i) / bodyCount;
-        ApplyBodyConfig(*currentBody, bodyConfiguration);
-        currentBody->Init();
+        BodyProperties properties;
+        properties.innerColor = bodyColor;
+        properties.position = (p0 * (bodyCount - i) + p1 * i) / bodyCount;
+        properties = ParseBodyProperties(bodyConfiguration, properties);
+        currentBody = std::make_shared<Body>(shape, properties);
         physicsWorld.bodies.push_back(currentBody);
 
         connection = std::make_shared<Connection>();
@@ -236,11 +240,11 @@ void Necklace(PhysicsWorld& physicsWorld, Value const& centerValue, Value const&
     Color bodyColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
 
     auto firstShape = std::make_shared<Shape>(ballRadius);
-    previousBody = std::make_shared<Body>(firstShape);
-    previousBody->appearance.innerColor = bodyColor;
-    previousBody->position = center + Vector2(radius.number, 0);
-    ApplyBodyConfig(*previousBody, bodyConfiguration);
-    previousBody->Init();
+    BodyProperties firstProperties;
+    firstProperties.innerColor = bodyColor;
+    firstProperties.position = center + Vector2(radius.number, 0);
+    firstProperties = ParseBodyProperties(bodyConfiguration, firstProperties);
+    previousBody = std::make_shared<Body>(firstShape, firstProperties);
     physicsWorld.bodies.push_back(previousBody);
     firstBody = previousBody;
 
@@ -248,11 +252,11 @@ void Necklace(PhysicsWorld& physicsWorld, Value const& centerValue, Value const&
     {
         double phi = 2 * kPi * i / bodyCount;
         auto shape = std::make_shared<Shape>(ballRadius);
-        currentBody = std::make_shared<Body>(shape);
-        currentBody->appearance.innerColor = bodyColor;
-        currentBody->position = center + Vector2(cos(phi), sin(phi)) * radius.number;
-        ApplyBodyConfig(*currentBody, bodyConfiguration);
-        currentBody->Init();
+        BodyProperties properties;
+        properties.innerColor = bodyColor;
+        properties.position = center + Vector2(cos(phi), sin(phi)) * radius.number;
+        properties = ParseBodyProperties(bodyConfiguration, properties);
+        currentBody = std::make_shared<Body>(shape, properties);
         physicsWorld.bodies.push_back(currentBody);
 
         connection = std::make_shared<Connection>();

@@ -91,14 +91,15 @@ void Creator::UpdateBox(PhysicsWorld& world, AppInput& input)
         double minimumSize = 10;
         if (x1 - x0 >= minimumSize && y1 - y0 >= minimumSize)
         {
-            body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(x1 - x0, y1 - y0)));
-            body->position = Vector2(x0 + x1, y0 + y1) / 2;
-            body->appearance.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+            auto shape = std::make_shared<Shape>(GetRectVerticesByCenter(x1 - x0, y1 - y0));
+            BodyProperties properties;
+            properties.position = Vector2(x0 + x1, y0 + y1) / 2;
+            properties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
             if (bodyConfiguration)
             {
-                ApplyBodyConfig(*body, *bodyConfiguration);
+                properties = ParseBodyProperties(*bodyConfiguration, properties);
             }
-            body->Init();
+            body = std::make_shared<Body>(shape, properties);
         }
 
         if (!input.mouseButtonDown[0])
@@ -129,14 +130,15 @@ void Creator::UpdateBall(PhysicsWorld& world, AppInput& input)
         double minimumRadius = 7.5;
         if (dragRadius > minimumRadius)
         {
-            body = std::make_shared<Body>(std::make_shared<Shape>(dragRadius));
-            body->position = Vector2(creationStartPoint);
-            body->appearance.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+            auto shape = std::make_shared<Shape>(dragRadius);
+            BodyProperties properties;
+            properties.position = Vector2(creationStartPoint);
+            properties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
             if (bodyConfiguration)
             {
-                ApplyBodyConfig(*body, *bodyConfiguration);
+                properties = ParseBodyProperties(*bodyConfiguration, properties);
             }
-            body->Init();
+            body = std::make_shared<Body>(shape, properties);
         }
 
         if (!input.mouseButtonDown[0])
@@ -169,15 +171,16 @@ void Creator::UpdatePlate(PhysicsWorld& world, AppInput& input)
         double dragLen = sqrt(dragVector.GetLengthSquared());
         if (dragLen > minimumLength)
         {
-            body = std::make_shared<Body>(std::make_shared<Shape>(GetRectVerticesByCenter(dragLen + plateThickness, plateThickness)));
-            body->position = Vector2(creationStartPoint + input.mousePosition) / 2;
-            body->radian = atan2(dragVector.y, dragVector.x);
-            body->appearance.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+            auto shape = std::make_shared<Shape>(GetRectVerticesByCenter(dragLen + plateThickness, plateThickness));
+            BodyProperties properties;
+            properties.position = Vector2(creationStartPoint + input.mousePosition) / 2;
+            properties.radian = atan2(dragVector.y, dragVector.x);
+            properties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
             if (bodyConfiguration)
             {
-                ApplyBodyConfig(*body, *bodyConfiguration);
+                properties = ParseBodyProperties(*bodyConfiguration, properties);
             }
-            body->Init();
+            body = std::make_shared<Body>(shape, properties);
         }
 
         if (!input.mouseButtonDown[0])
@@ -243,13 +246,14 @@ void Creator::UpdatePoint(PhysicsWorld& world, AppInput& input)
 {
     if (hovered && input.IsMouseClickedDown(0))
     {
-        body = std::make_shared<Body>((Vector2)input.mousePosition);
-        body->appearance.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+        BodyProperties properties;
+        properties.position = (Vector2)input.mousePosition;
+        properties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
         if (bodyConfiguration)
         {
-            ApplyBodyConfig(*body, *bodyConfiguration);
+            properties = ParseBodyProperties(*bodyConfiguration, properties);
         }
-        body->Init();
+        body = Body::CreatePoint(properties);
         world.bodies.push_back(body);
         body = NULL;
         world.isSceneChanged = true;
@@ -259,8 +263,7 @@ void Creator::UpdateNail(PhysicsWorld& world, AppInput& input)
 {
     if (body0)
     {
-        body = std::make_shared<Body>(body0->position + body0->transform * p0Relative);
-        body->Init();
+        body = Body::CreatePoint(body0->position + body0->transform * p0Relative);
         world.bodies.push_back(body);
         connection = std::make_shared<Connection>();
         connection->type = kLinkConnection;
@@ -281,14 +284,15 @@ void Creator::UpdateParticle(PhysicsWorld& world, AppInput& input)
 {
     if (hovered && input.IsMouseClickedDown(0))
     {
-        body = std::make_shared<Body>(std::make_shared<Shape>(radius));
-        body->position = (Vector2)input.mousePosition;
-        body->appearance.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
+        auto shape = std::make_shared<Shape>(radius);
+        BodyProperties properties;
+        properties.position = (Vector2)input.mousePosition;
+        properties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
         if (bodyConfiguration)
         {
-            ApplyBodyConfig(*body, *bodyConfiguration);
+            properties = ParseBodyProperties(*bodyConfiguration, properties);
         }
-        body->Init();
+        body = std::make_shared<Body>(shape, properties);
         world.bodies.push_back(body);
         body = NULL;
         world.isSceneChanged = true;

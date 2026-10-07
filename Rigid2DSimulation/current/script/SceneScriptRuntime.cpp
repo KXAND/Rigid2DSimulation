@@ -292,7 +292,7 @@ void SceneScriptRuntime::RefreshBodyScript(Body& body)
         return;
     }
     auto const& bodyConfig = *currentScope[L"body"];
-    ApplyBodyConfig(body, bodyConfig);
+    auto properties = ParseBodyProperties(bodyConfig, body.GetProperties());
 
     // 这些单独放是因为它们无法只能通过 scriptText 获得，无法保存。
     TryReadConfigNumber(bodyConfig, L"hasPositionPreset", body.scriptData.hasPositionPreset);
@@ -310,7 +310,7 @@ void SceneScriptRuntime::RefreshBodyScript(Body& body)
     {
         body.scriptData.angularVelocityProgram = std::make_shared<Program>(value->bodyStatements);
     }
-    body.Init();
+    body.ApplyProperties(properties);
 }
 
 void SceneScriptRuntime::RefreshConnectionScript(Connection& connection)

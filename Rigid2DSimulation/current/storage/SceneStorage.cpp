@@ -134,7 +134,8 @@ void SceneStorage::SaveBody(FILE* file, Body const& body)
 
 std::shared_ptr<Body> SceneStorage::LoadBody(FILE* file)
 {
-    auto body = std::make_shared<Body>();
+    // 此处只恢复记录；Load 中的脚本刷新负责原时点的计算。
+    auto body = std::shared_ptr<Body>(new Body());
     int size = 0;
     fread(&(body->point), sizeof(body->point), 1, file);
     fread(&(body->fixed), sizeof(body->fixed), 1, file);

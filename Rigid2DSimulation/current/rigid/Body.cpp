@@ -3,29 +3,96 @@
 #include "Shape.h"
 #include "Connection.h"
 
-// 这些构造函数真的很混乱。
 Body::Body()
 {
-    density = 1;
-    dampCoeff = 0.1;
-    dampCoeffAngular = 0.1;
-    elasticity = 0.7;
-    frictionStatic = 0.5;
-    frictionDynamic = 0.3;
+    AssignProperties(BodyProperties{});
 }
-Body::Body(Vector2 const& position) : Body()
+
+Body::Body(std::shared_ptr<Shape> shape, BodyProperties const& properties)
+    : Body(vector<std::shared_ptr<Shape>>{shape}, properties)
 {
-    point = true;
-    this->position = position;
 }
-Body::Body(std::shared_ptr<Shape> shape) : Body()
+
+Body::Body(vector<std::shared_ptr<Shape>> const& shapes, BodyProperties const& properties)
+    : shapes(shapes)
 {
-    shapes = {shape};
+    ApplyProperties(properties);
 }
-Body::Body(vector<std::shared_ptr<Shape>> const& shapes) : Body()
+
+std::shared_ptr<Body> Body::CreateAtShapeCenter(vector<std::shared_ptr<Shape>> const& shapes,
+                                              BodyProperties const& properties)
 {
-    this->shapes = shapes;
+    auto body = std::shared_ptr<Body>(new Body());
+    body->shapes = shapes;
+    body->AssignProperties(properties);
+    body->position = body->Recalculate();
+    body->UpdateShapesPositionAndAABB();
+    return body;
 }
+
+std::shared_ptr<Body> Body::CreatePoint(Vector2 const& position)
+{
+    BodyProperties properties;
+    properties.position = position;
+    return CreatePoint(properties);
+}
+
+std::shared_ptr<Body> Body::CreatePoint(BodyProperties const& properties)
+{
+    auto body = std::shared_ptr<Body>(new Body());
+    body->point = true;
+    body->AssignProperties(properties);
+    return body;
+}
+
+BodyProperties Body::GetProperties() const
+{
+    BodyProperties properties;
+    properties.position = position;
+    properties.velocity = velocity;
+    properties.radian = radian;
+    properties.velocityAngular = velocityAngular;
+    properties.fixed = fixed;
+    properties.density = density;
+    properties.elasticity = elasticity;
+    properties.frictionStatic = frictionStatic;
+    properties.frictionDynamic = frictionDynamic;
+    properties.dampCoeff = dampCoeff;
+    properties.dampCoeffAngular = dampCoeffAngular;
+    properties.chargeDensity = chargeDensity;
+    properties.innerColor = appearance.innerColor;
+    return properties;
+}
+
+void Body::AssignProperties(BodyProperties const& properties)
+{
+    position = properties.position;
+    velocity = properties.velocity;
+    radian = properties.radian;
+    velocityAngular = properties.velocityAngular;
+    fixed = properties.fixed;
+    density = properties.density;
+    elasticity = properties.elasticity;
+    frictionStatic = properties.frictionStatic;
+    frictionDynamic = properties.frictionDynamic;
+    dampCoeff = properties.dampCoeff;
+    dampCoeffAngular = properties.dampCoeffAngular;
+    chargeDensity = properties.chargeDensity;
+    appearance.innerColor = properties.innerColor;
+}
+
+void Body::ApplyProperties(BodyProperties const& properties)
+{
+    AssignProperties(properties);
+    if (point)
+    {
+        return;
+    }
+
+    Recalculate();
+    UpdateShapesPositionAndAABB();
+}
+
 double Body::GetDepth() const
 {
     return point ? appearance.depthPoint : appearance.depthShape;
@@ -116,14 +183,9 @@ void Body::Warp(DRect rectangle, bool isWarpBlocked)
     }
 }
 
-void Body::Init(bool resetPosition)
+Vector2 Body::Recalculate()
 {
-    // 这里假设是之前没有乱改成员。
-    if (point)
-    {
-        return;
-    }
-
+    // 刷新仍完整执行旧计算，包括重复调用时的局部几何处理。
     area = 0;
     Vector2 center;
     inertia = 0;
@@ -162,10 +224,6 @@ void Body::Init(bool resetPosition)
     charge = chargeDensity * area;
     invMass = fixed ? 0 : 1 / (density * area);
     invInertia = fixed ? 0 : 1 / (density * inertia);
-    if (resetPosition)
-    {
-        position = center;
-    }
     for (auto shape : shapes)
     {
         shape->relativePosition -= center;
@@ -174,7 +232,7 @@ void Body::Init(bool resetPosition)
             v -= center;
         }
     }
-    UpdateShapesPositionAndAABB();
+    return center;
 }
 
 void Body::Step(Vector2 const& gravity, double stepDeltaTime, std::function<void(bool)> const& applyPresets)
