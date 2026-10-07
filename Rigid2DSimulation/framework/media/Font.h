@@ -10,8 +10,9 @@ wchar_t extern additionalChineseCharacters[];
 
 // 中文字体规格：画布：600x600，粗细：40，保存后：60x60。
 // 由于历史原因，颜色一般是: (0,255,0)。
-struct Font
+class Font
 {
+public:
     int height = 0;
     wstring chineseCharacters;
     Tile missing;

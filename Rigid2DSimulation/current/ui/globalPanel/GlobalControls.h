@@ -2,7 +2,8 @@
 
 #include "RichLabel.h"
 
-struct GlobalDetailsLabel : RichLabel
+class GlobalDetailsLabel : public RichLabel
 {
+public:
     void Sync(App& app) override;
 };

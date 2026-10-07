@@ -9,32 +9,36 @@
 #include "Separator.h"
 #include "TextBox.h"
 
-struct ParameterNameTextBox : TextBox
+class ParameterNameTextBox : public TextBox
 {
+public:
     int id = 0;
     ParameterNameTextBox(int id);
     void Sync(App& app) override;
     void OnDone(App& app) const override;
 };
 
-struct ParameterValueDragBar : HorizontalDragBar
+class ParameterValueDragBar : public HorizontalDragBar
 {
+public:
     int id = 0;
     ParameterValueDragBar(int id);
     void Sync(App& app) override;
     void Upload(App& app) const override;
 };
 
-struct ParameterValueTextBox : TextBox
+class ParameterValueTextBox : public TextBox
 {
+public:
     int id = 0;
     ParameterValueTextBox(int id);
     void Sync(App& app) override;
     void OnDone(App& app) const override;
 };
 
-struct ParameterControlRow : VerticalControlList
+class ParameterControlRow : public VerticalControlList
 {
+public:
     std::shared_ptr<ParameterNameTextBox> nameTextBox;
     std::shared_ptr<ParameterDeletionButton> deleteButton;
     std::shared_ptr<HorizontalControlList> nameControls;
@@ -45,8 +49,9 @@ struct ParameterControlRow : VerticalControlList
     ParameterControlRow(int id);
 };
 
-struct ParameterControlList : VerticalControlList
+class ParameterControlList : public VerticalControlList
 {
+public:
     vector<std::shared_ptr<ParameterControlRow>> parameterRows;
     void Update(App& app) override;
 };

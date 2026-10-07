@@ -5,11 +5,12 @@
 #include "SceneRenderer.h"
 #include "SceneScriptRuntime.h"
 
-struct UserInterface;
-struct SceneCanvas;
-struct AudioClip;
-struct SimulationApp : App
+class UserInterface;
+class SceneCanvas;
+class AudioClip;
+class SimulationApp : public App
 {
+public:
     std::shared_ptr<UserInterface> userInterface;
     std::shared_ptr<SceneCanvas> sceneCanvas;
     PhysicsWorld physicsWorld;

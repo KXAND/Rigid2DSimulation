@@ -2,8 +2,9 @@
 #include "Font.h"
 #include "Control.h"
 
-struct TextBox : Control
+class TextBox : public Control
 {
+public:
     DVector2 gap;
     double depth = 0;
     wstring labelText;
@@ -77,8 +78,9 @@ struct TextBox : Control
     void Discard(App& app) override;
     void PreUpdate(App& app) override;
 };
-struct LocalizedTextBox : TextBox
+class LocalizedTextBox : public TextBox
 {
+public:
     wstring labelTextId;
     LocalizedTextBox() = default;
     LocalizedTextBox(wstring const& id, int width);

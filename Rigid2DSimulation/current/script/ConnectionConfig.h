@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-struct Connection;
+class Connection;
 struct Value;
 
 void ApplyConnectionConfig(Connection& connection, Value const& configuration);

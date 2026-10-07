@@ -8,17 +8,19 @@
 #include "RichTextBox.h"
 #include "Separator.h"
 
-struct Connection;
+class Connection;
 
-struct ConnectionScriptEditor : RichTextBox
+class ConnectionScriptEditor : public RichTextBox
 {
+public:
     ConnectionScriptEditor();
     void Sync(App& app) override;
     void Upload(App& app) const override;
 };
 
-struct ConnectionEditorControls : VerticalControlList
+class ConnectionEditorControls : public VerticalControlList
 {
+public:
     Connection* selectedConnection = NULL;
     std::shared_ptr<ConnectionScriptEditor> scriptEditor;
     std::shared_ptr<ConnectionScriptApplicationButton> applyButton;
@@ -30,7 +32,8 @@ struct ConnectionEditorControls : VerticalControlList
     void Discard(App& app) override;
 };
 
-struct ConnectionDetailsLabel : RichLabel
+class ConnectionDetailsLabel : public RichLabel
 {
+public:
     void Sync(App& app) override;
 };

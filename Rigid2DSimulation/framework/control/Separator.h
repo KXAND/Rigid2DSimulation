@@ -2,8 +2,9 @@
 #include "Tile.h"
 #include "Control.h"
 
-struct HorizontalSeparator : Control
+class HorizontalSeparator : public Control
 {
+public:
     int width = 0;
     DVector2 gap;
     Color markerColor;

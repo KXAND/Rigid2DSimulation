@@ -6,8 +6,9 @@
 #include "ControlList.h"
 #include "FloatPanel.h"
 
-struct ConnectionPanel : LocalizedFloatPanel
+class ConnectionPanel : public LocalizedFloatPanel
 {
+public:
     std::shared_ptr<ConnectionEditorControls> editorControls;
     std::shared_ptr<ConnectionDetailsLabel> detailsLabel;
     std::shared_ptr<VerticalControlList> controls;

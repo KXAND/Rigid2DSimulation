@@ -2,15 +2,17 @@
 
 #include "Button.h"
 
-struct ParameterDeletionButton : LocalizedButton
+class ParameterDeletionButton : public LocalizedButton
 {
+public:
     int id = 0;
     ParameterDeletionButton(int id);
     void OnClick(App& app) override;
 };
 
-struct ParameterAdditionButton : LocalizedButton
+class ParameterAdditionButton : public LocalizedButton
 {
+public:
     ParameterAdditionButton();
     void OnClick(App& app) override;
 };

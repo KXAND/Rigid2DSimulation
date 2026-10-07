@@ -2,8 +2,9 @@
 #include "Utils.h"
 
 // 这里反正能用，不知道有没有更好的实现方式。
-struct WaveBlock
+class WaveBlock
 {
+public:
     WAVEHDR waveHeader{};
     vector<int16_t> samples;
 
@@ -14,8 +15,9 @@ struct WaveBlock
     bool Finish(HWAVEOUT waveOutputHandle);
 };
 
-struct WaveOutput
+class WaveOutput
 {
+public:
     HWAVEOUT waveOutputHandle{};
     int sampleRate = 0;
     int safeBlockCount = 0;

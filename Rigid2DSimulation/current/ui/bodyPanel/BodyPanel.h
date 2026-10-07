@@ -6,8 +6,9 @@
 #include "ControlList.h"
 #include "FloatPanel.h"
 
-struct BodyPanel : LocalizedFloatPanel
+class BodyPanel : public LocalizedFloatPanel
 {
+public:
     std::shared_ptr<BodyEditorControls> editorControls;
     std::shared_ptr<BodyDetailsLabel> detailsLabel;
     std::shared_ptr<VerticalControlList> controls;

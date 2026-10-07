@@ -7,8 +7,9 @@
 #include "ControlList.h"
 #include "FloatPanel.h"
 
-struct CommandPanel : LocalizedFloatPanel
+class CommandPanel : public LocalizedFloatPanel
 {
+public:
     std::shared_ptr<CommandScriptEditor> scriptEditor;
     std::shared_ptr<ScriptExecutionButton> compileButton;
     std::shared_ptr<VerticalControlList> controls;

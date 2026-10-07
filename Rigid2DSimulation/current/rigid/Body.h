@@ -10,9 +10,9 @@
 struct ScriptStatement;
 typedef vector<ScriptStatement> Program;
 
-struct Shape;
-struct Connection;
-struct SceneStorage;
+class Shape;
+class Connection;
+class SceneStorage;
 
 // 创建输入或刷新快照；派生量仍由 Body 计算。
 struct BodyProperties
@@ -58,8 +58,9 @@ struct BodyScriptData
 /// <summary>
 /// 定义单个物体的物理属性
 /// </summary>
-struct Body
+class Body
 {
+public:
     bool point = false;
     bool fixed = false;
     double inertia = 0;
@@ -106,7 +107,7 @@ struct Body
     void Step(Vector2 const& gravity, double stepDeltaTime, std::function<void(bool)> const& applyPresets);
 
 private:
-    friend struct SceneStorage;
+    friend class SceneStorage;
     friend class PhysicsWorld;
 
     vector<Connection*> connections;

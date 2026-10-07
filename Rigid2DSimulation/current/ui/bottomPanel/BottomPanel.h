@@ -6,8 +6,9 @@
 #include "ControlList.h"
 #include "Panel.h"
 
-struct BottomPanel : Panel
+class BottomPanel : public Panel
 {
+public:
     std::shared_ptr<FrameRateLabel> frameRateLabel;
     std::shared_ptr<TimeLabel> timeLabel;
     std::shared_ptr<MousePositionLabel> mousePositionLabel;

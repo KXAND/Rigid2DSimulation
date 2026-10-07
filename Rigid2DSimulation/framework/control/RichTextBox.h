@@ -3,8 +3,9 @@
 #include "Font.h"
 #include "Control.h"
 
-struct RichTextBox : Control
+class RichTextBox : public Control
 {
+public:
     DVector2 gap;
     int lineWidth = 0;
     double depth = 0;

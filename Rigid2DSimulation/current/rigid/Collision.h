@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include "Vector2.h"
 
-struct Body;
-struct Shape;
-struct Collision
+class Body;
+class Shape;
+class Collision
 {
+public:
     Body* body0 = NULL;
     Body* body1 = NULL;
     double depth = DBL_MAX;

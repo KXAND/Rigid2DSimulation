@@ -2,8 +2,9 @@
 #include "Font.h"
 #include "Control.h"
 
-struct Label : Control
+class Label : public Control
 {
+public:
     DVector2 gap;
     double depth = 0;
     int width = 0, height = 0;
@@ -20,8 +21,9 @@ struct Label : Control
     virtual void Sync(App& app) {}
     void Update(App& app) override;
 };
-struct LocalizedLabel : Label
+class LocalizedLabel : public Label
 {
+public:
     wstring textId;
     LocalizedLabel() = default;
     LocalizedLabel(wstring const& id, bool big = false);

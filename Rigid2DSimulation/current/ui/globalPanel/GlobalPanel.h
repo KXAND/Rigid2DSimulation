@@ -9,8 +9,9 @@
 #include "Separator.h"
 #include "TextBox.h"
 
-struct GlobalPanel : LocalizedFloatPanel
+class GlobalPanel : public LocalizedFloatPanel
 {
+public:
     std::shared_ptr<TextBox> savePathTextBox;
     std::shared_ptr<SceneSaveButton> saveButton;
     std::shared_ptr<HorizontalControlList> saveControls;

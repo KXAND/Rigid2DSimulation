@@ -1,19 +1,20 @@
 ﻿#pragma once
 #include "Utils.h"
 
-struct SimulationApp;
-struct FloatPanel;
-struct GlobalPanel;
-struct BodyPanel;
-struct ConnectionPanel;
-struct CommandPanel;
-struct ParameterPanel;
-struct LanguagePanel;
-struct AboutPanel;
-struct MenuPanel;
-struct BottomPanel;
-struct UserInterface
+class SimulationApp;
+class FloatPanel;
+class GlobalPanel;
+class BodyPanel;
+class ConnectionPanel;
+class CommandPanel;
+class ParameterPanel;
+class LanguagePanel;
+class AboutPanel;
+class MenuPanel;
+class BottomPanel;
+class UserInterface
 {
+public:
     vector<FloatPanel*> floatPanels;
     std::shared_ptr<GlobalPanel> globalPanel;
     std::shared_ptr<BodyPanel> bodyPanel;

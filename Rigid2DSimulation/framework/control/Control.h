@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include "DVector2.h"
 
-struct App;
-struct Control
+class App;
+class Control
 {
+public:
     DVector2 topLeft;
     DRect viewport;
 
@@ -24,8 +25,9 @@ struct Control
 };
 // Delegate 会自动 Discard 它的成员，这是它与 CtrlList 不同的一点。
 // Delegate 要求 control 一直是有效的，即使是在 control 被覆盖的那一帧。
-struct Delegate : Control
+class Delegate : public Control
 {
+public:
     Control* control = NULL;
     void SetControl(App& app, Control* newControl);
     int GetWidth() const override;

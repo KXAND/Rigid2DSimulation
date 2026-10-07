@@ -10,13 +10,14 @@ int constexpr kCreatePoint = 5;
 int constexpr kCreateNail = 6;
 
 struct Value;
-struct AppInput;
+class AppInput;
 struct InputOwners;
 class PhysicsWorld;
-struct Body;
-struct Connection;
-struct Creator
+class Body;
+class Connection;
+class Creator
 {
+public:
     int mode = 0;
     double bodyDepth = 0;
     double connectionDepth = 0;

@@ -6,8 +6,9 @@
 #include "FloatPanel.h"
 #include "LanguageButtons.h"
 
-struct LanguagePanel : LocalizedFloatPanel
+class LanguagePanel : public LocalizedFloatPanel
 {
+public:
     std::shared_ptr<ChineseLanguageButton> chineseButton;
     std::shared_ptr<EnglishLanguageButton> englishButton;
     std::shared_ptr<VerticalControlList> controls;

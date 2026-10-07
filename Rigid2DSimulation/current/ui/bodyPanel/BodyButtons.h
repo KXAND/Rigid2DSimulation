@@ -2,14 +2,16 @@
 
 #include "Button.h"
 
-struct BodyScriptApplicationButton : LocalizedButton
+class BodyScriptApplicationButton : public LocalizedButton
 {
+public:
     BodyScriptApplicationButton();
     void OnClick(App& app) override;
 };
 
-struct BodyDeletionButton : LocalizedButton
+class BodyDeletionButton : public LocalizedButton
 {
+public:
     BodyDeletionButton();
     void OnClick(App& app) override;
 };

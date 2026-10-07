@@ -7,8 +7,9 @@ int constexpr kChineseLanguage = 0;
 int constexpr kEnglishLanguage = 1;
 
 LRESULT CALLBACK WindowProcedure(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam);
-struct App
+class App
 {
+public:
     int width = 0, height = 0;
     Tile screen;
     DepthBuffer depthBuffer, initialDepthBuffer;

@@ -2,8 +2,9 @@
 #include "Font.h"
 #include "Control.h"
 
-struct Button : Control
+class Button : public Control
 {
+public:
     DVector2 gap;
     double depth = 0;
     wstring text;
@@ -25,17 +26,19 @@ struct Button : Control
     void Discard(App& app) override;
     void PreUpdate(App& app) override;
 };
-struct LocalizedButton : Button
+class LocalizedButton : public Button
 {
+public:
     wstring textId;
     LocalizedButton() = default;
     LocalizedButton(int width, wstring const& id);
     void Update(App& app) override;
 };
 
-struct FloatPanel;
-struct ShowFloatPanelButton : Button
+class FloatPanel;
+class ShowFloatPanelButton : public Button
 {
+public:
     FloatPanel* floatPanel = NULL;
     ShowFloatPanelButton() = default;
     ShowFloatPanelButton(FloatPanel* floatPanel);

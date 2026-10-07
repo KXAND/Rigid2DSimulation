@@ -1,8 +1,9 @@
 ﻿#pragma once
 #include "Control.h"
 
-struct HorizontalControlList : Control
+class HorizontalControlList : public Control
 {
+public:
     vector<Control*> controls;
     HorizontalControlList(vector<Control*> const& controls = {});
     int GetWidth() const override;
@@ -13,8 +14,9 @@ struct HorizontalControlList : Control
     void PreUpdate(App& app) override;
 };
 
-struct VerticalControlList : Control
+class VerticalControlList : public Control
 {
+public:
     vector<Control*> controls;
     VerticalControlList(vector<Control*> const& controls = {});
     int GetWidth() const override;

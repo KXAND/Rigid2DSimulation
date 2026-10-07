@@ -2,20 +2,23 @@
 
 #include "Label.h"
 
-struct FrameRateLabel : Label
+class FrameRateLabel : public Label
 {
+public:
     FrameRateLabel();
     void Sync(App& app) override;
 };
 
-struct TimeLabel : Label
+class TimeLabel : public Label
 {
+public:
     TimeLabel();
     void Sync(App& app) override;
 };
 
-struct MousePositionLabel : Label
+class MousePositionLabel : public Label
 {
+public:
     MousePositionLabel();
     void Sync(App& app) override;
 };

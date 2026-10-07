@@ -4,14 +4,15 @@
 #include <memory>
 #include <string>
 
-struct Body;
-struct Connection;
+class Body;
+class Connection;
 class PhysicsWorld;
-struct SceneScriptRuntime;
-struct Shape;
+class SceneScriptRuntime;
+class Shape;
 
-struct SceneStorage
+class SceneStorage
 {
+public:
     static void Save(std::wstring const& name, PhysicsWorld const& physicsWorld,
                      SceneScriptRuntime const& runtime);
     static void Load(std::wstring const& name, PhysicsWorld& physicsWorld,

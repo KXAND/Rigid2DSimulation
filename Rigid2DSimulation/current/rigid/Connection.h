@@ -6,7 +6,7 @@ int constexpr kLinkConnection = 1;
 int constexpr kSpringConnection = 3;
 int constexpr kCordConnection = 4;
 
-struct Body;
+class Body;
 
 struct ConnectionAppearance
 {
@@ -22,8 +22,9 @@ struct ConnectionAppearance
 /// <summary>
 /// 定义一个两两连接关系，根据连接物理材质的不同，更新位置
 /// </summary>
-struct Connection
+class Connection
 {
+public:
     int type = 0;
     wstring scriptText, temporaryScriptText;
     Vector2 p0Relative, p1Relative;
@@ -56,7 +57,7 @@ struct Connection
 
 private:
     friend class PhysicsWorld;
-    friend struct SceneStorage;
+    friend class SceneStorage;
 
     Body* body0 = nullptr;
     Body* body1 = nullptr;

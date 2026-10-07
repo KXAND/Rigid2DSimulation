@@ -40,8 +40,9 @@ inline bool operator!=(Color leftColor, Color rightColor)
 wstring ToWString(Color color);
 void BlendColor(Color& backgroundColor, BYTE& backgroundAlpha, Color foregroundColor, BYTE foregroundAlpha);
 
-struct Tile
+class Tile
 {
+public:
     int width = 0, height = 0;
     vector<Color> colors;
     vector<BYTE> alphaValues;

@@ -5,8 +5,9 @@
 typedef function<wstring(int, App&)> DropListItemNameProvider;
 wstring GetDefaultDropListItemName(int id, App& app);
 
-struct DropList : Control
+class DropList : public Control
 {
+public:
     DVector2 gap;
     double depth = 0;
     wstring text;
@@ -48,8 +49,9 @@ struct DropList : Control
     void Discard(App& app) override;
     void PreUpdate(App& app) override;
 };
-struct LocalizedDropList : DropList
+class LocalizedDropList : public DropList
 {
+public:
     wstring textId;
     LocalizedDropList() = default;
     LocalizedDropList(wstring const& id, int width, DropListItemNameProvider const& itemNameProvider = GetDefaultDropListItemName);

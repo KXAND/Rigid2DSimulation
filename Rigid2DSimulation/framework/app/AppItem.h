@@ -1,8 +1,9 @@
 ﻿#pragma once
 #include "DVector2.h"
 
-struct AppInput
+class AppInput
 {
+public:
     double mouseWheelDelta = 0;
     wstring typedCharacters;
     DVector2 mousePosition, previousMousePosition;
@@ -34,8 +35,9 @@ struct AppInput
     void Reset();
 };
 
-struct FrameRate
+class FrameRate
 {
+public:
     int frameCount = 0;
     int frameSampleCount = 0;
     long long sampleNanoseconds = 0;

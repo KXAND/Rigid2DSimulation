@@ -7,8 +7,9 @@
 #include "MenuButtons.h"
 #include "Panel.h"
 
-struct MenuPanel : Panel
+class MenuPanel : public Panel
 {
+public:
     std::shared_ptr<SimulationPauseButton> pauseButton;
     std::shared_ptr<SceneResetButton> resetButton;
     std::shared_ptr<AudioMuteButton> muteButton;

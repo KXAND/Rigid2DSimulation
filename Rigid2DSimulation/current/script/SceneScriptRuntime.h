@@ -5,10 +5,10 @@
 
 #include "Value.h"
 
-struct Body;
-struct Connection;
+class Body;
+class Connection;
 class PhysicsWorld;
-struct SceneCanvas;
+class SceneCanvas;
 class SceneEditor;
 struct SceneParameter;
 class SceneRenderer;
@@ -24,8 +24,9 @@ struct SceneScriptBindings
     bool& isTrackShown;
 };
 
-struct SceneScriptRuntime
+class SceneScriptRuntime
 {
+public:
     Scope currentScope;
     std::wstring scriptText, temporaryScriptText, debugString;
     std::vector<std::shared_ptr<SceneParameter>> parameters;

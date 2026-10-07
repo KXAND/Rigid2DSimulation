@@ -1,11 +1,12 @@
 ﻿#pragma once
 #include "Tile.h"
 
-struct App;
-struct Control;
-struct VerticalScrollBar;
-struct FloatPanel
+class App;
+class Control;
+class VerticalScrollBar;
+class FloatPanel
 {
+public:
     DVector2 topLeft;
     double depth = 0;
     Control* contentControl = NULL;
@@ -64,8 +65,9 @@ struct FloatPanel
     virtual void Discard(App& app);
     virtual void PreUpdate(App& app);
 };
-struct LocalizedFloatPanel : FloatPanel
+class LocalizedFloatPanel : public FloatPanel
 {
+public:
     wstring titleLocalizationId;
     LocalizedFloatPanel() = default;
     LocalizedFloatPanel(App& app, int width, int height, wstring const& id);

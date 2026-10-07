@@ -2,11 +2,12 @@
 #include "DVector2.h"
 #include "Tile.h"
 
-struct AppInput;
+class AppInput;
 struct InputOwners;
 
-struct SceneCanvas
+class SceneCanvas
 {
+public:
     DVector2 topLeft;
     double depth = 0;
     Tile backgroundTile;

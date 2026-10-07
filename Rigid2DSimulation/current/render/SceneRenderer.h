@@ -7,12 +7,12 @@
 #include "Tile.h"
 #include "Vector2.h"
 
-struct Body;
-struct Collision;
-struct Connection;
-struct Creator;
-struct Font;
-struct SceneCanvas;
+class Body;
+class Collision;
+class Connection;
+class Creator;
+class Font;
+class SceneCanvas;
 class PhysicsWorld;
 
 int constexpr kColorDisplay = 0;

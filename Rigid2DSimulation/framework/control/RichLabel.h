@@ -2,8 +2,9 @@
 #include "Font.h"
 #include "Control.h"
 
-struct RichLabel : Control
+class RichLabel : public Control
 {
+public:
     DVector2 gap;
     double depth = 0;
     int width = 0, height = 0;
@@ -22,8 +23,9 @@ struct RichLabel : Control
     virtual void Sync(App& app) {}
     void Update(App& app);
 };
-struct LocalizedRichLabel : RichLabel
+class LocalizedRichLabel : public RichLabel
 {
+public:
     wstring textId;
     LocalizedRichLabel() = default;
     LocalizedRichLabel(int width, wstring const& id);

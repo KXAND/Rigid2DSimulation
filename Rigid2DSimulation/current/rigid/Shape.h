@@ -5,7 +5,7 @@
 /// <summary>
 /// 定义一个图形
 /// </summary>
-struct Shape
+class Shape
 {
 private:
     Vector2 GenerateRandomPointInTriangle(Vector2 v0, Vector2 v1, Vector2 v2) const;

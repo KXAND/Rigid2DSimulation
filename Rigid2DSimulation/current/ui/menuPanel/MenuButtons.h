@@ -2,35 +2,40 @@
 
 #include "Button.h"
 
-struct SimulationPauseButton : Button
+class SimulationPauseButton : public Button
 {
+public:
     SimulationPauseButton();
     void Update(App& app) override;
     void OnClick(App& app) override;
 };
 
-struct SceneResetButton : LocalizedButton
+class SceneResetButton : public LocalizedButton
 {
+public:
     SceneResetButton();
     void OnClick(App& app) override;
 };
 
-struct AudioMuteButton : Button
+class AudioMuteButton : public Button
 {
+public:
     AudioMuteButton();
     void Update(App& app) override;
     void OnClick(App& app) override;
 };
 
-struct InteractionModeButton : Button
+class InteractionModeButton : public Button
 {
+public:
     InteractionModeButton();
     void Update(App& app) override;
     void OnClick(App& app) override;
 };
 
-struct DisplayModeButton : Button
+class DisplayModeButton : public Button
 {
+public:
     DisplayModeButton();
     void Update(App& app) override;
     void OnClick(App& app) override;

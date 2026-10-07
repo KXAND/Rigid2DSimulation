@@ -2,14 +2,16 @@
 
 #include "Button.h"
 
-struct ConnectionScriptApplicationButton : LocalizedButton
+class ConnectionScriptApplicationButton : public LocalizedButton
 {
+public:
     ConnectionScriptApplicationButton();
     void OnClick(App& app) override;
 };
 
-struct ConnectionDeletionButton : LocalizedButton
+class ConnectionDeletionButton : public LocalizedButton
 {
+public:
     ConnectionDeletionButton();
     void OnClick(App& app) override;
 };

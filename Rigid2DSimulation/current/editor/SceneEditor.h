@@ -6,10 +6,10 @@
 #include "DVector2.h"
 #include "Vector2.h"
 
-struct AppInput;
-struct Body;
-struct Connection;
-struct Creator;
+class AppInput;
+class Body;
+class Connection;
+class Creator;
 struct InputOwners;
 class PhysicsWorld;
 

@@ -3,13 +3,14 @@
 
 #include "DVector2.h"
 
-struct Body;
+class Body;
 
 /// <summary>
 /// Group 是一系列通过 connection 连接的图形
 /// </summary>
-struct Group
+class Group
 {
+public:
     vector<Body*> bodies;
     Group(vector<Body*> const& bodies) : bodies(bodies) {}
 

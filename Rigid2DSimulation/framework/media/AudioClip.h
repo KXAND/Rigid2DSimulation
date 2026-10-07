@@ -1,8 +1,9 @@
 ﻿#pragma once
 #include "Utils.h"
 
-struct AudioClip
+class AudioClip
 {
+public:
     int sampleRate = 0;
     int sampleIndex = 0;
     bool repeat = false;

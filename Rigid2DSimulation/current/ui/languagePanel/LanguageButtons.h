@@ -2,14 +2,16 @@
 
 #include "Button.h"
 
-struct ChineseLanguageButton : Button
+class ChineseLanguageButton : public Button
 {
+public:
     ChineseLanguageButton();
     void OnClick(App& app) override;
 };
 
-struct EnglishLanguageButton : Button
+class EnglishLanguageButton : public Button
 {
+public:
     EnglishLanguageButton();
     void OnClick(App& app) override;
 };

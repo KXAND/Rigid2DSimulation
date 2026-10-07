@@ -2,8 +2,9 @@
 
 #include "Button.h"
 
-struct ScriptExecutionButton : LocalizedButton
+class ScriptExecutionButton : public LocalizedButton
 {
+public:
     ScriptExecutionButton();
     void OnClick(App& app) override;
 };

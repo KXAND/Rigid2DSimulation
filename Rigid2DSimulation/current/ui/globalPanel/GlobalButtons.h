@@ -2,14 +2,16 @@
 
 #include "Button.h"
 
-struct SceneSaveButton : LocalizedButton
+class SceneSaveButton : public LocalizedButton
 {
+public:
     SceneSaveButton();
     void OnClick(App& app) override;
 };
 
-struct SceneLoadButton : LocalizedButton
+class SceneLoadButton : public LocalizedButton
 {
+public:
     SceneLoadButton();
     void OnClick(App& app) override;
 };

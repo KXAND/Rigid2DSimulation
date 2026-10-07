@@ -6,10 +6,10 @@
 #include "DVector2.h"
 #include "Vector2.h"
 
-struct Body;
-struct Collision;
-struct Connection;
-struct Group;
+class Body;
+class Collision;
+class Connection;
+class Group;
 
 class PhysicsWorld
 {

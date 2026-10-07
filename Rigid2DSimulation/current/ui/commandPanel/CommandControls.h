@@ -2,8 +2,9 @@
 
 #include "RichTextBox.h"
 
-struct CommandScriptEditor : RichTextBox
+class CommandScriptEditor : public RichTextBox
 {
+public:
     CommandScriptEditor();
     void Sync(App& app) override;
     void OnDone(App& app) const override;

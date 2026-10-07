@@ -2,8 +2,9 @@
 #include "Tile.h"
 #include "Control.h"
 
-struct HorizontalDragBar : Control
+class HorizontalDragBar : public Control
 {
+public:
     DVector2 gap;
     double depth = 0;
     wstring text;
@@ -34,8 +35,9 @@ struct HorizontalDragBar : Control
     void Discard(App& app) override;
     void PreUpdate(App& app) override;
 };
-struct LocalizedHorizontalDragBar : HorizontalDragBar
+class LocalizedHorizontalDragBar : public HorizontalDragBar
 {
+public:
     wstring textId;
     LocalizedHorizontalDragBar() = default;
     LocalizedHorizontalDragBar(wstring const& id, int width);

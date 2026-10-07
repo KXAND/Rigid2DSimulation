@@ -2,8 +2,9 @@
 #include "Tile.h"
 #include "Control.h"
 
-struct CheckBox : Control
+class CheckBox : public Control
 {
+public:
     int height = 0;
     DVector2 gap;
     double depth = 0;
@@ -29,8 +30,9 @@ struct CheckBox : Control
     void Discard(App& app) override;
     void PreUpdate(App& app) override;
 };
-struct LocalizedCheckBox : CheckBox
+class LocalizedCheckBox : public CheckBox
 {
+public:
     wstring textId;
     LocalizedCheckBox() = default;
     LocalizedCheckBox(wstring const& id, bool big = false);

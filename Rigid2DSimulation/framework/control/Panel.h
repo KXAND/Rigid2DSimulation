@@ -1,11 +1,12 @@
 ﻿#pragma once
 #include "Tile.h"
 
-struct App;
-struct Control;
-struct VerticalScrollBar;
-struct Panel
+class App;
+class Control;
+class VerticalScrollBar;
+class Panel
 {
+public:
     DVector2 topLeft;
     double depth = 0;
     Control* contentControl = NULL;
