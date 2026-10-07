@@ -87,19 +87,23 @@ void Group::Warp(DRect rectangle, Body const* warpExcludedBody,
     }
 }
 
-void FindBodiesInGroup(vector<Body*>& bodies, Body* body)
+namespace
 {
-    body->visited = true;
-    bodies.push_back(body);
-    for (auto connection : body->GetConnections())
+    void FindBodiesInGroup(vector<Body*>& bodies, Body* body)
     {
-        auto tmp = GetOtherBody(body, *connection);
-        if (tmp && !tmp->visited)
+        body->visited = true;
+        bodies.push_back(body);
+        for (auto connection : body->GetConnections())
         {
-            FindBodiesInGroup(bodies, tmp);
+            auto tmp = GetOtherBody(body, *connection);
+            if (tmp && !tmp->visited)
+            {
+                FindBodiesInGroup(bodies, tmp);
+            }
         }
     }
 }
+
 vector<std::shared_ptr<Group>> FormGroups(vector<std::shared_ptr<Body>> const& bodies)
 {
     vector<std::shared_ptr<Group>> groups;

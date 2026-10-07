@@ -67,10 +67,6 @@ void SceneRenderer::RenderBody(Body const& body, SceneRenderContext const& conte
     case kColorDisplay:
         normalColor = body.appearance.innerColor;
         break;
-        if (body.point)
-        {
-            break;
-        }
     case kEnergyDisplay:
     {
         double energy = body.velocity.GetLengthSquared() + body.velocityAngular * body.velocityAngular * body.inertia / body.area;

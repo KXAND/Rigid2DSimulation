@@ -1,7 +1,6 @@
 ﻿#include "Body.h"
 #include "framework/basic/Utils.h"
 #include "Shape.h"
-#include "Connection.h"
 
 Body::Body()
 {
@@ -137,32 +136,6 @@ void Body::UpdateAABB()
     }
 }
 
-// 这个方法已经过时了。
-void Body::Warp(DRect rectangle, bool isWarpBlocked)
-{
-    if (invMass == 0 || isWarpBlocked)
-    {
-        return;
-    }
-
-    if (position.x < rectangle.GetLeft())
-    {
-        position.x += rectangle.width;
-    }
-    else if (position.x > rectangle.GetRight())
-    {
-        position.x -= rectangle.width;
-    }
-    if (position.y < rectangle.GetTop())
-    {
-        position.y += rectangle.height;
-    }
-    else if (position.y > rectangle.GetBottom())
-    {
-        position.y -= rectangle.height;
-    }
-}
-
 Vector2 Body::Recalculate()
 {
     // 刷新仍完整执行旧计算，包括重复调用时的局部几何处理。
@@ -234,11 +207,6 @@ void Body::Step(Vector2 const& gravity, double stepDeltaTime, std::function<void
         applyPresets(false);
     }
 }
-
-
-
-
-
 
 void Electrostatic(Body& b0, Body& b1, double sdt, double coulombConstant)
 {

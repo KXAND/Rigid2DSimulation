@@ -102,7 +102,6 @@ struct Body
 
     Vector2 GenerateRandomPointInside() const;
     void UpdateShapesPositionAndAABB();
-    void Warp(DRect rectangle, bool isWarpBlocked);
 
     void Step(Vector2 const& gravity, double stepDeltaTime, std::function<void(bool)> const& applyPresets);
 

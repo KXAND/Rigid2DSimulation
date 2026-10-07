@@ -209,8 +209,8 @@ void Creator::UpdateConnection(PhysicsWorld& world, AppInput& input)
         {
             ApplyConnectionConfig(*connection, *connectionConfiguration);
         }
-        // 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
-        // 要求 creator 的更新在 body 后面对吧，是不是耦合太高了。
+        // SceneEditor::UpdateBodies 先处理端点拾取，本次更新再确认创建连接。
+        // TODO: 将共享端点字段和 active 的时序约定改为显式接口，保留拾取与创建的原有阶段。
         if (!input.mouseButtonDown[0])
         {
             if (body1)
