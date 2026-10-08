@@ -249,6 +249,9 @@
     <ClCompile Include="current\editor\Creator.cpp">
       <Filter>current\editor</Filter>
     </ClCompile>
+    <ClCompile Include="current\editor\DragTool.cpp">
+      <Filter>current\editor</Filter>
+    </ClCompile>
     <ClCompile Include="current\editor\SceneEditor.cpp">
       <Filter>current\editor</Filter>
     </ClCompile>
@@ -492,6 +495,9 @@
       <Filter>current\rigid</Filter>
     </ClInclude>
     <ClInclude Include="current\editor\Creator.h">
+      <Filter>current\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="current\editor\DragTool.h">
       <Filter>current\editor</Filter>
     </ClInclude>
     <ClInclude Include="current\editor\SceneEditor.h">

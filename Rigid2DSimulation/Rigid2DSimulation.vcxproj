@@ -150,6 +150,7 @@
     <ClCompile Include="current\rigid\Connection.cpp" />
     <ClCompile Include="framework\control\Control.cpp" />
     <ClCompile Include="current\editor\Creator.cpp" />
+    <ClCompile Include="current\editor\DragTool.cpp" />
     <ClCompile Include="current\editor\SceneEditor.cpp" />
     <ClCompile Include="current\render\SceneRenderer.cpp" />
     <ClCompile Include="current\script\BodyConfig.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="current\rigid\Connection.h" />
     <ClInclude Include="framework\control\Control.h" />
     <ClInclude Include="current\editor\Creator.h" />
+    <ClInclude Include="current\editor\DragTool.h" />
     <ClInclude Include="current\editor\SceneEditor.h" />
     <ClInclude Include="current\render\SceneRenderer.h" />
     <ClInclude Include="current\script\BodyConfig.h" />

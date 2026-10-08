@@ -161,7 +161,7 @@ void SimulationApp::AdvanceSimulation()
 {
     if (!isPaused && realDeltaTime != 0)
     {
-        physicsWorld.Advance(realDeltaTime, editor.GetDrag().body,
+        physicsWorld.Advance(realDeltaTime, editor.dragTool.GetDrag().body,
             [this](double time)
             {
                 scriptRuntime.SetSimulationTime(time);
@@ -172,7 +172,7 @@ void SimulationApp::AdvanceSimulation()
                 {
                     scriptRuntime.ApplyMotionPresets(body, isDynamic, physicsWorld.simulationTime, stepDeltaTime);
                 });
-                editor.ApplyDrag(body, input, inputOwners, realDeltaTime, stepDeltaTime);
+                editor.dragTool.ApplySubstep(body, input, inputOwners, realDeltaTime, stepDeltaTime);
                 body.UpdateShapesPositionAndAABB();
             },
             [this](Body const& body)
@@ -187,5 +187,5 @@ SceneRenderContext SimulationApp::GetSceneRenderContext()
 {
     return {screen, depthBuffer, font, sceneCanvas->GetViewport(), input.mousePosition,
             editor.bodySelecting, editor.connectionSelecting,
-            editor.GetHoveredBody(), editor.GetDrag().body, editor.GetDrag().relativePoint, editor.GetTracks()};
+            editor.GetHoveredBody(), editor.dragTool.GetDrag().body, editor.dragTool.GetDrag().relativePoint, editor.GetTracks()};
 }
