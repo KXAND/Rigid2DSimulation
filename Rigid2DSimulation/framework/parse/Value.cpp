@@ -13,7 +13,7 @@ Value::Value(double number) : number(number)
 
 Value::Value(wstring const& text) : stringValue(text)
 {
-    type = L"ToString";
+    type = L"str";
 }
 
 Value::Value(Function const& nativeFunction) : nativeFunction(nativeFunction)
@@ -262,7 +262,7 @@ std::shared_ptr<Value> EvaluateAccess(Scope& globalScope, Scope& scope, ScriptEx
         return accessedValue->elements[indexValue->number];
     }
 
-    if (indexValue->type == L"ToString")
+    if (indexValue->type == L"str")
     {
         if (accessedValue->type != L"dic")
         {
@@ -297,7 +297,7 @@ std::shared_ptr<Value> Evaluate(Scope& globalScope, Scope& scope, ScriptExpressi
     {
         return std::make_shared<Value>(expression.number);
     }
-    else if (expression.type == L"ToString")
+    else if (expression.type == L"str")
     {
         return std::make_shared<Value>(expression.stringValue);
     }
