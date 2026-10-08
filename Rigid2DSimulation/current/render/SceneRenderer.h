@@ -47,7 +47,7 @@ public:
                           SceneRenderContext const& context) const;
     // 保留原时点的几何更新；本入口不是对世界的纯只读操作。
     void RenderObjects(PhysicsWorld& world, SceneRenderContext const& context) const;
-    void RenderCreatorPreview(Creator& creator, SceneRenderContext const& context) const;
+    void RenderCreatorPreview(Creator const& creator, SceneRenderContext const& context) const;
     void RenderCollision(Collision const& collision, SceneRenderContext const& context) const;
 
 private:

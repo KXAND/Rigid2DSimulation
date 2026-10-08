@@ -36,17 +36,15 @@ void SceneRenderer::RenderObjects(PhysicsWorld& world, SceneRenderContext const&
     }
 }
 
-void SceneRenderer::RenderCreatorPreview(Creator& creator, SceneRenderContext const& context) const
+void SceneRenderer::RenderCreatorPreview(Creator const& creator, SceneRenderContext const& context) const
 {
-    if (creator.body)
+    if (auto body = creator.GetPreviewBody())
     {
-        RenderBody(*creator.body, context);
+        RenderBody(*body, context);
     }
-    if (creator.connection && creator.body0)
+    if (auto connection = creator.GetPreviewConnection())
     {
-        creator.connection->p0 = creator.body0->position + creator.body0->transform * creator.p0Relative;
-        creator.connection->p1 = (Vector2)context.mousePosition;
-        RenderConnection(*creator.connection, context);
+        RenderConnection(*connection, context);
     }
 }
 

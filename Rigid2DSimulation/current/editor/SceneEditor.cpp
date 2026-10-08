@@ -280,20 +280,15 @@ void SceneEditor::UpdateBody(PhysicsWorld& world, Body& body, AppInput& input, I
         ClearTrack(body);
     }
 
-    // 创造连接
-    bool canCreate = isHovered && mode == kCreateMode &&
-                     (creator->mode == kCreateConnection || creator->mode == kCreateNail);
-    if (canCreate)
+    if (isHovered && mode == kCreateMode)
     {
-        if (input.IsMouseClickedDown(0) && !creator->active)
+        if (input.IsMouseClickedDown(0))
         {
-            creator->body0 = &body;
-            creator->p0Relative = body.transform.Inverse() * ((Vector2)input.mousePosition - body.position);
+            creator->OnBodyPressed(body, (Vector2)input.mousePosition);
         }
-        else if (!input.mouseButtonDown[0] && input.previousMouseButtonDown[0] && creator->active)
+        else if (!input.mouseButtonDown[0] && input.previousMouseButtonDown[0])
         {
-            creator->body1 = &body;
-            creator->p1Relative = body.transform.Inverse() * ((Vector2)input.mousePosition - body.position);
+            creator->OnBodyReleased(body, (Vector2)input.mousePosition);
         }
     }
 }

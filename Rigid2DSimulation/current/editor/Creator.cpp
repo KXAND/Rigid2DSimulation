@@ -209,8 +209,7 @@ void Creator::UpdateConnection(PhysicsWorld& world, AppInput& input)
         {
             ApplyConnectionConfig(*connection, *connectionConfiguration);
         }
-        // SceneEditor::UpdateBodies 先处理端点拾取，本次更新再确认创建连接。
-        // TODO: 将共享端点字段和 active 的时序约定改为显式接口，保留拾取与创建的原有阶段。
+        // 物体输入通知已在物理推进前记录锚点，此处使用推进后的姿态确认连接。
         if (!input.mouseButtonDown[0])
         {
             if (body1)
@@ -284,6 +283,25 @@ void Creator::UpdateParticle(PhysicsWorld& world, AppInput& input)
         body = NULL;
     }
 }
+
+void Creator::OnBodyPressed(Body& hitBody, Vector2 const& mousePosition)
+{
+    if ((mode == kCreateConnection || mode == kCreateNail) && !active)
+    {
+        body0 = &hitBody;
+        p0Relative = hitBody.transform.Inverse() * (mousePosition - hitBody.position);
+    }
+}
+
+void Creator::OnBodyReleased(Body& hitBody, Vector2 const& mousePosition)
+{
+    if ((mode == kCreateConnection || mode == kCreateNail) && active)
+    {
+        body1 = &hitBody;
+        p1Relative = hitBody.transform.Inverse() * (mousePosition - hitBody.position);
+    }
+}
+
 void Creator::Update(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners)
 {
     hovered = (inputOwners.hovered == this);
@@ -313,6 +331,13 @@ void Creator::Update(PhysicsWorld& world, AppInput& input, InputOwners const& in
     case kCreateParticle:
         UpdateParticle(world, input);
         break;
+    }
+
+    // 预览端点在物理推进后准备；渲染只读取，不参与创建状态维护。
+    if (connection && body0)
+    {
+        connection->p0 = body0->position + body0->transform * p0Relative;
+        connection->p1 = (Vector2)input.mousePosition;
     }
 }
 
