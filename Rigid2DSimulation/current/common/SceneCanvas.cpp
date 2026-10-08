@@ -16,11 +16,6 @@ void SceneCanvas::Render(Tile& targetTile) const
     DrawTileRaw(targetTile, topLeft, backgroundTile);
 }
 
-bool SceneCanvas::IsEmptyAreaClicked(AppInput& input, InputOwners const& inputOwners) const
-{
-    return inputOwners.hovered == this && input.IsMouseClickedDown(0);
-}
-
 void SceneCanvas::PreUpdate(AppInput const& input, InputOwners& inputOwners)
 {
     bool haveDeeperValue = inputOwners.hoveredDepth <= depth && IsInside(input.mousePosition, GetViewport());

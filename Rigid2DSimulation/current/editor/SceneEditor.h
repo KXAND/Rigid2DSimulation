@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "CreationPreview.h"
 #include "DVector2.h"
 #include "DragTool.h"
 #include "Vector2.h"
@@ -13,6 +14,7 @@ class Connection;
 class Creator;
 struct InputOwners;
 class PhysicsWorld;
+class SceneCanvas;
 
 int constexpr kDragMode = 0;
 int constexpr kSelectMode = 1;
@@ -47,14 +49,22 @@ public:
     void RequestBodyDeletion(PhysicsWorld& world);
     void RequestConnectionDeletion(PhysicsWorld& world);
     void PreUpdate(PhysicsWorld const& world, AppInput const& input, InputOwners& inputOwners, DRect viewport);
-    void UpdateBodies(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners,
-                      double realDeltaTime, bool isTrackShown, bool isPaused);
+    // 每帧只处理一次编辑输入，返回随后交给模拟阶段的拖拽快照。
+    BodyDrag Update(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners,
+                    SceneCanvas const& canvas, double realDeltaTime);
+    BodyDrag const& GetDrag() const
+    {
+        return dragTool.GetDrag();
+    }
+    CreationPreview GetPreview() const;
+    // 每帧拖拽作用后、物理推进前采样，不处理输入。
+    void RecordTracks(PhysicsWorld const& world, bool isTrackShown, bool isPaused);
 
 private:
     Body const* hoveredBody = nullptr;
     std::unordered_map<Body const*, std::vector<Vector2>> tracks;
 
     static bool HitTestBody(Body const& body, Vector2 mousePosition);
-    void UpdateBody(PhysicsWorld& world, Body& body, AppInput& input, InputOwners const& inputOwners,
-                    double realDeltaTime, bool isTrackShown, bool isPaused);
+    BodyDrag UpdateBody(PhysicsWorld& world, Body& body, AppInput& input, InputOwners const& inputOwners,
+                        double realDeltaTime);
 };

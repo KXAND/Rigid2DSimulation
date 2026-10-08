@@ -243,6 +243,9 @@
     <ClCompile Include="current\rigid\Body.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
+    <ClCompile Include="current\rigid\BodyDrag.cpp">
+      <Filter>current\rigid</Filter>
+    </ClCompile>
     <ClCompile Include="current\rigid\Shape.cpp">
       <Filter>current\rigid</Filter>
     </ClCompile>
@@ -488,11 +491,17 @@
     <ClInclude Include="current\rigid\Body.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
+    <ClInclude Include="current\rigid\BodyDrag.h">
+      <Filter>current\rigid</Filter>
+    </ClInclude>
     <ClInclude Include="current\rigid\Shape.h">
       <Filter>current\rigid</Filter>
     </ClInclude>
     <ClInclude Include="current\rigid\Collision.h">
       <Filter>current\rigid</Filter>
+    </ClInclude>
+    <ClInclude Include="current\editor\CreationPreview.h">
+      <Filter>current\editor</Filter>
     </ClInclude>
     <ClInclude Include="current\editor\Creator.h">
       <Filter>current\editor</Filter>

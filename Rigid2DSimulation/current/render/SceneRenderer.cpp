@@ -3,7 +3,7 @@
 #include "Body.h"
 #include "Collision.h"
 #include "Connection.h"
-#include "Creator.h"
+#include "CreationPreview.h"
 #include "DrawCurve.h"
 #include "DrawGeometry.h"
 #include "DrawLineSegment.h"
@@ -32,19 +32,21 @@ void SceneRenderer::RenderObjects(PhysicsWorld& world, SceneRenderContext const&
     for (auto& connection : world.GetConnections())
     {
         connection->UpdatePosition();
-        RenderConnection(*connection, context);
+        RenderConnection(*connection, connection->p0, connection->p1, context);
     }
 }
 
-void SceneRenderer::RenderCreatorPreview(Creator const& creator, SceneRenderContext const& context) const
+void SceneRenderer::RenderCreationPreview(CreationPreview const& preview, SceneRenderContext const& context) const
 {
-    if (auto body = creator.GetPreviewBody())
+    if (preview.body)
     {
-        RenderBody(*body, context);
+        RenderBody(*preview.body, context);
     }
-    if (auto connection = creator.GetPreviewConnection())
+    if (preview.connection)
     {
-        RenderConnection(*connection, context);
+        auto const& anchorBody = *preview.connection->GetBody0();
+        Vector2 anchor = anchorBody.position + anchorBody.transform * preview.relativeAnchor;
+        RenderConnection(*preview.connection, anchor, preview.targetPosition, context);
     }
 }
 
@@ -137,7 +139,8 @@ void SceneRenderer::RenderBody(Body const& body, SceneRenderContext const& conte
     }
 }
 
-void SceneRenderer::RenderConnection(Connection const& connection, SceneRenderContext const& context) const
+void SceneRenderer::RenderConnection(Connection const& connection, Vector2 p0, Vector2 p1,
+                                     SceneRenderContext const& context) const
 {
     Color color;
     switch (connection.type)
@@ -155,5 +158,5 @@ void SceneRenderer::RenderConnection(Connection const& connection, SceneRenderCo
         color = connection.isTight ? connection.appearance.colorSpringStretch : connection.appearance.colorSpringCompress;
         break;
     }
-    DrawLineSegment(context.screen, context.depthBuffer, connection.p0, connection.p1, 2, context.viewport, color);
+    DrawLineSegment(context.screen, context.depthBuffer, p0, p1, 2, context.viewport, color);
 }

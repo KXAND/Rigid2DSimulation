@@ -5,6 +5,7 @@
 #include "Connection.h"
 #include "Creator.h"
 #include "PhysicsWorld.h"
+#include "SceneCanvas.h"
 #include "Shape.h"
 
 void SceneEditor::ClearSelection()
@@ -117,18 +118,54 @@ void SceneEditor::PreUpdate(PhysicsWorld const& world, AppInput const& input,
     }
 }
 
-void SceneEditor::UpdateBodies(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners,
-                               double realDeltaTime, bool isTrackShown, bool isPaused)
+BodyDrag SceneEditor::Update(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners,
+                             SceneCanvas const& canvas, double realDeltaTime)
 {
+    if (inputOwners.hovered == &canvas && input.IsMouseClickedDown(0))
+    {
+        ClearSelection();
+    }
+
     hoveredBody = nullptr;
+    BodyDrag frameDrag;
     for (const auto& body : world.GetBodies())
     {
-        UpdateBody(world, *body, input, inputOwners, realDeltaTime, isTrackShown, isPaused);
+        auto bodyDrag = UpdateBody(world, *body, input, inputOwners, realDeltaTime);
+        if (bodyDrag.body)
+        {
+            frameDrag = bodyDrag;
+        }
+    }
+    // 工具可以新增物体或连接，必须在物体遍历结束后确认创建。
+    if (mode == kCreateMode)
+    {
+        creator->Update(world, input, inputOwners);
+    }
+    return frameDrag;
+}
+
+CreationPreview SceneEditor::GetPreview() const
+{
+    return mode == kCreateMode ? creator->GetPreview() : CreationPreview{};
+}
+
+void SceneEditor::RecordTracks(PhysicsWorld const& world, bool isTrackShown, bool isPaused)
+{
+    for (auto const& body : world.GetBodies())
+    {
+        if (body.get() == bodySelecting && isTrackShown && !isPaused)
+        {
+            tracks[body.get()].push_back(body->position);
+        }
+        else if (body.get() != bodySelecting || !isTrackShown)
+        {
+            ClearTrack(*body);
+        }
     }
 }
 
-void SceneEditor::UpdateBody(PhysicsWorld& world, Body& body, AppInput& input, InputOwners const& inputOwners,
-                             double realDeltaTime, bool isTrackShown, bool isPaused)
+BodyDrag SceneEditor::UpdateBody(PhysicsWorld& world, Body& body, AppInput& input, InputOwners const& inputOwners,
+                                 double realDeltaTime)
 {
     bool isHovered = inputOwners.hovered == &body;
     if (isHovered)
@@ -144,18 +181,7 @@ void SceneEditor::UpdateBody(PhysicsWorld& world, Body& body, AppInput& input, I
     {
         bodySelecting = &body;
     }
-    dragTool.UpdateBody(body, input, inputOwners, realDeltaTime, isHovered, mode == kDragMode);
-
-    if (&body == bodySelecting && isTrackShown && !isPaused)
-    {
-        // 绘制运动轨迹
-        tracks[&body].push_back(body.position);
-    }
-    else if (&body != bodySelecting || !isTrackShown)
-    {
-        //不符合条件时清空轨迹信息
-        ClearTrack(body);
-    }
+    auto frameDrag = dragTool.UpdateBody(body, input, inputOwners, realDeltaTime, isHovered, mode == kDragMode);
 
     if (isHovered && mode == kCreateMode)
     {
@@ -168,4 +194,5 @@ void SceneEditor::UpdateBody(PhysicsWorld& world, Body& body, AppInput& input, I
             creator->OnBodyReleased(body, (Vector2)input.mousePosition);
         }
     }
+    return frameDrag;
 }

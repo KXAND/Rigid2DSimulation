@@ -2,9 +2,9 @@
 #include "UserInterface.h"
 #include "SceneCanvas.h"
 #include "Body.h"
+#include "BodyDrag.h"
 #include "Connection.h"
 #include "AudioClip.h"
-#include "Creator.h"
 #include "SceneStorage.h"
 
 SimulationApp::SimulationApp()
@@ -95,27 +95,17 @@ void SimulationApp::Update()
 
     RemoveDeletedObjects();
 
-    if (sceneCanvas->IsEmptyAreaClicked(input, inputOwners))
-    {
-        editor.ClearSelection();
-    }
+    realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
+    scriptRuntime.SetFrameDeltaTime(realDeltaTime);
 
-    // 保持底图与调试文字在物体更新、绘制之前输出。
-    sceneRenderer.RenderBackground(*sceneCanvas, scriptRuntime.debugString, GetSceneRenderContext());
+    BodyDrag frameDrag = editor.Update(physicsWorld, input, inputOwners, *sceneCanvas, realDeltaTime);
+    UpdateSceneState(frameDrag);
+    AdvanceSimulation(editor.GetDrag());
 
-    PrepareSimulation();
-
-    editor.UpdateBodies(physicsWorld, input, inputOwners, realDeltaTime, isTrackShown, isPaused);
-
-    AdvanceSimulation();
-
-    sceneRenderer.RenderObjects(physicsWorld, GetSceneRenderContext());
-
-    if (editor.mode == kCreateMode)
-    {
-        editor.creator->Update(physicsWorld, input, inputOwners);
-        sceneRenderer.RenderCreatorPreview(*editor.creator, GetSceneRenderContext());
-    }
+    auto context = GetSceneRenderContext();
+    sceneRenderer.RenderBackground(*sceneCanvas, scriptRuntime.debugString, context);
+    sceneRenderer.RenderObjects(physicsWorld, context);
+    sceneRenderer.RenderCreationPreview(editor.GetPreview(), context);
     userInterface->UpdateAndRender(*this);
 }
 
@@ -165,30 +155,32 @@ void SimulationApp::RemoveDeletedObjects()
     physicsWorld.RemoveDeletedObjects();
 }
 
-void SimulationApp::PrepareSimulation()
+void SimulationApp::UpdateSceneState(BodyDrag const& frameDrag)
 {
-    // 更新运行信息
-    realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
-    scriptRuntime.SetFrameDeltaTime(realDeltaTime);
     physicsWorld.Prepare();
+    for (auto const& body : physicsWorld.GetBodies())
+    {
+        ApplyBodyDragFrame(*body, frameDrag, realDeltaTime);
+    }
+    editor.RecordTracks(physicsWorld, isTrackShown, isPaused);
 }
 
-void SimulationApp::AdvanceSimulation()
+void SimulationApp::AdvanceSimulation(BodyDrag drag)
 {
     if (!isPaused && realDeltaTime != 0)
     {
-        physicsWorld.Advance(realDeltaTime, editor.dragTool.GetDrag().body,
+        physicsWorld.Advance(realDeltaTime, drag.body,
             [this](double time)
             {
                 scriptRuntime.SetSimulationTime(time);
             },
-            [this](Body& body, double stepDeltaTime)
+            [this, &drag](Body& body, double stepDeltaTime)
             {
                 body.Step(physicsWorld.gravity, stepDeltaTime, [this, &body, stepDeltaTime](bool isDynamic)
                 {
                     scriptRuntime.ApplyMotionPresets(body, isDynamic, physicsWorld.simulationTime, stepDeltaTime);
                 });
-                editor.dragTool.ApplySubstep(body, input, inputOwners, realDeltaTime, stepDeltaTime);
+                ApplyBodyDragSubstep(body, drag, realDeltaTime, stepDeltaTime);
                 body.UpdateShapesPositionAndAABB();
             },
             [this](Body const& body)
@@ -203,5 +195,5 @@ SceneRenderContext SimulationApp::GetSceneRenderContext()
 {
     return {screen, depthBuffer, font, sceneCanvas->GetViewport(), input.mousePosition,
             editor.bodySelecting, editor.connectionSelecting,
-            editor.GetHoveredBody(), editor.dragTool.GetDrag().body, editor.dragTool.GetDrag().relativePoint, editor.GetTracks()};
+            editor.GetHoveredBody(), editor.GetDrag().body, editor.GetDrag().relativePoint, editor.GetTracks()};
 }

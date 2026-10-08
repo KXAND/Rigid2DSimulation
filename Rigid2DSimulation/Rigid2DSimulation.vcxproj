@@ -140,6 +140,7 @@
     <ClCompile Include="framework\app\WaveOutput.cpp" />
     <ClCompile Include="current\common\SceneCanvas.cpp" />
     <ClCompile Include="current\rigid\Body.cpp" />
+    <ClCompile Include="current\rigid\BodyDrag.cpp" />
     <ClCompile Include="framework\parse\BracketGroup.cpp" />
     <ClCompile Include="framework\control\Button.cpp" />
     <ClCompile Include="framework\control\CheckBox.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="framework\app\WaveOutput.h" />
     <ClInclude Include="current\common\SceneCanvas.h" />
     <ClInclude Include="current\rigid\Body.h" />
+    <ClInclude Include="current\rigid\BodyDrag.h" />
     <ClInclude Include="framework\parse\BracketGroup.h" />
     <ClInclude Include="framework\control\Button.h" />
     <ClInclude Include="framework\control\CheckBox.h" />
@@ -233,6 +235,7 @@
     <ClInclude Include="current\script\ShapeBuiltins.h" />
     <ClInclude Include="current\rigid\Connection.h" />
     <ClInclude Include="framework\control\Control.h" />
+    <ClInclude Include="current\editor\CreationPreview.h" />
     <ClInclude Include="current\editor\Creator.h" />
     <ClInclude Include="current\editor\DragTool.h" />
     <ClInclude Include="current\editor\SceneEditor.h" />

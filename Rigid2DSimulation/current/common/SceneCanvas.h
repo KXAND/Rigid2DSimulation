@@ -21,7 +21,4 @@ public:
 
     void Render(Tile& targetTile) const;
     void PreUpdate(AppInput const& input, InputOwners& inputOwners);
-
-    // 必须在所有对象完成 PreUpdate 后查询，避免将物体或 UI 点击视为空白点击。
-    bool IsEmptyAreaClicked(AppInput& input, InputOwners const& inputOwners) const;
 };

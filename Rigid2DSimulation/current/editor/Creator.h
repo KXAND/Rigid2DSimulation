@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Vector2.h"
+#include "CreationPreview.h"
 
 int constexpr kCreateBox = 0;
 int constexpr kCreateBall = 1;
@@ -28,7 +29,7 @@ public:
     Creator();
     Creator(Value const& config);
     double Depth() const;
-    // 左键命中物体的通知；在物理推进前记录锚点，由 Update 在原阶段确认创建。
+    // 左键命中物体的通知；由同一输入阶段的 Update 确认创建。
     void OnBodyPressed(Body& hitBody, Vector2 const& mousePosition);
     void OnBodyReleased(Body& hitBody, Vector2 const& mousePosition);
     void Update(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners);
@@ -37,21 +38,14 @@ public:
     void PrepareForDeletion(InputOwners& inputOwners);
     void PreUpdate(AppInput const& input, InputOwners& inputOwners, DRect viewport);
 
-    // 只借用当前预览；Update 或 Discard 后须重新获取，无预览时返回 nullptr。
-    Body const* GetPreviewBody() const
-    {
-        return body.get();
-    }
-    Connection const* GetPreviewConnection() const
-    {
-        return body0 ? connection.get() : nullptr;
-    }
+    CreationPreview GetPreview() const;
 
 private:
     DVector2 creationStartPoint;
     Body* body0 = NULL;
     Body* body1 = NULL;
     Vector2 p0Relative, p1Relative;
+    Vector2 previewTarget;
     std::shared_ptr<Body> body;
     std::shared_ptr<Connection> connection;
     bool active = false;

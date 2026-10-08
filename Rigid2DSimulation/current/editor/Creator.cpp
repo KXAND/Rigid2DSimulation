@@ -209,7 +209,7 @@ void Creator::UpdateConnection(PhysicsWorld& world, AppInput& input)
         {
             ApplyConnectionConfig(*connection, *connectionConfiguration);
         }
-        // 物体输入通知已在物理推进前记录锚点，此处使用推进后的姿态确认连接。
+        // 使用输入阶段确认时的姿态确定连接长度，新连接随后参与本帧模拟。
         if (!input.mouseButtonDown[0])
         {
             if (body1)
@@ -313,6 +313,7 @@ void Creator::OnBodyReleased(Body& hitBody, Vector2 const& mousePosition)
 void Creator::Update(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners)
 {
     hovered = (inputOwners.hovered == this);
+    previewTarget = (Vector2)input.mousePosition;
     body = NULL;
     connection = NULL;
 
@@ -340,13 +341,11 @@ void Creator::Update(PhysicsWorld& world, AppInput& input, InputOwners const& in
         UpdateParticle(world, input);
         break;
     }
+}
 
-    // 预览端点在物理推进后准备；渲染只读取，不参与创建状态维护。
-    if (connection && body0)
-    {
-        connection->p0 = body0->position + body0->transform * p0Relative;
-        connection->p1 = (Vector2)input.mousePosition;
-    }
+CreationPreview Creator::GetPreview() const
+{
+    return {body.get(), body0 ? connection.get() : nullptr, p0Relative, previewTarget};
 }
 
 void Creator::PrepareForDeletion(InputOwners& inputOwners)

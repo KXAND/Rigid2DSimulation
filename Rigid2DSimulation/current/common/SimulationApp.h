@@ -39,7 +39,8 @@ private:
     void ResolveInputOwnership();
     void UpdateMusic();
     void RemoveDeletedObjects();
-    void PrepareSimulation();
-    void AdvanceSimulation();
+    // 暂停时也同步场景结构、应用每帧拖拽并维护轨迹，不推进模拟时间。
+    void UpdateSceneState(BodyDrag const& frameDrag);
+    void AdvanceSimulation(BodyDrag drag);
     SceneRenderContext GetSceneRenderContext();
 };

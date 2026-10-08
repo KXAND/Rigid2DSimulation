@@ -10,7 +10,7 @@
 class Body;
 class Collision;
 class Connection;
-class Creator;
+struct CreationPreview;
 class Font;
 class SceneCanvas;
 class PhysicsWorld;
@@ -47,10 +47,11 @@ public:
                           SceneRenderContext const& context) const;
     // 保留原时点的几何更新；本入口不是对世界的纯只读操作。
     void RenderObjects(PhysicsWorld& world, SceneRenderContext const& context) const;
-    void RenderCreatorPreview(Creator const& creator, SceneRenderContext const& context) const;
+    void RenderCreationPreview(CreationPreview const& preview, SceneRenderContext const& context) const;
     void RenderCollision(Collision const& collision, SceneRenderContext const& context) const;
 
 private:
     void RenderBody(Body const& body, SceneRenderContext const& context) const;
-    void RenderConnection(Connection const& connection, SceneRenderContext const& context) const;
+    void RenderConnection(Connection const& connection, Vector2 p0, Vector2 p1,
+                          SceneRenderContext const& context) const;
 };
