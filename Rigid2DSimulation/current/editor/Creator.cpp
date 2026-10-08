@@ -286,6 +286,10 @@ void Creator::UpdateParticle(PhysicsWorld& world, AppInput& input)
 
 void Creator::OnBodyPressed(Body& hitBody, Vector2 const& mousePosition)
 {
+    if (hitBody.IsMarkedForDeletion())
+    {
+        return;
+    }
     if ((mode == kCreateConnection || mode == kCreateNail) && !active)
     {
         body0 = &hitBody;
@@ -295,6 +299,10 @@ void Creator::OnBodyPressed(Body& hitBody, Vector2 const& mousePosition)
 
 void Creator::OnBodyReleased(Body& hitBody, Vector2 const& mousePosition)
 {
+    if (hitBody.IsMarkedForDeletion())
+    {
+        return;
+    }
     if ((mode == kCreateConnection || mode == kCreateNail) && active)
     {
         body1 = &hitBody;
@@ -338,6 +346,14 @@ void Creator::Update(PhysicsWorld& world, AppInput& input, InputOwners const& in
     {
         connection->p0 = body0->position + body0->transform * p0Relative;
         connection->p1 = (Vector2)input.mousePosition;
+    }
+}
+
+void Creator::PrepareForDeletion(InputOwners& inputOwners)
+{
+    if ((body0 && body0->IsMarkedForDeletion()) || (body1 && body1->IsMarkedForDeletion()))
+    {
+        Discard(inputOwners);
     }
 }
 

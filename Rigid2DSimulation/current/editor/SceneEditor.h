@@ -32,7 +32,7 @@ public:
     // 场景重置时清空选择、悬停、拖拽和轨迹，不改变工具或模式。
     void ResetInteraction();
     // 删除前清理待删除对象的交互引用和轨迹，不标记或删除对象。
-    void PrepareForDeletion();
+    void PrepareForDeletion(InputOwners& inputOwners);
     void ClearTrack(Body const& body);
     std::unordered_map<Body const*, std::vector<Vector2>> const& GetTracks() const
     {

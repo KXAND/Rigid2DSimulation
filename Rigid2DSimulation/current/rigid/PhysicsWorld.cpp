@@ -12,10 +12,10 @@
 
 void PhysicsWorld::AddBody(std::shared_ptr<Body> const& body)
 {
-    if (!body || std::find(bodies.begin(), bodies.end(), body) != bodies.end() ||
+    if (!body || body->isMarkedForDeletion || std::find(bodies.begin(), bodies.end(), body) != bodies.end() ||
         !body->connections.empty())
     {
-        throw std::invalid_argument("Body must be non-null, unregistered and have no connections.");
+        throw std::invalid_argument("Body must be non-null, unregistered, not pending deletion and have no connections.");
     }
     bodies.push_back(body);
     isSceneChanged = true;
@@ -30,10 +30,12 @@ void PhysicsWorld::AddConnection(std::shared_ptr<Connection> const& connection)
             return item.get() == body;
         });
     };
-    if (!connection || std::find(connections.begin(), connections.end(), connection) != connections.end() ||
-        !containsBody(connection->body0) || !containsBody(connection->body1))
+    if (!connection || connection->isMarkedForDeletion ||
+        std::find(connections.begin(), connections.end(), connection) != connections.end() ||
+        !containsBody(connection->body0) || !containsBody(connection->body1) ||
+        connection->body0->isMarkedForDeletion || connection->body1->isMarkedForDeletion)
     {
-        throw std::invalid_argument("Connection must be unregistered and both endpoints must belong to this world.");
+        throw std::invalid_argument("Connection must be unregistered, both endpoints must belong to this world, and none may be pending deletion.");
     }
 
     auto& firstBodyConnections = connection->body0->connections;
@@ -71,6 +73,10 @@ void PhysicsWorld::RequestBodyDeletion(Body& body)
         throw std::invalid_argument("Body must belong to this world.");
     }
     body.isMarkedForDeletion = true;
+    for (auto connection : body.connections)
+    {
+        connection->isMarkedForDeletion = true;
+    }
     isSceneChanged = true;
 }
 
@@ -117,23 +123,9 @@ void PhysicsWorld::ResetParameters(DRect const& sceneRect)
     useEqualPositionCorrection = false;
 }
 
-void PhysicsWorld::MarkDeletedConnections()
-{
-    // 删除被标记为删除的图形和其上的连接
-    for (auto body : bodies)
-    {
-        if (body->isMarkedForDeletion)
-        {
-            for (auto connection : body->connections)
-            {
-                connection->isMarkedForDeletion = true;
-            }
-        }
-    }
-}
-
 void PhysicsWorld::RemoveDeletedObjects()
 {
+    // 先解除连接的两端关联，物体在此阶段仍然有效。
     for (auto& connection : connections)
     {
         if (connection->isMarkedForDeletion)
@@ -145,20 +137,28 @@ void PhysicsWorld::RemoveDeletedObjects()
             secondBodyConnections.erase(remove(secondBodyConnections.begin(), secondBodyConnections.end(), &*connection), secondBodyConnections.end());
         }
     }
-    connections.erase(
-        remove_if(connections.begin(), connections.end(),
-                  [](std::shared_ptr<Connection> connection)
-                  {
-                      return connection->isMarkedForDeletion;
-                  }),
-        connections.end());
-    bodies.erase(
-        remove_if(bodies.begin(), bodies.end(),
-                  [](std::shared_ptr<Body> body)
-                  {
-                      return body->isMarkedForDeletion;
-                  }),
-        bodies.end());
+    auto connectionsEnd = std::remove_if(connections.begin(), connections.end(),
+        [](std::shared_ptr<Connection> const& connection)
+        {
+            return connection->isMarkedForDeletion;
+        });
+    if (connectionsEnd != connections.end())
+    {
+        isSceneChanged = true;
+        connections.erase(connectionsEnd, connections.end());
+    }
+
+    // 连接清理完成后再移除物体；移除时重新使分组失效。
+    auto bodiesEnd = std::remove_if(bodies.begin(), bodies.end(),
+        [](std::shared_ptr<Body> const& body)
+        {
+            return body->isMarkedForDeletion;
+        });
+    if (bodiesEnd != bodies.end())
+    {
+        isSceneChanged = true;
+        bodies.erase(bodiesEnd, bodies.end());
+    }
 }
 
 void PhysicsWorld::Prepare()

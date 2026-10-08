@@ -42,7 +42,6 @@ public:
 
     void ClearObjects();
     void ResetParameters(DRect const& sceneRect);
-    void MarkDeletedConnections();
     void RemoveDeletedObjects();
     void Prepare();
 

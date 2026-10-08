@@ -2,6 +2,7 @@
 #include "UserInterface.h"
 #include "SceneCanvas.h"
 #include "Body.h"
+#include "Connection.h"
 #include "AudioClip.h"
 #include "Creator.h"
 #include "SceneStorage.h"
@@ -144,8 +145,23 @@ void SimulationApp::UpdateMusic()
 
 void SimulationApp::RemoveDeletedObjects()
 {
-    physicsWorld.MarkDeletedConnections();
-    editor.PrepareForDeletion();
+    // 本帧的拾取先于删除清理，先释放待删除对象的输入归属。
+    for (auto const& body : physicsWorld.GetBodies())
+    {
+        if (body->IsMarkedForDeletion())
+        {
+            inputOwners.Remove(body.get());
+        }
+    }
+    for (auto const& connection : physicsWorld.GetConnections())
+    {
+        if (connection->IsMarkedForDeletion())
+        {
+            inputOwners.Remove(connection.get());
+        }
+    }
+
+    editor.PrepareForDeletion(inputOwners);
     physicsWorld.RemoveDeletedObjects();
 }
 

@@ -33,6 +33,8 @@ public:
     void OnBodyReleased(Body& hitBody, Vector2 const& mousePosition);
     void Update(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners);
     void Discard(InputOwners& inputOwners);
+    // 删除前取消引用待删除端点的创建过程及预览。
+    void PrepareForDeletion(InputOwners& inputOwners);
     void PreUpdate(AppInput const& input, InputOwners& inputOwners, DRect viewport);
 
     // 只借用当前预览；Update 或 Discard 后须重新获取，无预览时返回 nullptr。

@@ -21,7 +21,7 @@ void SceneEditor::ResetInteraction()
     tracks.clear();
 }
 
-void SceneEditor::PrepareForDeletion()
+void SceneEditor::PrepareForDeletion(InputOwners& inputOwners)
 {
     for (auto it = tracks.begin(); it != tracks.end();)
     {
@@ -47,6 +47,10 @@ void SceneEditor::PrepareForDeletion()
         hoveredBody = nullptr;
     }
     dragTool.PrepareForDeletion();
+    if (creator)
+    {
+        creator->PrepareForDeletion(inputOwners);
+    }
 }
 
 void SceneEditor::ClearTrack(Body const& body)
