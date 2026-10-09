@@ -45,8 +45,8 @@ public:
 
     void RenderBackground(SceneCanvas const& canvas, std::wstring const& debugString,
                           SceneRenderContext const& context) const;
-    // 保留原时点的几何更新；本入口不是对世界的纯只读操作。
-    void RenderObjects(PhysicsWorld& world, SceneRenderContext const& context) const;
+    // 调用方先同步世界几何；绘制不修改物体或连接。
+    void RenderObjects(PhysicsWorld const& world, SceneRenderContext const& context) const;
     void RenderCreationPreview(CreationPreview const& preview, SceneRenderContext const& context) const;
     void RenderCollision(Collision const& collision, SceneRenderContext const& context) const;
 

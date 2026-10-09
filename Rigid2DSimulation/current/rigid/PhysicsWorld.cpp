@@ -172,6 +172,18 @@ void PhysicsWorld::Prepare()
     }
 }
 
+void PhysicsWorld::UpdateGeometry()
+{
+    for (auto const& body : bodies)
+    {
+        body->UpdateShapesPositionAndAABB();
+    }
+    for (auto const& connection : connections)
+    {
+        connection->UpdatePosition();
+    }
+}
+
 void PhysicsWorld::Advance(double deltaTime, Body const* warpExcludedBody,
                            std::function<void(double)> const& beginStep,
                            std::function<void(Body&, double)> const& stepBody,

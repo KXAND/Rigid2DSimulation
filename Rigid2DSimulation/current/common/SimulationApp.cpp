@@ -101,6 +101,7 @@ void SimulationApp::Update()
     BodyDrag frameDrag = editor.Update(physicsWorld, input, inputOwners, *sceneCanvas, realDeltaTime);
     UpdateSceneState(frameDrag);
     AdvanceSimulation(editor.GetDrag());
+    physicsWorld.UpdateGeometry();
 
     auto context = GetSceneRenderContext();
     sceneRenderer.RenderBackground(*sceneCanvas, scriptRuntime.debugString, context);

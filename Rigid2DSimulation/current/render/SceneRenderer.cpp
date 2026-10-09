@@ -21,17 +21,14 @@ void SceneRenderer::RenderBackground(SceneCanvas const& canvas, std::wstring con
                Color(110), context.font, canvas.topLeft + DVector2(10, 10), canvas.width - 20, context.viewport);
 }
 
-void SceneRenderer::RenderObjects(PhysicsWorld& world, SceneRenderContext const& context) const
+void SceneRenderer::RenderObjects(PhysicsWorld const& world, SceneRenderContext const& context) const
 {
-    // 渲染
-    for (auto& body : world.GetBodies())
+    for (auto const& body : world.GetBodies())
     {
-        body->UpdateShapesPositionAndAABB();
         RenderBody(*body, context);
     }
-    for (auto& connection : world.GetConnections())
+    for (auto const& connection : world.GetConnections())
     {
-        connection->UpdatePosition();
         RenderConnection(*connection, connection->p0, connection->p1, context);
     }
 }
