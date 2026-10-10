@@ -3,6 +3,26 @@ frameTimeLabel $[ZhangYH] 帧时间: $ $[ZhangYH] Frame Time: $
 saveButton $保存$ $Save$
 loadButton $载入$ $Load$
 globalPanelTitle $全局$ $Global$
+creationPanelTitle $创建$ $Create$
+creationBoxTool $方框 / Box$ $Box$
+creationBallTool $圆 / Ball$ $Ball$
+creationPlateTool $板 / Plate$ $Plate$
+creationParticleTool $颗粒 / Particle$ $Particle$
+creationConnectionTool $连接 / Connection$ $Connection$
+creationPointTool $点 / Point$ $Point$
+creationNailTool $钉住 / Nail$ $Nail$
+creationParticleRadius $半径 / Radius: $ $Particle radius: $
+creationPlateThickness $板厚 / Thickness: $ $Plate thickness: $
+creationUnknownTool $未知工具$ $Unknown tool$
+creationChooseTool $点击上方工具按钮进入创建模式.$ $Click a tool above to enter creation mode.$
+creationBoxHelp $左键从左上向右下拖动, 松开创建方框.$ $Drag from top-left to bottom-right with the left mouse button. Release to create a box.$
+creationBallHelp $左键从圆心向外拖动, 松开创建圆.$ $Drag outward from the center with the left mouse button. Release to create a ball.$
+creationPlateHelp $左键沿板的长度方向拖动, 松开创建板.$ $Drag along the plate with the left mouse button. Release to create it. Thickness uses the field above.$
+creationParticleHelp $在空白处单击左键, 使用上方半径创建圆.$ $Left-click empty space to create a ball using the particle radius above.$
+creationConnectionHelp $在一个物体上按下左键, 在另一个物体上松开. 使用当前连接配置.$ $Press the left mouse button on one body and release on another. Uses the current connection configuration.$
+creationPointHelp $在空白处单击左键创建点物体.$ $Left-click empty space to create a point body.$
+creationNailHelp $在物体上单击左键, 将该位置钉住.$ $Left-click a body to pin it at that position.$
+creationSizeHelp $半径只用于颗粒, 板厚只用于板. 输入正数后回车或点击面板内别处确认, 无效值保留原值. 关闭面板不会退出创建模式.$ $Radius is for particles, thickness for plates. Enter a positive number; press Enter or click elsewhere in this panel to apply. Invalid input keeps the old value. Closing this panel keeps creation mode active.$
 compile $解释并运行$ $Interpret & Run$
 commandPanelTitle $指令$ $Command$
 unnamedParameter $未命名$ $Unnamed$

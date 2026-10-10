@@ -4,6 +4,7 @@
 class SimulationApp;
 class FloatPanel;
 class GlobalPanel;
+class CreationPanel;
 class BodyPanel;
 class ConnectionPanel;
 class CommandPanel;
@@ -17,6 +18,7 @@ class UserInterface
 public:
     vector<FloatPanel*> floatPanels;
     std::shared_ptr<GlobalPanel> globalPanel;
+    std::shared_ptr<CreationPanel> creationPanel;
     std::shared_ptr<BodyPanel> bodyPanel;
     std::shared_ptr<ConnectionPanel> connectionPanel;
     std::shared_ptr<CommandPanel> commandPanel;

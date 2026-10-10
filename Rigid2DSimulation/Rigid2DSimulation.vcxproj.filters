@@ -60,6 +60,7 @@
     <Filter Include="current\ui\globalPanel">
       <UniqueIdentifier>{5cc75a31-8c34-40e0-9e61-e592aad01b9c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="current\ui\creationPanel" />
     <Filter Include="current\ui\languagePanel">
       <UniqueIdentifier>{442181d7-159d-4635-89f8-04767fa984a3}</UniqueIdentifier>
     </Filter>
@@ -191,6 +192,15 @@
     </ClCompile>
     <ClCompile Include="current\ui\globalPanel\GlobalPanel.cpp">
       <Filter>current\ui\globalPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\creationPanel\CreationPanel.cpp">
+      <Filter>current\ui\creationPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\creationPanel\CreationButtons.cpp">
+      <Filter>current\ui\creationPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="current\ui\creationPanel\CreationControls.cpp">
+      <Filter>current\ui\creationPanel</Filter>
     </ClCompile>
     <ClCompile Include="current\ui\globalPanel\GlobalButtons.cpp">
       <Filter>current\ui\globalPanel</Filter>
@@ -442,6 +452,15 @@
     </ClInclude>
     <ClInclude Include="current\ui\globalPanel\GlobalPanel.h">
       <Filter>current\ui\globalPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\creationPanel\CreationPanel.h">
+      <Filter>current\ui\creationPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\creationPanel\CreationButtons.h">
+      <Filter>current\ui\creationPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="current\ui\creationPanel\CreationControls.h">
+      <Filter>current\ui\creationPanel</Filter>
     </ClInclude>
     <ClInclude Include="current\ui\globalPanel\GlobalButtons.h">
       <Filter>current\ui\globalPanel</Filter>

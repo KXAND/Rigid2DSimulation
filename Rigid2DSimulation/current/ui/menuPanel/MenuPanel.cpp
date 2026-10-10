@@ -9,6 +9,7 @@
 #include "current/ui/bodyPanel/BodyPanel.h"
 #include "current/ui/commandPanel/CommandPanel.h"
 #include "current/ui/connectionPanel/ConnectionPanel.h"
+#include "current/ui/creationPanel/CreationPanel.h"
 #include "current/ui/globalPanel/GlobalPanel.h"
 #include "current/ui/languagePanel/LanguagePanel.h"
 #include "current/ui/parameterPanel/ParameterPanel.h"
@@ -21,6 +22,7 @@ MenuPanel::MenuPanel(App& app) : Panel(Panel::CreateMenuPanel(app))
     resetButton = std::make_shared<SceneResetButton>();
     muteButton = std::make_shared<AudioMuteButton>();
     globalPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->globalPanel);
+    creationPanelButton = std::make_shared<ShowFloatPanelButton>(simulationApp.userInterface->creationPanel.get());
     bodyPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->bodyPanel);
     connectionPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->connectionPanel);
     modeButton = std::make_shared<InteractionModeButton>();
@@ -29,7 +31,7 @@ MenuPanel::MenuPanel(App& app) : Panel(Panel::CreateMenuPanel(app))
     parameterPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->parameterPanel);
     languagePanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->languagePanel);
     aboutPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->aboutPanel);
-    controls = {&*pauseButton, &*resetButton, &*muteButton, &*globalPanelButton,
+    controls = {&*pauseButton, &*resetButton, &*muteButton, &*globalPanelButton, creationPanelButton.get(),
                 &*bodyPanelButton, &*connectionPanelButton, &*modeButton, &*displayButton,
                 &*commandPanelButton, &*parameterPanelButton, &*languagePanelButton, &*aboutPanelButton};
     this->controls = std::make_shared<VerticalControlList>(controls);

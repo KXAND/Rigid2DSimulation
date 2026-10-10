@@ -46,6 +46,10 @@ public:
     void ResetTools(InputOwners& inputOwners);
     // 请求不会替换工具；下一次 PreUpdate 在拾取前取消旧操作并应用配置。
     void RequestCreatorConfig(Value const& config);
+    void RequestCreatorConfig(CreatorConfig const& config);
+    // UI 修改配置时读取最新请求，避免同帧的多项修改互相覆盖。
+    CreatorConfig const& GetRequestedCreatorConfig() const;
+    void SelectCreationTool(int toolMode);
     Creator const& GetCreator() const { return creator; }
     void CycleMode(InputOwners& inputOwners);
     void RequestBodyDeletion(PhysicsWorld& world);

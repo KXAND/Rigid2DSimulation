@@ -14,6 +14,7 @@ public:
     std::shared_ptr<SceneResetButton> resetButton;
     std::shared_ptr<AudioMuteButton> muteButton;
     std::shared_ptr<ShowFloatPanelButton> globalPanelButton;
+    std::shared_ptr<ShowFloatPanelButton> creationPanelButton;
     std::shared_ptr<ShowFloatPanelButton> bodyPanelButton;
     std::shared_ptr<ShowFloatPanelButton> connectionPanelButton;
     std::shared_ptr<InteractionModeButton> modeButton;

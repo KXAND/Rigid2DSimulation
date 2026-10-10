@@ -184,6 +184,9 @@
     <ClCompile Include="current\ui\connectionPanel\ConnectionButtons.cpp" />
     <ClCompile Include="current\ui\connectionPanel\ConnectionControls.cpp" />
     <ClCompile Include="current\ui\globalPanel\GlobalPanel.cpp" />
+    <ClCompile Include="current\ui\creationPanel\CreationPanel.cpp" />
+    <ClCompile Include="current\ui\creationPanel\CreationButtons.cpp" />
+    <ClCompile Include="current\ui\creationPanel\CreationControls.cpp" />
     <ClCompile Include="current\ui\globalPanel\GlobalButtons.cpp" />
     <ClCompile Include="current\ui\globalPanel\GlobalControls.cpp" />
     <ClCompile Include="current\ui\languagePanel\LanguagePanel.cpp" />
@@ -270,6 +273,9 @@
     <ClInclude Include="current\ui\connectionPanel\ConnectionButtons.h" />
     <ClInclude Include="current\ui\connectionPanel\ConnectionControls.h" />
     <ClInclude Include="current\ui\globalPanel\GlobalPanel.h" />
+    <ClInclude Include="current\ui\creationPanel\CreationPanel.h" />
+    <ClInclude Include="current\ui\creationPanel\CreationButtons.h" />
+    <ClInclude Include="current\ui\creationPanel\CreationControls.h" />
     <ClInclude Include="current\ui\globalPanel\GlobalButtons.h" />
     <ClInclude Include="current\ui\globalPanel\GlobalControls.h" />
     <ClInclude Include="current\ui\languagePanel\LanguagePanel.h" />

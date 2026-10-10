@@ -2,6 +2,7 @@
 #include "SimulationApp.h"
 #include "FloatPanel.h"
 #include "current/ui/globalPanel/GlobalPanel.h"
+#include "current/ui/creationPanel/CreationPanel.h"
 #include "current/ui/bodyPanel/BodyPanel.h"
 #include "current/ui/connectionPanel/ConnectionPanel.h"
 #include "current/ui/parameterPanel/ParameterPanel.h"
@@ -19,6 +20,8 @@ void UserInterface::Init(SimulationApp& simulationApp)
 {
     globalPanel = std::make_shared<GlobalPanel>(simulationApp);
     floatPanels.push_back(&*globalPanel);
+    creationPanel = std::make_shared<CreationPanel>(simulationApp);
+    floatPanels.push_back(creationPanel.get());
     bodyPanel = std::make_shared<BodyPanel>(simulationApp);
     floatPanels.push_back(&*bodyPanel);
     connectionPanel = std::make_shared<ConnectionPanel>(simulationApp);

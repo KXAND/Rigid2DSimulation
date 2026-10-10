@@ -65,7 +65,26 @@ void SceneEditor::ResetTools(InputOwners& inputOwners)
 
 void SceneEditor::RequestCreatorConfig(Value const& config)
 {
-    pendingCreatorConfig = std::make_unique<CreatorConfig>(ParseCreatorConfig(config));
+    RequestCreatorConfig(ParseCreatorConfig(config));
+}
+
+void SceneEditor::RequestCreatorConfig(CreatorConfig const& config)
+{
+    pendingCreatorConfig = std::make_unique<CreatorConfig>(config);
+}
+
+CreatorConfig const& SceneEditor::GetRequestedCreatorConfig() const
+{
+    return pendingCreatorConfig ? *pendingCreatorConfig : creator.GetConfig();
+}
+
+void SceneEditor::SelectCreationTool(int toolMode)
+{
+    auto config = GetRequestedCreatorConfig();
+    config.mode = toolMode;
+    RequestCreatorConfig(config);
+    dragTool.Cancel();
+    mode = kCreateMode;
 }
 
 void SceneEditor::CycleMode(InputOwners& inputOwners)
