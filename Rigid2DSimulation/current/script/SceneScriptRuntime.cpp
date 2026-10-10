@@ -52,18 +52,11 @@ void SceneScriptRuntime::ApplySceneScript()
 
 void SceneScriptRuntime::Update()
 {
-    // 保留原帧流程：两次 Update 之间同步参数，不能合并脚本调用。
     if (currentScope.find(L"current.debugString") != currentScope.end())
     {
         debugString = currentScope[L"current.debugString"]->stringValue;
     }
-    if (currentScope.find(L"Update") != currentScope.end())
-    {
-        auto file = currentScope[L"Update"];
-        Execute(currentScope, file->bodyStatements);
-    }
-
-    // 删除标记为删除的键
+    // 先清理参数列表，再将面板参数同步到脚本作用域。
     parameters.erase(
         remove_if(parameters.begin(), parameters.end(),
                   [](std::shared_ptr<SceneParameter> parameter)
@@ -72,12 +65,12 @@ void SceneScriptRuntime::Update()
                   }),
         parameters.end());
 
-    //更新对应键的值
     for (auto& parameter : parameters)
     {
         currentScope[parameter->name] = std::make_shared<Value>(parameter->value);
     }
 
+    // 本帧脚本只执行一次，读取刚同步的参数。
     if (currentScope.find(L"Update") != currentScope.end())
     {
         auto updateFunction = *currentScope[L"Update"];
