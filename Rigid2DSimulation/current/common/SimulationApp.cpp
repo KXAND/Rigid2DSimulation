@@ -80,6 +80,10 @@ void SimulationApp::Update()
     ResolveInputOwnership();
 
     title = GetLocalizedString(L"title");
+    // 每帧必须先计算并设置时长，再调用无参 Update；脚本与物理推进共用该值。
+    // 本帧不重新计算时长，脚本修改上限从下一帧生效。
+    realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
+    scriptRuntime.SetFrameDeltaTime(realDeltaTime);
     scriptRuntime.Update();
 
     UpdateMusic();
@@ -94,9 +98,6 @@ void SimulationApp::Update()
     }
 
     RemoveDeletedObjects();
-
-    realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
-    scriptRuntime.SetFrameDeltaTime(realDeltaTime);
 
     BodyDrag frameDrag = editor.Update(physicsWorld, input, inputOwners, *sceneCanvas, realDeltaTime);
     UpdateSceneState(frameDrag);

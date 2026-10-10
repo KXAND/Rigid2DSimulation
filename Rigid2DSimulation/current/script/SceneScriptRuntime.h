@@ -34,6 +34,7 @@ public:
     void ResetScope(SceneScriptBindings bindings);
     void ResetSceneVariables(SceneCanvas const& canvas);
     void Update();
+    // App 在每帧 Update 前设置；Update 同步面板参数后再发布到 DSL。
     void SetFrameDeltaTime(double deltaTime);
     void SetSimulationTime(double time);
     void ExecuteSceneScript();
@@ -43,6 +44,8 @@ public:
     void ApplyMotionPresets(Body& body, bool isDynamic, double const& simulationTime, double stepDeltaTime);
 
 private:
+    double frameDeltaTime = 0;
+
     void InitializeDefaultFunctions(SceneScriptBindings bindings);
     void SetConfig(Value const& config, SceneScriptBindings bindings);
     void FollowPresetPosition(Body& body, double const& simulationTime, double stepDeltaTime);

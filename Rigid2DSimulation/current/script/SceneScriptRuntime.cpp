@@ -22,6 +22,8 @@ void SceneScriptRuntime::ResetScope(SceneScriptBindings bindings)
     currentScope.clear();
     InitializeDefaultFunctions(bindings);
     parameters.clear();
+    frameDeltaTime = 0;
+    currentScope[L"deltaTime"] = std::make_shared<Value>(0);
 }
 
 void SceneScriptRuntime::ResetSceneVariables(SceneCanvas const& canvas)
@@ -35,7 +37,7 @@ void SceneScriptRuntime::ResetSceneVariables(SceneCanvas const& canvas)
 
 void SceneScriptRuntime::SetFrameDeltaTime(double deltaTime)
 {
-    currentScope[L"current.frameRate.GetDeltaTime()"] = std::make_shared<Value>(deltaTime);
+    frameDeltaTime = deltaTime;
 }
 
 void SceneScriptRuntime::SetSimulationTime(double time)
@@ -74,7 +76,10 @@ void SceneScriptRuntime::Update()
         currentScope[parameter->name] = std::make_shared<Value>(parameter->value);
     }
 
-    // 本帧脚本只执行一次，读取刚同步的参数。
+    // 系统帧时长优先于同名面板参数；脚本与物理推进使用同一个时长。
+    currentScope[L"deltaTime"] = std::make_shared<Value>(frameDeltaTime);
+
+    // 本帧脚本只执行一次，读取刚同步的参数和时长。
     if (currentScope.find(L"Update") != currentScope.end())
     {
         auto updateFunction = *currentScope[L"Update"];
