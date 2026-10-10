@@ -48,10 +48,7 @@ void SceneEditor::PrepareForDeletion(InputOwners& inputOwners)
         hoveredBody = nullptr;
     }
     dragTool.PrepareForDeletion();
-    if (creator)
-    {
-        creator->PrepareForDeletion(inputOwners);
-    }
+    creator.PrepareForDeletion(inputOwners);
 }
 
 void SceneEditor::ClearTrack(Body const& body)
@@ -59,15 +56,21 @@ void SceneEditor::ClearTrack(Body const& body)
     tracks.erase(&body);
 }
 
-void SceneEditor::ResetTools()
+void SceneEditor::ResetTools(InputOwners& inputOwners)
 {
     dragTool.rotationSpeed = 2;
-    creator = std::make_shared<Creator>();
+    pendingCreatorConfig.reset();
+    creator.ApplyConfig(CreatorConfig{}, inputOwners);
+}
+
+void SceneEditor::RequestCreatorConfig(Value const& config)
+{
+    pendingCreatorConfig = std::make_unique<CreatorConfig>(ParseCreatorConfig(config));
 }
 
 void SceneEditor::CycleMode(InputOwners& inputOwners)
 {
-    creator->Discard(inputOwners);
+    creator.Discard(inputOwners);
     mode = (mode + 1) % 4;
 }
 
@@ -101,9 +104,15 @@ bool SceneEditor::HitTestBody(Body const& body, Vector2 mousePosition)
 void SceneEditor::PreUpdate(PhysicsWorld const& world, AppInput const& input,
                             InputOwners& inputOwners, DRect viewport)
 {
+    // 配置变更只在本次拾取之前生效，不能复用旧模式的输入归属。
+    if (pendingCreatorConfig)
+    {
+        creator.ApplyConfig(*pendingCreatorConfig, inputOwners);
+        pendingCreatorConfig.reset();
+    }
     if (mode == kCreateMode)
     {
-        creator->PreUpdate(input, inputOwners, viewport);
+        creator.PreUpdate(input, inputOwners, viewport);
     }
     for (auto& body : world.GetBodies())
     {
@@ -137,16 +146,16 @@ BodyDrag SceneEditor::Update(PhysicsWorld& world, AppInput& input, InputOwners c
         }
     }
     // 工具可以新增物体或连接，必须在物体遍历结束后确认创建。
-    if (mode == kCreateMode)
+    if (mode == kCreateMode && !pendingCreatorConfig)
     {
-        creator->Update(world, input, inputOwners);
+        creator.Update(world, input, inputOwners);
     }
     return frameDrag;
 }
 
 CreationPreview SceneEditor::GetPreview() const
 {
-    return mode == kCreateMode ? creator->GetPreview() : CreationPreview{};
+    return mode == kCreateMode && !pendingCreatorConfig ? creator.GetPreview() : CreationPreview{};
 }
 
 void SceneEditor::RecordTracks(PhysicsWorld const& world, bool isTrackShown, bool isPaused)
@@ -183,15 +192,15 @@ BodyDrag SceneEditor::UpdateBody(PhysicsWorld& world, Body& body, AppInput& inpu
     }
     auto frameDrag = dragTool.UpdateBody(body, input, inputOwners, realDeltaTime, isHovered, mode == kDragMode);
 
-    if (isHovered && mode == kCreateMode)
+    if (isHovered && mode == kCreateMode && !pendingCreatorConfig)
     {
         if (input.IsMouseClickedDown(0))
         {
-            creator->OnBodyPressed(body, (Vector2)input.mousePosition);
+            creator.OnBodyPressed(body, (Vector2)input.mousePosition);
         }
         else if (!input.mouseButtonDown[0] && input.previousMouseButtonDown[0])
         {
-            creator->OnBodyReleased(body, (Vector2)input.mousePosition);
+            creator.OnBodyReleased(body, (Vector2)input.mousePosition);
         }
     }
     return frameDrag;

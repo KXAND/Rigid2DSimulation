@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "CreationPreview.h"
+#include "Creator.h"
 #include "DVector2.h"
 #include "DragTool.h"
 #include "Vector2.h"
@@ -11,7 +12,6 @@
 class AppInput;
 class Body;
 class Connection;
-class Creator;
 struct InputOwners;
 class PhysicsWorld;
 class SceneCanvas;
@@ -25,7 +25,6 @@ class SceneEditor
 {
 public:
     int mode = 0;
-    std::shared_ptr<Creator> creator;
     Body* bodySelecting = NULL;
     Connection* connectionSelecting = NULL;
     DragTool dragTool;
@@ -44,7 +43,10 @@ public:
     {
         return hoveredBody;
     }
-    void ResetTools();
+    void ResetTools(InputOwners& inputOwners);
+    // 请求不会替换工具；下一次 PreUpdate 在拾取前取消旧操作并应用配置。
+    void RequestCreatorConfig(Value const& config);
+    Creator const& GetCreator() const { return creator; }
     void CycleMode(InputOwners& inputOwners);
     void RequestBodyDeletion(PhysicsWorld& world);
     void RequestConnectionDeletion(PhysicsWorld& world);
@@ -61,6 +63,8 @@ public:
     void RecordTracks(PhysicsWorld const& world, bool isTrackShown, bool isPaused);
 
 private:
+    Creator creator;
+    std::unique_ptr<CreatorConfig> pendingCreatorConfig;
     Body const* hoveredBody = nullptr;
     std::unordered_map<Body const*, std::vector<Vector2>> tracks;
 

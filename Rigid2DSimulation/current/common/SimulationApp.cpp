@@ -72,7 +72,7 @@ void SimulationApp::Reset()
     sceneRenderer.chargeMultiplier = 1;
     isTrackShown = false;
 
-    editor.ResetTools();
+    editor.ResetTools(inputOwners);
 }
 
 void SimulationApp::Update()

@@ -19,7 +19,7 @@ void GlobalDetailsLabel::Sync(App& app)
     text += simulationApp.GetLocalizedString(L"coulomb") + FormatFixed2(simulationApp.physicsWorld.coulombConstant) + L"\n";
 
     wstring modeName;
-    switch (simulationApp.editor.creator->mode)
+    switch (simulationApp.editor.GetCreator().GetConfig().mode)
     {
     case kCreateBall:
         modeName = simulationApp.GetLocalizedString(L"createBall");

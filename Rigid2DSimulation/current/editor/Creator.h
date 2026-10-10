@@ -16,18 +16,23 @@ struct InputOwners;
 class PhysicsWorld;
 class Body;
 class Connection;
+struct CreatorConfig
+{
+    int mode = kCreateBox;
+    double bodyDepth = 10;
+    double connectionDepth = -1;
+    double thickness = 10;
+    double radius = 8;
+    std::shared_ptr<Value> bodyConfiguration, connectionConfiguration;
+};
+
+CreatorConfig ParseCreatorConfig(Value const& config);
+
 class Creator
 {
 public:
-    int mode = 0;
-    double bodyDepth = 0;
-    double connectionDepth = 0;
-    double thickness = 0;
-    double radius = 0;
-    std::shared_ptr<Value> bodyConfiguration, connectionConfiguration;
-
-    Creator();
-    Creator(Value const& config);
+    CreatorConfig const& GetConfig() const { return config; }
+    void ApplyConfig(CreatorConfig const& newConfig, InputOwners& inputOwners);
     double Depth() const;
     // 左键命中物体的通知；由同一输入阶段的 Update 确认创建。
     void OnBodyPressed(Body& hitBody, Vector2 const& mousePosition);
@@ -41,6 +46,7 @@ public:
     CreationPreview GetPreview() const;
 
 private:
+    CreatorConfig config;
     DVector2 creationStartPoint;
     Body* body0 = NULL;
     Body* body1 = NULL;

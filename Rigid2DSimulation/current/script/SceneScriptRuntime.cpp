@@ -142,7 +142,7 @@ void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings
     {
         if (arguments.size() >= 1)
         {
-            bindings.editor.creator = std::make_shared<Creator>(*arguments[0]);
+            bindings.editor.RequestCreatorConfig(*arguments[0]);
         }
         return std::make_shared<Value>();
     };
