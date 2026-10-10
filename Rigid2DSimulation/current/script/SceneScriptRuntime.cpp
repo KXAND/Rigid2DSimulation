@@ -175,7 +175,7 @@ void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings
 
     auto parallelogramFunction = [](vector<std::shared_ptr<Value>> const& arguments)
     {
-        if (arguments.size() >= 2)
+        if (arguments.size() >= 3)
         {
             return Parallelogram(*arguments[0], *arguments[1], *arguments[2]);
         }
