@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <cstddef>
 #include <exception>
 #include <string>
 
@@ -23,3 +24,12 @@ public:
 private:
     std::wstring message;
 };
+
+inline void RequireArgumentCount(std::wstring const& functionName, std::size_t expected, std::size_t actual)
+{
+    if (expected != actual)
+    {
+        throw ScriptError(functionName + L" expects " + std::to_wstring(expected) +
+                          L" arguments, but received " + std::to_wstring(actual) + L".");
+    }
+}

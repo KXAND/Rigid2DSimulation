@@ -37,10 +37,10 @@ public:
     // App 在每帧 Update 前设置；Update 同步面板参数后再发布到 DSL。
     void SetFrameDeltaTime(double deltaTime);
     void SetSimulationTime(double time);
-    void ExecuteSceneScript();
-    void ApplySceneScript();
-    void RefreshBodyScript(Body& body);
-    void RefreshConnectionScript(Connection& connection);
+    bool ExecuteSceneScript();
+    bool ApplySceneScript();
+    bool RefreshBodyScript(Body& body);
+    bool RefreshConnectionScript(Connection& connection);
     void ApplyMotionPresets(Body& body, bool isDynamic, double const& simulationTime, double stepDeltaTime);
     std::wstring const& GetError() const;
     // 只消费待记录消息；错误状态保留至重新应用脚本或重置。
@@ -54,6 +54,8 @@ private:
 
     void ClearError();
     void RequireSceneMutationAllowed(wchar_t const* functionName) const;
+    void ReportError(std::wstring const& context, ScriptError const& error);
+    bool TryExecuteScript(std::wstring const& text, std::wstring const& context);
     void InitializeDefaultFunctions(SceneScriptBindings bindings);
     void SetConfig(Value const& config, SceneScriptBindings bindings);
     void FollowPresetPosition(Body& body, double const& simulationTime, double stepDeltaTime);

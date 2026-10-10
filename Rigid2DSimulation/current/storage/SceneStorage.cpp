@@ -38,13 +38,13 @@ void SceneStorage::Save(std::wstring const& name, PhysicsWorld const& physicsWor
     fclose(file);
 }
 
-void SceneStorage::Load(std::wstring const& name, PhysicsWorld& physicsWorld,
+bool SceneStorage::Load(std::wstring const& name, PhysicsWorld& physicsWorld,
                         SceneScriptRuntime& runtime, std::function<void()> const& resetScene)
 {
     FILE* file = OpenFile(name, L"rb");
     if (!file)
     {
-        return;
+        return false;
     }
     resetScene();
     int size = 0;
@@ -58,20 +58,29 @@ void SceneStorage::Load(std::wstring const& name, PhysicsWorld& physicsWorld,
     for (int i = (0), iEnd = int(size); i < iEnd; ++i)
     {
         auto body = LoadBody(file);
-        runtime.RefreshBodyScript(*body);
+        if (!runtime.RefreshBodyScript(*body))
+        {
+            fclose(file);
+            return false;
+        }
         physicsWorld.AddBody(body);
     }
     fread(&(size), sizeof(size), 1, file);
     for (int i = (0), iEnd = int(size); i < iEnd; ++i)
     {
         auto connection = LoadConnection(file, physicsWorld);
-        runtime.RefreshConnectionScript(*connection);
+        if (!runtime.RefreshConnectionScript(*connection))
+        {
+            fclose(file);
+            return false;
+        }
         connection->UpdatePosition();
         physicsWorld.AddConnection(connection);
     }
 
-    runtime.ExecuteSceneScript();
+    bool succeeded = runtime.ExecuteSceneScript();
     fclose(file);
+    return succeeded;
 }
 
 void SceneStorage::SaveParameters(FILE* file, SceneScriptRuntime const& runtime)

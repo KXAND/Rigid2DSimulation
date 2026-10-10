@@ -52,10 +52,15 @@ void SimulationApp::Save(wstring const& name) const
 
 void SimulationApp::Load(wstring const& name)
 {
-    SceneStorage::Load(name, physicsWorld, scriptRuntime, [this]()
+    bool loaded = SceneStorage::Load(name, physicsWorld, scriptRuntime, [this]()
     {
         Reset();
     });
+    if (!loaded)
+    {
+        AddLog(L"Scene loading did not complete: " + name + L"\n");
+    }
+    HandleScriptError();
 }
 void SimulationApp::Reset()
 {
@@ -112,6 +117,7 @@ void SimulationApp::Update()
     sceneRenderer.RenderObjects(physicsWorld, context);
     sceneRenderer.RenderCreationPreview(editor.GetPreview(), context);
     userInterface->UpdateAndRender(*this);
+    HandleScriptError();
 }
 
 void SimulationApp::HandleScriptError()

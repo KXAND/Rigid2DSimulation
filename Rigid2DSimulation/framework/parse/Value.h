@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Utils.h"
 #include "ScriptStatement.h"
+#include "ScriptError.h"
 
 struct Value;
 typedef function<std::shared_ptr<Value>(vector<std::shared_ptr<Value>> const&)> Function;
@@ -13,6 +14,7 @@ struct Value
     double number = 0;
     wstring stringValue;
     Function nativeFunction;
+    size_t nativeArgumentCount = 0;
     Program bodyStatements;
     vector<wstring> arguments;
     vector<std::shared_ptr<Value>> elements;
@@ -21,7 +23,7 @@ struct Value
     Value() = default;
     Value(double number);
     Value(wstring const& text);
-    Value(Function const& nativeFunction);
+    Value(Function const& nativeFunction, size_t argumentCount);
     Value(vector<std::shared_ptr<Value>> const& elements);
     Value(Program const& statements, vector<wstring> const& arguments);
 };

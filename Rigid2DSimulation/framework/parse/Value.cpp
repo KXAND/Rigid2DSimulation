@@ -16,7 +16,8 @@ Value::Value(wstring const& text) : stringValue(text)
     type = L"str";
 }
 
-Value::Value(Function const& nativeFunction) : nativeFunction(nativeFunction)
+Value::Value(Function const& nativeFunction, size_t argumentCount) : nativeFunction(nativeFunction),
+                                                                  nativeArgumentCount(argumentCount)
 {
     type = L"user";
 }
@@ -80,6 +81,18 @@ std::shared_ptr<Value> FindVariable(Scope& globalScope, Scope& scope, wstring va
 bool TryEvaluateDefaultFunction(Scope& globalScope, Scope& scope, ScriptExpression const& expression, Value& result)
 {
     auto const& functionName = expression.functionName;
+    static map<wstring, size_t> const argumentCounts = {
+        {L"!", 1}, {L"++", 1}, {L"--", 1}, {L"Sin", 1}, {L"Cos", 1}, {L"Abs", 1},
+        {L"+", 2}, {L"-", 2}, {L"*", 2}, {L"/", 2}, {L"<", 2}, {L">", 2},
+        {L"<=", 2}, {L">=", 2}, {L"==", 2}, {L"!=", 2}, {L"&&", 2}, {L"||", 2},
+        {L"Pow", 2}, {L"Random", 2}, {L"RandomInt", 2}, {L"ToString", 1}, {L".", 2}
+    };
+    auto signature = argumentCounts.find(functionName);
+    if (signature == argumentCounts.end())
+    {
+        return false;
+    }
+    RequireArgumentCount(functionName, signature->second, expression.arguments.size());
     // 每次都能找到新 bug，很可能还有一些 bug。2__
     auto numArg = [&](int index)
     {
@@ -221,6 +234,7 @@ std::shared_ptr<Value> EvaluateCall(Scope& globalScope, Scope& scope, ScriptExpr
     auto functionValue = FindVariable(globalScope, scope, expression.functionName, expression.isGlobal);
     if (functionValue->type == L"user" && functionValue->nativeFunction)
     {
+        RequireArgumentCount(expression.functionName, functionValue->nativeArgumentCount, expression.arguments.size());
         vector<std::shared_ptr<Value>> argumentValues;
         for (auto const& argument : expression.arguments)
         {
@@ -229,7 +243,12 @@ std::shared_ptr<Value> EvaluateCall(Scope& globalScope, Scope& scope, ScriptExpr
         return functionValue->nativeFunction(argumentValues);
     }
 
-    int argumentCount = int(min(functionValue->arguments.size(), expression.arguments.size()));
+    if (functionValue->type != L"fun")
+    {
+        throw ScriptError(expression.functionName + L" is not a callable function.");
+    }
+    RequireArgumentCount(expression.functionName, functionValue->arguments.size(), expression.arguments.size());
+    int argumentCount = int(functionValue->arguments.size());
     for (int argumentIndex = 0; argumentIndex < argumentCount; ++argumentIndex)
     {
         localScope[functionValue->arguments[argumentIndex]] = Evaluate(globalScope, scope, expression.arguments[argumentIndex]);

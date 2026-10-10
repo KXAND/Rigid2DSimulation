@@ -108,7 +108,7 @@ void App::AddLog(wstring const& text)
     }
     else
     {
-        fwprintf(logFile, text.c_str());
+        fwprintf(logFile, L"%ls", text.c_str());
         fclose(logFile);
     }
 }

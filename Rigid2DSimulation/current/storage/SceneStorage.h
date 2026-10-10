@@ -15,7 +15,7 @@ class SceneStorage
 public:
     static void Save(std::wstring const& name, PhysicsWorld const& physicsWorld,
                      SceneScriptRuntime const& runtime);
-    static void Load(std::wstring const& name, PhysicsWorld& physicsWorld,
+    static bool Load(std::wstring const& name, PhysicsWorld& physicsWorld,
                      SceneScriptRuntime& runtime, std::function<void()> const& resetScene);
 
 private:

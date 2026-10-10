@@ -155,16 +155,36 @@ void SceneScriptRuntime::SetSimulationTime(double time)
     currentScope[L"time"] = std::make_shared<Value>(time);
 }
 
-void SceneScriptRuntime::ExecuteSceneScript()
+void SceneScriptRuntime::ReportError(std::wstring const& context, ScriptError const& error)
 {
-    Execute(currentScope, Compile(scriptText));
-    ClearError();
+    lastError = context + L": " + error.GetMessage();
+    hasPendingError = true;
 }
 
-void SceneScriptRuntime::ApplySceneScript()
+bool SceneScriptRuntime::TryExecuteScript(std::wstring const& text, std::wstring const& context)
+{
+    ClearError();
+    try
+    {
+        Execute(currentScope, Compile(text));
+        return true;
+    }
+    catch (ScriptError const& error)
+    {
+        ReportError(context, error);
+        return false;
+    }
+}
+
+bool SceneScriptRuntime::ExecuteSceneScript()
+{
+    return TryExecuteScript(scriptText, L"Scene script");
+}
+
+bool SceneScriptRuntime::ApplySceneScript()
 {
     scriptText = temporaryScriptText;
-    ExecuteSceneScript();
+    return ExecuteSceneScript();
 }
 
 void SceneScriptRuntime::Update()
@@ -193,8 +213,21 @@ void SceneScriptRuntime::Update()
     // 本帧脚本只执行一次，读取刚同步的参数和时长。
     if (lastError.empty() && currentScope.find(L"Update") != currentScope.end())
     {
-        auto updateFunction = *currentScope[L"Update"];
-        Execute(currentScope, updateFunction.bodyStatements);
+        try
+        {
+            auto updateFunction = *currentScope[L"Update"];
+            if (updateFunction.type != L"fun")
+            {
+                throw ScriptError(L"Update must be a script function.");
+            }
+            RequireArgumentCount(L"Update", updateFunction.arguments.size(), 0);
+            // 保留自动 Update 在场景作用域内执行的既有规则。
+            Execute(currentScope, updateFunction.bodyStatements);
+        }
+        catch (ScriptError const& error)
+        {
+            ReportError(L"Update", error);
+        }
     }
 }
 
@@ -256,175 +289,126 @@ void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings
     auto setCreatorFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
         RequireSceneMutationAllowed(L"SetCreator");
-        if (arguments.size() >= 1)
-        {
-            bindings.editor.RequestCreatorConfig(*arguments[0]);
-        }
+        bindings.editor.RequestCreatorConfig(*arguments[0]);
         return std::make_shared<Value>();
     };
-    currentScope[L"SetCreator"] = std::make_shared<Value>(setCreatorFunction);
+    currentScope[L"SetCreator"] = std::make_shared<Value>(setCreatorFunction, 1);
 
     auto createBodyFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
         RequireSceneMutationAllowed(L"CreateBody");
-        if (arguments.size() >= 2)
-        {
-            CreateBody(bindings.physicsWorld, *arguments[0], *arguments[1]);
-        }
+        CreateBody(bindings.physicsWorld, *arguments[0], *arguments[1]);
         return std::make_shared<Value>();
     };
-    currentScope[L"CreateBody"] = std::make_shared<Value>(createBodyFunction);
+    currentScope[L"CreateBody"] = std::make_shared<Value>(createBodyFunction, 2);
 
     auto boxFunction = [](vector<std::shared_ptr<Value>> const& arguments)
     {
-        if (arguments.size() >= 2)
-        {
-            return Box(*arguments[0], *arguments[1]);
-        }
-        return std::make_shared<Value>();
+        return Box(*arguments[0], *arguments[1]);
     };
-    currentScope[L"Box"] = std::make_shared<Value>(boxFunction);
+    currentScope[L"Box"] = std::make_shared<Value>(boxFunction, 2);
 
     auto ballFunction = [](vector<std::shared_ptr<Value>> const& arguments)
     {
-        if (arguments.size() >= 1)
-        {
-            return Ball(*arguments[0]);
-        }
-        return std::make_shared<Value>();
+        return Ball(*arguments[0]);
     };
-    currentScope[L"Ball"] = std::make_shared<Value>(ballFunction);
+    currentScope[L"Ball"] = std::make_shared<Value>(ballFunction, 1);
 
     auto parallelogramFunction = [](vector<std::shared_ptr<Value>> const& arguments)
     {
-        if (arguments.size() >= 3)
-        {
-            return Parallelogram(*arguments[0], *arguments[1], *arguments[2]);
-        }
-        return std::make_shared<Value>();
+        return Parallelogram(*arguments[0], *arguments[1], *arguments[2]);
     };
-    currentScope[L"Parallelogram"] = std::make_shared<Value>(parallelogramFunction);
+    currentScope[L"Parallelogram"] = std::make_shared<Value>(parallelogramFunction, 3);
 
     auto trapezoidFunction = [](vector<std::shared_ptr<Value>> const& arguments)
     {
-        if (arguments.size() >= 3)
-        {
-            return Trapezoid(*arguments[0], *arguments[1], *arguments[2]);
-        }
-        return std::make_shared<Value>();
+        return Trapezoid(*arguments[0], *arguments[1], *arguments[2]);
     };
-    currentScope[L"Trapezoid"] = std::make_shared<Value>(trapezoidFunction);
+    currentScope[L"Trapezoid"] = std::make_shared<Value>(trapezoidFunction, 3);
 
     auto regularPolygonFunction = [](vector<std::shared_ptr<Value>> const& arguments)
     {
-        if (arguments.size() >= 2)
-        {
-            return RegularPolygon(*arguments[0], *arguments[1]);
-        }
-        return std::make_shared<Value>();
+        return RegularPolygon(*arguments[0], *arguments[1]);
     };
-    currentScope[L"RegularPolygon"] = std::make_shared<Value>(regularPolygonFunction);
+    currentScope[L"RegularPolygon"] = std::make_shared<Value>(regularPolygonFunction, 2);
 
     auto crossFunction = [](vector<std::shared_ptr<Value>> const& arguments)
     {
-        if (arguments.size() >= 2)
-        {
-            return Cross(*arguments[0], *arguments[1]);
-        }
-        return std::make_shared<Value>();
+        return Cross(*arguments[0], *arguments[1]);
     };
-    currentScope[L"Cross"] = std::make_shared<Value>(crossFunction);
+    currentScope[L"Cross"] = std::make_shared<Value>(crossFunction, 2);
 
     auto getBodyCountFunction = [bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
         return std::make_shared<Value>(bindings.physicsWorld.GetBodies().size());
     };
-    currentScope[L"GetBodyCount"] = std::make_shared<Value>(getBodyCountFunction);
+    currentScope[L"GetBodyCount"] = std::make_shared<Value>(getBodyCountFunction, 0);
 
     auto createConnectionFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
         RequireSceneMutationAllowed(L"CreateConnection");
-        if (arguments.size() >= 1)
-        {
-            CreateConnection(bindings.physicsWorld, *arguments[0]);
-        }
+        CreateConnection(bindings.physicsWorld, *arguments[0]);
         return std::make_shared<Value>();
     };
-    currentScope[L"CreateConnection"] = std::make_shared<Value>(createConnectionFunction);
+    currentScope[L"CreateConnection"] = std::make_shared<Value>(createConnectionFunction, 1);
 
     auto setConfigFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
         RequireSceneMutationAllowed(L"SetConfig");
-        if (arguments.size() >= 1)
-        {
-            SetConfig(*arguments[0], bindings);
-        }
+        SetConfig(*arguments[0], bindings);
         return std::make_shared<Value>();
     };
-    currentScope[L"SetConfig"] = std::make_shared<Value>(setConfigFunction);
+    currentScope[L"SetConfig"] = std::make_shared<Value>(setConfigFunction, 1);
 
     auto boundaryFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
         RequireSceneMutationAllowed(L"Boundary");
-        if (arguments.size() >= 2)
-        {
-            Boundary(bindings.physicsWorld, bindings.sceneCanvas.GetViewport(), *arguments[0], *arguments[1]);
-        }
+        Boundary(bindings.physicsWorld, bindings.sceneCanvas.GetViewport(), *arguments[0], *arguments[1]);
         return std::make_shared<Value>();
     };
-    currentScope[L"Boundary"] = std::make_shared<Value>(boundaryFunction);
+    currentScope[L"Boundary"] = std::make_shared<Value>(boundaryFunction, 2);
 
     auto framedBoxFunction = [](vector<std::shared_ptr<Value>> const& arguments)
     {
-        if (arguments.size() >= 3)
-        {
-            return FramedBox(*arguments[0], *arguments[1], *arguments[2]);
-        }
-        return std::make_shared<Value>();
+        return FramedBox(*arguments[0], *arguments[1], *arguments[2]);
     };
-    currentScope[L"FramedBox"] = std::make_shared<Value>(framedBoxFunction);
+    currentScope[L"FramedBox"] = std::make_shared<Value>(framedBoxFunction, 3);
 
     auto gearFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
         RequireSceneMutationAllowed(L"Gear");
-        if (arguments.size() >= 4)
-        {
-            Gear(bindings.physicsWorld, *arguments[0], *arguments[1], *arguments[2], *arguments[3]);
-        }
+        Gear(bindings.physicsWorld, *arguments[0], *arguments[1], *arguments[2], *arguments[3]);
         return std::make_shared<Value>();
     };
-    currentScope[L"Gear"] = std::make_shared<Value>(gearFunction);
+    currentScope[L"Gear"] = std::make_shared<Value>(gearFunction, 4);
 
     auto strandFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
         RequireSceneMutationAllowed(L"Strand");
-        if (arguments.size() >= 6)
-        {
-            Strand(bindings.physicsWorld, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
-        }
+        Strand(bindings.physicsWorld, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
         return std::make_shared<Value>();
     };
-    currentScope[L"Strand"] = std::make_shared<Value>(strandFunction);
+    currentScope[L"Strand"] = std::make_shared<Value>(strandFunction, 6);
 
     auto necklaceFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
         RequireSceneMutationAllowed(L"Necklace");
-        if (arguments.size() >= 6)
-        {
-            Necklace(bindings.physicsWorld, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
-        }
+        Necklace(bindings.physicsWorld, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
         return std::make_shared<Value>();
     };
-    currentScope[L"Necklace"] = std::make_shared<Value>(necklaceFunction);
+    currentScope[L"Necklace"] = std::make_shared<Value>(necklaceFunction, 6);
 }
 
-void SceneScriptRuntime::RefreshBodyScript(Body& body)
+bool SceneScriptRuntime::RefreshBodyScript(Body& body)
 {
     currentScope[L"body"] = std::make_shared<Value>();
-    Execute(currentScope, Compile(body.scriptData.scriptText));
+    if (!TryExecuteScript(body.scriptData.scriptText, L"Body script"))
+    {
+        return false;
+    }
     if (currentScope.find(L"body") == currentScope.end())
     {
-        return;
+        return true;
     }
     auto const& bodyConfig = *currentScope[L"body"];
     auto properties = ParseBodyProperties(bodyConfig, body.GetProperties());
@@ -446,20 +430,24 @@ void SceneScriptRuntime::RefreshBodyScript(Body& body)
         body.scriptData.angularVelocityProgram = std::make_shared<Program>(value->bodyStatements);
     }
     body.ApplyProperties(properties);
-    ClearError();
+    return true;
 }
 
-void SceneScriptRuntime::RefreshConnectionScript(Connection& connection)
+bool SceneScriptRuntime::RefreshConnectionScript(Connection& connection)
 {
     currentScope[L"connection"] = std::make_shared<Value>();
-    Execute(currentScope, Compile(connection.scriptText));
+    if (!TryExecuteScript(connection.scriptText, L"Connection script"))
+    {
+        return false;
+    }
     if (currentScope.find(L"connection") == currentScope.end())
     {
-        return;
+        return true;
     }
     ApplyConnectionConfig(connection, *currentScope[L"connection"]);
 
     connection.UpdatePosition();
+    return true;
 }
 
 void SceneScriptRuntime::ApplyMotionPresets(Body& body, bool isDynamic,
@@ -499,8 +487,7 @@ void SceneScriptRuntime::ApplyMotionPresets(Body& body, bool isDynamic,
     catch (ScriptError const& error)
     {
         // 不让异常中断物理遍历；App 在本帧推进完成后暂停并展示错误。
-        lastError = std::wstring(presetName) + L": " + error.GetMessage();
-        hasPendingError = true;
+        ReportError(presetName, error);
     }
 }
 
