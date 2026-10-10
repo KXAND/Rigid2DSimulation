@@ -217,7 +217,19 @@ void SceneScriptRuntime::SetConfig(Value const& config, SceneScriptBindings bind
     }
     TryReadConfigNumber(config, L"hasElectrostatic", bindings.physicsWorld.hasElectrostatic);
     TryReadConfigNumber(config, L"coulombConstant", bindings.physicsWorld.coulombConstant);
-    TryReadConfigNumber(config, L"stepCount", bindings.physicsWorld.stepNum);
+    if (auto value = FindConfigValue(config, L"stepCount"))
+    {
+        // 必须先校验再转 int；下面的最小值限制无法补救越界转换。
+        if (value->type == L"num" && std::isfinite(value->number) &&
+            value->number >= INT_MIN && value->number <= INT_MAX)
+        {
+            bindings.physicsWorld.stepNum = static_cast<int>(value->number);
+        }
+        else
+        {
+            std::wcerr << L"SetConfig: stepCount must be a finite number in [INT_MIN, INT_MAX]; keeping previous value.\n";
+        }
+    }
     bindings.physicsWorld.stepNum = max(1, bindings.physicsWorld.stepNum);
     ApplyGridConfig(config, bindings.physicsWorld);
     TryReadConfigNumber(config, L"useEqualPositionCorrection", bindings.physicsWorld.useEqualPositionCorrection);
