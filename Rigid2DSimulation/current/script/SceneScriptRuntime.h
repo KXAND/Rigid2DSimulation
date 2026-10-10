@@ -42,10 +42,18 @@ public:
     void RefreshBodyScript(Body& body);
     void RefreshConnectionScript(Connection& connection);
     void ApplyMotionPresets(Body& body, bool isDynamic, double const& simulationTime, double stepDeltaTime);
+    std::wstring const& GetError() const;
+    // 只消费待记录消息；错误状态保留至重新应用脚本或重置。
+    std::wstring ConsumeError();
 
 private:
     double frameDeltaTime = 0;
+    bool isExecutingMotionPreset = false;
+    std::wstring lastError;
+    bool hasPendingError = false;
 
+    void ClearError();
+    void RequireSceneMutationAllowed(wchar_t const* functionName) const;
     void InitializeDefaultFunctions(SceneScriptBindings bindings);
     void SetConfig(Value const& config, SceneScriptBindings bindings);
     void FollowPresetPosition(Body& body, double const& simulationTime, double stepDeltaTime);

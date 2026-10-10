@@ -36,6 +36,7 @@ public:
     void Update() override;
 
 private:
+    void HandleScriptError();
     void ResolveInputOwnership();
     void UpdateMusic();
     void RemoveDeletedObjects();

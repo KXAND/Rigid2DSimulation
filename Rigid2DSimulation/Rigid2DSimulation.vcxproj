@@ -299,6 +299,7 @@
     <ClInclude Include="current\ui\UserInterface.h" />
     <ClInclude Include="framework\basic\Utils.h" />
     <ClInclude Include="framework\parse\Value.h" />
+    <ClInclude Include="framework\parse\ScriptError.h" />
     <ClInclude Include="framework\basic\Vector2.h" />
     <ClInclude Include="framework\basic\Vector3.h" />
     <ClInclude Include="framework\basic\ValuePtr.h" />

@@ -14,11 +14,66 @@
 #include "SceneEditor.h"
 #include "SceneParameter.h"
 #include "SceneRenderer.h"
+#include "ScriptError.h"
 #include "ShapeBuiltins.h"
 #include "current/common/utils.h"
 
+namespace
+{
+    class MotionPresetExecutionScope
+    {
+    public:
+        explicit MotionPresetExecutionScope(bool& isActive) : isActive(isActive), wasActive(isActive)
+        {
+            isActive = true;
+        }
+
+        ~MotionPresetExecutionScope()
+        {
+            isActive = wasActive;
+        }
+
+        MotionPresetExecutionScope(MotionPresetExecutionScope const&) = delete;
+        MotionPresetExecutionScope& operator=(MotionPresetExecutionScope const&) = delete;
+
+    private:
+        bool& isActive;
+        bool wasActive;
+    };
+}
+
+std::wstring const& SceneScriptRuntime::GetError() const
+{
+    return lastError;
+}
+
+std::wstring SceneScriptRuntime::ConsumeError()
+{
+    if (!hasPendingError)
+    {
+        return {};
+    }
+    hasPendingError = false;
+    return lastError;
+}
+
+void SceneScriptRuntime::ClearError()
+{
+    lastError.clear();
+    hasPendingError = false;
+}
+
+void SceneScriptRuntime::RequireSceneMutationAllowed(wchar_t const* functionName) const
+{
+    if (isExecutingMotionPreset)
+    {
+        throw ScriptError(std::wstring(functionName) + L" is not allowed in a motion preset.");
+    }
+}
+
 void SceneScriptRuntime::ResetScope(SceneScriptBindings bindings)
 {
+    ClearError();
     currentScope.clear();
     InitializeDefaultFunctions(bindings);
     parameters.clear();
@@ -48,6 +103,7 @@ void SceneScriptRuntime::SetSimulationTime(double time)
 void SceneScriptRuntime::ExecuteSceneScript()
 {
     Execute(currentScope, Compile(scriptText));
+    ClearError();
 }
 
 void SceneScriptRuntime::ApplySceneScript()
@@ -80,7 +136,7 @@ void SceneScriptRuntime::Update()
     currentScope[L"deltaTime"] = std::make_shared<Value>(frameDeltaTime);
 
     // 本帧脚本只执行一次，读取刚同步的参数和时长。
-    if (currentScope.find(L"Update") != currentScope.end())
+    if (lastError.empty() && currentScope.find(L"Update") != currentScope.end())
     {
         auto updateFunction = *currentScope[L"Update"];
         Execute(currentScope, updateFunction.bodyStatements);
@@ -138,8 +194,9 @@ void SceneScriptRuntime::SetConfig(Value const& config, SceneScriptBindings bind
 
 void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings)
 {
-    auto setCreatorFunction = [bindings](vector<std::shared_ptr<Value>> const& arguments)
+    auto setCreatorFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
+        RequireSceneMutationAllowed(L"SetCreator");
         if (arguments.size() >= 1)
         {
             bindings.editor.RequestCreatorConfig(*arguments[0]);
@@ -148,8 +205,9 @@ void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings
     };
     currentScope[L"SetCreator"] = std::make_shared<Value>(setCreatorFunction);
 
-    auto createBodyFunction = [bindings](vector<std::shared_ptr<Value>> const& arguments)
+    auto createBodyFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
+        RequireSceneMutationAllowed(L"CreateBody");
         if (arguments.size() >= 2)
         {
             CreateBody(bindings.physicsWorld, *arguments[0], *arguments[1]);
@@ -224,8 +282,9 @@ void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings
     };
     currentScope[L"GetBodyCount"] = std::make_shared<Value>(getBodyCountFunction);
 
-    auto createConnectionFunction = [bindings](vector<std::shared_ptr<Value>> const& arguments)
+    auto createConnectionFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
+        RequireSceneMutationAllowed(L"CreateConnection");
         if (arguments.size() >= 1)
         {
             CreateConnection(bindings.physicsWorld, *arguments[0]);
@@ -236,6 +295,7 @@ void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings
 
     auto setConfigFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
+        RequireSceneMutationAllowed(L"SetConfig");
         if (arguments.size() >= 1)
         {
             SetConfig(*arguments[0], bindings);
@@ -244,8 +304,9 @@ void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings
     };
     currentScope[L"SetConfig"] = std::make_shared<Value>(setConfigFunction);
 
-    auto boundaryFunction = [bindings](vector<std::shared_ptr<Value>> const& arguments)
+    auto boundaryFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
+        RequireSceneMutationAllowed(L"Boundary");
         if (arguments.size() >= 2)
         {
             Boundary(bindings.physicsWorld, bindings.sceneCanvas.GetViewport(), *arguments[0], *arguments[1]);
@@ -264,8 +325,9 @@ void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings
     };
     currentScope[L"FramedBox"] = std::make_shared<Value>(framedBoxFunction);
 
-    auto gearFunction = [bindings](vector<std::shared_ptr<Value>> const& arguments)
+    auto gearFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
+        RequireSceneMutationAllowed(L"Gear");
         if (arguments.size() >= 4)
         {
             Gear(bindings.physicsWorld, *arguments[0], *arguments[1], *arguments[2], *arguments[3]);
@@ -274,8 +336,9 @@ void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings
     };
     currentScope[L"Gear"] = std::make_shared<Value>(gearFunction);
 
-    auto strandFunction = [bindings](vector<std::shared_ptr<Value>> const& arguments)
+    auto strandFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
+        RequireSceneMutationAllowed(L"Strand");
         if (arguments.size() >= 6)
         {
             Strand(bindings.physicsWorld, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
@@ -284,8 +347,9 @@ void SceneScriptRuntime::InitializeDefaultFunctions(SceneScriptBindings bindings
     };
     currentScope[L"Strand"] = std::make_shared<Value>(strandFunction);
 
-    auto necklaceFunction = [bindings](vector<std::shared_ptr<Value>> const& arguments)
+    auto necklaceFunction = [this, bindings](vector<std::shared_ptr<Value>> const& arguments)
     {
+        RequireSceneMutationAllowed(L"Necklace");
         if (arguments.size() >= 6)
         {
             Necklace(bindings.physicsWorld, *arguments[0], *arguments[1], *arguments[2], *arguments[3], *arguments[4], *arguments[5]);
@@ -323,6 +387,7 @@ void SceneScriptRuntime::RefreshBodyScript(Body& body)
         body.scriptData.angularVelocityProgram = std::make_shared<Program>(value->bodyStatements);
     }
     body.ApplyProperties(properties);
+    ClearError();
 }
 
 void SceneScriptRuntime::RefreshConnectionScript(Connection& connection)
@@ -341,23 +406,42 @@ void SceneScriptRuntime::RefreshConnectionScript(Connection& connection)
 void SceneScriptRuntime::ApplyMotionPresets(Body& body, bool isDynamic,
                                           double const& simulationTime, double stepDeltaTime)
 {
-    if (isDynamic)
+    if (!lastError.empty())
     {
-        if (body.scriptData.hasAngularVelocityPreset)
+        return;
+    }
+
+    MotionPresetExecutionScope executionScope(isExecutingMotionPreset);
+    wchar_t const* presetName = L"Motion preset";
+    try
+    {
+        if (isDynamic)
         {
-            FollowPresetAngularVelocity(body, simulationTime);
+            if (body.scriptData.hasAngularVelocityPreset)
+            {
+                presetName = L"Angular velocity preset";
+                FollowPresetAngularVelocity(body, simulationTime);
+            }
+        }
+        else
+        {
+            if (body.scriptData.hasPositionPreset)
+            {
+                presetName = L"Position preset";
+                FollowPresetPosition(body, simulationTime, stepDeltaTime);
+            }
+            if (body.scriptData.hasAnglePreset)
+            {
+                presetName = L"Angle preset";
+                FollowPresetAngle(body, simulationTime, stepDeltaTime);
+            }
         }
     }
-    else
+    catch (ScriptError const& error)
     {
-        if (body.scriptData.hasPositionPreset)
-        {
-            FollowPresetPosition(body, simulationTime, stepDeltaTime);
-        }
-        if (body.scriptData.hasAnglePreset)
-        {
-            FollowPresetAngle(body, simulationTime, stepDeltaTime);
-        }
+        // 不让异常中断物理遍历；App 在本帧推进完成后暂停并展示错误。
+        lastError = std::wstring(presetName) + L": " + error.GetMessage();
+        hasPendingError = true;
     }
 }
 

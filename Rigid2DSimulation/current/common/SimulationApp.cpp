@@ -100,15 +100,31 @@ void SimulationApp::Update()
     RemoveDeletedObjects();
 
     BodyDrag frameDrag = editor.Update(physicsWorld, input, inputOwners, *sceneCanvas, realDeltaTime);
+    HandleScriptError();
     UpdateSceneState(frameDrag);
     AdvanceSimulation(editor.GetDrag());
+    HandleScriptError();
     physicsWorld.UpdateGeometry();
 
     auto context = GetSceneRenderContext();
-    sceneRenderer.RenderBackground(*sceneCanvas, scriptRuntime.debugString, context);
+    auto const& scriptMessage = scriptRuntime.GetError().empty() ? scriptRuntime.debugString : scriptRuntime.GetError();
+    sceneRenderer.RenderBackground(*sceneCanvas, scriptMessage, context);
     sceneRenderer.RenderObjects(physicsWorld, context);
     sceneRenderer.RenderCreationPreview(editor.GetPreview(), context);
     userInterface->UpdateAndRender(*this);
+}
+
+void SimulationApp::HandleScriptError()
+{
+    if (!scriptRuntime.GetError().empty())
+    {
+        isPaused = true;
+    }
+    auto error = scriptRuntime.ConsumeError();
+    if (!error.empty())
+    {
+        AddLog(L"Script error: " + error + L"\n");
+    }
 }
 
 void SimulationApp::ResolveInputOwnership()

@@ -368,6 +368,9 @@
     <ClInclude Include="framework\parse\Value.h">
       <Filter>framework\parse</Filter>
     </ClInclude>
+    <ClInclude Include="framework\parse\ScriptError.h">
+      <Filter>framework\parse</Filter>
+    </ClInclude>
     <ClInclude Include="framework\draw\DrawTile.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
