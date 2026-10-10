@@ -12,7 +12,7 @@ wstring Font::GenerateRandomText(int count) const
     wstring text;
     for (int i = (0), iEnd = int(count); i < iEnd; ++i)
     {
-        text += chineseCharacters[GenerateRandomInt(chineseCharacters.size())];
+        text += loadedChineseCharacters[GenerateRandomInt(loadedChineseCharacters.size())];
     }
     return text;
 }
@@ -61,7 +61,7 @@ bool Font::Initialize()
     {
         if (LoadFont({character}, character))
         {
-            chineseCharacters.push_back(character);
+            loadedChineseCharacters.push_back(character);
         }
     }
 

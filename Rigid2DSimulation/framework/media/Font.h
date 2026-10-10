@@ -14,7 +14,8 @@ class Font
 {
 public:
     int height = 0;
-    wstring chineseCharacters;
+    // 已成功加载的中文字符，区别于全局待加载字符表。
+    wstring loadedChineseCharacters;
     Tile missing;
     map<wchar_t, Tile> glyphs;
 
