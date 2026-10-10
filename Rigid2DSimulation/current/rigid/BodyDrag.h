@@ -23,6 +23,8 @@ struct BodyDrag
 };
 
 // 保留现有每帧修正规则：普通/整体执行，力拖拽不执行。
+// realDeltaTime 非有限正数时不修改物体。
 void ApplyBodyDragFrame(Body& body, BodyDrag const& drag, double realDeltaTime);
 // 普通/整体使用 realDeltaTime 推导速度，力拖拽使用 stepDeltaTime 计算冲量。
+// 两个时长均须为有限正数，否则不修改物体。
 void ApplyBodyDragSubstep(Body& body, BodyDrag const& drag, double realDeltaTime, double stepDeltaTime);

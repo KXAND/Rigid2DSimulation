@@ -1,5 +1,7 @@
 ﻿#include "BodyDrag.h"
 
+#include <cmath>
+
 #include "Body.h"
 
 namespace
@@ -60,6 +62,12 @@ namespace
     void ApplyDrag(Body& body, BodyDrag const& drag, double realDeltaTime, double stepDeltaTime)
     {
         if (drag.body != &body)
+        {
+            return;
+        }
+        // 不伪造时间，也不在无效时长下修改物体；输入释放仍由 DragTool 处理。
+        if (!std::isfinite(realDeltaTime) || realDeltaTime <= 0 ||
+            !std::isfinite(stepDeltaTime) || stepDeltaTime <= 0)
         {
             return;
         }

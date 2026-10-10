@@ -1,4 +1,8 @@
 ﻿#include "SceneScriptRuntime.h"
+
+#include <cmath>
+#include <iostream>
+
 #include "Body.h"
 #include "BodyConfig.h"
 #include "Connection.h"
@@ -84,7 +88,17 @@ void SceneScriptRuntime::SetConfig(Value const& config, SceneScriptBindings bind
     TryReadConfigNumber(config, L"energyMultiplier", bindings.sceneRenderer.energyMultiplier);
     TryReadConfigNumber(config, L"chargeMultiplier", bindings.sceneRenderer.chargeMultiplier);
     TryReadConfigNumber(config, L"parallelEpsilon", bindings.physicsWorld.parallelEpsilon);
-    TryReadConfigNumber(config, L"maxRealDeltaTime", bindings.maxRealDeltaTime);
+    if (auto value = FindConfigValue(config, L"maxRealDeltaTime"))
+    {
+        if (value->type == L"num" && std::isfinite(value->number) && value->number > 0)
+        {
+            bindings.maxRealDeltaTime = value->number;
+        }
+        else
+        {
+            std::wcerr << L"SetConfig: maxRealDeltaTime must be a finite positive number; keeping previous value.\n";
+        }
+    }
     TryReadConfigNumber(config, L"hasElectrostatic", bindings.physicsWorld.hasElectrostatic);
     TryReadConfigNumber(config, L"coulombConstant", bindings.physicsWorld.coulombConstant);
     TryReadConfigNumber(config, L"stepCount", bindings.physicsWorld.stepNum);
