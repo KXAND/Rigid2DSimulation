@@ -10,6 +10,20 @@
 #include "Group.h"
 #include "Utils.h"
 
+bool PhysicsWorld::IsGridConfigValid(double gridSize, int sceneWidth, int sceneHeight)
+{
+    if (!std::isfinite(gridSize) || gridSize <= 0 || sceneWidth <= 0 || sceneHeight <= 0)
+    {
+        return false;
+    }
+
+    // 暂留为 double，避免极小 gridSize 产生过大的商后直接转成 int。
+    double columns = std::ceil(sceneWidth / gridSize);
+    double rows = std::ceil(sceneHeight / gridSize);
+    // 先限制单轴（也拒绝无穷大），再检查总格数；通过后 int 转换及索引乘积均安全。
+    return columns <= kMaxGridCells && rows <= kMaxGridCells && columns * rows <= kMaxGridCells;
+}
+
 void PhysicsWorld::AddBody(std::shared_ptr<Body> const& body)
 {
     if (!body || body->isMarkedForDeletion || std::find(bodies.begin(), bodies.end(), body) != bodies.end() ||
@@ -163,8 +177,12 @@ void PhysicsWorld::RemoveDeletedObjects()
 
 void PhysicsWorld::Prepare()
 {
-    gridNumX = ceil(rectScene.width / gridSize);
-    gridNumY = ceil(rectScene.height / gridSize);
+    if (!IsGridConfigValid(gridSize, rectScene.width, rectScene.height))
+    {
+        throw std::invalid_argument("Invalid scene grid configuration.");
+    }
+    gridNumX = static_cast<int>(std::ceil(rectScene.width / gridSize));
+    gridNumY = static_cast<int>(std::ceil(rectScene.height / gridSize));
     if (isSceneChanged)
     {
         isSceneChanged = false;

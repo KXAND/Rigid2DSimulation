@@ -40,6 +40,7 @@ public:
     bool useEqualPositionCorrection = false;
     double gridSize = 0;
 
+    static bool IsGridConfigValid(double gridSize, int sceneWidth, int sceneHeight);
     void ClearObjects();
     void ResetParameters(DRect const& sceneRect);
     void RemoveDeletedObjects();
@@ -58,6 +59,9 @@ private:
     std::vector<std::shared_ptr<Connection>> connections;
     std::vector<std::shared_ptr<Group>> groups;
     std::vector<std::shared_ptr<Collision>> collisions;
+
+    // 限制网格的分配和逐子步遍历成本，不自动调整用户指定的 gridSize。
+    static constexpr int kMaxGridCells = 65536;
     int gridNumX = 0;
     int gridNumY = 0;
     std::vector<Body*> multiGridBodies;

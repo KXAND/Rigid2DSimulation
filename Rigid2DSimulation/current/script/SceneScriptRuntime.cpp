@@ -1,5 +1,6 @@
 ﻿#include "SceneScriptRuntime.h"
 
+#include <climits>
 #include <cmath>
 #include <iostream>
 
@@ -20,6 +21,60 @@
 
 namespace
 {
+    void ApplyGridConfig(Value const& config, PhysicsWorld& world)
+    {
+        auto gridSizeValue = FindConfigValue(config, L"gridSize");
+        auto widthValue = FindConfigValue(config, L"sceneWidth");
+        auto heightValue = FindConfigValue(config, L"sceneHeight");
+        if (!gridSizeValue && !widthValue && !heightValue)
+        {
+            return;
+        }
+
+        // 先收集整组候选值，避免拒绝配置后留下新旧值混用的网格。
+        double gridSize = world.gridSize;
+        int width = world.rectScene.width;
+        int height = world.rectScene.height;
+        if (gridSizeValue)
+        {
+            if (gridSizeValue->type != L"num" || !std::isfinite(gridSizeValue->number) || gridSizeValue->number <= 0)
+            {
+                std::wcerr << L"SetConfig: gridSize must be a finite positive number; keeping previous grid configuration.\n";
+                return;
+            }
+            gridSize = gridSizeValue->number;
+        }
+        // 场景宽高存为 int，必须在转换前拒绝无效值；合法小数仍按旧规则截断。
+        if (widthValue)
+        {
+            if (widthValue->type != L"num" || !std::isfinite(widthValue->number) ||
+                widthValue->number < 1 || widthValue->number > INT_MAX)
+            {
+                std::wcerr << L"SetConfig: sceneWidth must be a finite number in [1, INT_MAX]; keeping previous grid configuration.\n";
+                return;
+            }
+            width = static_cast<int>(widthValue->number);
+        }
+        if (heightValue)
+        {
+            if (heightValue->type != L"num" || !std::isfinite(heightValue->number) ||
+                heightValue->number < 1 || heightValue->number > INT_MAX)
+            {
+                std::wcerr << L"SetConfig: sceneHeight must be a finite number in [1, INT_MAX]; keeping previous grid configuration.\n";
+                return;
+            }
+            height = static_cast<int>(heightValue->number);
+        }
+        if (!PhysicsWorld::IsGridConfigValid(gridSize, width, height))
+        {
+            std::wcerr << L"SetConfig: scene grid dimensions exceed supported limits; keeping previous grid configuration.\n";
+            return;
+        }
+        world.gridSize = gridSize;
+        world.rectScene.width = width;
+        world.rectScene.height = height;
+    }
+
     class MotionPresetExecutionScope
     {
     public:
@@ -164,7 +219,7 @@ void SceneScriptRuntime::SetConfig(Value const& config, SceneScriptBindings bind
     TryReadConfigNumber(config, L"coulombConstant", bindings.physicsWorld.coulombConstant);
     TryReadConfigNumber(config, L"stepCount", bindings.physicsWorld.stepNum);
     bindings.physicsWorld.stepNum = max(1, bindings.physicsWorld.stepNum);
-    TryReadConfigNumber(config, L"gridSize", bindings.physicsWorld.gridSize);
+    ApplyGridConfig(config, bindings.physicsWorld);
     TryReadConfigNumber(config, L"useEqualPositionCorrection", bindings.physicsWorld.useEqualPositionCorrection);
     TryReadConfigNumber(config, L"time", bindings.physicsWorld.simulationTime);
     TryReadConfigNumber(config, L"isTrackShown", bindings.isTrackShown);
@@ -175,14 +230,6 @@ void SceneScriptRuntime::SetConfig(Value const& config, SceneScriptBindings bind
     if (auto value = FindConfigValue(config, L"sceneTop"))
     {
         bindings.physicsWorld.rectScene.topLeftPosition.y = value->number;
-    }
-    if (auto value = FindConfigValue(config, L"sceneWidth"))
-    {
-        bindings.physicsWorld.rectScene.width = value->number;
-    }
-    if (auto value = FindConfigValue(config, L"sceneHeight"))
-    {
-        bindings.physicsWorld.rectScene.height = value->number;
     }
     if (auto value = FindConfigValue(config, L"gravity"))
     {
