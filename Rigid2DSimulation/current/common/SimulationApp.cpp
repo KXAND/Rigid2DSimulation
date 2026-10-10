@@ -42,7 +42,7 @@ SimulationApp::SimulationApp()
     PrintConsole(L"音乐加载完成.", true);
 
     volume = 1;
-    currentMusicClip = GenerateRandomFloat(1) < 0.5 ? &*firstMusicClip : &*secondMusicClip;
+    currentMusicClip = GenerateRandomFloat(1) < 0.5 ? firstMusicClip.get() : secondMusicClip.get();
 }
 
 void SimulationApp::Save(wstring const& name) const
@@ -142,7 +142,7 @@ void SimulationApp::UpdateMusic()
         if (currentMusicClip->sampleIndex >= currentMusicClip->GetSampleCount())
         {
             currentMusicClip->sampleIndex = 0;
-            currentMusicClip = (currentMusicClip == &*firstMusicClip) ? &*secondMusicClip : &*firstMusicClip;
+            currentMusicClip = (currentMusicClip == firstMusicClip.get()) ? secondMusicClip.get() : firstMusicClip.get();
         }
         if (!isMuted)
         {
