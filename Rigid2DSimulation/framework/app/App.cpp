@@ -1,4 +1,7 @@
 ﻿#include "App.h"
+
+#include <stdexcept>
+
 #include "Tile.h"
 
 App::App()
@@ -16,6 +19,10 @@ void App::Init()
     depthBuffer = initialDepthBuffer = DepthBuffer(width * height, -DBL_MAX);
     bool isFontLoaded = font.Initialize();
     AddLog(isFontLoaded ? L"成功加载字体模块.\n" : L"加载字体模块失败.\n");
+    if (!isFontLoaded)
+    {
+        throw std::runtime_error("Cannot load fonts/NotoSansSC.ttf. Restore the bundled font file before starting the application.");
+    }
 
     HRESULT dpiAwarenessResult = SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
     AddLog(dpiAwarenessResult == S_OK ? L"成功设置 DPI 感知.\n" : L"设置 DPI 感知失败.\n");

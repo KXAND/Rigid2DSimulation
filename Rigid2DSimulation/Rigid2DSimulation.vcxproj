@@ -194,7 +194,6 @@
     <ClCompile Include="current\ui\parameterPanel\ParameterPanel.cpp" />
     <ClCompile Include="current\ui\parameterPanel\ParameterButtons.cpp" />
     <ClCompile Include="current\ui\parameterPanel\ParameterControls.cpp" />
-    <ClCompile Include="framework\media\FontCharacters.cpp" />
     <ClCompile Include="current\rigid\Group.cpp" />
     <ClCompile Include="current\rigid\PhysicsWorld.cpp" />
     <ClCompile Include="framework\control\Label.cpp" />
@@ -311,6 +310,16 @@
     <ClInclude Include="framework\basic\ValuePtr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemGroup>
+    <None Include="fonts\NotoSansSC.ttf" />
+    <None Include="fonts\OFL-NotoSansSC.txt" />
+    <None Include="fonts\README.md" />
+  </ItemGroup>
+  <Target Name="CopyFontResources" AfterTargets="Build">
+    <MakeDir Directories="$(OutDir)fonts" />
+    <Copy SourceFiles="$(ProjectDir)fonts\NotoSansSC.ttf;$(ProjectDir)fonts\OFL-NotoSansSC.txt;$(ProjectDir)fonts\README.md"
+          DestinationFolder="$(OutDir)fonts" SkipUnchangedFiles="true" />
+  </Target>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

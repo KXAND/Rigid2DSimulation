@@ -1,31 +1,40 @@
 ﻿#pragma once
+
+#include <map>
+#include <string>
+
 #include "Tile.h"
 
-wchar_t extern chineseCharacters[];
-wchar_t extern numbers[];
-wchar_t extern normalSymbols[];
-wchar_t extern uppercaseLetters[];
-wchar_t extern lowercaseLetters[];
-wchar_t extern additionalChineseCharacters[];
+struct FontGlyph
+{
+    Tile bitmap;
+    DVector2 offset;
+    int advance = 0;
+    bool isMissing = false;
+};
 
-// 中文字体规格：画布：600x600，粗细：40，保存后：60x60。
-// 由于历史原因，颜色一般是: (0,255,0)。
 class Font
 {
 public:
-    int height = 0;
-    // 已成功加载的中文字符，区别于全局待加载字符表。
-    wstring loadedChineseCharacters;
-    Tile missing;
-    map<wchar_t, Tile> glyphs;
+    int const height;
 
-    Font();
-    Font(int height);
+    explicit Font(int height = 20);
+    ~Font();
+    Font(Font const&) = delete;
+    Font& operator=(Font const&) = delete;
 
-    Tile const& operator[](wchar_t character) const;
-    // 严格来说用单独的方法更好，但是这样很方便。
-    wstring GenerateRandomText(int count) const;
+    bool Initialize(std::wstring const& fileName = L"fonts/NotoSansSC.ttf");
+    FontGlyph const& GetGlyph(wchar_t character) const;
 
-    bool LoadFont(wstring const& name, wchar_t character);
-    bool Initialize();
+private:
+    HDC deviceContext = nullptr;
+    HFONT fontHandle = nullptr;
+    std::wstring resourcePath;
+    int baseline = 0;
+    FontGlyph missingGlyph;
+    // 单线程 UI 的逻辑只读缓存；字体和字号在缓存存续期间不变。
+    mutable std::map<wchar_t, FontGlyph> glyphs;
+
+    void Release();
+    bool LoadGlyph(wchar_t character, FontGlyph& glyph) const;
 };

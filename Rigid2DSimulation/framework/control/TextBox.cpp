@@ -159,7 +159,7 @@ void TextBox::HandleBackspace(App& app)
     }
     else if (GetEditBegin() > 0)
     {
-        valueOffsetX += app.font[value[selectionStart]].width;
+        valueOffsetX += app.font.GetGlyph(value[selectionStart - 1]).advance;
         valueOffsetX = min<double>(valueOffsetX, editMarginWidth);
         auto rangeBegin = value.begin();
         auto rangeEnd = value.begin() + selectionStart - 1;

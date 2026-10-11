@@ -85,9 +85,6 @@
     <ClCompile Include="framework\basic\Vector3.cpp">
       <Filter>framework\basic</Filter>
     </ClCompile>
-    <ClCompile Include="framework\media\FontCharacters.cpp">
-      <Filter>framework\media</Filter>
-    </ClCompile>
     <ClCompile Include="framework\media\Font.cpp">
       <Filter>framework\media</Filter>
     </ClCompile>
