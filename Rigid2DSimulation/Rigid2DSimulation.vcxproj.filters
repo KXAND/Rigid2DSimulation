@@ -181,9 +181,6 @@
     <ClCompile Include="current\ui\commandPanel\CommandPanel.cpp">
       <Filter>current\ui\commandPanel</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\commandPanel\CommandButtons.cpp">
-      <Filter>current\ui\commandPanel</Filter>
-    </ClCompile>
     <ClCompile Include="current\ui\commandPanel\CommandControls.cpp">
       <Filter>current\ui\commandPanel</Filter>
     </ClCompile>
@@ -193,14 +190,8 @@
     <ClCompile Include="current\ui\creationPanel\CreationPanel.cpp">
       <Filter>current\ui\creationPanel</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\creationPanel\CreationButtons.cpp">
-      <Filter>current\ui\creationPanel</Filter>
-    </ClCompile>
     <ClCompile Include="current\ui\creationPanel\CreationControls.cpp">
       <Filter>current\ui\creationPanel</Filter>
-    </ClCompile>
-    <ClCompile Include="current\ui\globalPanel\GlobalButtons.cpp">
-      <Filter>current\ui\globalPanel</Filter>
     </ClCompile>
     <ClCompile Include="current\ui\globalPanel\GlobalControls.cpp">
       <Filter>current\ui\globalPanel</Filter>
@@ -208,13 +199,7 @@
     <ClCompile Include="current\ui\languagePanel\LanguagePanel.cpp">
       <Filter>current\ui\languagePanel</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\languagePanel\LanguageButtons.cpp">
-      <Filter>current\ui\languagePanel</Filter>
-    </ClCompile>
     <ClCompile Include="current\ui\parameterPanel\ParameterPanel.cpp">
-      <Filter>current\ui\parameterPanel</Filter>
-    </ClCompile>
-    <ClCompile Include="current\ui\parameterPanel\ParameterButtons.cpp">
       <Filter>current\ui\parameterPanel</Filter>
     </ClCompile>
     <ClCompile Include="current\ui\parameterPanel\ParameterControls.cpp">
@@ -298,9 +283,6 @@
     <ClCompile Include="current\ui\bodyPanel\BodyPanel.cpp">
       <Filter>current\ui\bodyPanel</Filter>
     </ClCompile>
-    <ClCompile Include="current\ui\bodyPanel\BodyButtons.cpp">
-      <Filter>current\ui\bodyPanel</Filter>
-    </ClCompile>
     <ClCompile Include="current\ui\bodyPanel\BodyControls.cpp">
       <Filter>current\ui\bodyPanel</Filter>
     </ClCompile>
@@ -308,9 +290,6 @@
       <Filter>current\rigid</Filter>
     </ClCompile>
     <ClCompile Include="current\ui\connectionPanel\ConnectionPanel.cpp">
-      <Filter>current\ui\connectionPanel</Filter>
-    </ClCompile>
-    <ClCompile Include="current\ui\connectionPanel\ConnectionButtons.cpp">
       <Filter>current\ui\connectionPanel</Filter>
     </ClCompile>
     <ClCompile Include="current\ui\connectionPanel\ConnectionControls.cpp">
@@ -441,9 +420,6 @@
     <ClInclude Include="current\ui\commandPanel\CommandPanel.h">
       <Filter>current\ui\commandPanel</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\commandPanel\CommandButtons.h">
-      <Filter>current\ui\commandPanel</Filter>
-    </ClInclude>
     <ClInclude Include="current\ui\commandPanel\CommandControls.h">
       <Filter>current\ui\commandPanel</Filter>
     </ClInclude>
@@ -453,14 +429,8 @@
     <ClInclude Include="current\ui\creationPanel\CreationPanel.h">
       <Filter>current\ui\creationPanel</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\creationPanel\CreationButtons.h">
-      <Filter>current\ui\creationPanel</Filter>
-    </ClInclude>
     <ClInclude Include="current\ui\creationPanel\CreationControls.h">
       <Filter>current\ui\creationPanel</Filter>
-    </ClInclude>
-    <ClInclude Include="current\ui\globalPanel\GlobalButtons.h">
-      <Filter>current\ui\globalPanel</Filter>
     </ClInclude>
     <ClInclude Include="current\ui\globalPanel\GlobalControls.h">
       <Filter>current\ui\globalPanel</Filter>
@@ -468,13 +438,7 @@
     <ClInclude Include="current\ui\languagePanel\LanguagePanel.h">
       <Filter>current\ui\languagePanel</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\languagePanel\LanguageButtons.h">
-      <Filter>current\ui\languagePanel</Filter>
-    </ClInclude>
     <ClInclude Include="current\ui\parameterPanel\ParameterPanel.h">
-      <Filter>current\ui\parameterPanel</Filter>
-    </ClInclude>
-    <ClInclude Include="current\ui\parameterPanel\ParameterButtons.h">
       <Filter>current\ui\parameterPanel</Filter>
     </ClInclude>
     <ClInclude Include="current\ui\parameterPanel\ParameterControls.h">
@@ -564,9 +528,6 @@
     <ClInclude Include="current\ui\bodyPanel\BodyPanel.h">
       <Filter>current\ui\bodyPanel</Filter>
     </ClInclude>
-    <ClInclude Include="current\ui\bodyPanel\BodyButtons.h">
-      <Filter>current\ui\bodyPanel</Filter>
-    </ClInclude>
     <ClInclude Include="current\ui\bodyPanel\BodyControls.h">
       <Filter>current\ui\bodyPanel</Filter>
     </ClInclude>
@@ -574,9 +535,6 @@
       <Filter>current\rigid</Filter>
     </ClInclude>
     <ClInclude Include="current\ui\connectionPanel\ConnectionPanel.h">
-      <Filter>current\ui\connectionPanel</Filter>
-    </ClInclude>
-    <ClInclude Include="current\ui\connectionPanel\ConnectionButtons.h">
       <Filter>current\ui\connectionPanel</Filter>
     </ClInclude>
     <ClInclude Include="current\ui\connectionPanel\ConnectionControls.h">

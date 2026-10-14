@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "ConnectionButtons.h"
+#include "Button.h"
 #include "ControlList.h"
 #include "RichLabel.h"
 #include "RichTextBox.h"
@@ -23,8 +23,8 @@ class ConnectionEditorControls : public VerticalControlList
 public:
     Connection* selectedConnection = NULL;
     std::shared_ptr<ConnectionScriptEditor> scriptEditor;
-    std::shared_ptr<ConnectionScriptApplicationButton> applyButton;
-    std::shared_ptr<ConnectionDeletionButton> deleteButton;
+    std::shared_ptr<LocalizedButton> applyButton;
+    std::shared_ptr<LocalizedButton> deleteButton;
     std::shared_ptr<HorizontalControlList> actionButtons;
     std::shared_ptr<HorizontalSeparator> separator;
     ConnectionEditorControls();

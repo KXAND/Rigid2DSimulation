@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <functional>
+
 #include "Font.h"
 #include "Control.h"
 
@@ -20,7 +22,8 @@ public:
     int GetHeight() const override;
 
     void Render(App& app);
-    virtual void OnClick(App& app) {}
+    // 在原点击判定位置同步执行；为空时不处理，不保存传入的 App。
+    std::function<void(App&)> onClick;
 
     void Update(App& app) override;
     void Discard(App& app) override;
@@ -42,6 +45,8 @@ public:
     FloatPanel* floatPanel = NULL;
     ShowFloatPanelButton() = default;
     ShowFloatPanelButton(FloatPanel* floatPanel);
-    void OnClick(App& app) override;
+    // 点击回调绑定自身，控件保持稳定地址，由外部通过指针持有。
+    ShowFloatPanelButton(ShowFloatPanelButton const&) = delete;
+    ShowFloatPanelButton& operator=(ShowFloatPanelButton const&) = delete;
     void Update(App& app) override;
 };

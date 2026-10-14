@@ -95,8 +95,20 @@ BodyEditorControls::BodyEditorControls()
 {
     vector<Control*> controls;
     scriptEditor = std::make_shared<BodyScriptEditor>();
-    applyButton = std::make_shared<BodyScriptApplicationButton>();
-    deleteButton = std::make_shared<BodyDeletionButton>();
+    applyButton = std::make_shared<LocalizedButton>(70, L"applyBodyButton");
+    applyButton->onClick = [](App& app)
+    {
+        auto& simulationApp = static_cast<SimulationApp&>(app);
+        auto& selectedBody = *simulationApp.editor.bodySelecting;
+        selectedBody.scriptData.scriptText = selectedBody.scriptData.temporaryScriptText;
+        simulationApp.scriptRuntime.RefreshBodyScript(selectedBody);
+    };
+    deleteButton = std::make_shared<LocalizedButton>(70, L"deleteBodyButton");
+    deleteButton->onClick = [](App& app)
+    {
+        auto& simulationApp = static_cast<SimulationApp&>(app);
+        simulationApp.editor.RequestBodyDeletion(simulationApp.physicsWorld);
+    };
     controls = {&*applyButton, &*deleteButton};
     actionButtons = std::make_shared<HorizontalControlList>(controls);
     controls = {};

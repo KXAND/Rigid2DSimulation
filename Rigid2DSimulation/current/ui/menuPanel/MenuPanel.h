@@ -11,7 +11,7 @@ class MenuPanel : public Panel
 {
 public:
     std::shared_ptr<SimulationPauseButton> pauseButton;
-    std::shared_ptr<SceneResetButton> resetButton;
+    std::shared_ptr<LocalizedButton> resetButton;
     std::shared_ptr<AudioMuteButton> muteButton;
     std::shared_ptr<ShowFloatPanelButton> globalPanelButton;
     std::shared_ptr<ShowFloatPanelButton> creationPanelButton;

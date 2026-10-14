@@ -47,7 +47,10 @@ void Button::Update(App& app)
     {
         if (enabled && !app.input.mouseButtonDown[0])
         {
-            OnClick(app);
+            if (onClick)
+            {
+                onClick(app);
+            }
         }
         chosen = enabled && hovered && app.input.mouseButtonDown[0];
     }
@@ -80,10 +83,12 @@ void LocalizedButton::Update(App& app)
     Button::Update(app);
 }
 
-ShowFloatPanelButton::ShowFloatPanelButton(FloatPanel* floatPanel) : Button(150), floatPanel(floatPanel) {}
-void ShowFloatPanelButton::OnClick(App& app)
+ShowFloatPanelButton::ShowFloatPanelButton(FloatPanel* floatPanel) : Button(150), floatPanel(floatPanel)
 {
-    floatPanel->Show(app);
+    onClick = [this](App& app)
+    {
+        this->floatPanel->Show(app);
+    };
 }
 void ShowFloatPanelButton::Update(App& app)
 {

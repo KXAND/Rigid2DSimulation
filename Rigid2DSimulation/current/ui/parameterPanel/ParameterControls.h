@@ -5,7 +5,7 @@
 
 #include "ControlList.h"
 #include "DragBar.h"
-#include "ParameterButtons.h"
+#include "Button.h"
 #include "Separator.h"
 #include "TextBox.h"
 
@@ -40,7 +40,7 @@ class ParameterControlRow : public VerticalControlList
 {
 public:
     std::shared_ptr<ParameterNameTextBox> nameTextBox;
-    std::shared_ptr<ParameterDeletionButton> deleteButton;
+    std::shared_ptr<LocalizedButton> deleteButton;
     std::shared_ptr<HorizontalControlList> nameControls;
     std::shared_ptr<ParameterValueDragBar> valueDragBar;
     std::shared_ptr<ParameterValueTextBox> valueTextBox;

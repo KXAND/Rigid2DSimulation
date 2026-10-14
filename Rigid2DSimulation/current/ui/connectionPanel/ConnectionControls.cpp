@@ -24,8 +24,20 @@ ConnectionEditorControls::ConnectionEditorControls()
 {
     vector<Control*> controls;
     scriptEditor = std::make_shared<ConnectionScriptEditor>();
-    applyButton = std::make_shared<ConnectionScriptApplicationButton>();
-    deleteButton = std::make_shared<ConnectionDeletionButton>();
+    applyButton = std::make_shared<LocalizedButton>(70, L"applyConnectionButton");
+    applyButton->onClick = [](App& app)
+    {
+        auto& simulationApp = static_cast<SimulationApp&>(app);
+        auto& selectedConnection = *simulationApp.editor.connectionSelecting;
+        selectedConnection.scriptText = selectedConnection.temporaryScriptText;
+        simulationApp.scriptRuntime.RefreshConnectionScript(selectedConnection);
+    };
+    deleteButton = std::make_shared<LocalizedButton>(70, L"deleteConnectionButton");
+    deleteButton->onClick = [](App& app)
+    {
+        auto& simulationApp = static_cast<SimulationApp&>(app);
+        simulationApp.editor.RequestConnectionDeletion(simulationApp.physicsWorld);
+    };
     controls = {&*applyButton, &*deleteButton};
     actionButtons = std::make_shared<HorizontalControlList>(controls);
     controls = {};

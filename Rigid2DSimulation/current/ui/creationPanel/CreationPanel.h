@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "ControlList.h"
-#include "CreationButtons.h"
+#include "Button.h"
 #include "CreationControls.h"
 #include "FloatPanel.h"
 
@@ -14,7 +14,7 @@ public:
     explicit CreationPanel(App& app);
 
 private:
-    std::vector<std::shared_ptr<CreationToolButton>> toolButtons;
+    std::vector<std::shared_ptr<LocalizedButton>> toolButtons;
     std::shared_ptr<CreationSizeTextBox> radiusTextBox;
     std::shared_ptr<CreationSizeTextBox> thicknessTextBox;
     std::shared_ptr<CreationHelpLabel> helpLabel;

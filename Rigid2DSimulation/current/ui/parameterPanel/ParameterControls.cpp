@@ -52,7 +52,12 @@ ParameterControlRow::ParameterControlRow(int id)
 {
     vector<Control*> controls;
     nameTextBox = std::make_shared<ParameterNameTextBox>(id);
-    deleteButton = std::make_shared<ParameterDeletionButton>(id);
+    deleteButton = std::make_shared<LocalizedButton>(80, L"deleteParameterButton");
+    deleteButton->onClick = [id](App& app)
+    {
+        auto& simulationApp = static_cast<SimulationApp&>(app);
+        simulationApp.scriptRuntime.parameters[id]->isMarkedForDeletion = true;
+    };
     controls = {&*nameTextBox, &*deleteButton};
     nameControls = std::make_shared<HorizontalControlList>(controls);
     controls = {};

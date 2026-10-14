@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "BodyButtons.h"
+#include "Button.h"
 #include "CheckBox.h"
 #include "ControlList.h"
 #include "Label.h"
@@ -67,8 +67,8 @@ public:
     Body* selectedBody = NULL;
     std::shared_ptr<BodyConnectionControlList> connectionList;
     std::shared_ptr<BodyScriptEditor> scriptEditor;
-    std::shared_ptr<BodyScriptApplicationButton> applyButton;
-    std::shared_ptr<BodyDeletionButton> deleteButton;
+    std::shared_ptr<LocalizedButton> applyButton;
+    std::shared_ptr<LocalizedButton> deleteButton;
     std::shared_ptr<HorizontalControlList> actionButtons;
     std::shared_ptr<HorizontalSeparator> separator;
     BodyEditorControls();

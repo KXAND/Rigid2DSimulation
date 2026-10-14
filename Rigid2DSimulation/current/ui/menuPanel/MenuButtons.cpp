@@ -11,20 +11,6 @@ void SimulationPauseButton::Update(App& app)
     Button::Update(app);
 }
 
-void SimulationPauseButton::OnClick(App& app)
-{
-    auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.isPaused = !simulationApp.isPaused;
-}
-
-SceneResetButton::SceneResetButton() : LocalizedButton(150, L"resetButton") {}
-
-void SceneResetButton::OnClick(App& app)
-{
-    auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.Reset();
-}
-
 AudioMuteButton::AudioMuteButton() : Button(150) {}
 
 void AudioMuteButton::Update(App& app)
@@ -32,12 +18,6 @@ void AudioMuteButton::Update(App& app)
     auto& simulationApp = static_cast<SimulationApp&>(app);
     text = simulationApp.isMuted ? simulationApp.GetLocalizedString(L"unmute") : simulationApp.GetLocalizedString(L"mute");
     Button::Update(app);
-}
-
-void AudioMuteButton::OnClick(App& app)
-{
-    auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.isMuted = !simulationApp.isMuted;
 }
 
 InteractionModeButton::InteractionModeButton() : Button(150) {}
@@ -63,12 +43,6 @@ void InteractionModeButton::Update(App& app)
     Button::Update(app);
 }
 
-void InteractionModeButton::OnClick(App& app)
-{
-    auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.editor.CycleMode(simulationApp.inputOwners);
-}
-
 DisplayModeButton::DisplayModeButton() : Button(150) {}
 
 void DisplayModeButton::Update(App& app)
@@ -90,10 +64,4 @@ void DisplayModeButton::Update(App& app)
         break;
     }
     Button::Update(app);
-}
-
-void DisplayModeButton::OnClick(App& app)
-{
-    auto& simulationApp = static_cast<SimulationApp&>(app);
-    simulationApp.sceneRenderer.display = (simulationApp.sceneRenderer.display + 1) % 4;
 }

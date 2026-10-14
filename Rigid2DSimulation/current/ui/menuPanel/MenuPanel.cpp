@@ -19,14 +19,38 @@ MenuPanel::MenuPanel(App& app) : Panel(Panel::CreateMenuPanel(app))
     auto& simulationApp = static_cast<SimulationApp&>(app);
     vector<Control*> controls;
     pauseButton = std::make_shared<SimulationPauseButton>();
-    resetButton = std::make_shared<SceneResetButton>();
+    pauseButton->onClick = [](App& app)
+    {
+        auto& simulationApp = static_cast<SimulationApp&>(app);
+        simulationApp.isPaused = !simulationApp.isPaused;
+    };
+    resetButton = std::make_shared<LocalizedButton>(150, L"resetButton");
+    resetButton->onClick = [](App& app)
+    {
+        static_cast<SimulationApp&>(app).Reset();
+    };
     muteButton = std::make_shared<AudioMuteButton>();
+    muteButton->onClick = [](App& app)
+    {
+        auto& simulationApp = static_cast<SimulationApp&>(app);
+        simulationApp.isMuted = !simulationApp.isMuted;
+    };
     globalPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->globalPanel);
     creationPanelButton = std::make_shared<ShowFloatPanelButton>(simulationApp.userInterface->creationPanel.get());
     bodyPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->bodyPanel);
     connectionPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->connectionPanel);
     modeButton = std::make_shared<InteractionModeButton>();
+    modeButton->onClick = [](App& app)
+    {
+        auto& simulationApp = static_cast<SimulationApp&>(app);
+        simulationApp.editor.CycleMode(simulationApp.inputOwners);
+    };
     displayButton = std::make_shared<DisplayModeButton>();
+    displayButton->onClick = [](App& app)
+    {
+        auto& simulationApp = static_cast<SimulationApp&>(app);
+        simulationApp.sceneRenderer.display = (simulationApp.sceneRenderer.display + 1) % 4;
+    };
     commandPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->commandPanel);
     parameterPanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->parameterPanel);
     languagePanelButton = std::make_shared<ShowFloatPanelButton>(&*simulationApp.userInterface->languagePanel);
