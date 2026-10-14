@@ -55,6 +55,22 @@ void HorizontalDragBar::Render(App& app)
     DrawRectangleRaw(app.screen, GetNodeTopLeft(), nodeWidth, nodeHeight, viewport, color);
 }
 
+void HorizontalDragBar::Sync(App& app)
+{
+    if (valueProvider)
+    {
+        SetNormalizedNodePosition(valueProvider(app));
+    }
+}
+
+void HorizontalDragBar::Upload(App& app) const
+{
+    if (onDragging)
+    {
+        onDragging(app, GetNormalizedValue());
+    }
+}
+
 void HorizontalDragBar::Update(App& app)
 {
     hovered = (app.inputOwners.hovered == this);

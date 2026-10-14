@@ -27,6 +27,14 @@ void RichLabel::Render(App& app)
 {
     DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, topLeft, GetLineWidth(), viewport);
 }
+void RichLabel::Sync(App& app)
+{
+    if (textProvider)
+    {
+        text = textProvider(app);
+    }
+}
+
 void RichLabel::Update(App& app)
 {
     Sync(app);

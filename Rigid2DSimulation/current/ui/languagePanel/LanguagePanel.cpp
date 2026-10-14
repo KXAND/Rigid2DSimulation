@@ -8,7 +8,6 @@
 
 LanguagePanel::LanguagePanel(App& app) : LocalizedFloatPanel(app, 200, 200, L"languagePanelTitle")
 {
-    vector<Control*> controls;
     shown = true;
     chineseButton = std::make_shared<Button>(150);
     chineseButton->text = L"中文";
@@ -18,6 +17,7 @@ LanguagePanel::LanguagePanel(App& app) : LocalizedFloatPanel(app, 200, 200, L"la
         simulationApp.languageIdx = kChineseLanguage;
         simulationApp.userInterface->languagePanel->Hide(app);
     };
+
     englishButton = std::make_shared<Button>(150);
     englishButton->text = L"English";
     englishButton->onClick = [](App& app)
@@ -26,8 +26,8 @@ LanguagePanel::LanguagePanel(App& app) : LocalizedFloatPanel(app, 200, 200, L"la
         simulationApp.languageIdx = kEnglishLanguage;
         simulationApp.userInterface->languagePanel->Hide(app);
     };
-    controls = {&*chineseButton, &*englishButton};
-    this->controls = std::make_shared<VerticalControlList>(controls);
-    contentControl = &*this->controls;
+
+    layout = std::make_shared<VerticalControlList>(std::vector<Control*>{chineseButton.get(), englishButton.get()});
+    contentControl = layout.get();
     Init(app);
 }

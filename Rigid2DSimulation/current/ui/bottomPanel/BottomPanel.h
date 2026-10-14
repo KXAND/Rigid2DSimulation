@@ -2,16 +2,18 @@
 
 #include <memory>
 
-#include "BottomControls.h"
 #include "ControlList.h"
+#include "Label.h"
 #include "Panel.h"
 
 class BottomPanel : public Panel
 {
 public:
-    std::shared_ptr<FrameRateLabel> frameRateLabel;
-    std::shared_ptr<TimeLabel> timeLabel;
-    std::shared_ptr<MousePositionLabel> mousePositionLabel;
-    std::shared_ptr<HorizontalControlList> controls;
+    std::shared_ptr<Label> frameRateLabel;
+    std::shared_ptr<Label> timeLabel;
+    std::shared_ptr<Label> mousePositionLabel;
+    std::shared_ptr<HorizontalControlList> layout;
+
     BottomPanel(App& app);
+    void Update(App& app) override;
 };

@@ -231,7 +231,7 @@ void FloatPanel::Update(App& app)
         Render(app);
         if (contentControl)
         {
-            contentControl->Update(app);
+            UpdateContent(app);
         }
         if (useScrollBar)
         {
@@ -239,6 +239,11 @@ void FloatPanel::Update(App& app)
         }
     }
 }
+void FloatPanel::UpdateContent(App& app)
+{
+    contentControl->Update(app);
+}
+
 void FloatPanel::Discard(App& app)
 {
     closeButtonChosen = closeButtonHovered =

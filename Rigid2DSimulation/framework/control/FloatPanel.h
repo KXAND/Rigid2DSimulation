@@ -64,6 +64,10 @@ public:
     virtual void Update(App& app);
     virtual void Discard(App& app);
     virtual void PreUpdate(App& app);
+
+protected:
+    // 仅在仍显示的面板中调用，位于滚动/标题处理之后、内容遍历的位置。
+    virtual void UpdateContent(App& app);
 };
 class LocalizedFloatPanel : public FloatPanel
 {

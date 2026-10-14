@@ -50,6 +50,22 @@ void CheckBox::Render(App& app)
     }
 }
 
+void CheckBox::Sync(App& app)
+{
+    if (checkedProvider)
+    {
+        checked = checkedProvider(app);
+    }
+}
+
+void CheckBox::Upload(App& app) const
+{
+    if (onCheckedChanged)
+    {
+        onCheckedChanged(app, checked);
+    }
+}
+
 void CheckBox::Update(App& app)
 {
     hovered = (app.inputOwners.hovered == this);

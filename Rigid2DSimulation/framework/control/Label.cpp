@@ -24,6 +24,14 @@ void Label::Render(App& app)
     DVector2 textTopLeft = topLeft + DVector2(0, height - app.font.height) / 2;
     DrawString(app.screen, app.depthBuffer, depth, text, textColor, app.font, textTopLeft, 0, viewport);
 }
+void Label::Sync(App& app)
+{
+    if (textProvider)
+    {
+        text = textProvider(app);
+    }
+}
+
 void Label::Update(App& app)
 {
     Sync(app);

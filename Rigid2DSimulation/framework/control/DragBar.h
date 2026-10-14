@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <functional>
+
 #include "Tile.h"
 #include "Control.h"
 
@@ -27,9 +29,13 @@ public:
     DVector2 GetNodeTopLeft() const;
 
     void Render(App& app);
-    virtual void Sync(App& app) {}
+    std::function<double(App&)> valueProvider;
+    // 原拖动分支持续回写，包括释放鼠标的最后一帧。
+    std::function<void(App&, double)> onDragging;
+
+    virtual void Sync(App& app);
     virtual void OnDone(App& app) const {}
-    virtual void Upload(App& app) const {}
+    virtual void Upload(App& app) const;
 
     void Update(App& app) override;
     void Discard(App& app) override;

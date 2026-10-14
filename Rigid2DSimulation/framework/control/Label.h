@@ -1,4 +1,7 @@
 ﻿#pragma once
+#include <functional>
+#include <string>
+
 #include "Font.h"
 #include "Control.h"
 
@@ -12,13 +15,15 @@ public:
 
     Color textColor;
     wstring text;
+    // 默认 Sync 在测量、绘制之前读取；派生类覆盖 Sync 时替代此行为。
+    std::function<std::wstring(App&)> textProvider;
 
     Label(bool big = false);
     int GetWidth() const override;
     int GetHeight() const override;
 
     void Render(App& app);
-    virtual void Sync(App& app) {}
+    virtual void Sync(App& app);
     void Update(App& app) override;
 };
 class LocalizedLabel : public Label

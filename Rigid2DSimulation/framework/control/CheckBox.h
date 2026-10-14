@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <functional>
+
 #include "Tile.h"
 #include "Control.h"
 
@@ -23,8 +25,11 @@ public:
 
     DVector2 GetBoxTopLeft() const;
     void Render(App& app);
-    virtual void Sync(App& app) {}
-    virtual void Upload(App& app) const {}
+    std::function<bool(App&)> checkedProvider;
+    std::function<void(App&, bool)> onCheckedChanged;
+
+    virtual void Sync(App& app);
+    virtual void Upload(App& app) const;
 
     void Update(App& app) override;
     void Discard(App& app) override;

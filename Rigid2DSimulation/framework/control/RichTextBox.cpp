@@ -415,6 +415,30 @@ void RichTextBox::Render(App& app)
     RenderCursor(app);
 }
 
+void RichTextBox::Sync(App& app)
+{
+    if (valueProvider)
+    {
+        value = valueProvider(app);
+    }
+}
+
+void RichTextBox::OnDone(App& app) const
+{
+    if (onEditFinished)
+    {
+        onEditFinished(app, value);
+    }
+}
+
+void RichTextBox::Upload(App& app) const
+{
+    if (onEditing)
+    {
+        onEditing(app, value);
+    }
+}
+
 void RichTextBox::Update(App& app)
 {
     hovered = (app.inputOwners.hovered == this);

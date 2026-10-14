@@ -1,4 +1,7 @@
 ﻿#pragma once
+#include <functional>
+#include <string>
+
 #include "Font.h"
 #include "Control.h"
 
@@ -10,6 +13,7 @@ public:
     wstring labelText;
     int width = 0, height = 0;
     bool clearUponEdit = false;
+    bool submitOnEnter = false;
     Color labelTextColor, valueColor, editColor, frameColor, normalColor,
         cursorColor, hoveredColor, invalidColor, selectedColor;
 
@@ -70,9 +74,14 @@ public:
     void RenderCursor(App& app);
     void Render(App& app);
 
-    virtual void Sync(App& app) {}
-    virtual void OnDone(App& app) const {}
-    virtual void Upload(App& app) const {}
+    std::function<std::wstring(App&)> valueProvider;
+    // 每个编辑帧回写草稿，不等同于值改变事件；失焦提交与清理保持原时序。
+    std::function<void(App&, std::wstring const&)> onEditing;
+    std::function<void(App&, std::wstring const&)> onEditFinished;
+
+    virtual void Sync(App& app);
+    virtual void OnDone(App& app) const;
+    virtual void Upload(App& app) const;
 
     void Update(App& app) override;
     void Discard(App& app) override;

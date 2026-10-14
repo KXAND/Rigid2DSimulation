@@ -332,6 +332,30 @@ void TextBox::Render(App& app)
     RenderCursor(app);
 }
 
+void TextBox::Sync(App& app)
+{
+    if (valueProvider)
+    {
+        value = valueProvider(app);
+    }
+}
+
+void TextBox::OnDone(App& app) const
+{
+    if (onEditFinished)
+    {
+        onEditFinished(app, value);
+    }
+}
+
+void TextBox::Upload(App& app) const
+{
+    if (onEditing)
+    {
+        onEditing(app, value);
+    }
+}
+
 void TextBox::Update(App& app)
 {
     hovered = (app.inputOwners.hovered == this);
@@ -382,6 +406,13 @@ void TextBox::Update(App& app)
     }
     ClampTextPosition(app);
     Render(app);
+
+    // 保持原尺寸输入框在本帧绘制后提交、释放焦点的顺序。
+    if (submitOnEnter && edit && app.input.IsKeyPressedDown(VK_RETURN))
+    {
+        OnDone(app);
+        Discard(app);
+    }
 }
 void TextBox::Discard(App& app)
 {

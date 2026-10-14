@@ -42,6 +42,11 @@ void Button::Render(App& app)
 
 void Button::Update(App& app)
 {
+    if (textProvider)
+    {
+        text = textProvider(app);
+    }
+
     hovered = (app.inputOwners.hovered == this);
     if (chosen)
     {
