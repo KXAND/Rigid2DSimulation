@@ -1,28 +1,74 @@
 ﻿#pragma once
+
+#include <cstddef>
+#include <functional>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "Control.h"
 
-class HorizontalControlList : public Control
+class Button;
+class FloatPanel;
+class HorizontalControlList;
+class HorizontalDragBar;
+class HorizontalSeparator;
+class Label;
+class LocalizedButton;
+class LocalizedCheckBox;
+class LocalizedRichLabel;
+class LocalizedTextBox;
+class RichLabel;
+class RichTextBox;
+class ShowFloatPanelButton;
+class TextBox;
+class VerticalControlList;
+
+class ControlList : public Control
 {
 public:
-    vector<Control*> controls;
-    HorizontalControlList(vector<Control*> const& controls = {});
-    int GetWidth() const override;
-    int GetHeight() const override;
+    // 容器独占子控件；借用引用有效至 Clear 或容器销毁。
+    Control& Add(std::unique_ptr<Control> control);
+    HorizontalControlList& AddRow();
+    VerticalControlList& AddColumn();
+    Button& AddButton(int width, std::wstring const& text, std::function<void(App&)> onClick);
+    LocalizedButton& AddLocalizedButton(int width, std::wstring const& textId, std::function<void(App&)> onClick);
+    ShowFloatPanelButton& AddPanelButton(FloatPanel& panel);
+    TextBox& AddTextBox(int width);
+    LocalizedTextBox& AddLocalizedTextBox(int width, std::wstring const& textId);
+    RichTextBox& AddRichTextBox(int width, int height);
+    Label& AddLabel(int width);
+    RichLabel& AddRichLabel(int width, std::function<std::wstring(App&)> textProvider);
+    LocalizedRichLabel& AddLocalizedRichLabel(int width, std::wstring const& textId);
+    LocalizedCheckBox& AddLocalizedCheckBox(std::wstring const& textId);
+    HorizontalDragBar& AddDragBar(int width);
+    HorizontalSeparator& AddSeparator(int width);
 
-    void Update(App& app) override;
+    std::size_t GetSize() const;
+    std::vector<Control*> const& GetControls() const;
+    // 只显示前 size 个子项；隐藏时 Discard，但保留实例供动态列表复用。
+    void SetVisibleCount(std::size_t size, App& app);
+    void Clear(App& app);
     void Discard(App& app) override;
     void PreUpdate(App& app) override;
+
+private:
+    std::vector<std::unique_ptr<Control>> ownedControls;
+    std::vector<Control*> controls;
 };
 
-class VerticalControlList : public Control
+class HorizontalControlList : public ControlList
 {
 public:
-    vector<Control*> controls;
-    VerticalControlList(vector<Control*> const& controls = {});
     int GetWidth() const override;
     int GetHeight() const override;
-
     void Update(App& app) override;
-    void Discard(App& app) override;
-    void PreUpdate(App& app) override;
+};
+
+class VerticalControlList : public ControlList
+{
+public:
+    int GetWidth() const override;
+    int GetHeight() const override;
+    void Update(App& app) override;
 };

@@ -8,24 +8,16 @@
 
 #include "Creator.h"
 #include "SimulationApp.h"
+#include "TextBox.h"
 
 CreationPanel::CreationPanel(App& app) : LocalizedFloatPanel(app, 400, 680, L"creationPanelTitle")
 {
+    layout = std::make_unique<VerticalControlList>();
     BuildToolButtons();
 
-    radiusTextBox = CreateSizeInput(SizeField::ParticleRadius);
-    thicknessTextBox = CreateSizeInput(SizeField::PlateThickness);
-    helpLabel = std::make_shared<RichLabel>(340);
-    helpLabel->textProvider = GetHelpText;
-
-    layout = std::make_shared<VerticalControlList>();
-    for (auto const& button : toolButtons)
-    {
-        layout->controls.push_back(button.get());
-    }
-    layout->controls.push_back(radiusTextBox.get());
-    layout->controls.push_back(thicknessTextBox.get());
-    layout->controls.push_back(helpLabel.get());
+    AddSizeInput(SizeField::ParticleRadius);
+    AddSizeInput(SizeField::PlateThickness);
+    layout->AddRichLabel(340, GetHelpText);
     contentControl = layout.get();
     Init(app);
 }
@@ -43,30 +35,27 @@ void CreationPanel::BuildToolButtons()
 
 void CreationPanel::AddToolButton(int mode, wchar_t const* textId)
 {
-    auto button = std::make_shared<LocalizedButton>(340, textId);
-    button->onClick = [mode](App& app)
+    layout->AddLocalizedButton(340, textId, [mode](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);
         simulationApp.editor.SelectCreationTool(mode);
-    };
-    toolButtons.push_back(button);
+    });
 }
 
-std::shared_ptr<LocalizedTextBox> CreationPanel::CreateSizeInput(SizeField field)
+void CreationPanel::AddSizeInput(SizeField field)
 {
-    auto textBox = std::make_shared<LocalizedTextBox>(
-        field == SizeField::ParticleRadius ? L"creationParticleRadius" : L"creationPlateThickness", 100);
-    textBox->submitOnEnter = true;
-    textBox->valueProvider = [field](App& app)
+    auto& textBox = layout->AddLocalizedTextBox(
+        100, field == SizeField::ParticleRadius ? L"creationParticleRadius" : L"creationPlateThickness");
+    textBox.submitOnEnter = true;
+    textBox.valueProvider = [field](App& app)
     {
         auto const& config = static_cast<SimulationApp&>(app).editor.GetRequestedCreatorConfig();
         return FormatFixed2(field == SizeField::ParticleRadius ? config.radius : config.thickness);
     };
-    textBox->onEditFinished = [field](App& app, std::wstring const& text)
+    textBox.onEditFinished = [field](App& app, std::wstring const& text)
     {
         ApplySize(app, field, text);
     };
-    return textBox;
 }
 
 void CreationPanel::ApplySize(App& app, SizeField field, std::wstring const& text)

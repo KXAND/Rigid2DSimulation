@@ -1,59 +1,54 @@
 ﻿#include "ConnectionPanel.h"
 
 #include <memory>
-#include <vector>
 
 #include "Connection.h"
+#include "RichTextBox.h"
 #include "SimulationApp.h"
 
 ConnectionPanel::ConnectionPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"connectionPanelTitle")
 {
+    layout = std::make_unique<VerticalControlList>();
+    editorLayout = &layout->AddColumn();
     BuildEditor();
+    editorLayout->SetVisibleCount(0, app);
 
-    detailsLabel = std::make_shared<RichLabel>();
-    detailsLabel->textProvider = GetDetailsText;
-
-    layout = std::make_shared<VerticalControlList>(
-        std::vector<Control*>{editorLayout.get(), detailsLabel.get()});
+    layout->AddRichLabel(0, GetDetailsText);
     contentControl = layout.get();
     Init(app);
 }
 
 void ConnectionPanel::BuildEditor()
 {
-    scriptEditor = std::make_shared<RichTextBox>(360, 400);
-    scriptEditor->valueProvider = [](App& app)
+    auto& scriptEditor = editorLayout->AddRichTextBox(360, 400);
+    scriptEditor.valueProvider = [](App& app)
     {
         return static_cast<SimulationApp&>(app).editor.connectionSelecting->temporaryScriptText;
     };
-    scriptEditor->onEditing = [](App& app, std::wstring const& text)
+    scriptEditor.onEditing = [](App& app, std::wstring const& text)
     {
         static_cast<SimulationApp&>(app).editor.connectionSelecting->temporaryScriptText = text;
     };
 
     BuildActionButtons();
-    separator = std::make_shared<HorizontalSeparator>(400);
-    editorLayout = std::make_shared<VerticalControlList>();
+    editorLayout->AddSeparator(400);
 }
 
 void ConnectionPanel::BuildActionButtons()
 {
-    applyButton = std::make_shared<LocalizedButton>(70, L"applyConnectionButton");
-    applyButton->onClick = [](App& app)
+    auto& actionButtons = editorLayout->AddRow();
+    actionButtons.AddLocalizedButton(70, L"applyConnectionButton", [](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);
         auto& selectedConnection = *simulationApp.editor.connectionSelecting;
         selectedConnection.scriptText = selectedConnection.temporaryScriptText;
         simulationApp.scriptRuntime.RefreshConnectionScript(selectedConnection);
-    };
-    deleteButton = std::make_shared<LocalizedButton>(70, L"deleteConnectionButton");
-    deleteButton->onClick = [](App& app)
+    });
+    actionButtons.AddLocalizedButton(70, L"deleteConnectionButton", [](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);
         simulationApp.editor.RequestConnectionDeletion(simulationApp.physicsWorld);
-    };
-    actionButtons = std::make_shared<HorizontalControlList>(
-        std::vector<Control*>{applyButton.get(), deleteButton.get()});
+    });
 }
 
 void ConnectionPanel::SyncSelection(App& app)
@@ -66,14 +61,7 @@ void ConnectionPanel::SyncSelection(App& app)
 
     selectedConnection = selection;
     editorLayout->Discard(app);
-    if (selectedConnection)
-    {
-        editorLayout->controls = {scriptEditor.get(), actionButtons.get(), separator.get()};
-    }
-    else
-    {
-        editorLayout->controls.clear();
-    }
+    editorLayout->SetVisibleCount(selectedConnection ? editorLayout->GetSize() : 0, app);
 }
 
 void ConnectionPanel::UpdateContent(App& app)
@@ -86,7 +74,7 @@ void ConnectionPanel::Discard(App& app)
 {
     FloatPanel::Discard(app);
     selectedConnection = nullptr;
-    editorLayout->controls.clear();
+    editorLayout->SetVisibleCount(0, app);
 }
 
 std::wstring ConnectionPanel::GetDetailsText(App& app)

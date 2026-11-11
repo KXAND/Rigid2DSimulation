@@ -2,12 +2,14 @@
 
 #include <memory>
 
+#include "ControlList.h"
 #include "FloatPanel.h"
-#include "RichLabel.h"
 
 class AboutPanel : public LocalizedFloatPanel
 {
 public:
-    std::shared_ptr<LocalizedRichLabel> aboutText;
     AboutPanel(App& app);
+
+private:
+    std::unique_ptr<VerticalControlList> layout;
 };

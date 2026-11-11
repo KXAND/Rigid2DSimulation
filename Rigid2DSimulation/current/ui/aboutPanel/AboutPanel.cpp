@@ -4,7 +4,8 @@
 
 AboutPanel::AboutPanel(App& app) : LocalizedFloatPanel(app, 600, 540, L"aboutPanelTitle")
 {
-    aboutText = std::make_shared<LocalizedRichLabel>(560, L"aboutText");
-    contentControl = aboutText.get();
+    layout = std::make_unique<VerticalControlList>();
+    layout->AddLocalizedRichLabel(560, L"aboutText");
+    contentControl = layout.get();
     Init(app);
 }

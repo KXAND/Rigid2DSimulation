@@ -1,52 +1,42 @@
 ﻿#include "GlobalPanel.h"
 
 #include <memory>
-#include <vector>
 
 #include "Creator.h"
 #include "SimulationApp.h"
+#include "TextBox.h"
 #include "UserInterface.h"
 
 GlobalPanel::GlobalPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"globalPanelTitle")
 {
-    BuildSaveRow();
-    BuildLoadRow();
-    separator = std::make_shared<HorizontalSeparator>(400);
+    layout = std::make_unique<VerticalControlList>();
 
-    detailsLabel = std::make_shared<RichLabel>();
-    // 在保存、加载按钮更新后读取详情，保持同帧显示加载结果。
-    detailsLabel->textProvider = GetDetailsText;
+    auto& saveRow = layout->AddRow();
+    savePathTextBox = &saveRow.AddTextBox(270);
+    saveRow.AddLocalizedButton(80, L"saveButton", SaveScene);
 
-    layout = std::make_shared<VerticalControlList>(
-        std::vector<Control*>{saveRow.get(), loadRow.get(), separator.get(), detailsLabel.get()});
+    auto& loadRow = layout->AddRow();
+    loadPathTextBox = &loadRow.AddTextBox(270);
+    loadRow.AddLocalizedButton(80, L"loadButton", LoadScene);
+
+    layout->AddSeparator(400);
+    // 详情仍在保存、加载按钮之后读取，保留原来的宽度策略。
+    layout->AddRichLabel(0, GetDetailsText);
+
     contentControl = layout.get();
     Init(app);
 }
 
-void GlobalPanel::BuildSaveRow()
+void GlobalPanel::SaveScene(App& app)
 {
-    savePathTextBox = std::make_shared<TextBox>(270);
-    saveButton = std::make_shared<LocalizedButton>(80, L"saveButton");
-    saveButton->onClick = [](App& app)
-    {
-        auto& simulationApp = static_cast<SimulationApp&>(app);
-        simulationApp.Save(simulationApp.userInterface->globalPanel->savePathTextBox->value);
-    };
-    saveRow = std::make_shared<HorizontalControlList>(
-        std::vector<Control*>{savePathTextBox.get(), saveButton.get()});
+    auto& simulationApp = static_cast<SimulationApp&>(app);
+    simulationApp.Save(simulationApp.userInterface->globalPanel->savePathTextBox->value);
 }
 
-void GlobalPanel::BuildLoadRow()
+void GlobalPanel::LoadScene(App& app)
 {
-    loadPathTextBox = std::make_shared<TextBox>(270);
-    loadButton = std::make_shared<LocalizedButton>(80, L"loadButton");
-    loadButton->onClick = [](App& app)
-    {
-        auto& simulationApp = static_cast<SimulationApp&>(app);
-        simulationApp.Load(simulationApp.userInterface->globalPanel->loadPathTextBox->value);
-    };
-    loadRow = std::make_shared<HorizontalControlList>(
-        std::vector<Control*>{loadPathTextBox.get(), loadButton.get()});
+    auto& simulationApp = static_cast<SimulationApp&>(app);
+    simulationApp.Load(simulationApp.userInterface->globalPanel->loadPathTextBox->value);
 }
 
 std::wstring GlobalPanel::GetDetailsText(App& app)

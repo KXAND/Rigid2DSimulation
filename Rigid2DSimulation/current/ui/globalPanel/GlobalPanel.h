@@ -3,30 +3,24 @@
 #include <memory>
 #include <string>
 
-#include "Button.h"
 #include "ControlList.h"
 #include "FloatPanel.h"
-#include "RichLabel.h"
-#include "Separator.h"
-#include "TextBox.h"
+
+class TextBox;
 
 class GlobalPanel : public LocalizedFloatPanel
 {
 public:
-    std::shared_ptr<TextBox> savePathTextBox;
-    std::shared_ptr<LocalizedButton> saveButton;
-    std::shared_ptr<HorizontalControlList> saveRow;
-    std::shared_ptr<TextBox> loadPathTextBox;
-    std::shared_ptr<LocalizedButton> loadButton;
-    std::shared_ptr<HorizontalControlList> loadRow;
-    std::shared_ptr<HorizontalSeparator> separator;
-    std::shared_ptr<RichLabel> detailsLabel;
-    std::shared_ptr<VerticalControlList> layout;
+    // 控件由 layout 持有；这里只借用保存、加载操作需要读取的输入框。
+    TextBox* savePathTextBox = nullptr;
+    TextBox* loadPathTextBox = nullptr;
 
     GlobalPanel(App& app);
 
 private:
-    void BuildSaveRow();
-    void BuildLoadRow();
+    std::unique_ptr<VerticalControlList> layout;
+
+    static void SaveScene(App& app);
+    static void LoadScene(App& app);
     static std::wstring GetDetailsText(App& app);
 };

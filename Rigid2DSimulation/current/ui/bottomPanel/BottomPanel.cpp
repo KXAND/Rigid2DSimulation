@@ -1,26 +1,15 @@
 ﻿#include "BottomPanel.h"
 
 #include <memory>
-#include <vector>
 
 #include "SimulationApp.h"
 
 BottomPanel::BottomPanel(App& app) : Panel(Panel::CreateBottomPanel(app))
 {
-    frameRateLabel = std::make_shared<Label>();
-    frameRateLabel->width = 450;
-    frameRateLabel->fixedWidth = true;
-
-    timeLabel = std::make_shared<Label>();
-    timeLabel->width = 200;
-    timeLabel->fixedWidth = true;
-
-    mousePositionLabel = std::make_shared<Label>();
-    mousePositionLabel->width = 300;
-    mousePositionLabel->fixedWidth = true;
-
-    layout = std::make_shared<HorizontalControlList>(
-        std::vector<Control*>{frameRateLabel.get(), timeLabel.get(), mousePositionLabel.get()});
+    layout = std::make_unique<HorizontalControlList>();
+    frameRateLabel = &layout->AddLabel(450);
+    timeLabel = &layout->AddLabel(200);
+    mousePositionLabel = &layout->AddLabel(300);
     contentControl = layout.get();
     Init(app);
 }
