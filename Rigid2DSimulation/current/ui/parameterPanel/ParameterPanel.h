@@ -1,8 +1,6 @@
 ﻿#pragma once
 
-#include <memory>
-
-#include "ControlList.h"
+#include "ControlContainer.h"
 #include "FloatPanel.h"
 
 class ParameterPanel : public LocalizedFloatPanel
@@ -11,8 +9,7 @@ public:
     ParameterPanel(App& app);
 
 private:
-    std::unique_ptr<VerticalControlList> layout;
-    VerticalControlList* parameterList = nullptr;
+    VerticalStack* parameterList = nullptr;
 
     void CreateParameterRow(int id);
     void SyncParameterRows(App& app);

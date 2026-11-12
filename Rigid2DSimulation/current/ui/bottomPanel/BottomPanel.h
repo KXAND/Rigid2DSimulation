@@ -1,8 +1,6 @@
 ﻿#pragma once
 
-#include <memory>
-
-#include "ControlList.h"
+#include "ControlContainer.h"
 #include "Label.h"
 #include "Panel.h"
 
@@ -13,7 +11,6 @@ public:
     void Update(App& app) override;
 
 private:
-    std::unique_ptr<HorizontalControlList> layout;
     Label* frameRateLabel = nullptr;
     Label* timeLabel = nullptr;
     Label* mousePositionLabel = nullptr;

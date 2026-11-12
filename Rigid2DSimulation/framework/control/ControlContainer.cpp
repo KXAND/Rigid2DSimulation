@@ -1,4 +1,4 @@
-﻿#include "ControlList.h"
+﻿#include "ControlContainer.h"
 
 #include <stdexcept>
 #include <utility>
@@ -12,11 +12,11 @@
 #include "Separator.h"
 #include "TextBox.h"
 
-Control& ControlList::Add(std::unique_ptr<Control> control)
+Control& ControlContainer::Add(std::unique_ptr<Control> control)
 {
     if (!control)
     {
-        throw std::invalid_argument("ControlList::Add requires a control");
+        throw std::invalid_argument("ControlContainer::Add requires a control");
     }
     bool showNewControl = controls.size() == ownedControls.size();
     // 先预留视图容量，避免接管成功后因分配失败留下未登记的子项。
@@ -33,23 +33,23 @@ Control& ControlList::Add(std::unique_ptr<Control> control)
     return child;
 }
 
-HorizontalControlList& ControlList::AddRow()
+HorizontalStack& ControlContainer::AddRow()
 {
-    auto control = std::make_unique<HorizontalControlList>();
+    auto control = std::make_unique<HorizontalStack>();
     auto& result = *control;
     Add(std::move(control));
     return result;
 }
 
-VerticalControlList& ControlList::AddColumn()
+VerticalStack& ControlContainer::AddColumn()
 {
-    auto control = std::make_unique<VerticalControlList>();
+    auto control = std::make_unique<VerticalStack>();
     auto& result = *control;
     Add(std::move(control));
     return result;
 }
 
-Button& ControlList::AddButton(int width, std::wstring const& text, std::function<void(App&)> onClick)
+Button& ControlContainer::AddButton(int width, std::wstring const& text, std::function<void(App&)> onClick)
 {
     auto control = std::make_unique<Button>(width);
     control->text = text;
@@ -59,7 +59,7 @@ Button& ControlList::AddButton(int width, std::wstring const& text, std::functio
     return result;
 }
 
-LocalizedButton& ControlList::AddLocalizedButton(int width, std::wstring const& textId, std::function<void(App&)> onClick)
+LocalizedButton& ControlContainer::AddLocalizedButton(int width, std::wstring const& textId, std::function<void(App&)> onClick)
 {
     auto control = std::make_unique<LocalizedButton>(width, textId);
     control->onClick = std::move(onClick);
@@ -68,7 +68,7 @@ LocalizedButton& ControlList::AddLocalizedButton(int width, std::wstring const& 
     return result;
 }
 
-ShowFloatPanelButton& ControlList::AddPanelButton(FloatPanel& panel)
+ShowFloatPanelButton& ControlContainer::AddPanelButton(FloatPanel& panel)
 {
     auto control = std::make_unique<ShowFloatPanelButton>(&panel);
     auto& result = *control;
@@ -76,7 +76,7 @@ ShowFloatPanelButton& ControlList::AddPanelButton(FloatPanel& panel)
     return result;
 }
 
-TextBox& ControlList::AddTextBox(int width)
+TextBox& ControlContainer::AddTextBox(int width)
 {
     auto control = std::make_unique<TextBox>(width);
     auto& result = *control;
@@ -84,7 +84,7 @@ TextBox& ControlList::AddTextBox(int width)
     return result;
 }
 
-LocalizedTextBox& ControlList::AddLocalizedTextBox(int width, std::wstring const& textId)
+LocalizedTextBox& ControlContainer::AddLocalizedTextBox(int width, std::wstring const& textId)
 {
     auto control = std::make_unique<LocalizedTextBox>(textId, width);
     auto& result = *control;
@@ -92,7 +92,7 @@ LocalizedTextBox& ControlList::AddLocalizedTextBox(int width, std::wstring const
     return result;
 }
 
-RichTextBox& ControlList::AddRichTextBox(int width, int height)
+RichTextBox& ControlContainer::AddRichTextBox(int width, int height)
 {
     auto control = std::make_unique<RichTextBox>(width, height);
     auto& result = *control;
@@ -100,7 +100,7 @@ RichTextBox& ControlList::AddRichTextBox(int width, int height)
     return result;
 }
 
-Label& ControlList::AddLabel(int width)
+Label& ControlContainer::AddLabel(int width)
 {
     auto control = std::make_unique<Label>();
     control->width = width;
@@ -110,7 +110,7 @@ Label& ControlList::AddLabel(int width)
     return result;
 }
 
-RichLabel& ControlList::AddRichLabel(int width, std::function<std::wstring(App&)> textProvider)
+RichLabel& ControlContainer::AddRichLabel(int width, std::function<std::wstring(App&)> textProvider)
 {
     auto control = std::make_unique<RichLabel>(width);
     control->textProvider = std::move(textProvider);
@@ -119,7 +119,7 @@ RichLabel& ControlList::AddRichLabel(int width, std::function<std::wstring(App&)
     return result;
 }
 
-LocalizedRichLabel& ControlList::AddLocalizedRichLabel(int width, std::wstring const& textId)
+LocalizedRichLabel& ControlContainer::AddLocalizedRichLabel(int width, std::wstring const& textId)
 {
     auto control = std::make_unique<LocalizedRichLabel>(width, textId);
     auto& result = *control;
@@ -127,7 +127,7 @@ LocalizedRichLabel& ControlList::AddLocalizedRichLabel(int width, std::wstring c
     return result;
 }
 
-LocalizedCheckBox& ControlList::AddLocalizedCheckBox(std::wstring const& textId)
+LocalizedCheckBox& ControlContainer::AddLocalizedCheckBox(std::wstring const& textId)
 {
     auto control = std::make_unique<LocalizedCheckBox>(textId);
     auto& result = *control;
@@ -135,7 +135,7 @@ LocalizedCheckBox& ControlList::AddLocalizedCheckBox(std::wstring const& textId)
     return result;
 }
 
-HorizontalDragBar& ControlList::AddDragBar(int width)
+HorizontalDragBar& ControlContainer::AddDragBar(int width)
 {
     auto control = std::make_unique<HorizontalDragBar>(width);
     auto& result = *control;
@@ -143,7 +143,7 @@ HorizontalDragBar& ControlList::AddDragBar(int width)
     return result;
 }
 
-HorizontalSeparator& ControlList::AddSeparator(int width)
+HorizontalSeparator& ControlContainer::AddSeparator(int width)
 {
     auto control = std::make_unique<HorizontalSeparator>(width);
     auto& result = *control;
@@ -151,21 +151,21 @@ HorizontalSeparator& ControlList::AddSeparator(int width)
     return result;
 }
 
-std::size_t ControlList::GetSize() const
+std::size_t ControlContainer::GetSize() const
 {
     return ownedControls.size();
 }
 
-std::vector<Control*> const& ControlList::GetControls() const
+std::vector<Control*> const& ControlContainer::GetControls() const
 {
     return controls;
 }
 
-void ControlList::SetVisibleCount(std::size_t size, App& app)
+void ControlContainer::SetVisibleCount(std::size_t size, App& app)
 {
     if (size > ownedControls.size())
     {
-        throw std::out_of_range("ControlList::SetVisibleCount exceeds child count");
+        throw std::out_of_range("ControlContainer::SetVisibleCount exceeds child count");
     }
     controls.reserve(size);
     for (std::size_t i = size; i < controls.size(); ++i)
@@ -179,14 +179,14 @@ void ControlList::SetVisibleCount(std::size_t size, App& app)
     }
 }
 
-void ControlList::Clear(App& app)
+void ControlContainer::Clear(App& app)
 {
     Discard(app);
     controls.clear();
     ownedControls.clear();
 }
 
-void ControlList::Discard(App& app)
+void ControlContainer::Discard(App& app)
 {
     for (auto control : controls)
     {
@@ -194,15 +194,17 @@ void ControlList::Discard(App& app)
     }
 }
 
-void ControlList::PreUpdate(App& app)
+void ControlContainer::PreUpdate(App& app)
 {
     for (auto control : controls)
     {
+        // 父容器的裁剪范围可能已变化，命中测试不能沿用上一帧的范围。
+        control->viewport = viewport;
         control->PreUpdate(app);
     }
 }
 
-int HorizontalControlList::GetWidth() const
+int HorizontalStack::GetWidth() const
 {
     if (GetControls().empty())
     {
@@ -216,7 +218,7 @@ int HorizontalControlList::GetWidth() const
     return totalWidth;
 }
 
-int HorizontalControlList::GetHeight() const
+int HorizontalStack::GetHeight() const
 {
     int maxHeight = 0;
     for (auto control : GetControls())
@@ -229,7 +231,7 @@ int HorizontalControlList::GetHeight() const
     return maxHeight;
 }
 
-void HorizontalControlList::Update(App& app)
+void HorizontalStack::Update(App& app)
 {
     int currentX = topLeft.x;
     for (auto control : GetControls())
@@ -243,7 +245,7 @@ void HorizontalControlList::Update(App& app)
     }
 }
 
-int VerticalControlList::GetWidth() const
+int VerticalStack::GetWidth() const
 {
     int maxWidth = 0;
     for (auto control : GetControls())
@@ -256,7 +258,7 @@ int VerticalControlList::GetWidth() const
     return maxWidth;
 }
 
-int VerticalControlList::GetHeight() const
+int VerticalStack::GetHeight() const
 {
     if (GetControls().empty())
     {
@@ -270,7 +272,7 @@ int VerticalControlList::GetHeight() const
     return totalHeight;
 }
 
-void VerticalControlList::Update(App& app)
+void VerticalStack::Update(App& app)
 {
     int currentY = topLeft.y;
     for (auto control : GetControls())

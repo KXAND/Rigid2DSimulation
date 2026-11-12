@@ -1,15 +1,17 @@
 ﻿#pragma once
+
+#include <memory>
+
+#include "Control.h"
 #include "Tile.h"
 
 class App;
-class Control;
 class VerticalScrollBar;
 class Panel
 {
 public:
     DVector2 topLeft;
     double depth = 0;
-    Control* contentControl = NULL;
     int width = 0, height = 0;
     double wheelMultiplier = 0;
     DVector2 contentOffset;
@@ -17,7 +19,7 @@ public:
     Color frameColor, panelColor;
 
     bool useScrollBar = false;
-    // 我也不清楚为啥要用指针。有点惯性的感觉了。
+    // TODO: 滚动条目前仅由面板持有，评估改为值成员或 unique_ptr。
     std::shared_ptr<VerticalScrollBar> scrollBar;
 
     int visibleHeight = 0;
@@ -25,21 +27,26 @@ public:
     bool hovered = false;
     bool wheeled = false;
 
-    Panel();
-    static Panel CreateMenuPanel(App& app);
-    static Panel CreateBottomPanel(App& app);
+    explicit Panel(DRect const& displayBounds);
+    static Panel CreateMenuPanel(DRect const& displayBounds);
+    static Panel CreateBottomPanel(DRect const& displayBounds);
 
     int GetMinY() const;
-    DRect GetVisibleViewport(App& app) const;
-    // 不用 delegate 而用专门的 SetControl 主要是希望能重置滚动。
-    void SetControl(App& app, Control* newContentControl);
-    void InitializeControl(App& app);
-    void InitializeScrollBar();
+    DRect GetVisibleViewport() const;
+    void SetDisplayBounds(DRect const& bounds);
     void Render(App& app);
 
-    void Init(App& app);
     virtual void Update(App& app);
     // 如果有可删除的 Panel 就用这个。
     virtual void Discard(App& app);
     virtual void PreUpdate(App& app);
+
+protected:
+    // 构造期间安装一次根内容；不支持运行中替换，以免遗留输入归属。
+    void SetContent(std::unique_ptr<Control> content);
+
+private:
+    void InitializeScrollBar();
+    DRect displayBounds;
+    std::unique_ptr<Control> contentControl;
 };

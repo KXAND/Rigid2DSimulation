@@ -1,13 +1,14 @@
 ﻿#include "CommandPanel.h"
 
 #include <memory>
+#include <utility>
 
 #include "RichTextBox.h"
 #include "SimulationApp.h"
 
-CommandPanel::CommandPanel(App& app) : LocalizedFloatPanel(app, 600, 600, L"commandPanelTitle")
+CommandPanel::CommandPanel(App& app) : LocalizedFloatPanel(app.screen.Rect(), 600, 600, L"commandPanelTitle")
 {
-    layout = std::make_unique<VerticalControlList>();
+    auto layout = std::make_unique<VerticalStack>();
     auto& scriptEditor = layout->AddRichTextBox(560, 500);
     scriptEditor.valueProvider = [](App& app)
     {
@@ -24,6 +25,5 @@ CommandPanel::CommandPanel(App& app) : LocalizedFloatPanel(app, 600, 600, L"comm
         simulationApp.scriptRuntime.ApplySceneScript();
     });
 
-    contentControl = layout.get();
-    Init(app);
+    SetContent(std::move(layout));
 }

@@ -1,9 +1,8 @@
 ﻿#pragma once
 
-#include <memory>
 #include <string>
 
-#include "ControlList.h"
+#include "ControlContainer.h"
 #include "FloatPanel.h"
 
 class Connection;
@@ -15,8 +14,7 @@ public:
     void Discard(App& app) override;
 
 private:
-    std::unique_ptr<VerticalControlList> layout;
-    VerticalControlList* editorLayout = nullptr;
+    VerticalStack* editorLayout = nullptr;
 
     // 仅用于识别选择切换并清理旧编辑状态，不拥有场景对象。
     Connection* selectedConnection = nullptr;

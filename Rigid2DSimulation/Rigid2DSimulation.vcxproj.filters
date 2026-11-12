@@ -136,7 +136,7 @@
     <ClCompile Include="framework\control\Control.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
-    <ClCompile Include="framework\control\ControlList.cpp">
+    <ClCompile Include="framework\control\ControlContainer.cpp">
       <Filter>framework\control</Filter>
     </ClCompile>
     <ClCompile Include="framework\control\Label.cpp">
@@ -357,7 +357,7 @@
     <ClInclude Include="framework\control\CheckBox.h">
       <Filter>framework\control</Filter>
     </ClInclude>
-    <ClInclude Include="framework\control\ControlList.h">
+    <ClInclude Include="framework\control\ControlContainer.h">
       <Filter>framework\control</Filter>
     </ClInclude>
     <ClInclude Include="framework\control\DragBar.h">

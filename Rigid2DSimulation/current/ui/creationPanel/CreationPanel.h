@@ -1,9 +1,8 @@
 ﻿#pragma once
 
-#include <memory>
 #include <string>
 
-#include "ControlList.h"
+#include "ControlContainer.h"
 #include "FloatPanel.h"
 
 class CreationPanel : public LocalizedFloatPanel
@@ -18,11 +17,9 @@ private:
         PlateThickness
     };
 
-    std::unique_ptr<VerticalControlList> layout;
-
-    void BuildToolButtons();
-    void AddSizeInput(SizeField field);
+    void BuildToolButtons(VerticalStack& layout);
+    void AddSizeInput(VerticalStack& layout, SizeField field);
     static void ApplySize(App& app, SizeField field, std::wstring const& text);
-    void AddToolButton(int mode, wchar_t const* textId);
+    void AddToolButton(VerticalStack& layout, int mode, wchar_t const* textId);
     static std::wstring GetHelpText(App& app);
 };

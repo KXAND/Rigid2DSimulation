@@ -1,15 +1,17 @@
 ﻿#pragma once
+
+#include <memory>
+
+#include "Control.h"
 #include "Tile.h"
 
 class App;
-class Control;
 class VerticalScrollBar;
 class FloatPanel
 {
 public:
     DVector2 topLeft;
     double depth = 0;
-    Control* contentControl = NULL;
     wstring title;
     int width = 0, height = 0;
     double wheelMultiplier = 0;
@@ -17,6 +19,7 @@ public:
     DRect contentViewport;
 
     bool useScrollBar = false;
+    // TODO: 滚动条目前仅由面板持有，评估改为值成员或 unique_ptr。
     std::shared_ptr<VerticalScrollBar> scrollBar;
 
     int titleBarHeight = 0;
@@ -40,16 +43,13 @@ public:
     bool closeButtonHovered = false;
     bool closeButtonEnabled = true;
 
-    FloatPanel();
-    FloatPanel(App& app, int width, int height);
+    FloatPanel(DRect const& displayBounds, int width, int height);
 
     int GetMinY() const;
-    DRect GetVisibleViewport(App& app) const;
+    DRect GetVisibleViewport() const;
+    void SetDisplayBounds(DRect const& bounds);
     DVector2 GetCloseTopLeft() const;
-    void SetControl(App& app, Control* newContentControl);
-    void SetTopLeft(App& app, DVector2 const& topLeft);
-    void InitializeControl(App& app);
-    void InitializeScrollBar();
+    void SetTopLeft(DVector2 const& topLeft);
 
     void Hide(App& app);
     void Show(App& app);
@@ -60,21 +60,28 @@ public:
     void RenderClose(App& app);
     void Render(App& app);
 
-    void Init(App& app);
     virtual void Update(App& app);
     virtual void Discard(App& app);
     virtual void PreUpdate(App& app);
 
 protected:
+    // 构造期间安装一次根内容；不支持运行中替换，以免遗留输入归属。
+    void SetContent(std::unique_ptr<Control> content);
+
     // 仅在仍显示的面板中调用，位于滚动/标题处理之后、内容遍历的位置。
     virtual void UpdateContent(App& app);
+
+private:
+    FloatPanel();
+    void InitializeScrollBar();
+    DRect displayBounds;
+    std::unique_ptr<Control> contentControl;
 };
 class LocalizedFloatPanel : public FloatPanel
 {
 public:
     wstring titleLocalizationId;
-    LocalizedFloatPanel() = default;
-    LocalizedFloatPanel(App& app, int width, int height, wstring const& id);
+    LocalizedFloatPanel(DRect const& displayBounds, int width, int height, wstring const& id);
     void Update(App& app) override;
 };
 

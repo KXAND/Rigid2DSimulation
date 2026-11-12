@@ -1,15 +1,16 @@
 ﻿#include "GlobalPanel.h"
 
 #include <memory>
+#include <utility>
 
 #include "Creator.h"
 #include "SimulationApp.h"
 #include "TextBox.h"
 #include "UserInterface.h"
 
-GlobalPanel::GlobalPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"globalPanelTitle")
+GlobalPanel::GlobalPanel(App& app) : LocalizedFloatPanel(app.screen.Rect(), 400, 600, L"globalPanelTitle")
 {
-    layout = std::make_unique<VerticalControlList>();
+    auto layout = std::make_unique<VerticalStack>();
 
     auto& saveRow = layout->AddRow();
     savePathTextBox = &saveRow.AddTextBox(270);
@@ -23,8 +24,7 @@ GlobalPanel::GlobalPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"global
     // 详情仍在保存、加载按钮之后读取，保留原来的宽度策略。
     layout->AddRichLabel(0, GetDetailsText);
 
-    contentControl = layout.get();
-    Init(app);
+    SetContent(std::move(layout));
 }
 
 void GlobalPanel::SaveScene(App& app)

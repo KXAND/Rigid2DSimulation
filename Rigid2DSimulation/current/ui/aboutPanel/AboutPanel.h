@@ -1,8 +1,6 @@
 ﻿#pragma once
 
-#include <memory>
-
-#include "ControlList.h"
+#include "ControlContainer.h"
 #include "FloatPanel.h"
 
 class AboutPanel : public LocalizedFloatPanel
@@ -10,6 +8,4 @@ class AboutPanel : public LocalizedFloatPanel
 public:
     AboutPanel(App& app);
 
-private:
-    std::unique_ptr<VerticalControlList> layout;
 };

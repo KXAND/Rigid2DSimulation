@@ -1,15 +1,16 @@
 ﻿#include "ParameterPanel.h"
 
 #include <memory>
+#include <utility>
 
 #include "DragBar.h"
 #include "SceneParameter.h"
 #include "SimulationApp.h"
 #include "TextBox.h"
 
-ParameterPanel::ParameterPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"parameterPanelTitle")
+ParameterPanel::ParameterPanel(App& app) : LocalizedFloatPanel(app.screen.Rect(), 400, 600, L"parameterPanelTitle")
 {
-    layout = std::make_unique<VerticalControlList>();
+    auto layout = std::make_unique<VerticalStack>();
     parameterList = &layout->AddColumn();
 
     layout->AddLocalizedButton(160, L"addParameterButton", [](App& app)
@@ -19,8 +20,7 @@ ParameterPanel::ParameterPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"
             std::make_shared<SceneParameter>(simulationApp.GetLocalizedString(L"unnamedParameter")));
     });
 
-    contentControl = layout.get();
-    Init(app);
+    SetContent(std::move(layout));
 }
 
 void ParameterPanel::CreateParameterRow(int id)

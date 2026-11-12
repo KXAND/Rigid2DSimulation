@@ -50,6 +50,15 @@ void UserInterface::UpdateAndRender(SimulationApp& simulationApp)
 }
 void UserInterface::PreUpdate(SimulationApp& simulationApp)
 {
+    // 在命中测试之前同步裁剪边界，不让业务面板缓存过期的屏幕尺寸。
+    auto bounds = simulationApp.screen.Rect();
+    menuPanel->SetDisplayBounds(bounds);
+    bottomPanel->SetDisplayBounds(bounds);
+    for (auto floatPanel : floatPanels)
+    {
+        floatPanel->SetDisplayBounds(bounds);
+    }
+
     menuPanel->PreUpdate(simulationApp);
     bottomPanel->PreUpdate(simulationApp);
     SortFloatPanels();

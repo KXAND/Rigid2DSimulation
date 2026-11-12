@@ -1,21 +1,21 @@
 ﻿#include "ConnectionPanel.h"
 
 #include <memory>
+#include <utility>
 
 #include "Connection.h"
 #include "RichTextBox.h"
 #include "SimulationApp.h"
 
-ConnectionPanel::ConnectionPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"connectionPanelTitle")
+ConnectionPanel::ConnectionPanel(App& app) : LocalizedFloatPanel(app.screen.Rect(), 400, 600, L"connectionPanelTitle")
 {
-    layout = std::make_unique<VerticalControlList>();
+    auto layout = std::make_unique<VerticalStack>();
     editorLayout = &layout->AddColumn();
     BuildEditor();
     editorLayout->SetVisibleCount(0, app);
 
     layout->AddRichLabel(0, GetDetailsText);
-    contentControl = layout.get();
-    Init(app);
+    SetContent(std::move(layout));
 }
 
 void ConnectionPanel::BuildEditor()

@@ -5,46 +5,46 @@
 #include <cwchar>
 #include <cwctype>
 #include <memory>
+#include <utility>
 
 #include "Creator.h"
 #include "SimulationApp.h"
 #include "TextBox.h"
 
-CreationPanel::CreationPanel(App& app) : LocalizedFloatPanel(app, 400, 680, L"creationPanelTitle")
+CreationPanel::CreationPanel(App& app) : LocalizedFloatPanel(app.screen.Rect(), 400, 680, L"creationPanelTitle")
 {
-    layout = std::make_unique<VerticalControlList>();
-    BuildToolButtons();
+    auto layout = std::make_unique<VerticalStack>();
+    BuildToolButtons(*layout);
 
-    AddSizeInput(SizeField::ParticleRadius);
-    AddSizeInput(SizeField::PlateThickness);
+    AddSizeInput(*layout, SizeField::ParticleRadius);
+    AddSizeInput(*layout, SizeField::PlateThickness);
     layout->AddRichLabel(340, GetHelpText);
-    contentControl = layout.get();
-    Init(app);
+    SetContent(std::move(layout));
 }
 
-void CreationPanel::BuildToolButtons()
+void CreationPanel::BuildToolButtons(VerticalStack& layout)
 {
-    AddToolButton(kCreateBox, L"creationBoxTool");
-    AddToolButton(kCreateBall, L"creationBallTool");
-    AddToolButton(kCreatePlate, L"creationPlateTool");
-    AddToolButton(kCreateParticle, L"creationParticleTool");
-    AddToolButton(kCreateConnection, L"creationConnectionTool");
-    AddToolButton(kCreatePoint, L"creationPointTool");
-    AddToolButton(kCreateNail, L"creationNailTool");
+    AddToolButton(layout, kCreateBox, L"creationBoxTool");
+    AddToolButton(layout, kCreateBall, L"creationBallTool");
+    AddToolButton(layout, kCreatePlate, L"creationPlateTool");
+    AddToolButton(layout, kCreateParticle, L"creationParticleTool");
+    AddToolButton(layout, kCreateConnection, L"creationConnectionTool");
+    AddToolButton(layout, kCreatePoint, L"creationPointTool");
+    AddToolButton(layout, kCreateNail, L"creationNailTool");
 }
 
-void CreationPanel::AddToolButton(int mode, wchar_t const* textId)
+void CreationPanel::AddToolButton(VerticalStack& layout, int mode, wchar_t const* textId)
 {
-    layout->AddLocalizedButton(340, textId, [mode](App& app)
+    layout.AddLocalizedButton(340, textId, [mode](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);
         simulationApp.editor.SelectCreationTool(mode);
     });
 }
 
-void CreationPanel::AddSizeInput(SizeField field)
+void CreationPanel::AddSizeInput(VerticalStack& layout, SizeField field)
 {
-    auto& textBox = layout->AddLocalizedTextBox(
+    auto& textBox = layout.AddLocalizedTextBox(
         100, field == SizeField::ParticleRadius ? L"creationParticleRadius" : L"creationPlateThickness");
     textBox.submitOnEnter = true;
     textBox.valueProvider = [field](App& app)

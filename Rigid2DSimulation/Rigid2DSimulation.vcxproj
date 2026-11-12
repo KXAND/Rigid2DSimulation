@@ -158,7 +158,7 @@
     <ClCompile Include="current\script\ConnectionConfig.cpp" />
     <ClCompile Include="current\script\SceneScriptRuntime.cpp" />
     <ClCompile Include="current\storage\SceneStorage.cpp" />
-    <ClCompile Include="framework\control\ControlList.cpp" />
+    <ClCompile Include="framework\control\ControlContainer.cpp" />
     <ClCompile Include="current\common\SimulationApp.cpp" />
     <ClCompile Include="framework\control\DragBar.cpp" />
     <ClCompile Include="framework\draw\DrawBorderedRectangle.cpp" />
@@ -231,7 +231,7 @@
     <ClInclude Include="current\script\ConnectionConfig.h" />
     <ClInclude Include="current\script\SceneScriptRuntime.h" />
     <ClInclude Include="current\storage\SceneStorage.h" />
-    <ClInclude Include="framework\control\ControlList.h" />
+    <ClInclude Include="framework\control\ControlContainer.h" />
     <ClInclude Include="current\common\SimulationApp.h" />
     <ClInclude Include="framework\control\DragBar.h" />
     <ClInclude Include="framework\draw\DrawBorderedRectangle.h" />

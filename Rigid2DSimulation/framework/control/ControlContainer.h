@@ -10,7 +10,7 @@
 
 class Button;
 class FloatPanel;
-class HorizontalControlList;
+class HorizontalStack;
 class HorizontalDragBar;
 class HorizontalSeparator;
 class Label;
@@ -22,15 +22,15 @@ class RichLabel;
 class RichTextBox;
 class ShowFloatPanelButton;
 class TextBox;
-class VerticalControlList;
+class VerticalStack;
 
-class ControlList : public Control
+class ControlContainer : public Control
 {
 public:
     // 容器独占子控件；借用引用有效至 Clear 或容器销毁。
     Control& Add(std::unique_ptr<Control> control);
-    HorizontalControlList& AddRow();
-    VerticalControlList& AddColumn();
+    HorizontalStack& AddRow();
+    VerticalStack& AddColumn();
     Button& AddButton(int width, std::wstring const& text, std::function<void(App&)> onClick);
     LocalizedButton& AddLocalizedButton(int width, std::wstring const& textId, std::function<void(App&)> onClick);
     ShowFloatPanelButton& AddPanelButton(FloatPanel& panel);
@@ -57,7 +57,7 @@ private:
     std::vector<Control*> controls;
 };
 
-class HorizontalControlList : public ControlList
+class HorizontalStack : public ControlContainer
 {
 public:
     int GetWidth() const override;
@@ -65,7 +65,7 @@ public:
     void Update(App& app) override;
 };
 
-class VerticalControlList : public ControlList
+class VerticalStack : public ControlContainer
 {
 public:
     int GetWidth() const override;

@@ -1,17 +1,17 @@
 ﻿#include "BottomPanel.h"
 
 #include <memory>
+#include <utility>
 
 #include "SimulationApp.h"
 
-BottomPanel::BottomPanel(App& app) : Panel(Panel::CreateBottomPanel(app))
+BottomPanel::BottomPanel(App& app) : Panel(Panel::CreateBottomPanel(app.screen.Rect()))
 {
-    layout = std::make_unique<HorizontalControlList>();
+    auto layout = std::make_unique<HorizontalStack>();
     frameRateLabel = &layout->AddLabel(450);
     timeLabel = &layout->AddLabel(200);
     mousePositionLabel = &layout->AddLabel(300);
-    contentControl = layout.get();
-    Init(app);
+    SetContent(std::move(layout));
 }
 
 void BottomPanel::Update(App& app)

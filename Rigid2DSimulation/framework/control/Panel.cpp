@@ -1,10 +1,14 @@
 ﻿#include "Panel.h"
+
+#include <stdexcept>
+#include <utility>
+
 #include "App.h"
 #include "Control.h"
 #include "DrawBorderedRectangle.h"
 #include "ScrollBar.h"
 
-Panel::Panel()
+Panel::Panel(DRect const& displayBounds) : displayBounds(displayBounds)
 {
     depth = 1000;
     wheelMultiplier = 40;
@@ -12,13 +16,15 @@ Panel::Panel()
 
     frameColor = {150, 150, 150};
     panelColor = {0, 0, 0};
+    scrollBar = std::make_shared<VerticalScrollBar>();
 }
 // 菜单按钮的宽度: 150.
-Panel Panel::CreateMenuPanel(App& app)
+Panel Panel::CreateMenuPanel(DRect const& displayBounds)
 {
-    Panel panel;
+    Panel panel(displayBounds);
+    panel.topLeft = displayBounds.topLeftPosition;
     panel.width = 169;
-    panel.height = app.height - 40;
+    panel.height = displayBounds.height - 40;
     panel.visibleHeight = panel.height - 20;
 
     DRect contentViewportRelative;
@@ -26,14 +32,16 @@ Panel Panel::CreateMenuPanel(App& app)
     contentViewportRelative.width = panel.width - 20 + 4;
     contentViewportRelative.height = panel.height - 20 + 4;
     panel.contentViewport = contentViewportRelative;
+    panel.InitializeScrollBar();
     return panel;
 }
-Panel Panel::CreateBottomPanel(App& app)
+Panel Panel::CreateBottomPanel(DRect const& displayBounds)
 {
-    Panel panel;
-    panel.width = app.width;
+    Panel panel(displayBounds);
+    panel.topLeft = displayBounds.topLeftPosition;
+    panel.width = displayBounds.width;
     panel.height = 40;
-    panel.topLeft.y = app.height - panel.height;
+    panel.topLeft.y += displayBounds.height - panel.height;
     panel.visibleHeight = panel.height;
 
     DRect contentViewportRelative;
@@ -41,6 +49,7 @@ Panel Panel::CreateBottomPanel(App& app)
     contentViewportRelative.width = panel.width - 20 + 4;
     contentViewportRelative.height = panel.height - 20 + 4;
     panel.contentViewport = contentViewportRelative;
+    panel.InitializeScrollBar();
     return panel;
 }
 
@@ -48,40 +57,42 @@ int Panel::GetMinY() const
 {
     return topLeft.y + contentOffset.y + visibleHeight - contentControl->GetHeight();
 }
-DRect Panel::GetVisibleViewport(App& app) const
+DRect Panel::GetVisibleViewport() const
 {
     DRect visibleViewport = contentViewport;
     visibleViewport.topLeftPosition += topLeft;
-    return GetOverlapRect(app.screen.Rect(), visibleViewport);
+    return GetOverlapRect(displayBounds, visibleViewport);
 }
-void Panel::SetControl(App& app, Control* newContentControl)
+void Panel::SetDisplayBounds(DRect const& bounds)
 {
-    if (contentControl != newContentControl)
-    {
-        if (contentControl)
-        {
-            contentControl->Discard(app);
-        }
-        if (contentControl = newContentControl)
-        {
-            contentControl->topLeft = topLeft + contentOffset;
-            contentControl->viewport = GetVisibleViewport(app);
-        }
-        scrollBar->contentControl = contentControl;
-    }
-}
-void Panel::InitializeControl(App& app)
-{
+    displayBounds = bounds;
     if (contentControl)
     {
-        contentControl->topLeft = topLeft + contentOffset;
-        contentControl->viewport = GetVisibleViewport(app);
+        contentControl->viewport = GetVisibleViewport();
     }
 }
+
+void Panel::SetContent(std::unique_ptr<Control> content)
+{
+    if (!content)
+    {
+        throw std::invalid_argument("Panel::SetContent requires content");
+    }
+    if (contentControl)
+    {
+        throw std::logic_error("Panel content is already installed");
+    }
+
+    contentControl = std::move(content);
+    contentControl->topLeft = topLeft + contentOffset;
+    contentControl->viewport = GetVisibleViewport();
+    // 滚动条只借用内容；根控件的唯一所有者是面板。
+    scrollBar->contentControl = contentControl.get();
+}
+
 void Panel::InitializeScrollBar()
 {
-    scrollBar = std::make_shared<VerticalScrollBar>();
-    scrollBar->contentControl = contentControl;
+    scrollBar->contentControl = contentControl.get();
     scrollBar->height = height;
     scrollBar->topLeft = topLeft + DVector2(width - scrollBar->width, 0);
     scrollBar->visibleHeight = visibleHeight;
@@ -92,14 +103,9 @@ void Panel::Render(App& app)
     DrawRectangleWithBorderRaw(app.screen, topLeft, width, height, app.screen.Rect(), panelColor, frameColor);
 }
 
-void Panel::Init(App& app)
-{
-    InitializeControl(app);
-    InitializeScrollBar();
-}
 void Panel::Update(App& app)
 {
-    hasOverflow = (contentControl != NULL) && visibleHeight < contentControl->GetHeight();
+    hasOverflow = (contentControl != nullptr) && visibleHeight < contentControl->GetHeight();
     hovered = (app.inputOwners.hovered == this);
     wheeled = (app.inputOwners.wheeled == this);
 

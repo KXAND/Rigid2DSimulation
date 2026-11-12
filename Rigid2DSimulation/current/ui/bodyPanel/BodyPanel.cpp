@@ -1,6 +1,7 @@
 ﻿#include "BodyPanel.h"
 
 #include <memory>
+#include <utility>
 
 #include "Body.h"
 #include "CheckBox.h"
@@ -9,16 +10,15 @@
 #include "RichTextBox.h"
 #include "SimulationApp.h"
 
-BodyPanel::BodyPanel(App& app) : LocalizedFloatPanel(app, 400, 600, L"bodyPanelTitle")
+BodyPanel::BodyPanel(App& app) : LocalizedFloatPanel(app.screen.Rect(), 400, 600, L"bodyPanelTitle")
 {
-    layout = std::make_unique<VerticalControlList>();
+    auto layout = std::make_unique<VerticalStack>();
     editorLayout = &layout->AddColumn();
     BuildEditor();
     editorLayout->SetVisibleCount(0, app);
 
     layout->AddRichLabel(0, GetDetailsText);
-    contentControl = layout.get();
-    Init(app);
+    SetContent(std::move(layout));
 }
 
 void BodyPanel::BuildEditor()

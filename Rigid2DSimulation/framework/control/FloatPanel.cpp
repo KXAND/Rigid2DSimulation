@@ -1,4 +1,8 @@
 ﻿#include "FloatPanel.h"
+
+#include <stdexcept>
+#include <utility>
+
 #include "App.h"
 #include "Control.h"
 #include "ScrollBar.h"
@@ -34,11 +38,12 @@ FloatPanel::FloatPanel()
     closeButtonHoveredColor = {20, 20, 255};
     closeButtonInvalidColor = {255, 255, 255};
 }
-FloatPanel::FloatPanel(App& app, int width, int height) : FloatPanel()
+FloatPanel::FloatPanel(DRect const& displayBounds, int width, int height) : FloatPanel()
 {
+    this->displayBounds = displayBounds;
     this->width = width;
     this->height = height;
-    topLeft = DVector2(app.screen.width - width, app.screen.height - height) / 2;
+    topLeft = displayBounds.topLeftPosition + DVector2(displayBounds.width - width, displayBounds.height - height) / 2;
     visibleHeight = height - 50;
     useScrollBar = true;
 
@@ -47,17 +52,18 @@ FloatPanel::FloatPanel(App& app, int width, int height) : FloatPanel()
     contentViewportRelative.width = width - 40 + 4;
     contentViewportRelative.height = height - 50 + 4;
     contentViewport = contentViewportRelative;
+    InitializeScrollBar();
 }
 
 int FloatPanel::GetMinY() const
 {
     return topLeft.y + contentOffset.y + visibleHeight - contentControl->GetHeight();
 }
-DRect FloatPanel::GetVisibleViewport(App& app) const
+DRect FloatPanel::GetVisibleViewport() const
 {
     DRect visibleViewport = contentViewport;
     visibleViewport.topLeftPosition += topLeft;
-    return GetOverlapRect(app.screen.Rect(), visibleViewport);
+    return GetOverlapRect(displayBounds, visibleViewport);
 }
 DVector2 FloatPanel::GetCloseTopLeft() const
 {
@@ -65,46 +71,49 @@ DVector2 FloatPanel::GetCloseTopLeft() const
     int closeY = (titleBarHeight - closeButtonSize) / 2;
     return topLeft + DVector2(closeX, closeY);
 }
-void FloatPanel::SetControl(App& app, Control* newContentControl)
+void FloatPanel::SetDisplayBounds(DRect const& bounds)
 {
-    if (contentControl != newContentControl)
+    displayBounds = bounds;
+    if (contentControl)
     {
-        if (contentControl)
-        {
-            contentControl->Discard(app);
-        }
-        if (contentControl = newContentControl)
-        {
-            contentControl->topLeft = topLeft + contentOffset;
-            contentControl->viewport = GetVisibleViewport(app);
-        }
-        scrollBar->contentControl = contentControl;
+        contentControl->viewport = GetVisibleViewport();
     }
 }
-void FloatPanel::SetTopLeft(App& app, DVector2 const& topLeft)
+
+void FloatPanel::SetContent(std::unique_ptr<Control> content)
+{
+    if (!content)
+    {
+        throw std::invalid_argument("FloatPanel::SetContent requires content");
+    }
+    if (contentControl)
+    {
+        throw std::logic_error("FloatPanel content is already installed");
+    }
+
+    contentControl = std::move(content);
+    contentControl->topLeft = topLeft + contentOffset;
+    contentControl->viewport = GetVisibleViewport();
+    // 滚动条只借用内容；根控件的唯一所有者是面板。
+    scrollBar->contentControl = contentControl.get();
+}
+
+void FloatPanel::SetTopLeft(DVector2 const& topLeft)
 {
     if (contentControl)
     {
         contentControl->topLeft += topLeft - this->topLeft;
         // 在调用 GetVisibleViewport 之前需要先更新 topLeft。
         this->topLeft = topLeft;
-        contentControl->viewport = GetVisibleViewport(app);
+        contentControl->viewport = GetVisibleViewport();
     }
     scrollBar->topLeft = topLeft + DVector2(width - scrollBar->width, titleBarHeight);
     scrollBar->visibleTop = topLeft.y + contentOffset.y;
 }
-void FloatPanel::InitializeControl(App& app)
-{
-    if (contentControl)
-    {
-        contentControl->topLeft = topLeft + contentOffset;
-        contentControl->viewport = GetVisibleViewport(app);
-    }
-}
 void FloatPanel::InitializeScrollBar()
 {
     scrollBar = std::make_shared<VerticalScrollBar>();
-    scrollBar->contentControl = contentControl;
+    scrollBar->contentControl = contentControl.get();
     scrollBar->height = height - titleBarHeight;
     scrollBar->topLeft = topLeft + DVector2(width - scrollBar->width, titleBarHeight);
     scrollBar->visibleHeight = visibleHeight;
@@ -131,7 +140,7 @@ void FloatPanel::HandleCaption(App& app)
         DVector2 newTopLeft = topLeft + app.input.mousePosition - app.input.previousMousePosition;
         newTopLeft.x = Clamp(newTopLeft.x, 0, app.screen.width - width);
         newTopLeft.y = Clamp(newTopLeft.y, 0, app.screen.height - titleBarHeight);
-        SetTopLeft(app, newTopLeft);
+        SetTopLeft(newTopLeft);
         titleBarDragged = app.input.mouseButtonDown[0];
     }
     else
@@ -201,11 +210,6 @@ void FloatPanel::Render(App& app)
     RenderClose(app);
 }
 
-void FloatPanel::Init(App& app)
-{
-    InitializeControl(app);
-    InitializeScrollBar();
-}
 // 这也是比较特殊，相当于要处理自己的 Discard。
 void FloatPanel::Update(App& app)
 {
@@ -213,7 +217,7 @@ void FloatPanel::Update(App& app)
     {
         return;
     }
-    hasOverflow = (contentControl != NULL) && visibleHeight < contentControl->GetHeight();
+    hasOverflow = (contentControl != nullptr) && visibleHeight < contentControl->GetHeight();
     hovered = (app.inputOwners.hovered == this);
     wheeled = (app.inputOwners.wheeled == this);
 
@@ -285,7 +289,8 @@ void FloatPanel::PreUpdate(App& app)
     }
 }
 
-LocalizedFloatPanel::LocalizedFloatPanel(App& app, int width, int height, wstring const& id) : FloatPanel(app, width, height), titleLocalizationId(id) {}
+LocalizedFloatPanel::LocalizedFloatPanel(DRect const& displayBounds, int width, int height, wstring const& id)
+    : FloatPanel(displayBounds, width, height), titleLocalizationId(id) {}
 void LocalizedFloatPanel::Update(App& app)
 {
     title = app.GetLocalizedString(titleLocalizationId);

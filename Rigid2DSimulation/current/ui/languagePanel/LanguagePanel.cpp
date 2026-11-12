@@ -1,14 +1,15 @@
 ﻿#include "LanguagePanel.h"
 
 #include <memory>
+#include <utility>
 
 #include "SimulationApp.h"
 #include "UserInterface.h"
 
-LanguagePanel::LanguagePanel(App& app) : LocalizedFloatPanel(app, 200, 200, L"languagePanelTitle")
+LanguagePanel::LanguagePanel(App& app) : LocalizedFloatPanel(app.screen.Rect(), 200, 200, L"languagePanelTitle")
 {
     shown = true;
-    layout = std::make_unique<VerticalControlList>();
+    auto layout = std::make_unique<VerticalStack>();
     layout->AddButton(150, L"中文", [](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);
@@ -23,6 +24,5 @@ LanguagePanel::LanguagePanel(App& app) : LocalizedFloatPanel(app, 200, 200, L"la
         simulationApp.userInterface->languagePanel->Hide(app);
     });
 
-    contentControl = layout.get();
-    Init(app);
+    SetContent(std::move(layout));
 }

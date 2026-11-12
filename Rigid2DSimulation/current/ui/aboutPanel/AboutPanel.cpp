@@ -1,11 +1,13 @@
 ﻿#include "AboutPanel.h"
 
 #include <memory>
+#include <utility>
 
-AboutPanel::AboutPanel(App& app) : LocalizedFloatPanel(app, 600, 540, L"aboutPanelTitle")
+#include "App.h"
+
+AboutPanel::AboutPanel(App& app) : LocalizedFloatPanel(app.screen.Rect(), 600, 540, L"aboutPanelTitle")
 {
-    layout = std::make_unique<VerticalControlList>();
+    auto layout = std::make_unique<VerticalStack>();
     layout->AddLocalizedRichLabel(560, L"aboutText");
-    contentControl = layout.get();
-    Init(app);
+    SetContent(std::move(layout));
 }

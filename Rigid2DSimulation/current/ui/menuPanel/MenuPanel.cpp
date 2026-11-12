@@ -1,6 +1,7 @@
 ﻿#include "MenuPanel.h"
 
 #include <memory>
+#include <utility>
 
 #include "Button.h"
 #include "SimulationApp.h"
@@ -14,21 +15,20 @@
 #include "current/ui/languagePanel/LanguagePanel.h"
 #include "current/ui/parameterPanel/ParameterPanel.h"
 
-MenuPanel::MenuPanel(App& app) : Panel(Panel::CreateMenuPanel(app))
+MenuPanel::MenuPanel(App& app) : Panel(Panel::CreateMenuPanel(app.screen.Rect()))
 {
-    layout = std::make_unique<VerticalControlList>();
-    BuildSimulationButtons();
-    BuildScenePanelButtons(app);
-    BuildModeButtons();
-    BuildUtilityPanelButtons(app);
+    auto layout = std::make_unique<VerticalStack>();
+    BuildSimulationButtons(*layout);
+    BuildScenePanelButtons(*layout, app);
+    BuildModeButtons(*layout);
+    BuildUtilityPanelButtons(*layout, app);
 
-    contentControl = layout.get();
-    Init(app);
+    SetContent(std::move(layout));
 }
 
-void MenuPanel::BuildSimulationButtons()
+void MenuPanel::BuildSimulationButtons(VerticalStack& layout)
 {
-    auto& pauseButton = layout->AddButton(150, L"按钮", [](App& app)
+    auto& pauseButton = layout.AddButton(150, L"按钮", [](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);
         simulationApp.isPaused = !simulationApp.isPaused;
@@ -39,12 +39,12 @@ void MenuPanel::BuildSimulationButtons()
         return app.GetLocalizedString(simulationApp.isPaused ? L"start" : L"pause");
     };
 
-    layout->AddLocalizedButton(150, L"resetButton", [](App& app)
+    layout.AddLocalizedButton(150, L"resetButton", [](App& app)
     {
         static_cast<SimulationApp&>(app).Reset();
     });
 
-    auto& muteButton = layout->AddButton(150, L"按钮", [](App& app)
+    auto& muteButton = layout.AddButton(150, L"按钮", [](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);
         simulationApp.isMuted = !simulationApp.isMuted;
@@ -56,16 +56,16 @@ void MenuPanel::BuildSimulationButtons()
     };
 }
 
-void MenuPanel::BuildModeButtons()
+void MenuPanel::BuildModeButtons(VerticalStack& layout)
 {
-    modeButton = &layout->AddButton(150, L"按钮", [](App& app)
+    modeButton = &layout.AddButton(150, L"按钮", [](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);
         simulationApp.editor.CycleMode(simulationApp.inputOwners);
     });
     modeButton->textProvider = GetInteractionModeText;
 
-    displayButton = &layout->AddButton(150, L"按钮", [](App& app)
+    displayButton = &layout.AddButton(150, L"按钮", [](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);
         simulationApp.sceneRenderer.display = (simulationApp.sceneRenderer.display + 1) % 4;
@@ -73,22 +73,22 @@ void MenuPanel::BuildModeButtons()
     displayButton->textProvider = GetDisplayModeText;
 }
 
-void MenuPanel::BuildScenePanelButtons(App& app)
+void MenuPanel::BuildScenePanelButtons(VerticalStack& layout, App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    layout->AddPanelButton(*simulationApp.userInterface->globalPanel);
-    layout->AddPanelButton(*simulationApp.userInterface->creationPanel);
-    layout->AddPanelButton(*simulationApp.userInterface->bodyPanel);
-    layout->AddPanelButton(*simulationApp.userInterface->connectionPanel);
+    layout.AddPanelButton(*simulationApp.userInterface->globalPanel);
+    layout.AddPanelButton(*simulationApp.userInterface->creationPanel);
+    layout.AddPanelButton(*simulationApp.userInterface->bodyPanel);
+    layout.AddPanelButton(*simulationApp.userInterface->connectionPanel);
 }
 
-void MenuPanel::BuildUtilityPanelButtons(App& app)
+void MenuPanel::BuildUtilityPanelButtons(VerticalStack& layout, App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    layout->AddPanelButton(*simulationApp.userInterface->commandPanel);
-    layout->AddPanelButton(*simulationApp.userInterface->parameterPanel);
-    layout->AddPanelButton(*simulationApp.userInterface->languagePanel);
-    layout->AddPanelButton(*simulationApp.userInterface->aboutPanel);
+    layout.AddPanelButton(*simulationApp.userInterface->commandPanel);
+    layout.AddPanelButton(*simulationApp.userInterface->parameterPanel);
+    layout.AddPanelButton(*simulationApp.userInterface->languagePanel);
+    layout.AddPanelButton(*simulationApp.userInterface->aboutPanel);
 }
 
 std::wstring MenuPanel::GetInteractionModeText(App& app)
