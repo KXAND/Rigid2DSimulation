@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 # dev references
 /ref
+# Local Codex skills
+/.agents/skills/
