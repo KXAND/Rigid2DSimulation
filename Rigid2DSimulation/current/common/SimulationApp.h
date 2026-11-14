@@ -34,10 +34,11 @@ public:
     void Load(wstring const& name);
     void Reset();
     void Update() override;
+    void HandleInput();
+    void TogglePausing();
 
 private:
     void HandleScriptError();
-    void ResolveInputOwnership();
     void UpdateMusic();
     void RemoveDeletedObjects();
     // 暂停时也同步场景结构、应用每帧拖拽并维护轨迹，不推进模拟时间。

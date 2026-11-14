@@ -30,8 +30,7 @@ void MenuPanel::BuildSimulationButtons(VerticalStack& layout)
 {
     auto& pauseButton = layout.AddButton(150, L"按钮", [](App& app)
     {
-        auto& simulationApp = static_cast<SimulationApp&>(app);
-        simulationApp.isPaused = !simulationApp.isPaused;
+        static_cast<SimulationApp&>(app).TogglePausing();
     });
     pauseButton.textProvider = [](App& app)
     {

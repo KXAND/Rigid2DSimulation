@@ -82,7 +82,11 @@ void SimulationApp::Reset()
 
 void SimulationApp::Update()
 {
-    ResolveInputOwnership();
+    // Resolve Input Ownership
+    sceneCanvas->PreUpdate(input, inputOwners);
+    editor.PreUpdate(physicsWorld, input, inputOwners, sceneCanvas->GetViewport());
+    userInterface->PreUpdate(*this);
+    HandleInput();
 
     title = GetLocalizedString(L"title");
     // 每帧必须先计算并设置时长，再调用无参 Update；脚本与物理推进共用该值。
@@ -92,15 +96,6 @@ void SimulationApp::Update()
     scriptRuntime.Update();
 
     UpdateMusic();
-
-    // 检查暂停
-    if (!inputOwners.keyboardOwner)
-    {
-        if (input.IsKeyPressedDown(L' '))
-        {
-            isPaused = !isPaused;
-        }
-    }
 
     RemoveDeletedObjects();
 
@@ -120,6 +115,19 @@ void SimulationApp::Update()
     HandleScriptError();
 }
 
+void SimulationApp::HandleInput()
+{
+    if (inputOwners.keyboardOwner)
+    {
+        return;
+    }
+
+    if (input.IsKeyPressedDown(L' '))
+    {
+        TogglePausing();
+    }
+}
+
 void SimulationApp::HandleScriptError()
 {
     if (!scriptRuntime.GetError().empty())
@@ -133,11 +141,9 @@ void SimulationApp::HandleScriptError()
     }
 }
 
-void SimulationApp::ResolveInputOwnership()
+void SimulationApp::TogglePausing()
 {
-    sceneCanvas->PreUpdate(input, inputOwners);
-    editor.PreUpdate(physicsWorld, input, inputOwners, sceneCanvas->GetViewport());
-    userInterface->PreUpdate(*this);
+    isPaused = !isPaused;
 }
 
 void SimulationApp::UpdateMusic()
