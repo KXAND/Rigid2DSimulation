@@ -259,6 +259,8 @@ void PhysicsWorld::Advance(double deltaTime, Body const* warpExcludedBody,
 
         simulationTime += stepDeltaTime;
     }
+    // 碰撞和连接约束可能再次修正姿态，推进结束后统一同步几何及连接端点。
+    UpdateGeometry();
 }
 
 void PhysicsWorld::RegisterBody(Body& body)

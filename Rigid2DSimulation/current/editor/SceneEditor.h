@@ -55,9 +55,11 @@ public:
     void RequestBodyDeletion(PhysicsWorld& world);
     void RequestConnectionDeletion(PhysicsWorld& world);
     void PreUpdate(PhysicsWorld const& world, AppInput const& input, InputOwners& inputOwners, DRect viewport);
-    // 每帧只处理一次编辑输入，返回随后交给模拟阶段的拖拽快照。
-    BodyDrag Update(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners,
-                    SceneCanvas const& canvas, double realDeltaTime);
+    // 每帧只处理一次编辑输入，并保存本帧拖拽快照。
+    void Update(PhysicsWorld& world, AppInput& input, InputOwners& inputOwners,
+                SceneCanvas const& canvas, double realDeltaTime);
+    // 释放帧仍保留一次每帧作用；GetDrag 则仅表示后续子步中仍持续的拖拽。
+    BodyDrag const& GetFrameDrag() const { return frameDrag; }
     BodyDrag const& GetDrag() const
     {
         return dragTool.GetDrag();
@@ -70,6 +72,7 @@ private:
     Creator creator;
     std::unique_ptr<CreatorConfig> pendingCreatorConfig;
     Body const* hoveredBody = nullptr;
+    BodyDrag frameDrag;
     std::unordered_map<Body const*, std::vector<Vector2>> tracks;
 
     static bool HitTestBody(Body const& body, Vector2 mousePosition);

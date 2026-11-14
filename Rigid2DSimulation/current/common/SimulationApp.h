@@ -40,9 +40,8 @@ public:
 private:
     void HandleScriptError();
     void UpdateMusic();
-    void RemoveDeletedObjects();
     // 暂停时也同步场景结构、应用每帧拖拽并维护轨迹，不推进模拟时间。
-    void UpdateSceneState(BodyDrag const& frameDrag);
-    void AdvanceSimulation(BodyDrag drag);
+    void UpdateSceneState();
+    void AdvanceSimulation();
     SceneRenderContext GetSceneRenderContext();
 };

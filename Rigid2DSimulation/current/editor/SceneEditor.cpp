@@ -19,6 +19,7 @@ void SceneEditor::ResetInteraction()
     ClearSelection();
     hoveredBody = nullptr;
     dragTool.Cancel();
+    frameDrag = {};
     tracks.clear();
 }
 
@@ -48,6 +49,10 @@ void SceneEditor::PrepareForDeletion(InputOwners& inputOwners)
         hoveredBody = nullptr;
     }
     dragTool.PrepareForDeletion();
+    if (frameDrag.body && frameDrag.body->IsMarkedForDeletion())
+    {
+        frameDrag = {};
+    }
     creator.PrepareForDeletion(inputOwners);
 }
 
@@ -135,6 +140,10 @@ void SceneEditor::PreUpdate(PhysicsWorld const& world, AppInput const& input,
     }
     for (auto& body : world.GetBodies())
     {
+        if (body->IsMarkedForDeletion())
+        {
+            continue;
+        }
         double depth = body->appearance.GetDepth(body->point);
         bool canReceiveHover = inputOwners.hoveredDepth <= depth &&
                                HitTestBody(*body, (Vector2)input.mousePosition) && ::IsInside(input.mousePosition, viewport);
@@ -146,18 +155,24 @@ void SceneEditor::PreUpdate(PhysicsWorld const& world, AppInput const& input,
     }
 }
 
-BodyDrag SceneEditor::Update(PhysicsWorld& world, AppInput& input, InputOwners const& inputOwners,
-                             SceneCanvas const& canvas, double realDeltaTime)
+void SceneEditor::Update(PhysicsWorld& world, AppInput& input, InputOwners& inputOwners,
+                         SceneCanvas const& canvas, double realDeltaTime)
 {
+    // 实体删除留到场景状态阶段，但工具不能继续使用此前已标记删除的端点或拖拽对象。
+    PrepareForDeletion(inputOwners);
     if (inputOwners.hovered == &canvas && input.IsMouseClickedDown(0))
     {
         ClearSelection();
     }
 
     hoveredBody = nullptr;
-    BodyDrag frameDrag;
+    frameDrag = {};
     for (const auto& body : world.GetBodies())
     {
+        if (body->IsMarkedForDeletion())
+        {
+            continue;
+        }
         auto bodyDrag = UpdateBody(world, *body, input, inputOwners, realDeltaTime);
         if (bodyDrag.body)
         {
@@ -169,7 +184,6 @@ BodyDrag SceneEditor::Update(PhysicsWorld& world, AppInput& input, InputOwners c
     {
         creator.Update(world, input, inputOwners);
     }
-    return frameDrag;
 }
 
 CreationPreview SceneEditor::GetPreview() const
