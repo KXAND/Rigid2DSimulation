@@ -22,7 +22,7 @@ public:
     int GetWidth() const override;
     int GetHeight() const override;
 
-    void Render(App& app);
+    void Render(App& app) override;
     virtual void Sync(App& app);
     void Update(App& app) override;
 };

@@ -496,7 +496,6 @@ void RichTextBox::Update(App& app)
         valueOffset.y += app.input.mouseWheelDelta * wheelMultiplier;
     }
     ClampTextPosition(app);
-    Render(app);
 }
 void RichTextBox::Discard(App& app)
 {

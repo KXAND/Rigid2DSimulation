@@ -10,6 +10,8 @@ public:
 
     virtual ~Control() {}
     virtual void Update(App& app) {}
+    // 绘制只读取更新后的控件状态，不在此阶段触发操作回调。
+    virtual void Render(App& app) {}
     // 在析构之前要执行 Discard。
     virtual void Discard(App& app) {}
     virtual void PreUpdate(App& app) {}
@@ -34,6 +36,7 @@ public:
     int GetHeight() const override;
 
     void Update(App& app) override;
+    void Render(App& app) override;
     void Discard(App& app) override;
     void PreUpdate(App& app) override;
 };

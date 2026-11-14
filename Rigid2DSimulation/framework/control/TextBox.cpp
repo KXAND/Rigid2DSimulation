@@ -405,9 +405,8 @@ void TextBox::Update(App& app)
         }
     }
     ClampTextPosition(app);
-    Render(app);
 
-    // 保持原尺寸输入框在本帧绘制后提交、释放焦点的顺序。
+    // 提交和释放焦点属于更新阶段；渲染读取提交后的状态。
     if (submitOnEnter && edit && app.input.IsKeyPressedDown(VK_RETURN))
     {
         OnDone(app);

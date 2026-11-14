@@ -80,7 +80,6 @@ void CheckBox::Update(App& app)
     {
         Sync(app);
     }
-    Render(app);
 }
 void CheckBox::Discard(App& app)
 {

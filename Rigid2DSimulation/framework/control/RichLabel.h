@@ -24,7 +24,7 @@ public:
     int GetHeight() const override;
 
     int GetLineWidth() const;
-    void Render(App& app);
+    void Render(App& app) override;
     virtual void Sync(App& app);
     void Update(App& app);
 };

@@ -21,7 +21,3 @@ void HorizontalSeparator::Render(App& app)
     // 虽然 dep 没什么用，但出于习惯还是保留了。
     DrawRectangleRaw(app.screen, topLeft, width, 1, viewport, markerColor);
 }
-void HorizontalSeparator::Update(App& app)
-{
-    Render(app);
-}

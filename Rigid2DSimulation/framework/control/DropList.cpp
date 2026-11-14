@@ -120,7 +120,6 @@ void DropList::Update(App& app)
         Sync(app);
         edit = enabled && hovered && app.input.IsMouseClickedDown(0);
     }
-    Render(app);
 }
 void DropList::Discard(App& app)
 {

@@ -63,7 +63,6 @@ void Button::Update(App& app)
     {
         chosen = enabled && hovered && app.input.IsMouseClickedDown(0);
     }
-    Render(app);
 }
 void Button::Discard(App& app)
 {

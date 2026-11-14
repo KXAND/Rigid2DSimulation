@@ -33,7 +33,7 @@ public:
 
     // 先将实例赋给 SimulationApp::userInterface，再初始化需要通过它访问浮动面板的菜单。
     void Init(SimulationApp& simulationApp);
-    // 控件仍在更新过程中按原顺序绘制，不表示全局更新/渲染已分阶段。
-    void UpdateAndRender(SimulationApp& simulationApp);
+    void Update(SimulationApp& simulationApp);
+    void Render(SimulationApp& simulationApp);
     void PreUpdate(SimulationApp& simulationApp);
 };

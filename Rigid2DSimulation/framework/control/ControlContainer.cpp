@@ -194,6 +194,14 @@ void ControlContainer::Discard(App& app)
     }
 }
 
+void ControlContainer::Render(App& app)
+{
+    for (auto control : controls)
+    {
+        control->Render(app);
+    }
+}
+
 void ControlContainer::PreUpdate(App& app)
 {
     for (auto control : controls)

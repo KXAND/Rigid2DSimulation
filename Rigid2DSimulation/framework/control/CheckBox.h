@@ -24,7 +24,7 @@ public:
     int GetHeight() const override;
 
     DVector2 GetBoxTopLeft() const;
-    void Render(App& app);
+    void Render(App& app) override;
     std::function<bool(App&)> checkedProvider;
     std::function<void(App&, bool)> onCheckedChanged;
 

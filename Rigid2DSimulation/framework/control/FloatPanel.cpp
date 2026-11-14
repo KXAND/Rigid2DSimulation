@@ -206,8 +206,20 @@ void FloatPanel::RenderClose(App& app)
 }
 void FloatPanel::Render(App& app)
 {
+    if (!shown)
+    {
+        return;
+    }
     RenderMain(app);
     RenderClose(app);
+    if (contentControl)
+    {
+        contentControl->Render(app);
+    }
+    if (useScrollBar)
+    {
+        scrollBar->Render(app);
+    }
 }
 
 // 这也是比较特殊，相当于要处理自己的 Discard。
@@ -232,7 +244,6 @@ void FloatPanel::Update(App& app)
     // 我觉得这里乱掉了。但是为了这个重构好像不值得。
     if (shown)
     {
-        Render(app);
         if (contentControl)
         {
             UpdateContent(app);

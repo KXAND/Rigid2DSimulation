@@ -76,7 +76,7 @@ public:
 
     void RenderMain(App& app);
     void RenderCursor(App& app);
-    void Render(App& app);
+    void Render(App& app) override;
 
     std::function<std::wstring(App&)> valueProvider;
     // 每个编辑帧回写草稿，不等同于值改变事件；失焦提交与清理保持原时序。

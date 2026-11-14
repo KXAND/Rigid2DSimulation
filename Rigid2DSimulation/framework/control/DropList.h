@@ -40,7 +40,7 @@ public:
     DVector2 GetItemsTopLeft() const;
     void RenderMain(App& app);
     void RenderItems(App& app);
-    void Render(App& app);
+    void Render(App& app) override;
     virtual void Sync(App& app) {}
     // 现在默认的是 Upload 的校正不改变控件本身值，只改变目标值。
     virtual void Upload(App& app) const {}
