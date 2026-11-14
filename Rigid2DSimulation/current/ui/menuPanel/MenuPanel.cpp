@@ -46,12 +46,12 @@ void MenuPanel::BuildSimulationButtons(VerticalStack& layout)
     auto& muteButton = layout.AddButton(150, L"按钮", [](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);
-        simulationApp.isMuted = !simulationApp.isMuted;
+        simulationApp.music.isMuted = !simulationApp.music.isMuted;
     });
     muteButton.textProvider = [](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);
-        return app.GetLocalizedString(simulationApp.isMuted ? L"unmute" : L"mute");
+        return app.GetLocalizedString(simulationApp.music.isMuted ? L"unmute" : L"mute");
     };
 }
 

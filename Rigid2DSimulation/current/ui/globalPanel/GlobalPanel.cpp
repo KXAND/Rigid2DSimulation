@@ -43,7 +43,7 @@ std::wstring GlobalPanel::GetDetailsText(App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
     std::wstring text;
-    text += simulationApp.GetLocalizedString(L"volume") + FormatFixed2(simulationApp.volume) + L"\n";
+    text += simulationApp.GetLocalizedString(L"volume") + FormatFixed2(simulationApp.music.volume) + L"\n";
     text += simulationApp.GetLocalizedString(L"stepCount") + std::to_wstring(simulationApp.physicsWorld.stepNum) + L"\n";
     text += simulationApp.GetLocalizedString(L"gridSize") + FormatFixed2(simulationApp.physicsWorld.gridSize) + L"\n";
     text += simulationApp.GetLocalizedString(L"maxRealDeltaTime") + FormatFixed2(simulationApp.maxRealDeltaTime) + L"\n";

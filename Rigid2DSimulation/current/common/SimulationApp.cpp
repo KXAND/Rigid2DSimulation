@@ -4,7 +4,6 @@
 #include "Body.h"
 #include "BodyDrag.h"
 #include "Connection.h"
-#include "AudioClip.h"
 #include "SceneStorage.h"
 
 SimulationApp::SimulationApp()
@@ -29,21 +28,8 @@ SimulationApp::SimulationApp()
     PrintConsole(L"控件加载完成.", true);
 
     PrintConsole(L"正在加载音乐...");
-    bool audioLoaded = false;
-    firstMusicClip = std::make_shared<AudioClip>(L"sound/bgm0.clip", &audioLoaded);
-    if (!audioLoaded)
-    {
-        firstMusicClip = NULL;
-    }
-    secondMusicClip = std::make_shared<AudioClip>(L"sound/bgm1.clip", &audioLoaded);
-    if (!audioLoaded)
-    {
-        secondMusicClip = NULL;
-    }
+    music.Initialize();
     PrintConsole(L"音乐加载完成.", true);
-
-    volume = 1;
-    currentMusicClip = GenerateRandomFloat(1) < 0.5 ? firstMusicClip.get() : secondMusicClip.get();
 }
 
 void SimulationApp::Save(wstring const& name) const
@@ -66,7 +52,7 @@ void SimulationApp::Load(wstring const& name)
 void SimulationApp::Reset()
 {
     scriptRuntime.ResetScope({ physicsWorld, editor, sceneRenderer, *sceneCanvas,
-                              volume, maxRealDeltaTime, isTrackShown });
+                              music.volume, maxRealDeltaTime, isTrackShown });
 
     editor.ResetInteraction();
     physicsWorld.ClearObjects();
@@ -95,7 +81,7 @@ void SimulationApp::Update()
     scriptRuntime.SetFrameDeltaTime(realDeltaTime);
     scriptRuntime.Update();
 
-    UpdateMusic();
+    music.Update(waveOutput.inputSamples);
 
     editor.Update(physicsWorld, input, inputOwners, *sceneCanvas, realDeltaTime);
     HandleScriptError();
@@ -140,23 +126,6 @@ void SimulationApp::HandleScriptError()
 void SimulationApp::TogglePausing()
 {
     isPaused = !isPaused;
-}
-
-void SimulationApp::UpdateMusic()
-{
-    // 音乐
-    if (firstMusicClip && secondMusicClip)
-    {
-        if (currentMusicClip->sampleIndex >= currentMusicClip->GetSampleCount())
-        {
-            currentMusicClip->sampleIndex = 0;
-            currentMusicClip = (currentMusicClip == firstMusicClip.get()) ? secondMusicClip.get() : firstMusicClip.get();
-        }
-        if (!isMuted)
-        {
-            currentMusicClip->Play(waveOutput.inputSamples);
-        }
-    }
 }
 
 void SimulationApp::UpdateSceneState()

@@ -4,10 +4,10 @@
 #include "SceneEditor.h"
 #include "SceneRenderer.h"
 #include "SceneScriptRuntime.h"
+#include "current/audio/MusicPlayer.h"
 
 class UserInterface;
 class SceneCanvas;
-class AudioClip;
 class SimulationApp : public App
 {
 public:
@@ -19,12 +19,9 @@ public:
 
     SceneScriptRuntime scriptRuntime;
 
-    std::shared_ptr<AudioClip> firstMusicClip, secondMusicClip;
-    AudioClip* currentMusicClip = NULL;
-    double volume = 0;
+    MusicPlayer music;
 
     bool isTrackShown = false;
-    bool isMuted = false;
     bool isPaused = false;
     double maxRealDeltaTime = 0;
     double realDeltaTime = 0;
@@ -39,7 +36,6 @@ public:
 
 private:
     void HandleScriptError();
-    void UpdateMusic();
     // 暂停时也同步场景结构、应用每帧拖拽并维护轨迹，不推进模拟时间。
     void UpdateSceneState();
     void AdvanceSimulation();

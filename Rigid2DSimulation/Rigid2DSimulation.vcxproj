@@ -160,6 +160,7 @@
     <ClCompile Include="current\storage\SceneStorage.cpp" />
     <ClCompile Include="framework\control\ControlContainer.cpp" />
     <ClCompile Include="current\common\SimulationApp.cpp" />
+    <ClCompile Include="current\audio\MusicPlayer.cpp" />
     <ClCompile Include="framework\control\DragBar.cpp" />
     <ClCompile Include="framework\draw\DrawBorderedRectangle.cpp" />
     <ClCompile Include="framework\draw\DrawCurve.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="current\storage\SceneStorage.h" />
     <ClInclude Include="framework\control\ControlContainer.h" />
     <ClInclude Include="current\common\SimulationApp.h" />
+    <ClInclude Include="current\audio\MusicPlayer.h" />
     <ClInclude Include="framework\control\DragBar.h" />
     <ClInclude Include="framework\draw\DrawBorderedRectangle.h" />
     <ClInclude Include="framework\draw\DrawCurve.h" />

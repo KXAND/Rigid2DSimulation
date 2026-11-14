@@ -29,6 +29,7 @@
       <UniqueIdentifier>{1084d84c-4808-4d4e-b325-c93493777584}</UniqueIdentifier>
     </Filter>
     <Filter Include="current\script" />
+    <Filter Include="current\audio" />
     <Filter Include="current\storage" />
     <Filter Include="current\render">
       <UniqueIdentifier>{E06DF75A-3E59-445A-ABAD-C635AA02A2F8}</UniqueIdentifier>
@@ -207,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="current\common\SimulationApp.cpp">
       <Filter>current\common</Filter>
+    </ClCompile>
+    <ClCompile Include="current\audio\MusicPlayer.cpp">
+      <Filter>current\audio</Filter>
     </ClCompile>
     <ClCompile Include="current\common\SceneParameter.cpp">
       <Filter>current\common</Filter>
@@ -422,6 +426,9 @@
     </ClInclude>
     <ClInclude Include="current\common\SimulationApp.h">
       <Filter>current\common</Filter>
+    </ClInclude>
+    <ClInclude Include="current\audio\MusicPlayer.h">
+      <Filter>current\audio</Filter>
     </ClInclude>
     <ClInclude Include="current\common\SceneParameter.h">
       <Filter>current\common</Filter>
