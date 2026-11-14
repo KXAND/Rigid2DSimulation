@@ -30,6 +30,7 @@ public:
     HINSTANCE instanceHandle = NULL;
 
     wstring title;
+    wstring titleLocalizationId;
     bool useSystemCursor = true;
     wstring windowClassName;
 

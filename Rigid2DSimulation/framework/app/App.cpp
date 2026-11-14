@@ -65,6 +65,10 @@ void App::Run(bool showConsole)
         }
         else
         {
+            if (!titleLocalizationId.empty())
+            {
+                title = GetLocalizedString(titleLocalizationId);
+            }
             bool isWindowTitleUpdated = SetWindowText(windowHandle, title.c_str());
             if (!isWindowTitleUpdated)
             {

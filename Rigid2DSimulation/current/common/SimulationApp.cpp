@@ -11,6 +11,7 @@ SimulationApp::SimulationApp()
 {
     width = 1800;
     height = 900;
+    titleLocalizationId = L"title";
     SetLocale();
     waveOutput.blockDuration = 4 * 5e-4;
 
@@ -88,7 +89,6 @@ void SimulationApp::Update()
     userInterface->PreUpdate(*this);
     HandleInput();
 
-    title = GetLocalizedString(L"title");
     // 每帧必须先计算并设置时长，再调用无参 Update；脚本与物理推进共用该值。
     // 本帧不重新计算时长，脚本修改上限从下一帧生效。
     realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
