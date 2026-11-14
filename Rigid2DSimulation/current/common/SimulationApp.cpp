@@ -89,26 +89,19 @@ void SimulationApp::Update()
     userInterface->PreUpdate(*this);
     HandleInput();
 
-    // 每帧必须先计算并设置时长，再调用无参 Update；脚本与物理推进共用该值。
-    // 本帧不重新计算时长，脚本修改上限从下一帧生效。
+    // 本帧编辑与物理推进共用同一时长；暂不接入脚本的自动更新。
     realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
-    scriptRuntime.SetFrameDeltaTime(realDeltaTime);
-    scriptRuntime.Update();
 
     UpdateMusic();
 
     editor.Update(physicsWorld, input, inputOwners, *sceneCanvas, realDeltaTime);
-    HandleScriptError();
     UpdateSceneState();
     AdvanceSimulation();
-    HandleScriptError();
     auto context = GetSceneRenderContext();
-    auto const& scriptMessage = scriptRuntime.GetError().empty() ? scriptRuntime.debugString : scriptRuntime.GetError();
-    sceneRenderer.RenderBackground(*sceneCanvas, scriptMessage, context);
+    sceneRenderer.RenderBackground(*sceneCanvas, L"", context);
     sceneRenderer.RenderObjects(physicsWorld, context);
     sceneRenderer.RenderCreationPreview(editor.GetPreview(), context);
     userInterface->UpdateAndRender(*this);
-    HandleScriptError();
 }
 
 void SimulationApp::HandleInput()
@@ -193,16 +186,11 @@ void SimulationApp::AdvanceSimulation()
     if (!isPaused && realDeltaTime != 0)
     {
         physicsWorld.Advance(realDeltaTime, drag.body,
-            [this](double time)
-            {
-                scriptRuntime.SetSimulationTime(time);
-            },
+            // 保留子步回调接口，但暂不发布脚本时间或执行运动预设。
+            [](double) {},
             [this, &drag](Body& body, double stepDeltaTime)
             {
-                body.Step(physicsWorld.gravity, stepDeltaTime, [this, &body, stepDeltaTime](bool isDynamic)
-                    {
-                        scriptRuntime.ApplyMotionPresets(body, isDynamic, physicsWorld.simulationTime, stepDeltaTime);
-                    });
+                body.Step(physicsWorld.gravity, stepDeltaTime, [](bool) {});
                 ApplyBodyDragSubstep(body, drag, realDeltaTime, stepDeltaTime);
                 body.UpdateShapesPositionAndAABB();
             },
