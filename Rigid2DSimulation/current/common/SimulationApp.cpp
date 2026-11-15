@@ -9,154 +9,154 @@
 
 SimulationApp::SimulationApp()
 {
-	width = 1800;
-	height = 900;
-	titleLocalizationId = L"title";
-	SetLocale();
-	waveOutput.blockDuration = 4 * 5e-4;
+    width = 1800;
+    height = 900;
+    titleLocalizationId = L"title";
+    SetLocale();
+    waveOutput.blockDuration = 4 * 5e-4;
 
-	PrintConsole(L"正在加载字体...");
-	App::Init();
+    PrintConsole(L"正在加载字体...");
+    App::Init();
 
-	PrintConsole(L"字体加载完成.", true);
+    PrintConsole(L"字体加载完成.", true);
 
-	PrintConsole(L"正在加载控件...");
-	userInterface = std::make_shared<UserInterface>(*this);
-	userInterface->Init(*this);
-	sceneCanvas = std::make_shared<SceneCanvas>();
-	Reset();
+    PrintConsole(L"正在加载控件...");
+    userInterface = std::make_shared<UserInterface>(*this);
+    userInterface->Init(*this);
+    sceneCanvas = std::make_shared<SceneCanvas>();
+    Reset();
 
-	PrintConsole(L"控件加载完成.", true);
+    PrintConsole(L"控件加载完成.", true);
 
-	PrintConsole(L"正在加载音乐...");
-	bool audioLoaded = false;
-	firstMusicClip = std::make_shared<AudioClip>(L"sound/bgm0.clip", &audioLoaded);
-	if (!audioLoaded)
-	{
-		firstMusicClip = NULL;
-	}
-	secondMusicClip = std::make_shared<AudioClip>(L"sound/bgm1.clip", &audioLoaded);
-	if (!audioLoaded)
-	{
-		secondMusicClip = NULL;
-	}
-	PrintConsole(L"音乐加载完成.", true);
+    PrintConsole(L"正在加载音乐...");
+    bool audioLoaded = false;
+    firstMusicClip = std::make_shared<AudioClip>(L"sound/bgm0.clip", &audioLoaded);
+    if (!audioLoaded)
+    {
+        firstMusicClip = NULL;
+    }
+    secondMusicClip = std::make_shared<AudioClip>(L"sound/bgm1.clip", &audioLoaded);
+    if (!audioLoaded)
+    {
+        secondMusicClip = NULL;
+    }
+    PrintConsole(L"音乐加载完成.", true);
 
-	volume = 1;
-	currentMusicClip = GenerateRandomFloat(1) < 0.5 ? firstMusicClip.get() : secondMusicClip.get();
+    volume = 1;
+    currentMusicClip = GenerateRandomFloat(1) < 0.5 ? firstMusicClip.get() : secondMusicClip.get();
 }
 
 void SimulationApp::Save(wstring const& name) const
 {
-	SceneStorage::Save(name, physicsWorld, scriptRuntime);
+    SceneStorage::Save(name, physicsWorld, scriptRuntime);
 }
 
 void SimulationApp::Load(wstring const& name)
 {
-	bool loaded = SceneStorage::Load(name, physicsWorld, scriptRuntime, [this]()
-		{
-			Reset();
-		});
-	if (!loaded)
-	{
-		AddLog(L"Scene loading did not complete: " + name + L"\n");
-	}
-	HandleScriptError();
+    bool loaded = SceneStorage::Load(name, physicsWorld, scriptRuntime, [this]()
+        {
+            Reset();
+        });
+    if (!loaded)
+    {
+        AddLog(L"Scene loading did not complete: " + name + L"\n");
+    }
+    HandleScriptError();
 }
 void SimulationApp::Reset()
 {
-	scriptRuntime.ResetScope({ physicsWorld, editor, sceneRenderer, *sceneCanvas,
-							  volume, maxRealDeltaTime, isTrackShown });
+    scriptRuntime.ResetScope({ physicsWorld, editor, sceneRenderer, *sceneCanvas,
+                              volume, maxRealDeltaTime, isTrackShown });
 
-	editor.ResetInteraction();
-	physicsWorld.ClearObjects();
-	scriptRuntime.ResetSceneVariables(*sceneCanvas);
+    editor.ResetInteraction();
+    physicsWorld.ClearObjects();
+    scriptRuntime.ResetSceneVariables(*sceneCanvas);
 
-	physicsWorld.ResetParameters(DRect(sceneCanvas->topLeft, sceneCanvas->width, sceneCanvas->height));
-	maxRealDeltaTime = 0.05;
-	sceneRenderer.energyMultiplier = 4e-6;
-	sceneRenderer.chargeMultiplier = 1;
-	isTrackShown = false;
+    physicsWorld.ResetParameters(DRect(sceneCanvas->topLeft, sceneCanvas->width, sceneCanvas->height));
+    maxRealDeltaTime = 0.05;
+    sceneRenderer.energyMultiplier = 4e-6;
+    sceneRenderer.chargeMultiplier = 1;
+    isTrackShown = false;
 
-	editor.ResetTools(inputOwners);
+    editor.ResetTools(inputOwners);
 }
 
 void SimulationApp::Update()
 {
-	// Resolve Input Ownership
-	sceneCanvas->PreUpdate(input, inputOwners);
-	editor.PreUpdate(physicsWorld, input, inputOwners, sceneCanvas->GetViewport());
-	userInterface->PreUpdate(*this);
-	HandleInput();
+    // Resolve Input Ownership
+    sceneCanvas->PreUpdate(input, inputOwners);
+    editor.PreUpdate(physicsWorld, input, inputOwners, sceneCanvas->GetViewport());
+    userInterface->PreUpdate(*this);
+    HandleInput();
 
-	// 每帧必须先计算并设置时长，再调用无参 Update；脚本与物理推进共用该值。
-	// 本帧不重新计算时长，脚本修改上限从下一帧生效。
-	realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
-	scriptRuntime.SetFrameDeltaTime(realDeltaTime);
-	scriptRuntime.Update();
+    // 每帧必须先计算并设置时长，再调用无参 Update；脚本与物理推进共用该值。
+    // 本帧不重新计算时长，脚本修改上限从下一帧生效。
+    realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
+    scriptRuntime.SetFrameDeltaTime(realDeltaTime);
+    scriptRuntime.Update();
 
-	UpdateMusic();
+    UpdateMusic();
 
-	editor.Update(physicsWorld, input, inputOwners, *sceneCanvas, realDeltaTime);
-	HandleScriptError();
-	UpdateSceneState();
-	AdvanceSimulation();
-	HandleScriptError();
-	auto context = GetSceneRenderContext();
-	auto const& scriptMessage = scriptRuntime.GetError().empty() ? scriptRuntime.debugString : scriptRuntime.GetError();
-	sceneRenderer.RenderBackground(*sceneCanvas, scriptMessage, context);
-	sceneRenderer.RenderObjects(physicsWorld, context);
-	sceneRenderer.RenderCreationPreview(editor.GetPreview(), context);
-	userInterface->UpdateAndRender(*this);
-	HandleScriptError();
+    editor.Update(physicsWorld, input, inputOwners, *sceneCanvas, realDeltaTime);
+    HandleScriptError();
+    UpdateSceneState();
+    AdvanceSimulation();
+    HandleScriptError();
+    auto context = GetSceneRenderContext();
+    auto const& scriptMessage = scriptRuntime.GetError().empty() ? scriptRuntime.debugString : scriptRuntime.GetError();
+    sceneRenderer.RenderBackground(*sceneCanvas, scriptMessage, context);
+    sceneRenderer.RenderObjects(physicsWorld, context);
+    sceneRenderer.RenderCreationPreview(editor.GetPreview(), context);
+    userInterface->UpdateAndRender(*this);
+    HandleScriptError();
 }
 
 void SimulationApp::HandleInput()
 {
-	if (inputOwners.keyboardOwner)
-	{
-		return;
-	}
+    if (inputOwners.keyboardOwner)
+    {
+        return;
+    }
 
-	if (input.IsKeyPressedDown(L' '))
-	{
-		TogglePausing();
-	}
+    if (input.IsKeyPressedDown(L' '))
+    {
+        TogglePausing();
+    }
 }
 
 void SimulationApp::HandleScriptError()
 {
-	if (!scriptRuntime.GetError().empty())
-	{
-		isPaused = true;
-	}
-	auto error = scriptRuntime.ConsumeError();
-	if (!error.empty())
-	{
-		AddLog(L"Script error: " + error + L"\n");
-	}
+    if (!scriptRuntime.GetError().empty())
+    {
+        isPaused = true;
+    }
+    auto error = scriptRuntime.ConsumeError();
+    if (!error.empty())
+    {
+        AddLog(L"Script error: " + error + L"\n");
+    }
 }
 
 void SimulationApp::TogglePausing()
 {
-	isPaused = !isPaused;
+    isPaused = !isPaused;
 }
 
 void SimulationApp::UpdateMusic()
 {
-	// 音乐
-	if (firstMusicClip && secondMusicClip)
-	{
-		if (currentMusicClip->sampleIndex >= currentMusicClip->GetSampleCount())
-		{
-			currentMusicClip->sampleIndex = 0;
-			currentMusicClip = (currentMusicClip == firstMusicClip.get()) ? secondMusicClip.get() : firstMusicClip.get();
-		}
-		if (!isMuted)
-		{
-			currentMusicClip->Play(waveOutput.inputSamples);
-		}
-	}
+    // 音乐
+    if (firstMusicClip && secondMusicClip)
+    {
+        if (currentMusicClip->sampleIndex >= currentMusicClip->GetSampleCount())
+        {
+            currentMusicClip->sampleIndex = 0;
+            currentMusicClip = (currentMusicClip == firstMusicClip.get()) ? secondMusicClip.get() : firstMusicClip.get();
+        }
+        if (!isMuted)
+        {
+            currentMusicClip->Play(waveOutput.inputSamples);
+        }
+    }
 }
 
 void SimulationApp::UpdateSceneState()
@@ -179,38 +179,38 @@ void SimulationApp::UpdateSceneState()
     editor.PrepareForDeletion(inputOwners);
     physicsWorld.RemoveDeletedObjects();
 
-	physicsWorld.Prepare();
-	for (auto const& body : physicsWorld.GetBodies())
-	{
+    physicsWorld.Prepare();
+    for (auto const& body : physicsWorld.GetBodies())
+    {
         ApplyBodyDragFrame(*body, editor.GetFrameDrag(), realDeltaTime);
-	}
-	editor.RecordTracks(physicsWorld, isTrackShown, isPaused);
+    }
+    editor.RecordTracks(physicsWorld, isTrackShown, isPaused);
 }
 
 void SimulationApp::AdvanceSimulation()
 {
     auto drag = editor.GetDrag();
-	if (!isPaused && realDeltaTime != 0)
-	{
-		physicsWorld.Advance(realDeltaTime, drag.body,
-			[this](double time)
-			{
-				scriptRuntime.SetSimulationTime(time);
-			},
-			[this, &drag](Body& body, double stepDeltaTime)
-			{
-				body.Step(physicsWorld.gravity, stepDeltaTime, [this, &body, stepDeltaTime](bool isDynamic)
-					{
-						scriptRuntime.ApplyMotionPresets(body, isDynamic, physicsWorld.simulationTime, stepDeltaTime);
-					});
-				ApplyBodyDragSubstep(body, drag, realDeltaTime, stepDeltaTime);
-				body.UpdateShapesPositionAndAABB();
-			},
-			[this](Body const& body)
-			{
-				editor.ClearTrack(body);
-			});
-	}
+    if (!isPaused && realDeltaTime != 0)
+    {
+        physicsWorld.Advance(realDeltaTime, drag.body,
+            [this](double time)
+            {
+                scriptRuntime.SetSimulationTime(time);
+            },
+            [this, &drag](Body& body, double stepDeltaTime)
+            {
+                body.Step(physicsWorld.gravity, stepDeltaTime, [this, &body, stepDeltaTime](bool isDynamic)
+                    {
+                        scriptRuntime.ApplyMotionPresets(body, isDynamic, physicsWorld.simulationTime, stepDeltaTime);
+                    });
+                ApplyBodyDragSubstep(body, drag, realDeltaTime, stepDeltaTime);
+                body.UpdateShapesPositionAndAABB();
+            },
+            [this](Body const& body)
+            {
+                editor.ClearTrack(body);
+            });
+    }
     else
     {
         // Advance 内部会同步几何；暂停或零时长不调用它，但编辑仍可能改变姿态。
@@ -221,7 +221,7 @@ void SimulationApp::AdvanceSimulation()
 
 SceneRenderContext SimulationApp::GetSceneRenderContext()
 {
-	return { screen, depthBuffer, font, sceneCanvas->GetViewport(), input.mousePosition,
-			editor.bodySelecting, editor.connectionSelecting,
-			editor.GetHoveredBody(), editor.GetDrag().body, editor.GetDrag().relativePoint, editor.GetTracks() };
+    return { screen, depthBuffer, font, sceneCanvas->GetViewport(), input.mousePosition,
+            editor.bodySelecting, editor.connectionSelecting,
+            editor.GetHoveredBody(), editor.GetDrag().body, editor.GetDrag().relativePoint, editor.GetTracks() };
 }
