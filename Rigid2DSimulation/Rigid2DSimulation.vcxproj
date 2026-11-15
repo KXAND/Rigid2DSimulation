@@ -76,7 +76,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\editor;$(ProjectDir)current\render;$(ProjectDir)current\script;$(ProjectDir)current\storage;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\editor;$(ProjectDir)current\render;$(ProjectDir)current\storage;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -91,7 +91,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\editor;$(ProjectDir)current\render;$(ProjectDir)current\script;$(ProjectDir)current\storage;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\editor;$(ProjectDir)current\render;$(ProjectDir)current\storage;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -106,7 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\editor;$(ProjectDir)current\render;$(ProjectDir)current\script;$(ProjectDir)current\storage;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\editor;$(ProjectDir)current\render;$(ProjectDir)current\storage;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -121,7 +121,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\editor;$(ProjectDir)current\render;$(ProjectDir)current\script;$(ProjectDir)current\storage;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)framework\basic;$(ProjectDir)framework\app;$(ProjectDir)framework\media;$(ProjectDir)framework\parse;$(ProjectDir)framework\draw;$(ProjectDir)framework\control;$(ProjectDir)current\common;$(ProjectDir)current\rigid;$(ProjectDir)current\editor;$(ProjectDir)current\render;$(ProjectDir)current\storage;$(ProjectDir)current\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>4244;4267;26451</DisableSpecificWarnings>
     </ClCompile>
@@ -146,17 +146,30 @@
     <ClCompile Include="framework\control\CheckBox.cpp" />
     <ClCompile Include="framework\media\AudioClip.cpp" />
     <ClCompile Include="current\rigid\Collision.cpp" />
-    <ClCompile Include="current\rigid\SceneBuilders.cpp" />
-    <ClCompile Include="current\script\ShapeBuiltins.cpp" />
+    <ClCompile Include="current\script\SceneBuilders.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="current\script\ShapeBuiltins.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="current\rigid\Connection.cpp" />
     <ClCompile Include="framework\control\Control.cpp" />
     <ClCompile Include="current\editor\Creator.cpp" />
     <ClCompile Include="current\editor\DragTool.cpp" />
     <ClCompile Include="current\editor\SceneEditor.cpp" />
     <ClCompile Include="current\render\SceneRenderer.cpp" />
-    <ClCompile Include="current\script\BodyConfig.cpp" />
-    <ClCompile Include="current\script\ConnectionConfig.cpp" />
-    <ClCompile Include="current\script\SceneScriptRuntime.cpp" />
+    <ClCompile Include="current\script\BodyConfig.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="current\script\ConnectionConfig.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="current\script\CreatorConfig.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="current\script\SceneScriptRuntime.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="current\storage\SceneStorage.cpp" />
     <ClCompile Include="framework\control\ControlContainer.cpp" />
     <ClCompile Include="current\common\SimulationApp.cpp" />
@@ -175,18 +188,24 @@
     <ClCompile Include="framework\media\Font.cpp" />
     <ClCompile Include="current\ui\aboutPanel\AboutPanel.cpp" />
     <ClCompile Include="current\ui\bodyPanel\BodyPanel.cpp" />
-    <ClCompile Include="current\ui\commandPanel\CommandPanel.cpp" />
+    <ClCompile Include="current\ui\commandPanel\CommandPanel.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="current\ui\connectionPanel\ConnectionPanel.cpp" />
     <ClCompile Include="current\ui\globalPanel\GlobalPanel.cpp" />
     <ClCompile Include="current\ui\creationPanel\CreationPanel.cpp" />
     <ClCompile Include="current\ui\languagePanel\LanguagePanel.cpp" />
-    <ClCompile Include="current\ui\parameterPanel\ParameterPanel.cpp" />
+    <ClCompile Include="current\ui\parameterPanel\ParameterPanel.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="current\rigid\Group.cpp" />
     <ClCompile Include="current\rigid\PhysicsWorld.cpp" />
     <ClCompile Include="framework\control\Label.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="framework\control\Panel.cpp" />
-    <ClCompile Include="current\common\SceneParameter.cpp" />
+    <ClCompile Include="current\script\SceneParameter.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="current\ui\bottomPanel\BottomPanel.cpp" />
     <ClCompile Include="current\ui\menuPanel\MenuPanel.cpp" />
     <ClCompile Include="framework\parse\ScriptStatement.cpp" />
@@ -217,8 +236,7 @@
     <ClInclude Include="framework\control\CheckBox.h" />
     <ClInclude Include="framework\media\AudioClip.h" />
     <ClInclude Include="current\rigid\Collision.h" />
-    <ClInclude Include="current\common\Utils.h" />
-    <ClInclude Include="current\rigid\SceneBuilders.h" />
+    <ClInclude Include="current\script\SceneBuilders.h" />
     <ClInclude Include="current\script\ShapeBuiltins.h" />
     <ClInclude Include="current\rigid\Connection.h" />
     <ClInclude Include="framework\control\Control.h" />
@@ -230,6 +248,8 @@
     <ClInclude Include="current\script\BodyConfig.h" />
     <ClInclude Include="current\script\ConnectionConfig.h" />
     <ClInclude Include="current\script\SceneScriptRuntime.h" />
+    <ClInclude Include="current\script\BodyScriptData.h" />
+    <ClInclude Include="current\script\ConfigUtils.h" />
     <ClInclude Include="current\storage\SceneStorage.h" />
     <ClInclude Include="framework\control\ControlContainer.h" />
     <ClInclude Include="current\common\SimulationApp.h" />
@@ -259,7 +279,7 @@
     <ClInclude Include="framework\basic\PlatformIncludes.h" />
     <ClInclude Include="framework\control\Label.h" />
     <ClInclude Include="framework\control\Panel.h" />
-    <ClInclude Include="current\common\SceneParameter.h" />
+    <ClInclude Include="current\script\SceneParameter.h" />
     <ClInclude Include="current\ui\bottomPanel\BottomPanel.h" />
     <ClInclude Include="current\ui\menuPanel\MenuPanel.h" />
     <ClInclude Include="framework\parse\ScriptStatement.h" />

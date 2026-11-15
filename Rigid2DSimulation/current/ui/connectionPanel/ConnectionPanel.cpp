@@ -4,7 +4,6 @@
 #include <utility>
 
 #include "Connection.h"
-#include "RichTextBox.h"
 #include "SimulationApp.h"
 
 ConnectionPanel::ConnectionPanel(App& app) : LocalizedFloatPanel(app.screen.Rect(), 400, 600, L"connectionPanelTitle")
@@ -20,16 +19,6 @@ ConnectionPanel::ConnectionPanel(App& app) : LocalizedFloatPanel(app.screen.Rect
 
 void ConnectionPanel::BuildEditor()
 {
-    auto& scriptEditor = editorLayout->AddRichTextBox(360, 400);
-    scriptEditor.valueProvider = [](App& app)
-    {
-        return static_cast<SimulationApp&>(app).editor.connectionSelecting->temporaryScriptText;
-    };
-    scriptEditor.onEditing = [](App& app, std::wstring const& text)
-    {
-        static_cast<SimulationApp&>(app).editor.connectionSelecting->temporaryScriptText = text;
-    };
-
     BuildActionButtons();
     editorLayout->AddSeparator(400);
 }
@@ -37,13 +26,6 @@ void ConnectionPanel::BuildEditor()
 void ConnectionPanel::BuildActionButtons()
 {
     auto& actionButtons = editorLayout->AddRow();
-    actionButtons.AddLocalizedButton(70, L"applyConnectionButton", [](App& app)
-    {
-        auto& simulationApp = static_cast<SimulationApp&>(app);
-        auto& selectedConnection = *simulationApp.editor.connectionSelecting;
-        selectedConnection.scriptText = selectedConnection.temporaryScriptText;
-        simulationApp.scriptRuntime.RefreshConnectionScript(selectedConnection);
-    });
     actionButtons.AddLocalizedButton(70, L"deleteConnectionButton", [](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);

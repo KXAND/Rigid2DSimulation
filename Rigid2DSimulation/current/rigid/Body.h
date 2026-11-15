@@ -1,14 +1,10 @@
 ﻿#pragma once
-#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "Aabb.h"
 #include "Tile.h"
-
-struct ScriptStatement;
-typedef vector<ScriptStatement> Program;
 
 class Shape;
 class Connection;
@@ -46,15 +42,6 @@ struct BodyAppearance
     }
 };
 
-struct BodyScriptData
-{
-    std::wstring scriptText, temporaryScriptText;
-    std::shared_ptr<Program> positionProgram, angleProgram, angularVelocityProgram;
-    bool hasPositionPreset = false;
-    bool hasAnglePreset = false;
-    bool hasAngularVelocityPreset = false;
-};
-
 /// <summary>
 /// 定义单个物体的物理属性
 /// </summary>
@@ -79,7 +66,6 @@ public:
 
     bool visited = false;
     BodyAppearance appearance;
-    BodyScriptData scriptData;
 
     Body(std::shared_ptr<Shape> shape, BodyProperties const& properties = {});
     Body(vector<std::shared_ptr<Shape>> const& shapes, BodyProperties const& properties = {});
@@ -104,7 +90,7 @@ public:
     Vector2 GenerateRandomPointInside() const;
     void UpdateShapesPositionAndAABB();
 
-    void Step(Vector2 const& gravity, double stepDeltaTime, std::function<void(bool)> const& applyPresets);
+    void Step(Vector2 const& gravity, double stepDeltaTime);
 
 private:
     friend class SceneStorage;
@@ -113,7 +99,7 @@ private:
     vector<Connection*> connections;
     bool isMarkedForDeletion = false;
 
-    // 存档需先读取字段、执行对象脚本，再按原时点计算。
+    // 供内部工厂分阶段组装；外部使用完整构造或 CreatePoint。
     Body();
     void AssignProperties(BodyProperties const& properties);
     // 重算普通物体的派生量和局部几何，返回输入形状中心；不设置位置或同步世界几何。

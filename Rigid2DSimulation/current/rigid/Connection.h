@@ -26,7 +26,6 @@ class Connection
 {
 public:
     int type = 0;
-    wstring scriptText, temporaryScriptText;
     Vector2 p0Relative, p1Relative;
     Vector2 p0, p1;
     double length = 0;

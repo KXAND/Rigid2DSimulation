@@ -13,12 +13,9 @@
 #include "SceneCanvas.h"
 #include "Shape.h"
 
-void SceneRenderer::RenderBackground(SceneCanvas const& canvas, std::wstring const& debugString,
-                                     SceneRenderContext const& context) const
+void SceneRenderer::RenderBackground(SceneCanvas const& canvas, SceneRenderContext const& context) const
 {
     canvas.Render(context.screen);
-    DrawString(context.screen, context.depthBuffer, 999, debugString,
-               Color(110), context.font, canvas.topLeft + DVector2(10, 10), canvas.width - 20, context.viewport);
 }
 
 void SceneRenderer::RenderObjects(PhysicsWorld const& world, SceneRenderContext const& context) const

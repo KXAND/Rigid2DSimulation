@@ -8,12 +8,10 @@
 #include "UserInterface.h"
 #include "current/ui/aboutPanel/AboutPanel.h"
 #include "current/ui/bodyPanel/BodyPanel.h"
-#include "current/ui/commandPanel/CommandPanel.h"
 #include "current/ui/connectionPanel/ConnectionPanel.h"
 #include "current/ui/creationPanel/CreationPanel.h"
 #include "current/ui/globalPanel/GlobalPanel.h"
 #include "current/ui/languagePanel/LanguagePanel.h"
-#include "current/ui/parameterPanel/ParameterPanel.h"
 
 MenuPanel::MenuPanel(App& app) : Panel(Panel::CreateMenuPanel(app.screen.Rect()))
 {
@@ -84,8 +82,6 @@ void MenuPanel::BuildScenePanelButtons(VerticalStack& layout, App& app)
 void MenuPanel::BuildUtilityPanelButtons(VerticalStack& layout, App& app)
 {
     auto& simulationApp = static_cast<SimulationApp&>(app);
-    layout.AddPanelButton(*simulationApp.userInterface->commandPanel);
-    layout.AddPanelButton(*simulationApp.userInterface->parameterPanel);
     layout.AddPanelButton(*simulationApp.userInterface->languagePanel);
     layout.AddPanelButton(*simulationApp.userInterface->aboutPanel);
 }

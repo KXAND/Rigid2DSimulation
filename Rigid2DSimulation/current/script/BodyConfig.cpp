@@ -1,7 +1,7 @@
 ﻿#include "BodyConfig.h"
 
 #include "Value.h"
-#include "current/common/utils.h"
+#include "ConfigUtils.h"
 
 BodyProperties ParseBodyProperties(Value const& config, BodyProperties defaults)
 {

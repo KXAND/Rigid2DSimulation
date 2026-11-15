@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 #include "Body.h"
+#include "BodyDrag.h"
 #include "Collision.h"
 #include "Connection.h"
 #include "Group.h"
@@ -202,9 +203,7 @@ void PhysicsWorld::UpdateGeometry()
     }
 }
 
-void PhysicsWorld::Advance(double deltaTime, Body const* warpExcludedBody,
-                           std::function<void(double)> const& beginStep,
-                           std::function<void(Body&, double)> const& stepBody,
+void PhysicsWorld::Advance(double deltaTime, BodyDrag const& drag,
                            std::function<void(Body const&)> const& onBodyWarped)
 {
     // 标准时长
@@ -212,14 +211,15 @@ void PhysicsWorld::Advance(double deltaTime, Body const* warpExcludedBody,
 
     for (int i = (0), iEnd = int(stepNum); i < iEnd; ++i)
     {
-        beginStep(simulationTime);
         for (const auto& body : bodies)
         {
-            stepBody(*body, stepDeltaTime);
+            body->Step(gravity, stepDeltaTime);
+            ApplyBodyDragSubstep(*body, drag, deltaTime, stepDeltaTime);
+            body->UpdateShapesPositionAndAABB();
         }
         for (auto& group : groups)
         {
-            group->Warp(rectScene, warpExcludedBody, onBodyWarped);
+            group->Warp(rectScene, drag.body, onBodyWarped);
         }
 
         //计算静电

@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Vector2.h"
 #include "CreationPreview.h"
+#include "Body.h"
+#include "Connection.h"
 
 int constexpr kCreateBox = 0;
 int constexpr kCreateBall = 1;
@@ -10,7 +12,6 @@ int constexpr kCreateConnection = 4;
 int constexpr kCreatePoint = 5;
 int constexpr kCreateNail = 6;
 
-struct Value;
 class AppInput;
 struct InputOwners;
 class PhysicsWorld;
@@ -23,10 +24,10 @@ struct CreatorConfig
     double connectionDepth = -1;
     double thickness = 10;
     double radius = 8;
-    std::shared_ptr<Value> bodyConfiguration, connectionConfiguration;
+    BodyProperties bodyProperties;
+    int connectionType = kRopeConnection;
+    double springConstant = 0;
 };
-
-CreatorConfig ParseCreatorConfig(Value const& config);
 
 class Creator
 {

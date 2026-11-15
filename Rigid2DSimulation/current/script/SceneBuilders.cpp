@@ -6,7 +6,7 @@
 #include "DVector2.h"
 #include "PhysicsWorld.h"
 #include "Shape.h"
-#include "current/common/utils.h"
+#include "ConfigUtils.h"
 
 void CreateBody(PhysicsWorld& physicsWorld, Value const& shapeConfigurations, Value const& configuration)
 {

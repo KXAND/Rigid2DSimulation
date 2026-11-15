@@ -82,7 +82,7 @@ namespace
         }
         else if (body.invMass == 0)
         {
-            // 物理预设可能改变逆质量，须按计算时的物体状态选择回退。
+            // 按计算时的物体状态选择回退。
             ApplyWholeDrag(body, drag, realDeltaTime);
         }
         else

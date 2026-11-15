@@ -188,15 +188,13 @@ Vector2 Body::Recalculate()
     return center;
 }
 
-void Body::Step(Vector2 const& gravity, double stepDeltaTime, std::function<void(bool)> const& applyPresets)
+void Body::Step(Vector2 const& gravity, double stepDeltaTime)
 {
-    // 预设可能修改物体属性，但本次推进仍沿用调用前选定的运动分支。
     if (invMass)
     {
         velocity -= dampCoeff * velocity * stepDeltaTime;
         velocity += gravity * stepDeltaTime;
         velocityAngular -= dampCoeffAngular * velocityAngular * stepDeltaTime;
-        applyPresets(true);
         position += velocity * stepDeltaTime;
         radian += velocityAngular * stepDeltaTime;
     }
@@ -204,7 +202,6 @@ void Body::Step(Vector2 const& gravity, double stepDeltaTime, std::function<void
     {
         velocity = {};
         velocityAngular = 0;
-        applyPresets(false);
     }
 }
 

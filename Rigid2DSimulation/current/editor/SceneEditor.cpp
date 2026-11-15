@@ -68,11 +68,6 @@ void SceneEditor::ResetTools(InputOwners& inputOwners)
     creator.ApplyConfig(CreatorConfig{}, inputOwners);
 }
 
-void SceneEditor::RequestCreatorConfig(Value const& config)
-{
-    RequestCreatorConfig(ParseCreatorConfig(config));
-}
-
 void SceneEditor::RequestCreatorConfig(CreatorConfig const& config)
 {
     pendingCreatorConfig = std::make_unique<CreatorConfig>(config);

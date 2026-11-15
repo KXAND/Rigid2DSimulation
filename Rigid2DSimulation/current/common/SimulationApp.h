@@ -3,7 +3,6 @@
 #include "PhysicsWorld.h"
 #include "SceneEditor.h"
 #include "SceneRenderer.h"
-#include "SceneScriptRuntime.h"
 
 class UserInterface;
 class SceneCanvas;
@@ -16,8 +15,6 @@ public:
     PhysicsWorld physicsWorld;
     SceneEditor editor;
     SceneRenderer sceneRenderer;
-
-    SceneScriptRuntime scriptRuntime;
 
     std::shared_ptr<AudioClip> firstMusicClip, secondMusicClip;
     AudioClip* currentMusicClip = NULL;
@@ -38,7 +35,6 @@ public:
     void TogglePausing();
 
 private:
-    void HandleScriptError();
     void UpdateMusic();
     // 暂停时也同步场景结构、应用每帧拖拽并维护轨迹，不推进模拟时间。
     void UpdateSceneState();
