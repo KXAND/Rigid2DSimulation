@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 # dev references
 /ref
+# Archived locally on archive/project-skills
+/.agents/skills/
