@@ -10,6 +10,7 @@ class Body;
 class Collision;
 class Connection;
 class Group;
+struct BodyDrag;
 
 class PhysicsWorld
 {
@@ -48,10 +49,8 @@ public:
     // 同步当前姿态对应的几何和连接端点，不推进时间；暂停时也须在绘制前调用。
     void UpdateGeometry();
 
-    // 同步过渡接口：保留每个子步内脚本预设与拖拽的原有执行位置，不保存回调。
-    void Advance(double deltaTime, Body const* warpExcludedBody,
-                 std::function<void(double)> const& beginStep,
-                 std::function<void(Body&, double)> const& stepBody,
+    // World 自己执行子步推进；回调仅通知外部清理越界物体的显示轨迹，不保存回调。
+    void Advance(double deltaTime, BodyDrag const& drag,
                  std::function<void(Body const&)> const& onBodyWarped);
 
 private:

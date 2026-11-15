@@ -1,5 +1,6 @@
 ﻿#include "ParameterPanel.h"
 
+// 保留脚本参数面板实现；恢复运行时接入前不编译、不实例化。
 #include <memory>
 #include <utility>
 

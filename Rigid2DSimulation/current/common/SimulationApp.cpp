@@ -34,12 +34,12 @@ SimulationApp::SimulationApp()
 
 void SimulationApp::Save(wstring const& name) const
 {
-    SceneStorage::Save(name, physicsWorld, scriptRuntime);
+    SceneStorage::Save(name, physicsWorld);
 }
 
 void SimulationApp::Load(wstring const& name)
 {
-    bool loaded = SceneStorage::Load(name, physicsWorld, scriptRuntime, [this]()
+    bool loaded = SceneStorage::Load(name, physicsWorld, [this]()
         {
             Reset();
         });
@@ -47,13 +47,9 @@ void SimulationApp::Load(wstring const& name)
     {
         AddLog(L"Scene loading did not complete: " + name + L"\n");
     }
-    HandleScriptError();
 }
 void SimulationApp::Reset()
 {
-    scriptRuntime.ResetScope({ physicsWorld, editor, sceneRenderer, *sceneCanvas,
-                              music.volume, maxRealDeltaTime, isTrackShown });
-
     editor.ResetInteraction();
     // UI 回调可能在本帧拾取之后重置场景，销毁前清除旧对象的输入归属。
     for (auto const& body : physicsWorld.GetBodies())
@@ -65,7 +61,6 @@ void SimulationApp::Reset()
         inputOwners.Remove(connection.get());
     }
     physicsWorld.ClearObjects();
-    scriptRuntime.ResetSceneVariables(*sceneCanvas);
 
     physicsWorld.ResetParameters(DRect(sceneCanvas->topLeft, sceneCanvas->width, sceneCanvas->height));
     maxRealDeltaTime = 0.05;
@@ -86,26 +81,19 @@ void SimulationApp::Update()
     // 按钮回调与快捷键都在推进物理之前生效；此处只更新控件，不绘制。
     userInterface->Update(*this);
 
-    // 每帧必须先计算并设置时长，再调用无参 Update；脚本与物理推进共用该值。
-    // 本帧不重新计算时长，脚本修改上限从下一帧生效。
+    // 本帧编辑与物理推进共用同一时长。
     realDeltaTime = min(maxRealDeltaTime, frameRate.GetDeltaTime());
-    scriptRuntime.SetFrameDeltaTime(realDeltaTime);
-    scriptRuntime.Update();
 
     music.Update(waveOutput.inputSamples);
 
     editor.Update(physicsWorld, input, inputOwners, *sceneCanvas, realDeltaTime);
-    HandleScriptError();
     UpdateSceneState();
     AdvanceSimulation();
-    HandleScriptError();
     auto context = GetSceneRenderContext();
-    auto const& scriptMessage = scriptRuntime.GetError().empty() ? scriptRuntime.debugString : scriptRuntime.GetError();
-    sceneRenderer.RenderBackground(*sceneCanvas, scriptMessage, context);
+    sceneRenderer.RenderBackground(*sceneCanvas, context);
     sceneRenderer.RenderObjects(physicsWorld, context);
     sceneRenderer.RenderCreationPreview(editor.GetPreview(), context);
     userInterface->Render(*this);
-    HandleScriptError();
 }
 
 void SimulationApp::HandleInput()
@@ -118,19 +106,6 @@ void SimulationApp::HandleInput()
     if (input.IsKeyPressedDown(L' '))
     {
         TogglePausing();
-    }
-}
-
-void SimulationApp::HandleScriptError()
-{
-    if (!scriptRuntime.GetError().empty())
-    {
-        isPaused = true;
-    }
-    auto error = scriptRuntime.ConsumeError();
-    if (!error.empty())
-    {
-        AddLog(L"Script error: " + error + L"\n");
     }
 }
 
@@ -172,20 +147,7 @@ void SimulationApp::AdvanceSimulation()
     auto drag = editor.GetDrag();
     if (!isPaused && realDeltaTime != 0)
     {
-        physicsWorld.Advance(realDeltaTime, drag.body,
-            [this](double time)
-            {
-                scriptRuntime.SetSimulationTime(time);
-            },
-            [this, &drag](Body& body, double stepDeltaTime)
-            {
-                body.Step(physicsWorld.gravity, stepDeltaTime, [this, &body, stepDeltaTime](bool isDynamic)
-                    {
-                        scriptRuntime.ApplyMotionPresets(body, isDynamic, physicsWorld.simulationTime, stepDeltaTime);
-                    });
-                ApplyBodyDragSubstep(body, drag, realDeltaTime, stepDeltaTime);
-                body.UpdateShapesPositionAndAABB();
-            },
+        physicsWorld.Advance(realDeltaTime, drag,
             [this](Body const& body)
             {
                 editor.ClearTrack(body);

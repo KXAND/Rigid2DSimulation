@@ -2,7 +2,7 @@
 
 #include "Connection.h"
 #include "Value.h"
-#include "current/common/Utils.h"
+#include "ConfigUtils.h"
 
 void ApplyConnectionConfig(Connection& connection, Value const& configuration)
 {

@@ -1,68 +1,9 @@
 ﻿#include "Creator.h"
 #include "AppItem.h"
 #include "Body.h"
-#include "BodyConfig.h"
 #include "Connection.h"
-#include "ConnectionConfig.h"
 #include "PhysicsWorld.h"
 #include "Shape.h"
-#include "Value.h"
-#include "current/common/utils.h"
-
-CreatorConfig ParseCreatorConfig(Value const& config)
-{
-    CreatorConfig result;
-    if (auto modeValue = FindConfigValue(config, L"mode"))
-    {
-        if (modeValue->type == L"str")
-        {
-            auto modeName = modeValue->stringValue;
-            if (modeName == L"box")
-            {
-                result.mode = kCreateBox;
-            }
-            else if (modeName == L"ball")
-            {
-                result.mode = kCreateBall;
-            }
-            else if (modeName == L"plate")
-            {
-                result.mode = kCreatePlate;
-            }
-            else if (modeName == L"connection")
-            {
-                result.mode = kCreateConnection;
-            }
-            else if (modeName == L"point")
-            {
-                result.mode = kCreatePoint;
-            }
-            else if (modeName == L"nail")
-            {
-                result.mode = kCreateNail;
-            }
-            else if (modeName == L"particle")
-            {
-                result.mode = kCreateParticle;
-            }
-        }
-        else
-        {
-            result.mode = modeValue->number;
-        }
-    }
-    TryReadConfigNumber(config, L"thickness", result.thickness);
-    TryReadConfigNumber(config, L"radius", result.radius);
-    if (auto value = FindConfigValue(config, L"bodyConfiguration"))
-    {
-        result.bodyConfiguration = std::make_shared<Value>(*value);
-    }
-    if (auto value = FindConfigValue(config, L"connectionConfiguration"))
-    {
-        result.connectionConfiguration = std::make_shared<Value>(*value);
-    }
-    return result;
-}
 
 void Creator::ApplyConfig(CreatorConfig const& newConfig, InputOwners& inputOwners)
 {
@@ -93,13 +34,9 @@ void Creator::UpdateBox(PhysicsWorld& world, AppInput& input)
         if (x1 - x0 >= minimumSize && y1 - y0 >= minimumSize)
         {
             auto shape = std::make_shared<Shape>(GetRectVerticesByCenter(x1 - x0, y1 - y0));
-            BodyProperties properties;
+            BodyProperties properties = config.bodyProperties;
             properties.position = Vector2(x0 + x1, y0 + y1) / 2;
             properties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-            if (config.bodyConfiguration)
-            {
-                properties = ParseBodyProperties(*config.bodyConfiguration, properties);
-            }
             body = std::make_shared<Body>(shape, properties);
         }
 
@@ -131,13 +68,9 @@ void Creator::UpdateBall(PhysicsWorld& world, AppInput& input)
         if (dragRadius > minimumRadius)
         {
             auto shape = std::make_shared<Shape>(dragRadius);
-            BodyProperties properties;
+            BodyProperties properties = config.bodyProperties;
             properties.position = Vector2(creationStartPoint);
             properties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-            if (config.bodyConfiguration)
-            {
-                properties = ParseBodyProperties(*config.bodyConfiguration, properties);
-            }
             body = std::make_shared<Body>(shape, properties);
         }
 
@@ -171,14 +104,10 @@ void Creator::UpdatePlate(PhysicsWorld& world, AppInput& input)
         if (dragLen > minimumLength)
         {
             auto shape = std::make_shared<Shape>(GetRectVerticesByCenter(dragLen + plateThickness, plateThickness));
-            BodyProperties properties;
+            BodyProperties properties = config.bodyProperties;
             properties.position = Vector2(creationStartPoint + input.mousePosition) / 2;
             properties.radian = atan2(dragVector.y, dragVector.x);
             properties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-            if (config.bodyConfiguration)
-            {
-                properties = ParseBodyProperties(*config.bodyConfiguration, properties);
-            }
             body = std::make_shared<Body>(shape, properties);
         }
 
@@ -206,10 +135,8 @@ void Creator::UpdateConnection(PhysicsWorld& world, AppInput& input)
     if (active)
     {
         connection = std::make_shared<Connection>(body0, body1);
-        if (config.connectionConfiguration)
-        {
-            ApplyConnectionConfig(*connection, *config.connectionConfiguration);
-        }
+        connection->type = config.connectionType;
+        connection->springConstant = config.springConstant;
         // 使用输入阶段确认时的姿态确定连接长度，新连接随后参与本帧模拟。
         if (!input.mouseButtonDown[0])
         {
@@ -238,13 +165,9 @@ void Creator::UpdatePoint(PhysicsWorld& world, AppInput& input)
 {
     if (hovered && input.IsMouseClickedDown(0))
     {
-        BodyProperties properties;
+        BodyProperties properties = config.bodyProperties;
         properties.position = (Vector2)input.mousePosition;
         properties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-        if (config.bodyConfiguration)
-        {
-            properties = ParseBodyProperties(*config.bodyConfiguration, properties);
-        }
         body = Body::CreatePoint(properties);
         world.AddBody(body);
         body = NULL;
@@ -272,13 +195,9 @@ void Creator::UpdateParticle(PhysicsWorld& world, AppInput& input)
     if (hovered && input.IsMouseClickedDown(0))
     {
         auto shape = std::make_shared<Shape>(config.radius);
-        BodyProperties properties;
+        BodyProperties properties = config.bodyProperties;
         properties.position = (Vector2)input.mousePosition;
         properties.innerColor = Color(GenerateRandomInt(256), GenerateRandomInt(256), GenerateRandomInt(256));
-        if (config.bodyConfiguration)
-        {
-            properties = ParseBodyProperties(*config.bodyConfiguration, properties);
-        }
         body = std::make_shared<Body>(shape, properties);
         world.AddBody(body);
         body = NULL;

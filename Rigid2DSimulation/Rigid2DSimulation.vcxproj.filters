@@ -52,11 +52,11 @@
     <Filter Include="current\ui\bottomPanel">
       <UniqueIdentifier>{e4a4e34f-063f-47e7-91a1-717bc65e8e96}</UniqueIdentifier>
     </Filter>
-    <Filter Include="current\ui\commandPanel">
-      <UniqueIdentifier>{46b12dce-f3e6-456d-80f0-4979ceefa68b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="current\ui\connectionPanel">
       <UniqueIdentifier>{5c1c18a8-9ad5-4178-ab61-6a93b8e44101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="current\ui\commandPanel">
+      <UniqueIdentifier>{46b12dce-f3e6-456d-80f0-4979ceefa68b}</UniqueIdentifier>
     </Filter>
     <Filter Include="current\ui\globalPanel">
       <UniqueIdentifier>{5cc75a31-8c34-40e0-9e61-e592aad01b9c}</UniqueIdentifier>
@@ -65,11 +65,11 @@
     <Filter Include="current\ui\languagePanel">
       <UniqueIdentifier>{442181d7-159d-4635-89f8-04767fa984a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="current\ui\menuPanel">
-      <UniqueIdentifier>{abc0acb7-cfec-4ad9-8ce7-ad5ee646aa33}</UniqueIdentifier>
-    </Filter>
     <Filter Include="current\ui\parameterPanel">
       <UniqueIdentifier>{e0a02764-b14d-4b8e-9074-0efa20361f0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="current\ui\menuPanel">
+      <UniqueIdentifier>{abc0acb7-cfec-4ad9-8ce7-ad5ee646aa33}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -212,8 +212,8 @@
     <ClCompile Include="current\audio\MusicPlayer.cpp">
       <Filter>current\audio</Filter>
     </ClCompile>
-    <ClCompile Include="current\common\SceneParameter.cpp">
-      <Filter>current\common</Filter>
+    <ClCompile Include="current\script\SceneParameter.cpp">
+      <Filter>current\script</Filter>
     </ClCompile>
     <ClCompile Include="framework\draw\DrawTriangle.cpp">
       <Filter>framework\draw</Filter>
@@ -242,6 +242,9 @@
     <ClCompile Include="current\script\ConnectionConfig.cpp">
       <Filter>current\script</Filter>
     </ClCompile>
+    <ClCompile Include="current\script\CreatorConfig.cpp">
+      <Filter>current\script</Filter>
+    </ClCompile>
     <ClCompile Include="current\script\SceneScriptRuntime.cpp">
       <Filter>current\script</Filter>
     </ClCompile>
@@ -260,8 +263,8 @@
     <ClCompile Include="framework\draw\DrawCurve.cpp">
       <Filter>framework\draw</Filter>
     </ClCompile>
-    <ClCompile Include="current\rigid\SceneBuilders.cpp">
-      <Filter>current\rigid</Filter>
+    <ClCompile Include="current\script\SceneBuilders.cpp">
+      <Filter>current\script</Filter>
     </ClCompile>
     <ClCompile Include="current\script\ShapeBuiltins.cpp">
       <Filter>current\script</Filter>
@@ -430,8 +433,8 @@
     <ClInclude Include="current\audio\MusicPlayer.h">
       <Filter>current\audio</Filter>
     </ClInclude>
-    <ClInclude Include="current\common\SceneParameter.h">
-      <Filter>current\common</Filter>
+    <ClInclude Include="current\script\SceneParameter.h">
+      <Filter>current\script</Filter>
     </ClInclude>
     <ClInclude Include="framework\draw\DrawTriangle.h">
       <Filter>framework\draw</Filter>
@@ -466,6 +469,12 @@
     <ClInclude Include="current\script\ConnectionConfig.h">
       <Filter>current\script</Filter>
     </ClInclude>
+    <ClInclude Include="current\script\BodyScriptData.h">
+      <Filter>current\script</Filter>
+    </ClInclude>
+    <ClInclude Include="current\script\ConfigUtils.h">
+      <Filter>current\script</Filter>
+    </ClInclude>
     <ClInclude Include="current\script\SceneScriptRuntime.h">
       <Filter>current\script</Filter>
     </ClInclude>
@@ -481,11 +490,8 @@
     <ClInclude Include="framework\draw\DrawCurve.h">
       <Filter>framework\draw</Filter>
     </ClInclude>
-    <ClInclude Include="current\common\Utils.h">
-      <Filter>current\common</Filter>
-    </ClInclude>
-    <ClInclude Include="current\rigid\SceneBuilders.h">
-      <Filter>current\rigid</Filter>
+    <ClInclude Include="current\script\SceneBuilders.h">
+      <Filter>current\script</Filter>
     </ClInclude>
     <ClInclude Include="current\script\ShapeBuiltins.h">
       <Filter>current\script</Filter>

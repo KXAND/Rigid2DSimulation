@@ -7,8 +7,6 @@ class GlobalPanel;
 class CreationPanel;
 class BodyPanel;
 class ConnectionPanel;
-class CommandPanel;
-class ParameterPanel;
 class LanguagePanel;
 class AboutPanel;
 class MenuPanel;
@@ -21,8 +19,6 @@ public:
     std::shared_ptr<CreationPanel> creationPanel;
     std::shared_ptr<BodyPanel> bodyPanel;
     std::shared_ptr<ConnectionPanel> connectionPanel;
-    std::shared_ptr<CommandPanel> commandPanel;
-    std::shared_ptr<ParameterPanel> parameterPanel;
     std::shared_ptr<LanguagePanel> languagePanel;
     std::shared_ptr<AboutPanel> aboutPanel;
     std::shared_ptr<MenuPanel> menuPanel;

@@ -5,8 +5,6 @@
 #include "current/ui/creationPanel/CreationPanel.h"
 #include "current/ui/bodyPanel/BodyPanel.h"
 #include "current/ui/connectionPanel/ConnectionPanel.h"
-#include "current/ui/parameterPanel/ParameterPanel.h"
-#include "current/ui/commandPanel/CommandPanel.h"
 #include "current/ui/languagePanel/LanguagePanel.h"
 #include "current/ui/aboutPanel/AboutPanel.h"
 #include "current/ui/menuPanel/MenuPanel.h"
@@ -26,10 +24,6 @@ void UserInterface::Init(SimulationApp& simulationApp)
     floatPanels.push_back(&*bodyPanel);
     connectionPanel = std::make_shared<ConnectionPanel>(simulationApp);
     floatPanels.push_back(&*connectionPanel);
-    commandPanel = std::make_shared<CommandPanel>(simulationApp);
-    floatPanels.push_back(&*commandPanel);
-    parameterPanel = std::make_shared<ParameterPanel>(simulationApp);
-    floatPanels.push_back(&*parameterPanel);
     languagePanel = std::make_shared<LanguagePanel>(simulationApp);
     floatPanels.push_back(&*languagePanel);
     aboutPanel = std::make_shared<AboutPanel>(simulationApp);

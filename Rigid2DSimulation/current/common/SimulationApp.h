@@ -3,7 +3,6 @@
 #include "PhysicsWorld.h"
 #include "SceneEditor.h"
 #include "SceneRenderer.h"
-#include "SceneScriptRuntime.h"
 #include "current/audio/MusicPlayer.h"
 
 class UserInterface;
@@ -16,8 +15,6 @@ public:
     PhysicsWorld physicsWorld;
     SceneEditor editor;
     SceneRenderer sceneRenderer;
-
-    SceneScriptRuntime scriptRuntime;
 
     MusicPlayer music;
 
@@ -35,7 +32,6 @@ public:
     void TogglePausing();
 
 private:
-    void HandleScriptError();
     // 暂停时也同步场景结构、应用每帧拖拽并维护轨迹，不推进模拟时间。
     void UpdateSceneState();
     void AdvanceSimulation();

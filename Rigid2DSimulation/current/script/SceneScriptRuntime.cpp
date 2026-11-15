@@ -17,7 +17,7 @@
 #include "SceneRenderer.h"
 #include "ScriptError.h"
 #include "ShapeBuiltins.h"
-#include "current/common/utils.h"
+#include "ConfigUtils.h"
 
 namespace
 {

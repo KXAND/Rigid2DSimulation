@@ -7,7 +7,6 @@
 #include "CheckBox.h"
 #include "Connection.h"
 #include "Label.h"
-#include "RichTextBox.h"
 #include "SimulationApp.h"
 
 BodyPanel::BodyPanel(App& app) : LocalizedFloatPanel(app.screen.Rect(), 400, 600, L"bodyPanelTitle")
@@ -24,16 +23,6 @@ BodyPanel::BodyPanel(App& app) : LocalizedFloatPanel(app.screen.Rect(), 400, 600
 void BodyPanel::BuildEditor()
 {
     connectionList = &editorLayout->AddColumn();
-    auto& scriptEditor = editorLayout->AddRichTextBox(360, 400);
-    scriptEditor.valueProvider = [](App& app)
-    {
-        return static_cast<SimulationApp&>(app).editor.bodySelecting->scriptData.temporaryScriptText;
-    };
-    scriptEditor.onEditing = [](App& app, std::wstring const& text)
-    {
-        static_cast<SimulationApp&>(app).editor.bodySelecting->scriptData.temporaryScriptText = text;
-    };
-
     BuildActionButtons();
     editorLayout->AddSeparator(400);
 }
@@ -41,13 +30,6 @@ void BodyPanel::BuildEditor()
 void BodyPanel::BuildActionButtons()
 {
     auto& actionButtons = editorLayout->AddRow();
-    actionButtons.AddLocalizedButton(70, L"applyBodyButton", [](App& app)
-    {
-        auto& simulationApp = static_cast<SimulationApp&>(app);
-        auto& selectedBody = *simulationApp.editor.bodySelecting;
-        selectedBody.scriptData.scriptText = selectedBody.scriptData.temporaryScriptText;
-        simulationApp.scriptRuntime.RefreshBodyScript(selectedBody);
-    });
     actionButtons.AddLocalizedButton(70, L"deleteBodyButton", [](App& app)
     {
         auto& simulationApp = static_cast<SimulationApp&>(app);
