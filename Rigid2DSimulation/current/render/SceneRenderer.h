@@ -43,10 +43,9 @@ public:
     double energyMultiplier = 0;
     double chargeMultiplier = 0;
 
-    void RenderBackground(SceneCanvas const& canvas, SceneRenderContext const& context) const;
     // 调用方先同步世界几何；绘制不修改物体或连接。
-    void RenderObjects(PhysicsWorld const& world, SceneRenderContext const& context) const;
-    void RenderCreationPreview(CreationPreview const& preview, SceneRenderContext const& context) const;
+    void Render(SceneCanvas const& canvas, PhysicsWorld const& world,
+                CreationPreview const& preview, SceneRenderContext const& context) const;
     void RenderCollision(Collision const& collision, SceneRenderContext const& context) const;
 
 private:

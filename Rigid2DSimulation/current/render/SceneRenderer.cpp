@@ -13,13 +13,11 @@
 #include "SceneCanvas.h"
 #include "Shape.h"
 
-void SceneRenderer::RenderBackground(SceneCanvas const& canvas, SceneRenderContext const& context) const
+void SceneRenderer::Render(SceneCanvas const& canvas, PhysicsWorld const& world,
+                           CreationPreview const& preview, SceneRenderContext const& context) const
 {
     canvas.Render(context.screen);
-}
 
-void SceneRenderer::RenderObjects(PhysicsWorld const& world, SceneRenderContext const& context) const
-{
     for (auto const& body : world.GetBodies())
     {
         RenderBody(*body, context);
@@ -28,10 +26,7 @@ void SceneRenderer::RenderObjects(PhysicsWorld const& world, SceneRenderContext 
     {
         RenderConnection(*connection, connection->p0, connection->p1, context);
     }
-}
 
-void SceneRenderer::RenderCreationPreview(CreationPreview const& preview, SceneRenderContext const& context) const
-{
     if (preview.body)
     {
         RenderBody(*preview.body, context);

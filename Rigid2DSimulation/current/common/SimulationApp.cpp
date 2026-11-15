@@ -90,9 +90,7 @@ void SimulationApp::Update()
     UpdateSceneState();
     AdvanceSimulation();
     auto context = GetSceneRenderContext();
-    sceneRenderer.RenderBackground(*sceneCanvas, context);
-    sceneRenderer.RenderObjects(physicsWorld, context);
-    sceneRenderer.RenderCreationPreview(editor.GetPreview(), context);
+    sceneRenderer.Render(*sceneCanvas, physicsWorld, editor.GetPreview(), context);
     userInterface->Render(*this);
 }
 
