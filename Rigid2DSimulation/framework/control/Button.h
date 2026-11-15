@@ -22,7 +22,7 @@ public:
     int GetWidth() const override;
     int GetHeight() const override;
 
-    void Render(App& app);
+    void Render(App& app) override;
     // 在原点击判定位置同步执行；为空时不处理，不保存传入的 App。
     std::function<void(App&)> onClick;
     // 在点击处理之前读取标题，保留动态按钮原来的显示时序。

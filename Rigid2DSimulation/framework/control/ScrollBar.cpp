@@ -56,7 +56,6 @@ void VerticalScrollBar::Update(App& app)
     {
         dragged = false;
     }
-    Render(app);
 }
 void VerticalScrollBar::Discard(App& app)
 {

@@ -39,7 +39,6 @@ void Label::Update(App& app)
     {
         width = GetStringSize(text, app.font, 0).x;
     }
-    Render(app);
 }
 
 LocalizedLabel::LocalizedLabel(wstring const& id, bool big) : Label(big), textId(id) {}

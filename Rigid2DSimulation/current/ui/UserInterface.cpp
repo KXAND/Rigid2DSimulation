@@ -39,13 +39,22 @@ void UserInterface::Init(SimulationApp& simulationApp)
     menuPanel = std::make_shared<MenuPanel>(simulationApp);
     bottomPanel = std::make_shared<BottomPanel>(simulationApp);
 }
-void UserInterface::UpdateAndRender(SimulationApp& simulationApp)
+void UserInterface::Update(SimulationApp& simulationApp)
 {
     menuPanel->Update(simulationApp);
     bottomPanel->Update(simulationApp);
     for (auto floatPanel : floatPanels)
     {
         floatPanel->Update(simulationApp);
+    }
+}
+void UserInterface::Render(SimulationApp& simulationApp)
+{
+    menuPanel->Render(simulationApp);
+    bottomPanel->Render(simulationApp);
+    for (auto floatPanel : floatPanels)
+    {
+        floatPanel->Render(simulationApp);
     }
 }
 void UserInterface::PreUpdate(SimulationApp& simulationApp)

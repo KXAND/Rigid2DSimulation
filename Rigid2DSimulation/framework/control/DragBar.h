@@ -28,7 +28,7 @@ public:
     void SetNormalizedNodePosition(double normalizedValue);
     DVector2 GetNodeTopLeft() const;
 
-    void Render(App& app);
+    void Render(App& app) override;
     std::function<double(App&)> valueProvider;
     // 原拖动分支持续回写，包括释放鼠标的最后一帧。
     std::function<void(App&, double)> onDragging;

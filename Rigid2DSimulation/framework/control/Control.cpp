@@ -26,6 +26,13 @@ void Delegate::Update(App& app)
         control->Update(app);
     }
 }
+void Delegate::Render(App& app)
+{
+    if (control)
+    {
+        control->Render(app);
+    }
+}
 void Delegate::Discard(App& app)
 {
     if (control)

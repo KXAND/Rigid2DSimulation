@@ -55,6 +55,15 @@ void SimulationApp::Reset()
                               music.volume, maxRealDeltaTime, isTrackShown });
 
     editor.ResetInteraction();
+    // UI 回调可能在本帧拾取之后重置场景，销毁前清除旧对象的输入归属。
+    for (auto const& body : physicsWorld.GetBodies())
+    {
+        inputOwners.Remove(body.get());
+    }
+    for (auto const& connection : physicsWorld.GetConnections())
+    {
+        inputOwners.Remove(connection.get());
+    }
     physicsWorld.ClearObjects();
     scriptRuntime.ResetSceneVariables(*sceneCanvas);
 
@@ -74,6 +83,8 @@ void SimulationApp::Update()
     editor.PreUpdate(physicsWorld, input, inputOwners, sceneCanvas->GetViewport());
     userInterface->PreUpdate(*this);
     HandleInput();
+    // 按钮回调与快捷键都在推进物理之前生效；此处只更新控件，不绘制。
+    userInterface->Update(*this);
 
     // 每帧必须先计算并设置时长，再调用无参 Update；脚本与物理推进共用该值。
     // 本帧不重新计算时长，脚本修改上限从下一帧生效。
@@ -93,7 +104,7 @@ void SimulationApp::Update()
     sceneRenderer.RenderBackground(*sceneCanvas, scriptMessage, context);
     sceneRenderer.RenderObjects(physicsWorld, context);
     sceneRenderer.RenderCreationPreview(editor.GetPreview(), context);
-    userInterface->UpdateAndRender(*this);
+    userInterface->Render(*this);
     HandleScriptError();
 }
 

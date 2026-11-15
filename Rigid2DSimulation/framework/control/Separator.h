@@ -13,6 +13,5 @@ public:
     int GetWidth() const override;
     int GetHeight() const override;
 
-    void Render(App& app);
-    void Update(App& app) override;
+    void Render(App& app) override;
 };

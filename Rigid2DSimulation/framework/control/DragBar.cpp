@@ -91,7 +91,6 @@ void HorizontalDragBar::Update(App& app)
         Sync(app);
         dragged = enabled && hovered && app.input.IsMouseClickedDown(0);
     }
-    Render(app);
 }
 void HorizontalDragBar::Discard(App& app)
 {

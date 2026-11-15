@@ -50,6 +50,7 @@ public:
     void SetVisibleCount(std::size_t size, App& app);
     void Clear(App& app);
     void Discard(App& app) override;
+    void Render(App& app) override;
     void PreUpdate(App& app) override;
 
 private:

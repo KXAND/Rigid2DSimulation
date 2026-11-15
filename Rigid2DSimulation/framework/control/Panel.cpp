@@ -101,6 +101,14 @@ void Panel::InitializeScrollBar()
 void Panel::Render(App& app)
 {
     DrawRectangleWithBorderRaw(app.screen, topLeft, width, height, app.screen.Rect(), panelColor, frameColor);
+    if (contentControl)
+    {
+        contentControl->Render(app);
+    }
+    if (useScrollBar)
+    {
+        scrollBar->Render(app);
+    }
 }
 
 void Panel::Update(App& app)
@@ -123,10 +131,6 @@ void Panel::Update(App& app)
         contentControl->topLeft.y = topLeft.y + contentOffset.y;
     }
 
-    // 下面 Update 顺序是为了方便绘制，本来应该控件先更新高度的。
-    // 下面 Update 顺序是为了方便绘制，本来应该控件先更新高度的。
-    // 这个是为了速度的牺牲，不知道有没有必要。
-    Render(app);
     if (contentControl)
     {
         contentControl->Update(app);

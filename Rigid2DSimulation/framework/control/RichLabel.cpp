@@ -47,7 +47,6 @@ void RichLabel::Update(App& app)
     {
         height = textSize.y;
     }
-    Render(app);
 }
 
 LocalizedRichLabel::LocalizedRichLabel(int width, wstring const& id) : textId(id), RichLabel(width) {}
